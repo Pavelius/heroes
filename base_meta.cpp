@@ -15,6 +15,8 @@ limitations under the License. */
 #include "base.h"
 #include "crt.h"
 
+bsmeta* bsmeta::first;
+
 static bstoken objects[] = {
 	{Requisites, Text, 0, {"Name", "Наименование"}},
 	{Requisites, Text, 0, {"Description", "Описание"}},
@@ -114,14 +116,15 @@ static bstoken objects[] = {
 	{0, 0, 0, {"Last Possible", "Последний возможный"}},
 	{0, 0, 0, {"Valid", "Правильный"}},
 };
-
-bsmeta* bsmeta::first;
-
-void bstoken::initialize()
-{
-	for(int i = FirstBaseTag; i <= LastBaseTag; i++)
-		objects[i - FirstBaseTag].tag = sztag(objects[i - FirstBaseTag].name[0]);
-}
+static bsmeta::field fields[] = {
+	BSREQ(bstoken, name, Name, Text),
+	BSREQ(bstoken, tag, Identifier, Text),
+	BSREQ(bstoken, type, Type, Reference),
+	BSREQ(bstoken, parent, Parent, Reference),
+	BSREQ(bstoken, image, Image, Number),
+	{0}
+};
+BSMETA(bstoken, "Standart tokens", "Стандартные элементы", FirstBaseTag)
 
 char* bsmeta::field::ptr(void* data, int id)
 {
@@ -481,13 +484,3 @@ int bsfind(int rec, int id, int value)
 	}
 	return 0;
 }
-
-static bsmeta::field fields[] = {
-	BSREQ(bstoken, name, Name, Text),
-	BSREQ(bstoken, tag, Identifier, Text),
-	BSREQ(bstoken, type, Type, Reference),
-	BSREQ(bstoken, parent, Parent, Reference),
-	BSREQ(bstoken, image, Image, Number),
-	{0}
-};
-BSMETA(bstoken, "Standart tokens", "Стандартные элементы", FirstBaseTag)

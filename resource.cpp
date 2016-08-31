@@ -6,7 +6,7 @@ struct resdata
 	void*			data;
 	int				size;
 };
-static resdata		data[res::Count];
+static resdata		data[res::Empthy];
 
 res::tokens res::map(int object)
 {
@@ -284,7 +284,7 @@ res::tokens res::buildings(int race)
 
 void* res::get(tokens icn)
 {
-	if((int)icn >= res::Count)
+	if((int)icn >= res::Empthy)
 		return 0;
 	if(!data[icn].data)
 	{

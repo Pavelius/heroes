@@ -540,11 +540,10 @@ namespace res
 		CAMPXTRE, CTRACK00, CTRACK01, CTRACK02, CTRACK03,
 		CTRACK04, CTRACK05, CTRACK06, BROTHERS, WavEXPERNCE,
 		WavNWHEROLV, WavTREASURE, WavDRAWBRG, WavH2MINE,
-		Count, Empthy = Count
+		Empthy
 	};
 	rect					box(int x, int y, tokens res, int frame, unsigned flags = 0);
 	tokens					buildings(int race);
-	void					clear();
 	bool					ishight(res::tokens icn, int index);
 	int						frames(tokens res);
 	void*					get(tokens res);
@@ -552,8 +551,6 @@ namespace res
 	tokens					map(int object);
 	int						ox(tokens res, int n);
 	int						oy(tokens res, int n);
-	void					set(const char* path);
-	int						size(tokens res);
 	int						width(tokens res, int frame);
 }
 struct animation : public drawable
