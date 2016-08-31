@@ -9,6 +9,7 @@
     <ClInclude Include="drawable.h" />
     <ClInclude Include="array.h" />
     <ClInclude Include="io.h" />
+    <ClInclude Include="win.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -52,7 +53,6 @@
     <ClCompile Include="spells.cpp" />
     <ClCompile Include="tokens.cpp" />
     <ClCompile Include="..\cface\point.cpp" />
-    <ClCompile Include="..\cface\win_io.cpp" />
     <ClCompile Include="adventure.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="draw.cpp" />
@@ -62,5 +62,6 @@
     <ClCompile Include="array.cpp" />
     <ClCompile Include="base_meta.cpp" />
     <ClCompile Include="io.cpp" />
+    <ClCompile Include="win_io.cpp" />
   </ItemGroup>
 </Project>

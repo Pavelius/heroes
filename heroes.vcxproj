@@ -27,10 +27,10 @@
     <ClInclude Include="drawable.h" />
     <ClInclude Include="io.h" />
     <ClInclude Include="main.h" />
+    <ClInclude Include="win.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\cface\point.cpp" />
-    <ClCompile Include="..\cface\win_io.cpp" />
     <ClCompile Include="animation.cpp" />
     <ClCompile Include="army.cpp" />
     <ClCompile Include="array.cpp" />
@@ -79,6 +79,7 @@
     <ClCompile Include="text.cpp" />
     <ClCompile Include="unitinfo.cpp" />
     <ClCompile Include="win.cpp" />
+    <ClCompile Include="win_io.cpp" />
     <ClCompile Include="world.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
