@@ -9,14 +9,14 @@ const int CastleIncomeWell2 = 10;
 static struct castle_t
 {
     tokens			player;
-    tokens			race;
+    tokens			type;
     int				index;
     char			name[14];
-    struct army		army;
     unsigned		flags;
     unsigned		building;
     unsigned char	mageguild;
     short int		dwellings[6];
+	short unsigned	army[LastTroopsIndex - FirstTroopsIndex + 1];
 } objects[LastCastle-FirstCastle+1];
 static const char*	str_dwelling[][2] =
 {
@@ -31,11 +31,6 @@ static const char*	str_dwelling[][2] =
 void castle::clear()
 {
     memset(objects, 0, sizeof(objects));
-}
-
-army& castle::garmy(int mid)
-{
-    return objects[mid-FirstCastle].army;
 }
 
 int castle::growth(int rec, int dwelling, bool apply)
@@ -64,14 +59,6 @@ static int object_get(int rec, int id)
     {
     case Valid:
         return e.index ? 1 : 0;
-    case Type:
-        return e.race;
-    case Last:
-        return FirstCastle + sizeof(objects)/sizeof(objects[0]) - 1;
-    case Position:
-        return e.index;
-    case Player:
-        return e.player;
     case BuildThisTurn:
         return (e.flags&FBuildThisTurn)!=0 ? 1 : 0;
     case Tent:
@@ -100,43 +87,6 @@ static int object_get(int rec, int id)
             }
         }
         return 0;
-    }
-}
-
-static void object_set(int rec, int id, int value)
-{
-    castle_t& e = objects[rec-FirstCastle];
-    switch(id)
-    {
-    case Position:
-        e.index = value;
-        break;
-    case Type:
-        e.race = tokens(value);
-        break;
-    case Player:
-        e.player = tokens(value);
-        break;
-    case BuildThisTurn:
-        if(value)
-            e.flags |= FBuildThisTurn;
-        else
-            e.flags &= ~FBuildThisTurn;
-        break;
-    case MageGuild:
-        e.mageguild = (unsigned char)(value%6);
-        break;
-    default:
-        if(id>=(int)FirstBuilding && id<=(int)LastBuilding)
-        {
-            if(value)
-                e.building |= 1<<(id-FirstBuilding);
-            else
-                e.building &= ~(1<<(id-FirstBuilding));
-        }
-        else if(id>=(int)FirstRecruit && id<=(int)LastRecruit)
-            e.dwellings[id-FirstRecruit] = value;
-        break;
     }
 }
 
@@ -169,7 +119,7 @@ static const char* object_gets(int rec, int id)
     case Tent:
         return "Tent";
     case Well2:
-        switch(objects[rec-FirstCastle].race)
+        switch(objects[rec-FirstCastle].type)
         {
         case Knight: return "Farm";
         case Barbarian: return "Garbage Heap";
@@ -179,7 +129,7 @@ static const char* object_gets(int rec, int id)
         default: return "Skull Pile";
         };
     case SpecialBuilding:
-        switch(objects[rec-FirstCastle].race)
+        switch(objects[rec-FirstCastle].type)
         {
         case Knight: return "Fortification";
         case Barbarian: return "Collesium";
@@ -204,7 +154,7 @@ static const char* object_gets(int rec, int id)
     case Dwelving4:
     case Dwelving5:
     case Dwelving6:
-        return str_dwelling[(id-Dwelving1)*6 + (objects[rec-FirstCastle].race-Barbarian)][0];
+        return str_dwelling[(id-Dwelving1)*6 + (objects[rec-FirstCastle].type -Barbarian)][0];
     default:
         if(id>=(int)Information)
         {
@@ -238,7 +188,7 @@ static const char* object_gets(int rec, int id)
             case Captain:
                 return szt("The Captain's Quarters provides a captain to assist in the castle's defense when no hero is present.","");
             case Well2:
-                switch(objects[rec-FirstCastle].race)
+                switch(objects[rec-FirstCastle].type)
                 {
                 case Knight:
                     return szprint(temp, szt("The Farm increases production of Peasants by %1i per week.",""), CastleIncomeWell2);
@@ -254,7 +204,7 @@ static const char* object_gets(int rec, int id)
                     return szprint(temp, szt("The Skull Pile increases production of Skeletons by %1i per week.", ""), CastleIncomeWell2);
                 };
             case SpecialBuilding:
-                switch(objects[rec-FirstCastle].race)
+                switch(objects[rec-FirstCastle].type)
                 {
                 case Knight:
                 case Barbarian:
@@ -274,7 +224,7 @@ static const char* object_gets(int rec, int id)
             case Dwelving6:
                 return szprint(temp, szt("%1 allow recruit %2.", "%1 позволяет нанимать %2."),
                                bsgets(rec, id-Information+CastleInTown),
-                               bsgets(buildings::unit(objects[rec-FirstCastle].race, id-Information+CastleInTown), NameMulti));
+                               bsgets(buildings::unit(objects[rec-FirstCastle].type, id-Information+CastleInTown), NameMulti));
             }
         }
         return "";
@@ -1009,7 +959,7 @@ void show::castle(int rec)
         draw::image(21, draw::height-19, res::SMALLBAR, 0);
         draw::button(draw::width-21, draw::height-19, res::SMALLBAR, KeyRight, 3, 3, 4, 0, 0, szt("Next town", ""));
         panorama(0, 0, rec);
-        draw::troops(112, 262, game::getarmy(rec), FirstGarrisonIndex, army_index);
+        draw::troops(112, 262, rec, FirstTroopsIndex, army_index);
         paint_panel(0, 256, rec, 0);
         draw::resource(552, 262, player::gcost(player));
         draw::button(553, 428, res::SWAPBTN, Cancel, 0, 0, 1, KeyEscape, 0, szt("Leave town", ""));
@@ -1036,10 +986,6 @@ void show::castle(int rec)
             break;
         case CastleInTown:
             show::build(rec);
-            break;
-        default:
-            if(id==Tooltips || (id>=(int)FirstGarrisonIndex && id<=(int)LastGarrisonIndex))
-                castle::garmy(rec).input(id, FirstGarrisonIndex, army_index, 0);
             break;
         }
     }

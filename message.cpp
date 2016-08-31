@@ -406,27 +406,26 @@ void draw::debug()
     text(10,10,temp);
 }
 
-void draw::troops(int x, int y, army* e, int id, int index)
+void draw::troops(int x, int y, int rec, int id, int index)
 {
-	if(!e)
-		return;
 	int w = res::width(res::STRIP, 2);
 	int h = res::width(res::STRIP, 2);
-	for(int i = 0; i<(int)(sizeof(e->units)/sizeof(e->units[0])); i++)
+	for(int i = 0; i<LastTroopsIndex; i += 2)
 	{
-		int id1 = e->units[i].id;
-		if(id1==0)
+		int unit = bsget(rec, id);
+		int count = bsget(rec, id + 1);
+		if(unit==0)
 			image(x, y, res::STRIP, 2);
 		else
-			clipart(x+40, y, id1, e->units[i].count);
+			clipart(x+40, y, unit, count);
 		if(i==index)
 			image(x, y, res::STRIP, 1);
 		if(area(x, y, x+w, y+h))
 		{
 			if(hot::key==MouseLeft && hot::pressed)
 				execute(id+i);
-			if(e->units[i].id)
-				status("%1i %2", e->units[i].count, (int)bsgets(e->units[i].id, NameMulti));
+			if(unit)
+				status("%1i %2", count, (int)bsgets(unit, NameMulti));
 		}
 		x += 88;
 	}

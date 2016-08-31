@@ -10,7 +10,7 @@ int artifacts_bonuses(int rec, int id)
 	{
 		if(!p[i])
 			continue;
-		result += bsget(p[i], Attack);
+		result += game::getartifact(p[i], id);
 	}
 	return result;
 }
@@ -71,6 +71,67 @@ bool game::candefend(int rec)
 	return true;
 }
 
+int game::getartifact(int rec, int id)
+{
+	int type = bsget(rec, Type);
+	int effect = bsget(rec, Value);
+	switch(id)
+	{
+	case Attack:
+	case Defence:
+		if(type == id
+			|| type == AttackDefence
+			|| type == All)
+			return effect;
+		return 0;
+	case Wisdow:
+	case SpellPower:
+		if(type == id
+			|| type == SpellPowerWisdow
+			|| type == All)
+			return effect;
+		return 0;
+	default:
+		if(type == id)
+			return effect;
+		return 0;
+	}
+}
+
+void game::cleararmy(int rec)
+{
+	for(int i = FirstTroopsIndex; i <= LastTroopsIndex; i++)
+		bsset(rec, i, 0);
+}
+
+void game::addunit(int rec, int type, int count)
+{
+	// Add in existing troops
+	for(int i = FirstTroopsIndex; i <= LastTroopsIndex; i += 2)
+	{
+		if(bsget(rec, i) == type)
+		{
+			count += bsget(rec, i + 1);
+			if(count < 0)
+				count = 0;
+			bsset(rec, i + 1, count);
+			if(!count)
+				bsset(rec, i, 0);
+			return;
+		}
+	}
+	// Add new one
+	for(int i = FirstTroopsIndex; i <= LastTroopsIndex; i += 2)
+	{
+		if(!bsget(rec, i))
+		{
+			bsset(rec, i, type);
+			bsset(rec, i + 1, count);
+			return;
+		}
+	}
+}
+
 int game::get(int rec, int id)
 {
 	int m, k;
@@ -81,11 +142,12 @@ int game::get(int rec, int id)
 			return bsget(rec, id) + artifacts_bonuses(rec, id);
 		else if(rec >= FirstCombatant && rec <= LastCombatant)
 		{
-			m = 0;
+			m = get(bsget(rec, Type), id);
+			m += get(bsget(rec, Side), id);
 			// RULE: Spell Boold Lust.
 			if(get(rec, SpellBloodLust))
 				m += 3;
-			return get(bsget(rec, Type), id) + m;
+			return m;
 		}
 		return bsget(rec, id);
 	case Defence:
@@ -93,14 +155,15 @@ int game::get(int rec, int id)
 			return bsget(rec, id) + artifacts_bonuses(rec, id);
 		else if(rec >= FirstCombatant && rec <= LastCombatant)
 		{
-			m = 0;
+			m = get(bsget(rec, Type), id);
+			m += get(bsget(rec, Side), id);
 			// RULE: Spell Stone skin.
 			if(get(rec, SpellStone))
 				m += 3;
 			// RULE: spell Steel skin.
 			else if(get(rec, SpellSteelSkin))
 				m += 5;
-			return get(bsget(rec, Type), id) + m;
+			return m;
 		}
 		return bsget(rec, id);
 	case Wisdow:
@@ -159,25 +222,22 @@ int game::get(int rec, int id)
 		{
 			m = 1000;
 			// slowest monster speed
-			auto p = getarmy(rec);
-			if(p)
+			for(int i = FirstTroopsIndex; i <= LastTroopsIndex; i += 2)
 			{
-				for(auto& u : p->units)
+				int unit = bsget(rec, i);
+				if(!unit)
+					continue;
+				int ms = 1000;
+				switch(bsget(unit, Speed))
 				{
-					if(!u.isvalid())
-						continue;
-					int ms = 1000;
-					switch(bsget(u.id, Speed))
-					{
-					case Slow: ms = 1100; break;
-					case Average: ms = 1200; break;
-					case Fast: ms = 1300; break;
-					case VeryFast: ms = 1400; break;
-					case UltraFast: ms = 1500; break;
-					}
-					if(m > ms)
-						m = ms;
+				case Slow: ms = 1100; break;
+				case Average: ms = 1200; break;
+				case Fast: ms = 1300; break;
+				case VeryFast: ms = 1400; break;
+				case UltraFast: ms = 1500; break;
 				}
+				if(m > ms)
+					m = ms;
 			}
 			// skill logistics
 			m += m*get(rec, SkillLogistics) * 10 / 100;
@@ -200,14 +260,12 @@ int game::get(int rec, int id)
 		return Necromancer;
 	case ArmyCost:
 		m = 0;
-		if(true)
+		for(int i = FirstTroopsIndex; i <= LastTroopsIndex; i += 2) 
 		{
-			auto p = getarmy(rec);
-			if(p)
-			{
-				for(auto& u : p->units)
-					m += get(u.id, Gold) * u.count;
-			}
+			int u = bsget(rec, i);
+			if(!u)
+				continue;
+			m += get(u, Gold) * bsget(rec, i+1);
 		}
 		return m;
 	default:

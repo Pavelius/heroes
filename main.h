@@ -228,16 +228,16 @@ enum tokens
 	FirstObject = WaterChest, LastObject = WaterAltar,
 	LastAction = LastObject,
 	// Custom tokens
-	FirstCastle, LastCastle = FirstCastle+128,
-	FirstEvent, LastEvent = FirstEvent+128,
-	FirstSign, LastSign = FirstSign+128,
-	Information, CanBuild = Information + LastBuilding-FirstBuilding + 2,
-	FirstGarrisonIndex, LastGarrisonIndex = FirstGarrisonIndex+5,
-	FirstArtifactIndex, LastArtifactIndex = FirstArtifactIndex+14,
-	FirstRecruit, LastRecruit = FirstRecruit+6,
+	FirstCastle, LastCastle = FirstCastle + 128,
+	FirstEvent, LastEvent = FirstEvent + 128,
+	FirstSign, LastSign = FirstSign + 128,
+	Information, CanBuild = Information + LastBuilding - FirstBuilding + 2,
+	FirstArtifactIndex, LastArtifactIndex = FirstArtifactIndex + 14,
+	FirstTroopsIndex, LastTroopsIndex = FirstTroopsIndex + 5 * 2,
+	FirstRecruit, LastRecruit = FirstRecruit + 6,
 	FirstCombatant, LastCombatant = FirstCombatant + 5 + 5 + 10,
 	FirstEffect, LastEffect = FirstEffect + 32,
-	FirstMoveable, LastMoveable = FirstMoveable+128*256,
+	FirstMoveable, LastMoveable = FirstMoveable + 128 * 256,
 	Valid,
 };
 enum blocks
@@ -641,33 +641,12 @@ namespace hot
 	extern bool				pressed;
 	extern int				symbol;
 };
-struct unit
-{
-	int						id;
-	short unsigned			count;
-	//
-	void					clear() { id = 0; count = 0; }
-	bool					isvalid() const { return id != 0; }
-	bool					isdead() const { return count == 0; }
-};
-struct army
-{
-	unit					units[5];
-	void					add(int id, int count);
-	void					clear();
-	void					input(int id, int base, int& army_index, int parent);
-};
 struct spellbook
 {
 	unsigned				known[5];
 	void					clear();
 	int						get(int id) const;
 	bool					set(int id, int value);
-};
-struct casualties : public adat<unit, 16>
-{
-	void					add(int id, int count);
-	void					clear();
 };
 struct order
 {
@@ -723,10 +702,10 @@ namespace draw
 	private:
 		unsigned char*		bits;
 	};
-    enum justify
-    {
-        Left, Center, Right,
-    };
+	enum justify
+	{
+		Left, Center, Right,
+	};
 	const int				width = 640;
 	const int				height = 480;
 	const int				scanline = 640;
@@ -770,7 +749,7 @@ namespace draw
 	void					status(const char* temp, int p1 = 0, int p2 = 0, int p3 = 0);
 	void					status(int x1, int y1, int x2, int y2);
 	void					text(int x, int y, const char* string, int count = -1);
-	void					text(int x, int y, int width, justify jf, const char* string, int count=-1);
+	void					text(int x, int y, int width, justify jf, const char* string, int count = -1);
 	int						textbc(const char* string, int count, int width);
 	int						textf(int x, int y, int width, const char* text, bool calculate);
 	int						texth();
@@ -780,7 +759,7 @@ namespace draw
 	int						textw(char ch);
 	int						textw(const char* string, int count = -1);
 	void					tiles(int x, int y, res::tokens icn, int* rec, int w, int h);
-	void					troops(int x, int y, army* e, int id, int index);
+	void					troops(int x, int y, int rec, int id, int index);
 };
 struct gamefile
 {
@@ -798,7 +777,7 @@ struct gamefile
 	bool					start_hero;
 	//
 	void					clear();
-	bool					isvalid() const { return file[0]!=0; }
+	bool					isvalid() const { return file[0] != 0; }
 	bool					load(const char* filename);
 	void					players(int count);
 	int						sides() const;
@@ -829,7 +808,7 @@ namespace map
 	int						action(int index);
 	void					init();
 	inline int				i2x(int i) { return i%width; }
-	inline int				i2y(int i) { return i/width; }
+	inline int				i2y(int i) { return i / width; }
 	bool					is(int index, bool(*callback)(unsigned char object, unsigned char index, unsigned char param), unsigned char param);
 	bool					isaction(int object);
 	bool					isroad(unsigned char object, unsigned char index, unsigned char direct);
@@ -851,22 +830,22 @@ namespace map
 	namespace moveable
 	{
 		void				block(unsigned* route);
-	    void        		load(int* rec, int index, int w, int h);
-	    int					nearest(int index, int id1, int id2, int radius);
-	    void				reaction(int rec, int user);
+		void        		load(int* rec, int index, int w, int h);
+		int					nearest(int index, int id1, int id2, int radius);
+		void				reaction(int rec, int user);
 	}
 	namespace show
 	{
-	    struct element
-	    {
-	        unsigned char   object;
-	        unsigned char   index;
-	        unsigned char   level;
-	    };
-		extern unsigned short   tiles[144*144];
-		extern unsigned char    objects[144*144][8][3];
-		extern unsigned char    flags[144*144];
-		extern unsigned     route[144*144];
+		struct element
+		{
+			unsigned char   object;
+			unsigned char   index;
+			unsigned char   level;
+		};
+		extern unsigned short   tiles[144 * 144];
+		extern unsigned char    objects[144 * 144][8][3];
+		extern unsigned char    flags[144 * 144];
+		extern unsigned     route[144 * 144];
 	}
 	namespace route
 	{
@@ -956,7 +935,6 @@ namespace monster
 namespace castle
 {
 	void					clear();
-	army&					garmy(int mid);
 	int						growth(int rec, int dwelling, bool apply);
 };
 namespace buildings
@@ -1050,9 +1028,11 @@ private:
 };
 namespace game
 {
+	void					addunit(int rec, int type, int count);
+	void					cleararmy(int rec);
 	bool					candefend(int rec);
 	int						get(int rec, int id);
-	army*					getarmy(int rec);
+	int						getartifact(int rec, int id);
 	const cost*				getcost(int rec);
 	int						geteffect(int rec, int id);
 	bool					isboosted(int rec);

@@ -18,9 +18,8 @@ struct hero
 	unsigned			experience;
 	unsigned char		skills[LastSkill - FirstSkill + 1];
 	unsigned char		spells[LastSpell - FirstSpell + 1];
-	unsigned short		artifacts[14];
+	unsigned short		params[LastTroopsIndex - FirstArtifactIndex + 1];
 	unsigned			state;
-	struct army			army;
 } objects[LastHero - FirstHero + 1] = {
 	{{"Lord Killburn", "Лорд Килбурн"}}, {{"Sir Gallanth", "Сэр Галлант"}}, {{"Ector", "Эктор"}}, {{"Gvenneth", "Гвиннет"}}, {{"Tyro", "Тиро"}},
 	{{"Ambrose", "Амброуз"}}, {{"Ruby", "Руби"}}, {{"Maximus", "Максимус"}}, {{"Dimitry", "Димитрий"}},
@@ -54,40 +53,39 @@ static bsmeta::field fields[] = {
 	BSREQ(hero, recruit, Recruit, Number),
 	BSREQ(hero, experience, Experience, Number),
 	BSINT(hero, spells, FirstSpell, Number),
-	BSINT(hero, artifacts, FirstArtifactIndex, Number),
+	BSINT(hero, params, FirstArtifactIndex, Number),
 };
 BSMETA(hero, "Heroes", "Герои", FirstHero);
 
 static void create_army(int rec)
 {
-	auto p = game::getarmy(rec);
-	p->clear();
+	game::cleararmy(rec);
 	switch(bsget(rec, Type))
 	{
 	case Knight:
-		p->add(Archer, xrand(3, 5));
-		p->add(Peasant, xrand(30, 50));
+		game::addunit(rec, Archer, xrand(3, 5));
+		game::addunit(rec, Peasant, xrand(30, 50));
 		break;
 	case Barbarian:
-		p->add(Orc, xrand(3, 5));
-		p->add(Goblin, xrand(10, 20));
-		p->add(Wolf, xrand(0, 2));
+		game::addunit(rec, Orc, xrand(3, 5));
+		game::addunit(rec, Goblin, xrand(10, 20));
+		game::addunit(rec, Wolf, xrand(0, 2));
 		break;
 	case Necromancer:
-		p->add(Skeleton, xrand(12, 22));
-		p->add(Zombie, xrand(4, 8));
+		game::addunit(rec, Skeleton, xrand(12, 22));
+		game::addunit(rec, Zombie, xrand(4, 8));
 		break;
 	case Sorcerer:
-		p->add(Sprite, xrand(10, 20));
-		p->add(Dwarf, xrand(3, 7));
+		game::addunit(rec, Sprite, xrand(10, 20));
+		game::addunit(rec, Dwarf, xrand(3, 7));
 		break;
 	case Wizard:
-		p->add(Halfling, xrand(10, 20));
-		p->add(Boar, xrand(2, 4));
+		game::addunit(rec, Halfling, xrand(10, 20));
+		game::addunit(rec, Boar, xrand(2, 4));
 		break;
 	case Warlock:
-		p->add(Centaur, xrand(8, 16));
-		p->add(Gargoyle, xrand(2, 4));
+		game::addunit(rec, Centaur, xrand(8, 16));
+		game::addunit(rec, Gargoyle, xrand(2, 4));
 		break;
 	}
 }
@@ -101,12 +99,11 @@ static void game_initialize()
 		bsset(rec, Portrait, rec-FirstHero);
 		bsset(rec, Direction, map::Up);
 		objects[rec-FirstHero].state = 0;
-		objects[rec-FirstHero].army.clear();
 		memset(objects[rec-FirstHero].skills, 0, sizeof(objects[rec-FirstHero].skills));
 		memset(objects[rec - FirstHero].spells, 0, sizeof(objects[rec - FirstHero].spells));
-		memset(objects[rec-FirstHero].artifacts, 0, sizeof(objects[rec-FirstHero].artifacts));
 		if(rec<=(int)Bax)
 			objects[rec-FirstHero].state |= InGame;
+		create_army(rec);
 		switch(bsget(rec, Type))
 		{
 		case Knight:
@@ -160,89 +157,10 @@ static void game_initialize()
 			bsset(rec, SpellHaste, 1);
 			break;
 		}
-		create_army(rec);
-		objects[rec-FirstHero].spell_points = bsget(rec, SpellPointsMax);
-		objects[rec-FirstHero].move_points = bsget(rec, MovePointsMax);
-		objects[rec-FirstHero].index = -1;
+		bsset(rec, SpellPoints, game::get(rec, SpellPointsMax));
+		bsset(rec, MovePoints, game::get(rec, MovePointsMax));
+		bsset(rec, Position, -1);
 	}
-}
-
-//static void object_set(int rec, int id, int value)
-//{
-//	hero_t& e = objects[rec-FirstHero];
-//	switch(id)
-//	{
-//	case Player:
-//		e.player = tokens(value);
-//		break;
-//	case Recruit:
-//		e.recruit = tokens(value);
-//		break;
-//	case Position:
-//		e.index = value;
-//		if(value==objects[rec-FirstHero].index_move)
-//            e.index_move = -1;
-//		break;
-//	case MoveTo:
-//		e.index_move = value;
-//		if(value==objects[rec-FirstHero].index)
-//            e.index_move = -1;
-//		break;
-//	case Direction:
-//		e.direction = value;
-//		break;
-//	case Portrait:
-//		e.portrait = value;
-//		break;
-//	case PathTo:
-//		break;
-//	case MovePoints:
-//		e.move_points = value;
-//		break;
-//	case SpellPoints:
-//		e.spell_points = value;
-//		break;
-//	default:
-//		if(id>=(int)FirstSkill && id<=(int)LastSkill)
-//			e.skills[id-FirstSkill] = value;
-//		else if(id>=(int)FirstArtifactIndex && id<=(int)LastArtifactIndex)
-//			e.artifacts[id-FirstArtifactIndex] = value;
-//		else if(id>=(int)FirstArtifact && id<=(int)LastArtifact)
-//		{
-//			for(int i = 0; i<(int)(sizeof(e.artifacts)/sizeof(e.artifacts[0])); i++)
-//			{
-//				if(e.artifacts[i])
-//					continue;
-//				e.artifacts[i] = id;
-//				break;
-//			}
-//		}
-//		else if(id>=(int)FirstSpell && id<=(int)LastSpell)
-//			e.spells.set(id, value);
-//		break;
-//	}
-//}
-//
-//static const char* object_gets(int rec, int id)
-//{
-//    static char code[8];
-//	switch(id)
-//	{
-//	case Name:
-//		return objects[rec-FirstHero].name;
-//    case Code:
-//        szprint(code, "%%h%1i", rec-FirstHero);
-//        return code;
-//	default:
-//		return "...";
-//	}
-//}
-
-army* game::getarmy(int rec)
-{
-	if(!heros.has(rec))
-		return 0;
-	return &objects[rec - FirstHero].army;
 }
 
 const cost* game::getcost(int rec)
@@ -332,7 +250,7 @@ void show::hero(tokens rec)
 			}
 		}
 		draw::image(49, 130, res::CREST, bsget(rec, Player) - FirstPlayer);
-		draw::troops(156, 130, game::getarmy(rec), FirstGarrisonIndex, army_index);
+		draw::troops(156, 130, rec, FirstTroopsIndex, army_index);
 		draw::button(5, 318, res::HSBTNS, Dismiss, 0, 0, 1, Alpha + 'A', 0, szt("Dismiss hero", "Уволить героя"));
 		draw::button(603, 318, res::HSBTNS, Cancel, 2, 2, 3, KeyEscape, 0, szt("Close hero window", "Закрыть окно"));
 		draw::cursor(res::ADVMCO, 0);
@@ -343,8 +261,9 @@ void show::hero(tokens rec)
 		case 0:
 			return;
 		default:
-			if(id == Tooltips || (id >= (int)FirstGarrisonIndex && id <= (int)LastGarrisonIndex))
-				game::getarmy(rec)->input(id, FirstGarrisonIndex, army_index, rec);
+			if(id == Tooltips || (id >= (int)FirstTroopsIndex && id <= (int)LastTroopsIndex))
+			{
+			}
 			break;
 		}
 	}

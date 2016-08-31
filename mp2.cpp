@@ -402,14 +402,14 @@ static tokens get_free_hero(tokens type)
     return Empthy;
 }
 
-static void load_object(mp2::army* p, army* e)
+static void load_object(mp2::army* p, int rec)
 {
     for(int i = 0; i<5; i++)
     {
         if(!p->count[i])
             continue;
-        e->units[i].id = FirstMonster + p->monster[i];
-		e->units[i].count = getLE16(p->count[i]);
+		bsset(rec, FirstTroopsIndex + i * 2 + 0, FirstMonster + p->monster[i]);
+		bsset(rec, FirstTroopsIndex + i * 2 + 1, FirstMonster + getLE16(p->count[i]));
     }
 }
 
@@ -454,7 +454,7 @@ static void load_object(mp2::castle* p, int rec)
         bsset(rec, Dwelving1, 1);
     // custom troops
     if(p->has_army)
-        load_object(&p->army, game::getarmy(rec));
+        load_object(&p->army, rec);
     // captain
     if(p->has_captain)
         bsset(rec, Captain, 1);
@@ -478,7 +478,7 @@ static void load_object(mp2::hero* p, int rec)
 {
     // custom troops
     if(p->has_army)
-        load_object(&p->army, game::getarmy(rec));
+        load_object(&p->army, rec);
     // custom portrate
     if(p->has_type)
         bsset(rec, Portrait, p->type);

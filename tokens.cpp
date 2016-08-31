@@ -84,8 +84,3 @@ static int object_get(int rec, int id)
         return 0;
     }
 }
-
-const char* sztag(const char* name)
-{
-	return name;
-}

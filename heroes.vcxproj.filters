@@ -24,7 +24,6 @@
     <ClCompile Include="player.cpp" />
     <ClCompile Include="map.cpp" />
     <ClCompile Include="hero.cpp" />
-    <ClCompile Include="army.cpp" />
     <ClCompile Include="event.cpp" />
     <ClCompile Include="monster.cpp" />
     <ClCompile Include="sign.cpp" />

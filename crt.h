@@ -91,50 +91,28 @@ struct command
 };
 namespace metrics
 {
-	//struct token
-	//{
-	//	const char*					name[2];
-	//	static int					compare(const void* e1, const void* e2);
-	//};
 	const codepages					code = CP1251;
 }
 //
-unsigned							dayb(unsigned d); // Get begin of day (time 00:00)
-unsigned							daye(unsigned d); // Get end of day (time 23:59)
-unsigned							getdate(); // Get current date
-int									getday(unsigned d); // Get day of month (1..31)
 int									getdigitscount(unsigned number); // Get digits count of number. For example if number=100, result be 3.
 inline int							gethour(unsigned d) { return (d/60)%24; } // Get hour
 inline int							getminute(unsigned d) { return (d % 60); } // Get minute
-int									getmonth(unsigned d); // Get month (1..12)
-int									getmonthdaymax(int month, int year); // Return maximum day of month (28..31)
-const char*							getstrfdat(char* result, unsigned d, bool show_time = true);
-int									getyear(unsigned d); // Get year from date
 bool								ischa(unsigned u); // is alphabetical character?
 bool								issignature(const char name[4], const char* s); // Is name equal to string s?
 inline bool							isnum(unsigned u) { return u>='0' && u<='9'; } // is numeric character?
 void*								loadb(const char* url, int* size = 0, int additional_bytes_alloated = 0); // Load binary file.
 char*								loadt(const char* url, int* size = 0); // Load text file and decode it to system codepage.
 extern int							locale; // Current system locale. Use in szt() and alike functions.
-unsigned							mkdate(int year, int month, int day, int hour, int minute); // Get date from parameters
-unsigned							monthb(unsigned d); // Return start of month
-unsigned							monthe(unsigned d); // Return end of month
 void								printc(const char* format, ...); // Analog prinf() but use format of this library
 void								printcnf(const char* text); // Write to console this text
-bool								dlgask(const char* title, const char* text); // Yes/No system dialog
 void								dlgerr(const char* title, const char* format, ...); // Show error.
 void								dlgmsg(const char* title, const char* text); // System message dialog
-const char*							psidn(const char* p, char* value); // parse identifier name from string
-const char*							psnum(const char* p, int& value); // Parse number from string
-const char*							psstr(const char* p, char* value, char end_symbol='\"'); // Parse string from string (like c format "Some\nstring")
 bool								rmblock(void* ptr); // Is memory ptr was previously allocated?
 int									rmblockcount(); // Get allocated memory block count. Can be used for allocation error detection.
 void*								rmreserve(void* ptr, int size); // Resize memory block. Return new value.
 int									rmsize(void* ptr); // Get allocated blok size.
 void								setsignature(char name[4], const char* s); // Set signature to name
-float								sqrt(const float x); // Return aquare root of 'x'
 int									sz2num(const char* p1, const char** pp1 = 0);
-char**								szcmdargv(int& argc);
 void								szencode(char* output, int output_count, codepages output_code, const char* input, int input_count, codepages input_code);
 unsigned							szget(const char** input, codepages page = metrics::code);
 int									szcmpi(const char* p1, const char* p2);
@@ -152,7 +130,6 @@ unsigned							szlower(unsigned u); // to lower reg
 void								szlower(char* p, int count=1); // to lower reg
 bool								szmatch(const char* text, const char* name); //
 char*								sznum(char* p1, int num, int precision = 0, const char* empthy = 0, int radix = 10);
-bool								szpmatch(const char* text, const char* pattern);
 char*					            szprint(char* dst, const char* src, ...);
 char*								szprintv(char* result, const char* src, const char* vl);
 void								szput(char** output, unsigned u, codepages page = metrics::code);
@@ -161,12 +138,10 @@ char*								szsep(char* result, const char* sep = ", ");
 const char*							szskipcr(const char* p);
 const char*							szskipcrr(const char* p0, const char* p);
 inline const char*					szt(const char* en, const char* ru) { return locale ? ru : en; }
-const char*							sztag(const char* p);
 unsigned							szupper(unsigned u);
 char*								szupper(char* p, int count=1); // to upper reg
 char*								szurl(char* p, const char* path, const char* name, const char* ext = 0, const char* suffix = 0);
 char*								szurlc(char* p1);
-unsigned							weekb(unsigned d);
 unsigned							xdecode(const char* name, void* output, unsigned output_size, const void* input, unsigned input_size);
 inline int							xrand(int n1, int n2) { return n1+rand()%(n2-n1+1); }
 inline int							xroll(int c, int d, int b = 0) { while(c--) b += 1+(rand()%d); return b; }
