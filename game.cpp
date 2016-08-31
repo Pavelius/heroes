@@ -210,7 +210,7 @@ int game::get(int rec, int id)
 		{
 			int t = bsget(rec, Type);
 			int m = bsget(t, HitPointsMax);
-			return (bsget(rec, HitPointsMax) + m - 1) / m;
+			return (bsget(rec, HitPoints) + m - 1) / m;
 		}
 		return 0;
 	case HitPoints:

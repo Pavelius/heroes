@@ -389,10 +389,11 @@ static int newgame()
 
 static void test_combat()
 {
+	command::execute("game", "initialize");
 	bsset(LordKillburn, Player, PlayerBlue);
 	bsset(Tsabu, Player, PlayerRed);
-	combat::board(LordKillburn, Tsabu);
-	show::battle::area();
+	combat::start(LordKillburn, Tsabu);
+	//show::battle::area();
 }
 
 static int mainmenu()
@@ -462,7 +463,7 @@ int draw::start()
 {
 	draw::font = res::FONT;
 	//sheme::initialize();
-    create("Heroes II", 50, false);
+    create("Heroes II", 50, true);
     //test_sprite(); return 0;
     //test_animation(); return 0;
     return mainmenu();

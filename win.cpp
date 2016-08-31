@@ -226,8 +226,8 @@ bool draw::create(const char* title, int frames_per_second, bool fullscreen)
 	if(!RegisterClassA(&wc))								// Attempt To Register The Window Class
 		return false;									// Return FALSE
 
-	//if(fullscreen)										// Attempt Fullscreen Mode?
-	//{
+	if(fullscreen)										// Attempt Fullscreen Mode?
+	{
 	//	DEVMODE	dmScreenSettings;						// Device Mode
 	//	memset(&dmScreenSettings, 0, sizeof(dmScreenSettings));	// Makes Sure Memory's Cleared
 	//	dmScreenSettings.dmSize = sizeof(dmScreenSettings);		// Size Of The Devmode Structure
@@ -238,8 +238,8 @@ bool draw::create(const char* title, int frames_per_second, bool fullscreen)
 	//	// Try To Set Selected Mode And Get Results.  NOTE: CDS_FULLSCREEN Gets Rid Of Start Bar.
 	//	if(ChangeDisplaySettings(&dmScreenSettings, CDS_FULLSCREEN) != DISP_CHANGE_SUCCESSFUL)
 	//		return false;
-	//	dwStyle = WS_POPUP;								// Windows Style
-	//}
+		dwStyle = WS_POPUP;								// Windows Style
+	}
 
 	window_fullscreen = fullscreen;
 	AdjustWindowRectEx(&WindowRect, dwStyle, 0, 0);	// Adjust Window To True Requested Size

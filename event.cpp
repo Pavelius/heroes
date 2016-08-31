@@ -16,8 +16,6 @@ static int object_get(int rec, int id)
 {
 	switch(id)
 	{
-	case Valid:
-		return (objects[rec].text!=0) ? 1 : 0;
 	case OneTime:
 		return (objects[rec].flags&FOneTime) ? 1 : 0;
 	case PlayerBlue:
@@ -47,12 +45,6 @@ static void object_set(int rec, int id, int value)
 			objects[rec].flags |= FComputer;
 		else
 			objects[rec].flags &= ~FComputer;
-		break;
-	case Valid:
-		if(value==0)
-			objects[rec].flags |= FDisabled;
-		else
-			objects[rec].flags &= ~FDisabled;
 		break;
 	default:
 		if(id>=(int)FirstPlayer && id<=(int)LastPlayer)

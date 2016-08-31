@@ -25,8 +25,6 @@ int effect::get(int rec, int id)
 		return e.target;
 	case Expire:
 		return e.expire;
-	case Valid:
-		return e.id!=0?1:0;
 	case Last:
 		return LastEffect;
 	default:

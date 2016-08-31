@@ -100,8 +100,6 @@ bool world::set(int id, int value)
         {
             for(int mid = FirstPlayer; mid<=(int)LastPlayer; mid++)
             {
-                if(!player::get(mid, Valid))
-                    continue;
                 if(player::get(mid, PlayerType)==Human)
                     difficult(mid, value);
                 else
@@ -122,8 +120,6 @@ int world::turn()
 {
     for(int rec = (int)FirstPlayer; rec<=(int)LastPlayer; rec++)
     {
-        if(!player::get(rec, Valid))
-            continue;
         set(Player, rec);
         switch(player::get(rec, PlayerType))
         {
@@ -163,8 +159,6 @@ static void all_castles_refresh()
 {
     for(int rec = FirstCastle; rec<=(int)LastCastle; rec++)
     {
-        if(!bsget(rec, Valid))
-            break;
         // Update build flags
         bsset(rec, BuildThisTurn, 0);
         // Get income for all player exept neutral

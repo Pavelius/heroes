@@ -62,8 +62,6 @@ static int object_get(int rec, int id)
         return e.index;
     case Type:
         return e.id;
-    case Valid:
-        return e.id ? 1 : 0;
 	case Count:
 		return e.count;
     default:

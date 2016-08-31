@@ -236,8 +236,7 @@ enum tokens
 	FirstRecruit, LastRecruit = FirstRecruit + 6,
 	FirstCombatant, LastCombatant = FirstCombatant + 5 + 5 + 10,
 	FirstEffect, LastEffect = FirstEffect + 32,
-	FirstMoveable, LastMoveable = FirstMoveable + 128 * 256,
-	Valid,
+	FirstMoveable, LastMoveable = FirstMoveable + 128 * 256
 };
 enum blocks
 {
@@ -604,7 +603,6 @@ namespace show
 {
 	namespace battle
 	{
-		void				area();
 		int					dialog(int side); // dialog surrender, cast, flee
 		void				fly(int rec, int target);
 		void				move(int rec, int target);
@@ -993,6 +991,7 @@ namespace combat
 	int						opposition(int side);
 	bool					isenemy(int rec, int object);
 	bool					isattacker(int rec);
+	point					i2h(int index);
 	extern int				killed;
 	void					melee(int att, int def);
 	extern unsigned char	movements[ahd*awd];
@@ -1000,7 +999,7 @@ namespace combat
 	int						moveto(int index, int direction);
 	extern int				rounds;
 	void					setaction(int rec, tokens action);
-	void					setpos(int rec, int value);
+	void					setpos(int rec, int index);
 	void					shoot(int att, int def);
 	void					start(int attacker, int defender);
 	void					applydamage(int rec, int value);

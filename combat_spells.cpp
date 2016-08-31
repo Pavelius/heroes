@@ -5,7 +5,7 @@ static int select_squads(int* result, int side = -1, int undead = -1, int dragon
 	int count = 0;
 	for(unsigned i = FirstCombatant; i<=LastCombatant; i++)
     {
-    	if(!bsget(i, Valid))
+    	if(!bsget(i, Type))
 			continue;
         if(bsget(i, MagicImmunity))
             continue;

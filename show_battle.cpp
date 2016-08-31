@@ -20,7 +20,7 @@ static unsigned char	hexagon_color;
 bool					combat::setting::movement = true;
 bool					combat::setting::cursor = true;
 bool					combat::setting::grid = true;
-bool					combat::setting::index = true;
+bool					combat::setting::index = false;
 int						combat::setting::speed;
 int						combat::setting::info;
 bool					combat::setting::shadow = true;
@@ -39,6 +39,11 @@ static int i2x(int index)
 static int i2y(int index)
 {
 	return 20 + 85 + ((cell_hd / 4) * 3 - 1) * (index / combat::awd);
+}
+
+point combat::i2h(int index)
+{
+	return{(short)i2x(index), (short)i2y(index)};
 }
 
 static int indicator_index(int rec)
@@ -85,10 +90,9 @@ static void prepare_leader(int rec, animation& e, bool defender)
 
 void combat::board(int attacker, int defender)
 {
-	command::execute("battle", "initialize");
 	bool light = true;
 	bool trees = false;
-	tokens area = Grass;
+	tokens area = Lava;
 	if(defender >= (int)FirstMoveable && defender <= (int)LastMoveable)
 	{
 		int pos = bsget(defender, Position);
@@ -279,7 +283,7 @@ static tokens hexagon_orient(int x1, int y1, int x2, int y2)
 	return Empthy;
 }
 
-static void paint_field(int rec)
+static void paint_field(int rec, drawable** objects)
 {
 	int h1 = res::height(res::TEXTBAR, 4);
 	int h2 = res::height(res::TEXTBAR, 6);
@@ -301,30 +305,12 @@ static void paint_field(int rec)
 	paint_grid(rec);
 	if(frng != res::Empthy)
 		draw::image(0, 0, frng, 0);
-}
-
-static void paint_board()
-{
-	hilite_index = -1;
-	hilite_combatant = -1;
-	int h1 = res::height(res::TEXTBAR, 4);
-	int h2 = res::height(res::TEXTBAR, 6);
-	int h3 = res::height(res::TEXTBAR, 0);
-	int h8 = res::height(res::TEXTBAR, 8);
-	int h9 = res::height(res::TEXTBAR, 9);
-	int w3 = res::width(res::TEXTBAR, 0);
-	draw::image(0, 0, back, 0);
-	int x = res::width(res::TEXTBAR, 4);
-	draw::image(x, draw::height - h8 - h9, res::TEXTBAR, 8);
-	draw::image(x, draw::height - h9, res::TEXTBAR, 9);
-	draw::status(x + 32, draw::height - h8 - h9 + 1, draw::width - w3, draw::height - 1);
-	draw::button(0, draw::height - h1 - h2, res::TEXTBAR, AutoCombat, 4, 4, 5, Alpha + 'A', 0, szt("Run auto-combat", "Запустить автоматический бой"));
-	draw::button(0, draw::height - h2, res::TEXTBAR, Setting, 6, 6, 7, KeyEscape, 0, szt("Open combat setting", "Открыть настройки"));
-	draw::button(draw::width - w3, draw::height - h3, res::TEXTBAR, Skip, 0, 0, 1, KeySpace, 0, szt("Skip current turn", "Пропустить текущий ход"));
-	hittest_grid();
-	paint_grid(-1);
-	if(frng != res::Empthy)
-		draw::image(0, 0, frng, 0);
+	objects[0] = 0;
+	dwselect(zend(objects), 1);
+	zcat(objects, static_cast<drawable*>(&attacker_leader));
+	zcat(objects, static_cast<drawable*>(&defender_leader));
+	dworder(objects, zlen(objects));
+	dwpaint(objects, {0, 0, 640, 480}, {0, 0});
 }
 
 static int missile9(int dx, int dy)
@@ -379,9 +365,10 @@ static int missile_index(res::tokens icn, int dx, int dy)
 
 int show::battle::target(int side, int sid)
 {
+	drawable* objects[64];
 	while(true)
 	{
-		paint_field(-1);
+		paint_field(-1, objects);
 		if(hot::key == KeyEscape)
 			draw::execute(Cancel);
 		int i = bsget(sid, Portrait);
@@ -428,10 +415,11 @@ void show::battle::move(int rec, int target)
 
 int show::battle::unit(int rec, int casted)
 {
+	drawable* objects[64];
 	while(true)
 	{
-		paint_field(rec);
 		animation cursor(CursorCombat, Cursor);
+		paint_field(rec, objects);
 		if(hilite_index != -1)
 		{
 			hilite_combatant = combat::combatant(hilite_index);
@@ -514,30 +502,6 @@ int show::battle::unit(int rec, int casted)
 			else if(id == Spells)
 				draw::execute(Spells);
 			return id;
-		}
-	}
-}
-
-void show::battle::area()
-{
-	animation cursor(CursorCombat, Cursor);
-	drawable* objects[64];
-	while(true)
-	{
-		paint_board();
-		objects[0] = 0;
-		zcat(objects, static_cast<drawable*>(&attacker_leader));
-		zcat(objects, static_cast<drawable*>(&defender_leader));
-		dworder(objects, zlen(objects));
-		dwpaint(objects, {0, 0, 640, 480}, {0, 0});
-		draw::debug();
-		draw::cursor(cursor.icn, cursor.frame, cursor.pos.x, cursor.pos.y);
-		int id = draw::input();
-		switch(id)
-		{
-		case Cancel:
-		case 0:
-			return;
 		case InputTimer:
 			for(auto e : objects)
 			{

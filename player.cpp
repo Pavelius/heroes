@@ -36,8 +36,6 @@ int player::get(int rec, int id)
 		return objects[rec-FirstPlayer].type;
 	case PlayerNeutral:
 		return rec==PlayerNeutral;
-	case Valid:
-		return objects[rec-FirstPlayer].race!=0 ? 1 : 0;
     default:
         return 0;
     }

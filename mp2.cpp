@@ -808,7 +808,6 @@ void map::load(gamefile& game)
                 {
                     mp2::eventcoord& e = (mp2::eventcoord&)pblock;
 					int rec = bscreate(FirstEvent);
-                    bsset(rec, Valid, 1);
                     bsset(rec, Position, findobject);
                     bsset(rec, Name, e.text);
                     bsset(rec, OneTime, e.cancel);
@@ -836,7 +835,6 @@ void map::load(gamefile& game)
                 {
                     mp2::riddle& e = (mp2::riddle&)pblock;
 					int rec = bscreate(FirstEvent);
-                    bsset(rec, Valid, 1);
                     bsset(rec, Position, findobject);
                     bsset(rec, Name, e.text);
                     bsset(rec, Gold, e.golds);
@@ -977,8 +975,6 @@ void map::load(gamefile& game)
     {
         for(int i = (int)FirstPlayer; i<=(int)LastPlayer; i++)
         {
-            if(!bsget(i, Valid))
-                continue;
             tokens hrc;
             // Get first castle and create hero
             tokens type = tokens(player::get(i, Type));

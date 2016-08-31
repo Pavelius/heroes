@@ -57,8 +57,6 @@ static int object_get(int rec, int id)
     castle_t& e = objects[rec-FirstCastle];
     switch(id)
     {
-    case Valid:
-        return e.index ? 1 : 0;
     case BuildThisTurn:
         return (e.flags&FBuildThisTurn)!=0 ? 1 : 0;
     case Tent:

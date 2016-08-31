@@ -109,7 +109,7 @@ void combat::wave(int start, bool wide, bool fly)
 		return;
 	for(unsigned i = FirstCombatant; i<=LastCombatant; i++)
 	{
-		if(!bsget(i, Valid))
+		if(!bsget(i, Type))
 			continue;
 		if(!bsget(i, Count))
 			continue;
