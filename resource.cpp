@@ -385,3 +385,31 @@ bool res::ishight(res::tokens icn, int index)
     }
     return false;
 }
+
+res::tokens res::getshooting(int rec)
+{
+	switch(rec)
+	{
+	case Orc:
+	case OrcChief:
+		return res::ORC__MSL;
+	case Druid:
+	case GreaterDruid:
+		return res::DRUIDMSL;
+	case Halfling:
+		return res::HALFLMSL;
+	case Titan:
+		return res::TITANMSL;
+	case Troll:
+	case WarTroll:
+		return res::TROLLMSL;
+	case Lich:
+	case PowerLich:
+		return res::LICH_MSL;
+	case Mage:
+	case ArchMage:
+		return res::ARCH_MSL;
+	default:
+		return res::Empthy;
+	}
+}

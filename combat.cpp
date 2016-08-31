@@ -690,7 +690,7 @@ static int missile_index(res::tokens icn, int dx, int dy)
 void show::battle::shoot(int rec, int target)
 {
 	overlay.clear();
-	overlay.icn = monster::getr(bsget(rec, Type), Shoot);
+	overlay.icn = res::getshooting(bsget(rec, Type));
 	if(overlay.icn == res::Empthy)
 		return;
 	point data[128];

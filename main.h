@@ -549,6 +549,7 @@ namespace res
 	tokens					map(int object);
 	int						ox(tokens res, int n);
 	int						oy(tokens res, int n);
+	tokens					getshooting(int rec);
 	int						width(tokens res, int frame);
 }
 struct animation : public drawable
@@ -932,10 +933,6 @@ namespace current
 	extern int				damage;
 	extern int				killed;
 };
-namespace monster
-{
-	res::tokens				getr(int rec, tokens id);
-}
 namespace castle
 {
 	void					clear();

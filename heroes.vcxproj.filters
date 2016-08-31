@@ -63,5 +63,6 @@
     <ClCompile Include="win_io.cpp" />
     <ClCompile Include="controls.cpp" />
     <ClCompile Include="point.cpp" />
+    <ClCompile Include="show_hero.cpp" />
   </ItemGroup>
 </Project>

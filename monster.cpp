@@ -1,11 +1,11 @@
 #include "main.h"
 
-static struct monster_t
+static struct monster
 {
 	unsigned char	level;
 	unsigned char	animtype;
 	unsigned char	attack;
-	unsigned char	defense;
+	unsigned char	defence;
 	unsigned char	damageMin;
 	unsigned char	damageMax;
 	unsigned short	hp;
@@ -15,7 +15,7 @@ static struct monster_t
 	const char*		name[2];
 	const char*		multiname[2];
 	struct cost		cost;
-} objects[LastMonster-FirstMonster+1] =
+} objects[LastMonster - FirstMonster + 1] =
 {
 	{1, 0, 1, 1, 1, 1, 1, VerySlow, 12, 0, {"Peasant", "Крестьянин"}, {"Peasants", "Крестьян"}, {20, 0, 0, 0, 0, 0, 0}},
 	{1, 0, 5, 3, 2, 3, 10, VerySlow, 8, 12, {"Archer", "Лучник"}, {"Archers", "Лучников"}, {150, 0, 0, 0, 0, 0, 0}},
@@ -96,46 +96,38 @@ static struct monster_t
 	{0, 0, 0, 0, 0, 0, 0, VerySlow, 0, 0, {"Random Monster 3"}, {"Random Monsters 3"}, {0, 0, 0, 0, 0, 0, 0}},
 	{0, 0, 0, 0, 0, 0, 0, VerySlow, 0, 0, {"Random Monster 4"}, {"Random Monsters 4"}, {0, 0, 0, 0, 0, 0, 0}},
 };
+static bsmeta::field fields[] = {
+	BSREQ(monster, name, Name, Text),
+	BSREQ(monster, multiname, NameMulti, Text),
+	BSREQ(monster, attack, Attack, Number),
+	BSREQ(monster, defence, Defence, Number),
+	BSREQ(monster, speed, Speed, Number),
+	BSREQ(monster, level, Level, Number),
+};
+BSMETA(monster, "Monsters", "Монстры", FirstMonster);
+
 
 static int object_get(int rec, int id)
 {
 	switch(id)
 	{
-	case Valid:
-		return 1;
-	case Attack:
-    case AttackRaw:
-		return objects[rec-FirstMonster].attack;
-	case Defence:
-    case DefenceRaw:
-		return objects[rec-FirstMonster].defense;
-    case DamageMin:
-        return objects[rec-FirstMonster].damageMin;
-    case DamageMax:
-        return objects[rec-FirstMonster].damageMax;
-    case Morale:
-        switch(rec)
-        {
-        case MinotaurKing:
-        case BattleDwarf:
-            return MoraleGood;
-        default:
-            return MoraleNormal;
-        }
-    case Luck:
-        return LuckNormal;
-	case Speed:
-		return objects[rec-FirstMonster].speed;
-	case Level:
-		return objects[rec-FirstMonster].level;
+	case Morale:
+		switch(rec)
+		{
+		case MinotaurKing:
+		case BattleDwarf:
+			return MoraleGood;
+		default:
+			return MoraleNormal;
+		}
 	case Gold:
-		return objects[rec-FirstMonster].cost.gold;
+		return objects[rec - FirstMonster].cost.gold;
 	case HitPointsMax:
-		return objects[rec-FirstMonster].hp;
+		return objects[rec - FirstMonster].hp;
 	case Shoots:
-		return objects[rec-FirstMonster].shots;
+		return objects[rec - FirstMonster].shots;
 	case AnimationType:
-		return objects[rec-FirstMonster].animtype;
+		return objects[rec - FirstMonster].animtype;
 	case AllAttackAnswer:
 		switch(rec)
 		{
@@ -313,82 +305,82 @@ static int object_get(int rec, int id)
 		default: return rec;
 		}
 	case Portrait:
-		return rec-FirstMonster;
-    case Base:
+		return rec - FirstMonster;
+	case Base:
 		return bsget(bsget(rec, Downgrade), Downgrade);
-    case Dwelve:
-        switch(rec)
-        {
-        case Goblin:
-        case Centaur:
-        case Halfling:
-        case Sprite:
-        case Skeleton:
-        case Peasant:
-            return Dwelving1;
-        case Orc:
-        case Gargoyle:
-        case Boar:
-        case Dwarf:
-        case Zombie:
-        case Archer:
-            return Dwelving2;
-        case Wolf:
-        case Griffin:
-        case IronGolem:
-        case Elf:
-        case Mummy:
-        case Pikeman:
-            return Dwelving3;
-        case Ogre:
-        case Minotaur:
-        case Roc:
-        case Druid:
-        case Vampire:
-        case Swordsman:
-            return Dwelving4;
-        case Troll:
-        case Hydra:
-        case Mage:
-        case Unicorn:
-        case Lich:
-        case Cavalry:
-            return Dwelving5;
-        case Cyclop:
-        case GreenDragon:
-        case Giant:
-        case Phoenix:
-        case BoneDragon:
-        case Paladin:
-            return Dwelving6;
-        case OrcChief:
-        case BattleDwarf:
-        case Ranger:
-        case MutantZombie:
-            return Upgrade2;
-        case SteelGolem:
-        case GrandElf:
-        case RoyalMummy:
-        case VeteranPikeman:
-            return Upgrade3;
-        case OgreLord:
-        case MinotaurKing:
-        case GreaterDruid:
-        case VampireLord:
-        case MasterSwordsman:
-            return Upgrade4;
-        case WarTroll:
-        case ArchMage:
-        case PowerLich:
-        case Champion:
-            return Upgrade5;
-        case RedDragon:
-        case Titan:
-        case Crusader:
-            return Dwelving6;
-        default:
-            return Empthy;
-        }
+	case Dwelve:
+		switch(rec)
+		{
+		case Goblin:
+		case Centaur:
+		case Halfling:
+		case Sprite:
+		case Skeleton:
+		case Peasant:
+			return Dwelving1;
+		case Orc:
+		case Gargoyle:
+		case Boar:
+		case Dwarf:
+		case Zombie:
+		case Archer:
+			return Dwelving2;
+		case Wolf:
+		case Griffin:
+		case IronGolem:
+		case Elf:
+		case Mummy:
+		case Pikeman:
+			return Dwelving3;
+		case Ogre:
+		case Minotaur:
+		case Roc:
+		case Druid:
+		case Vampire:
+		case Swordsman:
+			return Dwelving4;
+		case Troll:
+		case Hydra:
+		case Mage:
+		case Unicorn:
+		case Lich:
+		case Cavalry:
+			return Dwelving5;
+		case Cyclop:
+		case GreenDragon:
+		case Giant:
+		case Phoenix:
+		case BoneDragon:
+		case Paladin:
+			return Dwelving6;
+		case OrcChief:
+		case BattleDwarf:
+		case Ranger:
+		case MutantZombie:
+			return Upgrade2;
+		case SteelGolem:
+		case GrandElf:
+		case RoyalMummy:
+		case VeteranPikeman:
+			return Upgrade3;
+		case OgreLord:
+		case MinotaurKing:
+		case GreaterDruid:
+		case VampireLord:
+		case MasterSwordsman:
+			return Upgrade4;
+		case WarTroll:
+		case ArchMage:
+		case PowerLich:
+		case Champion:
+			return Upgrade5;
+		case RedDragon:
+		case Titan:
+		case Crusader:
+			return Dwelving6;
+		default:
+			return Empthy;
+		}
 	default:
 		return 0;
 	}
@@ -406,51 +398,17 @@ const char* monster_get_name_multi(int rec, int id)
 
 int random::monster(int level)
 {
-	int a[LastMonster-FirstMonster+1];
-	if(level==-1)
+	int a[LastMonster - FirstMonster + 1];
+	if(level == -1)
 		return xrand(Peasant, WaterElement);
 	int count = 0;
 	for(auto& e : objects)
 	{
-		if(e.level!=level)
+		if(e.level != level)
 			continue;
 		a[count++] = &e - objects + FirstMonster;
 	}
 	if(count)
-		return a[rand()%count];
+		return a[rand() % count];
 	return 0;
-}
-
-res::tokens monster::getr(int rec, tokens id)
-{
-	switch(id)
-	{
-	case Shoot:
-		switch(rec)
-		{
-		case Orc:
-		case OrcChief:
-			return res::ORC__MSL;
-		case Druid:
-		case GreaterDruid:
-			return res::DRUIDMSL;
-		case Halfling:
-			return res::HALFLMSL;
-		case Titan:
-			return res::TITANMSL;
-		case Troll:
-		case WarTroll:
-			return res::TROLLMSL;
-		case Lich:
-		case PowerLich:
-			return res::LICH_MSL;
-		case Mage:
-		case ArchMage:
-			return res::ARCH_MSL;
-		default:
-			return res::Empthy;
-		}
-	default:
-		return res::Empthy;
-	}
 }
