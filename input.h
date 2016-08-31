@@ -12,7 +12,6 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
-#include "cobject.h"
 #include "point.h"
 
 #pragma once
@@ -94,7 +93,6 @@ namespace hot
 	extern cursors				cursor; // set this mouse cursor
 	extern int					key; // [in] if pressed key or mouse this field has key
 	extern point				mouse; // current mouse coordinates
-	extern cobject*				object; // объект над которым парит мышка
 	extern bool					pressed; // flag if any of mouse keys is pressed
 	extern int					param; // command or input event parameter
 	extern char					link[1024];

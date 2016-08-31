@@ -2,8 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClInclude Include="main.h" />
-    <ClInclude Include="..\cface\point.h" />
-    <ClInclude Include="..\cface\rect.h" />
     <ClInclude Include="base.h" />
     <ClInclude Include="crt.h" />
     <ClInclude Include="drawable.h" />
@@ -53,7 +51,6 @@
     <ClCompile Include="map_show.cpp" />
     <ClCompile Include="spells.cpp" />
     <ClCompile Include="tokens.cpp" />
-    <ClCompile Include="..\cface\point.cpp" />
     <ClCompile Include="adventure.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="draw.cpp" />
@@ -65,5 +62,6 @@
     <ClCompile Include="io.cpp" />
     <ClCompile Include="win_io.cpp" />
     <ClCompile Include="controls.cpp" />
+    <ClCompile Include="point.cpp" />
   </ItemGroup>
 </Project>

@@ -1,5 +1,5 @@
-﻿#include "cface/point.h"
-#include "cface/rect.h"
+﻿#include "point.h"
+#include "rect.h"
 
 #pragma once
 

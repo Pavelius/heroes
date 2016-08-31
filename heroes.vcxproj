@@ -19,8 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\cface\point.h" />
-    <ClInclude Include="..\cface\rect.h" />
     <ClInclude Include="array.h" />
     <ClInclude Include="base.h" />
     <ClInclude Include="crt.h" />
@@ -33,7 +31,6 @@
     <ClInclude Include="win.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\cface\point.cpp" />
     <ClCompile Include="animation.cpp" />
     <ClCompile Include="array.cpp" />
     <ClCompile Include="artifacts.cpp" />
@@ -73,6 +70,7 @@
     <ClCompile Include="mp2.cpp" />
     <ClCompile Include="pallette.cpp" />
     <ClCompile Include="player.cpp" />
+    <ClCompile Include="point.cpp" />
     <ClCompile Include="resource.cpp" />
     <ClCompile Include="tokens.cpp" />
     <ClCompile Include="sign.cpp" />

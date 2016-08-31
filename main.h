@@ -4,8 +4,6 @@
 #include "drawable.h"
 #include "io.h"
 #include "input.h"
-#include "point.h"
-#include "rect.h"
 
 enum tokens
 {
