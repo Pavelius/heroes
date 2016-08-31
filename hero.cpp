@@ -21,7 +21,7 @@ struct hero
 	unsigned short		params[LastTroopsIndex - FirstArtifactIndex + 1];
 	unsigned			state;
 } objects[LastHero - FirstHero + 1] = {
-	{{"Lord Killburn", "Лорд Килбурн"}}, {{"Sir Gallanth", "Сэр Галлант"}}, {{"Ector", "Эктор"}}, {{"Gvenneth", "Гвиннет"}}, {{"Tyro", "Тиро"}},
+	{{"Lord Killburn", "Лорд Килбурн"}},{{"Sir Gallanth", "Сэр Галлант"}}, {{"Ector", "Эктор"}}, {{"Gvenneth", "Гвиннет"}}, {{"Tyro", "Тиро"}},
 	{{"Ambrose", "Амброуз"}}, {{"Ruby", "Руби"}}, {{"Maximus", "Максимус"}}, {{"Dimitry", "Димитрий"}},
 	//
 	{{"Thundax", "Громотопор"}}, {{"Fineous", "Прекраснейший"}}, {{"Jojosh", "Джоджош"}}, {{"Crag Hack", "Крэг Хек"}}, {{"Jezebel", "Жезебель"}},
@@ -237,7 +237,7 @@ void show::hero(tokens rec)
 			int x = 51 + dx / 2;
 			int y = 308;
 			int x2 = x + 7 * dx;
-			for(int i = (int)FirstArtifactIndex; i <= (int)LastArtifactIndex; i++)
+			for(int i = FirstArtifactIndex; i <= LastArtifactIndex; i++)
 			{
 				int n = bsget(rec, i);
 				if(n)
@@ -263,6 +263,9 @@ void show::hero(tokens rec)
 		case Cancel:
 		case 0:
 			return;
+		default:
+			draw::troopsinput(id, army_index);
+			break;
 		}
 	}
 }

@@ -406,6 +406,34 @@ void draw::debug()
     text(10,10,temp);
 }
 
+void draw::troopsinput(int id, int& source)
+{
+	static int source_rec;
+	if(id >= FirstTroopsIndex && id <= LastTroopsIndex)
+	{
+		if(source == -1)
+		{
+			source = id;
+			source_rec = hot::param;
+		}
+		else
+		{
+			int dest = id;
+			int dest_rec = hot::param;
+			int v11 = bsget(dest_rec, dest);
+			int v12 = bsget(dest_rec, dest+1);
+			int v21 = bsget(source_rec, source);
+			int v22 = bsget(source_rec, source + 1);
+			bsset(source_rec, source, v11);
+			bsset(source_rec, source+1, v12);
+			bsset(dest_rec, dest, v21);
+			bsset(dest_rec, dest + 1, v22);
+			source = -1;
+			source_rec = 0;
+		}
+	}
+}
+
 void draw::troops(int x, int y, int rec, int index)
 {
 	int w = res::width(res::STRIP, 2);
@@ -425,7 +453,7 @@ void draw::troops(int x, int y, int rec, int index)
 			if(hot::key==MouseLeft && hot::pressed)
 				execute(i, rec);
 			if(unit)
-				status("%1i %2", count, (int)bsgets(unit, NameMulti));
+				status("%1i %2", count, bsgets(unit, NameMulti));
 		}
 		x += 88;
 	}

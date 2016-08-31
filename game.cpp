@@ -6,7 +6,7 @@ int artifacts_bonuses(int rec, int id)
 	if(!p)
 		return 0;
 	int result = 0;
-	for(int i = 0; i < LastArtifactIndex - FirstArtifactIndex + 1; i++)
+	for(int i = 0; i <= LastArtifactIndex - FirstArtifactIndex; i++)
 	{
 		if(!p[i])
 			continue;

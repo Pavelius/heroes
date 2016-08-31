@@ -760,9 +760,9 @@ void draw::status(int x1, int y1, int x2, int y2)
     status_rect.set(x1, y1, x2, y2);
 }
 
-void draw::status(const char* text, int p1, int p2, int p3)
+void draw::status(const char* format, ...)
 {
-    szprint(status_text, text, p1, p2, p3);
+    szprintv(status_text, format, xva_start(format));
 }
 
 draw::fontsm::fontsm()

@@ -230,7 +230,7 @@ enum tokens
 	FirstEvent, LastEvent = FirstEvent + 128,
 	FirstSign, LastSign = FirstSign + 128,
 	Information, CanBuild = Information + LastBuilding - FirstBuilding + 2,
-	FirstArtifactIndex, LastArtifactIndex = FirstArtifactIndex + 14,
+	FirstArtifactIndex, LastArtifactIndex = FirstArtifactIndex + 13,
 	FirstTroopsIndex, LastTroopsIndex = FirstTroopsIndex + 5 * 2 - 1,
 	FirstRecruit, LastRecruit = FirstRecruit + 6,
 	FirstCombatant, LastCombatant = FirstCombatant + 5 + 5 + 10,
@@ -744,7 +744,7 @@ namespace draw
 	void					route(int x, int y, int* rec, int w, int h, int distance);
 	void					shadow(int x1, int y1, int x2, int y2, int intense);
 	int						start();
-	void					status(const char* temp, int p1 = 0, int p2 = 0, int p3 = 0);
+	void					status(const char* format, ...);
 	void					status(int x1, int y1, int x2, int y2);
 	void					text(int x, int y, const char* string, int count = -1);
 	void					text(int x, int y, int width, justify jf, const char* string, int count = -1);
@@ -758,6 +758,7 @@ namespace draw
 	int						textw(const char* string, int count = -1);
 	void					tiles(int x, int y, res::tokens icn, int* rec, int w, int h);
 	void					troops(int x, int y, int rec, int index);
+	void					troopsinput(int id, int& index);
 };
 struct gamefile
 {
