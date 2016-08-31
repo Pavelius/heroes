@@ -2,10 +2,26 @@
 
 const char*	rsname(int res);
 
+const char* strstr(const char* s1, const char* s2)
+{
+	auto n = zlen(s2) - 1;
+	if(n <= 0)
+		return 0;
+	while(true)
+	{
+		auto p = zchr(s1, s2[0]);
+		if(!p)
+			return 0;
+		if(memcmp(p+1, s2+1, n) == 0)
+			return p;
+		s1 = p + 1;
+	}
+}
+
 static int res_read(res::tokens* resdata)
 {
 	int count = 0;
-	for(res::tokens i = res::FntBIGFONT; i < res::Count; i = (res::tokens)(i+1))
+	for(res::tokens i = res::FntBIGFONT; i < res::Empthy; i = (res::tokens)(i+1))
 	{
 		const char* fn = rsname(i);
 		if(!fn)
@@ -24,7 +40,7 @@ static int res_read(res::tokens* resdata)
 
 static int find_index(res::tokens* resdata, int count, res::tokens icn)
 {
-	for(int i = 0; i < res::Count; i++)
+	for(int i = 0; i < res::Empthy; i++)
 	{
 		if(resdata[i]==icn)
 			return i;
@@ -70,7 +86,7 @@ static int search_image()
     {
 
         bool	need_update;
-        int		data[res::Count];
+        int		data[res::Empthy];
         char    name[32];
 
         static int compare(const void* p1, const void* p2)
@@ -85,7 +101,7 @@ static int search_image()
             maximum = 0;
             origin = 0;
             memset(data, 0, sizeof(data));
-            for(res::tokens i=res::FntBIGFONT; (int)i<res::Count; i = res::tokens((int)i+1))
+            for(res::tokens i=res::FntBIGFONT; (int)i<res::Empthy; i = res::tokens((int)i+1))
             {
                 const char* p = rsname(i);
                 if(!strstr(p,".ICN"))
@@ -112,7 +128,7 @@ static int search_image()
         }
 
     } resources;
-    draw::surface surface;
+    draw::screenshoot surface;
     char temp[260];
     int w1 = res::width(res::LISTBOXS, 0);
     int x = draw::width - w1;
@@ -120,7 +136,7 @@ static int search_image()
     resources.need_update = true;
 	while(true)
 	{
-	    surface.paint();
+	    surface.restore();
 	    zcpy(temp, resources.name);
 	    draw::image(x, y, res::LISTBOXS, 0);
 	    draw::edit(x+w1/2, y+5, resources.name, sizeof(resources.name));
@@ -144,11 +160,13 @@ static int search_image()
 
 static int view()
 {
-	res::tokens resdata[res::Count];
+	res::tokens resdata[res::Empthy];
 	memset(resdata, 0, sizeof(resdata));
 	int max_resource = res_read(resdata);
 	int current_resource = 0;//find_index(resdata, max_resource, res::P_FLAG32);
 	int current_frame = 0;
+	bool center_image = false;
+	bool border_image = false;
 	while(true)
 	{
 		char temp[256];
@@ -160,7 +178,17 @@ static int view()
 		draw::rectf(0, 0, draw::width - 1, draw::height - 1, 0x12);
 		int x = (draw::width - res::width(icn, current_frame))/ 2;
 		int y = (draw::height - res::height(icn, current_frame)) / 2;
+		if(!center_image)
+		{
+			x = 640 / 2;
+			y = 480 / 2 - res::height(icn, current_frame);
+		}
 		draw::image(x, y, icn, current_frame, AFNoOffset);
+		if(border_image)
+		{
+			draw::line(x-32, y, x+32, y, 0xBD);
+			draw::line(x, y - 32, x, y + 32, 0xBD);
+		}
         zcpy(temp2, rsname(icn));
         if(zfind(temp2, '.')!=-1)
 			temp2[zfind(temp2, '.')] = 0;
@@ -194,12 +222,18 @@ static int view()
 			current_resource -= 50;
 			current_frame = 0;
 			break;
-        case Ctrl+Alpha+'S':
+        case Ctrl+Alpha+'F':
             draw::execute(Accept);
             break;
         case Alpha+'P':
             draw::execute(Paladin);
             break;
+		case Alpha + 'C':
+			center_image = !center_image;
+			break;
+		case Alpha + 'B':
+			border_image = !border_image;
+			break;
 		case Paladin:
 			palview();
 			break;

@@ -64,5 +64,6 @@
     <ClCompile Include="point.cpp" />
     <ClCompile Include="show_hero.cpp" />
     <ClCompile Include="show_unit.cpp" />
+    <ClCompile Include="show_battle.cpp" />
   </ItemGroup>
 </Project>

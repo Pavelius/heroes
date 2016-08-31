@@ -50,7 +50,6 @@ bool cost::set(int id, int value)
 	case Wood: wood = value; break;
 	case Ore: ore = value; break;
 	case Crystal: crystal = value; break;
-	case Artifact: artifact = value; break;
 	default: return false;
     }
 	correct();

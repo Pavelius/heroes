@@ -8,10 +8,16 @@
 enum tokens
 {
 	Empthy,
+	// Basic ability
+	Attack, Defence, SpellPower, Wisdow,
+	// Skills
+	SkillPathfinding, SkillArchery, SkillLogistics, SkillScounting, SkillDiplomacy,
+	SkillNavigation, SkillLeadership, SkillWisdom, SkillMysticism, SkillLuck,
+	SkillBallistics, SkillEagleEye, SkillNecromancy, SkillEstates,
+	FirstSkill = SkillPathfinding, LastSkill = SkillEstates,
 	//
 	Luck, LuckCursed, LuckAwful, LuckBad, LuckNormal, LuckGood, LuckGreat, LuckIrish,
 	Morale, MoraleTreason, MoraleAwful, MoralePoor, MoraleNormal, MoraleGood, MoraleGreat, MoraleBlood,
-	// Speed
 	Speed, SpeedCrawling, SpeedVerySlow, SpeedSlow, SpeedAverage, SpeedFast, SpeedVeryFast, SpeedUltraFast,
 	// Difficulty
 	EasyDifficulty, NormalDifficulty, HardDifficulty, VeryHardDifficulty, ImpossibleDifficulty,
@@ -19,7 +25,7 @@ enum tokens
 	// Heroes types
 	Barbarian, Knight, Necromancer, Sorcerer, Warlock, Wizard, SandsWarriors,
 	// Ability
-	Attack, Defence, SpellPower, Wisdow, SpellPoints, SpellPointsMax,
+	SpellPoints, SpellPointsMax,
 	HitPoints, HitPointsMax, Shoots,
 	// Resources
 	Wood, Mercury, Ore, Sulfur, Crystal, Gems, Gold,
@@ -27,11 +33,6 @@ enum tokens
 	// Players
 	PlayerNeutral, PlayerBlue, PlayerGreen, PlayerRed, PlayerYellow, PlayerOrange, PlayerPurple,
 	FirstPlayer = PlayerNeutral, LastPlayer = PlayerPurple,
-	// Skills
-	SkillPathfinding, SkillArchery, SkillLogistics, SkillScounting, SkillDiplomacy,
-	SkillNavigation, SkillLeadership, SkillWisdom, SkillMysticism, SkillLuck,
-	SkillBallistics, SkillEagleEye, SkillNecromancy, SkillEstates,
-	FirstSkill = SkillPathfinding, LastSkill = SkillEstates,
 	// Skills level
 	SkillLevelBasic, SkillLevelAvanced, SkillLevelExpert,
 	// Calendar
@@ -242,10 +243,10 @@ enum blocks
 {
 	BlockSquad = 250, BlockCover, BlockTerrain,
 };
-enum animations
+enum image_flags
 {
-	AFMirror = 1 << 0,
-	AFNoOffset = 2 << 0,
+	AFMirror = 1,
+	AFNoOffset = 2,
 };
 namespace res
 {
@@ -554,6 +555,7 @@ namespace res
 }
 struct animation : public drawable
 {
+	int						rec;
 	point				    pos;
 	res::tokens			    icn;
 	short					frame, start, count;
@@ -565,6 +567,7 @@ struct animation : public drawable
 	animation(tokens id, tokens action);
 	animation(res::tokens base, int frame, int count);
 	//
+	int						getid() const override { return rec; }
 	rect				    getrect() const override;
 	point					getzpos() const override;
 	void					clear();
@@ -583,7 +586,6 @@ struct cost
 	int					    sulfur;
 	int					    crystal;
 	int					    gems;
-	int					    artifact;
 	//
 	bool				    operator==(const cost& e) const;
 	bool				    operator<=(const cost& e) const;

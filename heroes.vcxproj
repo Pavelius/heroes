@@ -72,6 +72,7 @@
     <ClCompile Include="player.cpp" />
     <ClCompile Include="point.cpp" />
     <ClCompile Include="resource.cpp" />
+    <ClCompile Include="show_battle.cpp" />
     <ClCompile Include="show_hero.cpp" />
     <ClCompile Include="tokens.cpp" />
     <ClCompile Include="sign.cpp" />

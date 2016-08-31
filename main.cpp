@@ -389,7 +389,9 @@ static int newgame()
 
 static void test_combat()
 {
-	combat::board(LordKillburn, 0);
+	bsset(LordKillburn, Player, PlayerBlue);
+	bsset(Tsabu, Player, PlayerRed);
+	combat::board(LordKillburn, Tsabu);
 	show::battle::area();
 }
 
@@ -442,11 +444,7 @@ static int mainmenu()
             world::game(game);
             break;
         case Credits:
-			command::execute("game", "initialize");
-			bsset(LordKillburn, Player, FirstPlayer);
-			bsset(LordKillburn, FirstArtifactIndex, DragonSword);
-			show::hero(LordKillburn);
-        	//test_combat();
+        	test_combat();
             break;
         case HightScores:
             show::highscore();

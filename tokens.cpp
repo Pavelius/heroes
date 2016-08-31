@@ -5,6 +5,26 @@ static struct token
 	const char*	name[2];
 } objects[] = {
 	{{"Empthy"}},
+	// Basic ablity
+	{{"Attack"}},
+	{{"Defence"}},
+	{{"Spell Power"}},
+	{{"Knowledge"}},
+	// Skills
+	{{"Pathfinding", "Поиск пути"}},
+	{{"Archery", "Лучник"}},
+	{{"Logistics", "Логистика"}},
+	{{"Scounting", "Разведка"}},
+	{{"Diplomacy", "Дипломатия"}},
+	{{"Navigation"}},
+	{{"Leadership"}},
+	{{"Wisdom", "Мудрость"}},
+	{{"Mysticism", "Мистицизм"}},
+	{{"Luck"}},
+	{{"Ballistics", "Баллистика"}},
+	{{"Eagle Eye", "Орлинный глаз"}},
+	{{"Necromancy", "Некромантия"}},
+	{{"Estates", "Доход"}},
 	//
 	{{"Luck"}},
 	{{"Cursed"}},
@@ -36,15 +56,10 @@ static struct token
 	{{"Easy"}}, {{"Normal"}}, {{"Hard"}}, {{"Very Hard"}}, {{"Impossible"}},
 	{{"Beginner"}}, {{"Normal"}}, {{"Hard"}}, {{"Expert"}},
 	{{"Barbarian"}}, {{"Knight"}}, {{"Necromancer"}}, {{"Sorcerer"}}, {{"Warlock"}}, {{"Wizard"}}, {{"Elementals"}},
-	{{"Attack"}}, {{"Defence"}}, {{"Spell Power"}}, {{"Wisdow"}}, {{"Magic"}}, {{"Magic (max)"}},
+	{{"Magic"}}, {{"Magic (max)"}},
 	{{"Hits"}}, {{"Hits"}}, {{"Shoots"}},
 	{{"Wood"}}, {{"Mercury"}}, {{"Ore"}}, {{"Sulfur"}}, {{"Crystal"}}, {{"Gems"}}, {{"Gold"}},
 	{{"Neutral"}}, {{"Blue"}}, {{"Green"}}, {{"Red"}}, {{"Yellow"}}, {{"Orange"}}, {{"Purple"}},
-	// Skills
-	{{"Pathfinding", "Поиск пути"}}, {{"Archery", "Лучник"}}, {{"Logistics", "Логистика"}}, {{"Scounting", "Разведка"}},
-	{{"Diplomacy", "Дипломатия"}}, {{"Navigation"}}, {{"Leadership"}}, {{"Wisdom", "Мудрость"}},
-	{{"Mysticism", "Мистицизм"}}, {{"Luck"}}, {{"Ballistics", "Баллистика"}}, {{"Eagle Eye", "Орлинный глаз"}},
-	{{"Necromancy", "Некромантия"}}, {{"Estates", "Доход"}},
 	//
 	{{"Basic"}}, {{"Advanced"}}, {{"Expert"}},
 };

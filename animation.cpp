@@ -109,12 +109,14 @@ combat_monsters_info combat_monsters[] =
 
 animation::animation() :icn(res::Empthy), frame(0), start(0), count(0), stamp(0), rate(0), flags(0)
 {
+	rec = 0;
 	pos.x = 0;
 	pos.y = 0;
 }
 
 animation::animation(res::tokens icn, int start, int count) :start(start), stamp(0), rate(0), flags(0)
 {
+	rec = 0;
 	if(count == -1)
 		count = res::frames(icn);
 	pos.x = 0;
@@ -122,10 +124,12 @@ animation::animation(res::tokens icn, int start, int count) :start(start), stamp
     this->icn = icn;
     this->frame = start;
     this->count = count;
+	this->rate = 1000 / 8;
 }
 
 animation::animation(tokens rec, tokens action) :icn(res::Empthy), stamp(0), rate(0), flags(0)
 {
+	this->rec = 0;
 	pos.x = 0;
 	pos.y = 0;
     set(rec, action, 0);
@@ -133,6 +137,7 @@ animation::animation(tokens rec, tokens action) :icn(res::Empthy), stamp(0), rat
 
 void animation::clear()
 {
+	rec = 0;
 	pos.clear();
 	frame = start = count = 0;;
 	flags = 0;
@@ -360,6 +365,7 @@ void animation::set(tokens id, tokens value, int param)
         default:
             break;
         }
+		rate = 1000 / 8;
     }
     else if(id >= BarbarianCaptain && id <= WizardCaptain)
     {

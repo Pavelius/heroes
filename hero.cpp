@@ -1,6 +1,5 @@
 #include "main.h"
 
-const int				InGame = 1;
 struct hero
 {
 	const char*			name[2];
@@ -14,12 +13,11 @@ struct hero
 	int					index_move;
 	unsigned char		direction;
 	unsigned char		portrait;
-	tokens				player, recruit;
+	int					player, recruit;
 	unsigned			experience;
 	unsigned char		skills[LastSkill - FirstSkill + 1];
 	unsigned char		spells[LastSpell - FirstSpell + 1];
 	unsigned short		params[LastTroopsIndex - FirstArtifactIndex + 1];
-	unsigned			state;
 } objects[LastHero - FirstHero + 1] = {
 	{{"Lord Killburn", "Лорд Килбурн"}},{{"Sir Gallanth", "Сэр Галлант"}}, {{"Ector", "Эктор"}}, {{"Gvenneth", "Гвиннет"}}, {{"Tyro", "Тиро"}},
 	{{"Ambrose", "Амброуз"}}, {{"Ruby", "Руби"}}, {{"Maximus", "Максимус"}}, {{"Dimitry", "Димитрий"}},
@@ -44,6 +42,7 @@ static bsmeta::field fields[] = {
 	BSREQ(hero, attack, Attack, Number),
 	BSREQ(hero, defence, Defence, Number),
 	BSREQ(hero, spellpower, SpellPower, Number),
+	BSREQ(hero, wisdow, Wisdow, Number),
 	BSREQ(hero, spell_points, SpellPoints, Number),
 	BSREQ(hero, move_points, MovePoints, Number),
 	BSREQ(hero, index, Position, Number),
@@ -122,7 +121,7 @@ static void game_initialize()
 			bsset(rec, Attack, 0);
 			bsset(rec, Defence, 0);
 			bsset(rec, SpellPower, 4);
-			bsset(rec, Wisdow, 2);
+			bsset(rec, Wisdow, 3);
 			bsset(rec, SkillScounting, 2);
 			bsset(rec, SkillWisdom, 1);
 			bsset(rec, SpellCurse, 1);
@@ -145,12 +144,12 @@ static void game_initialize()
 			bsset(rec, SpellBless, 1);
 			break;
 		case Necromancer:
-			objects[rec - FirstHero].attack = 1;
-			objects[rec - FirstHero].defence = 0;
-			objects[rec - FirstHero].spellpower = 3;
-			objects[rec - FirstHero].wisdow = 3;
-			bsset(rec, SkillWisdom, 1);
+			bsset(rec, Attack, 1);
+			bsset(rec, Defence, 0);
+			bsset(rec, SpellPower, 3);
+			bsset(rec, Wisdow, 3);
 			bsset(rec, SkillNecromancy, 1);
+			bsset(rec, SkillWisdom, 1);
 			bsset(rec, SpellHaste, 1);
 			break;
 		}
