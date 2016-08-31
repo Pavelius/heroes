@@ -1,11 +1,11 @@
-#include "cface/array.h"
-#include "cface/base.h"
-#include "cface/crt.h"
-#include "cface/drawable.h"
-#include "cface/io.h"
-#include "cface/input.h"
-#include "cface/point.h"
-#include "cface/rect.h"
+#include "array.h"
+#include "base.h"
+#include "crt.h"
+#include "drawable.h"
+#include "io.h"
+#include "input.h"
+#include "point.h"
+#include "rect.h"
 
 enum tokens
 {
@@ -233,7 +233,7 @@ enum tokens
 	FirstSign, LastSign = FirstSign + 128,
 	Information, CanBuild = Information + LastBuilding - FirstBuilding + 2,
 	FirstArtifactIndex, LastArtifactIndex = FirstArtifactIndex + 14,
-	FirstTroopsIndex, LastTroopsIndex = FirstTroopsIndex + 5 * 2,
+	FirstTroopsIndex, LastTroopsIndex = FirstTroopsIndex + 5 * 2 - 1,
 	FirstRecruit, LastRecruit = FirstRecruit + 6,
 	FirstCombatant, LastCombatant = FirstCombatant + 5 + 5 + 10,
 	FirstEffect, LastEffect = FirstEffect + 32,
@@ -728,7 +728,7 @@ namespace draw
 	void					building(int x, int y, int building, int race);
 	void					hexagon(int x, int y, unsigned char color);
 	void					hexagonf(int x, int y, unsigned char alpha);
-	void					image(int x, int y, res::tokens res, int id, unsigned flags = 0, unsigned char* change = 0);
+	void					image(int x, int y, res::tokens res, unsigned id, unsigned flags = 0, unsigned char* change = 0);
 	void					imager(int x, int y, res::tokens res, int id, int mode = 0);
 	int						input();
 	void					inputex();
@@ -759,7 +759,7 @@ namespace draw
 	int						textw(char ch);
 	int						textw(const char* string, int count = -1);
 	void					tiles(int x, int y, res::tokens icn, int* rec, int w, int h);
-	void					troops(int x, int y, int rec, int id, int index);
+	void					troops(int x, int y, int rec, int index);
 };
 struct gamefile
 {

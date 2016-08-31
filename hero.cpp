@@ -60,7 +60,7 @@ BSMETA(hero, "Heroes", "Герои", FirstHero);
 static void create_army(int rec)
 {
 	game::cleararmy(rec);
-	switch(bsget(rec, Type))
+	switch(game::get(rec, Type))
 	{
 	case Knight:
 		game::addunit(rec, Archer, xrand(3, 5));
@@ -92,76 +92,79 @@ static void create_army(int rec)
 
 static void game_initialize()
 {
-	for(int rec = (int)FirstHero; rec<=(int)LastHero; rec++)
+	for(int rec = FirstHero; rec <= LastHero; rec++)
 	{
 		bsset(rec, Position, -1);
 		bsset(rec, Player, PlayerNeutral); // neutral player
-		bsset(rec, Portrait, rec-FirstHero);
+		bsset(rec, Portrait, rec - FirstHero);
 		bsset(rec, Direction, map::Up);
-		objects[rec-FirstHero].state = 0;
-		memset(objects[rec-FirstHero].skills, 0, sizeof(objects[rec-FirstHero].skills));
+		memset(objects[rec - FirstHero].skills, 0, sizeof(objects[rec - FirstHero].skills));
 		memset(objects[rec - FirstHero].spells, 0, sizeof(objects[rec - FirstHero].spells));
-		if(rec<=(int)Bax)
-			objects[rec-FirstHero].state |= InGame;
-		create_army(rec);
-		switch(bsget(rec, Type))
+		switch(game::get(rec, Type))
 		{
 		case Knight:
-			objects[rec-FirstHero].attack = 2;
-			objects[rec-FirstHero].defence = 2;
-			objects[rec-FirstHero].spellpower = 1;
-			objects[rec-FirstHero].wisdow = 1;
+			bsset(rec, Attack, 2);
+			bsset(rec, Defence, 2);
+			bsset(rec, SpellPower, 1);
+			bsset(rec, Wisdow, 1);
 			bsset(rec, SkillLeadership, 1);
 			bsset(rec, SkillBallistics, 1);
 			break;
 		case Barbarian:
-			objects[rec-FirstHero].attack = 3;
-			objects[rec-FirstHero].defence = 1;
-			objects[rec-FirstHero].spellpower = 1;
-			objects[rec-FirstHero].wisdow = 1;
+			bsset(rec, Attack, 3);
+			bsset(rec, Defence, 1);
+			bsset(rec, SpellPower, 1);
+			bsset(rec, Wisdow, 1);
 			bsset(rec, SkillPathfinding, 2);
 			break;
 		case Warlock:
-			objects[rec-FirstHero].attack = 0;
-			objects[rec-FirstHero].defence = 0;
-			objects[rec-FirstHero].spellpower = 4;
-			objects[rec-FirstHero].wisdow = 2;
+			bsset(rec, Attack, 0);
+			bsset(rec, Defence, 0);
+			bsset(rec, SpellPower, 4);
+			bsset(rec, Wisdow, 2);
 			bsset(rec, SkillScounting, 2);
 			bsset(rec, SkillWisdom, 1);
 			bsset(rec, SpellCurse, 1);
 			break;
 		case Wizard:
-			objects[rec-FirstHero].attack = 0;
-			objects[rec-FirstHero].defence = 1;
-			objects[rec-FirstHero].spellpower = 3;
-			objects[rec-FirstHero].wisdow = 3;
+			bsset(rec, Attack, 0);
+			bsset(rec, Defence, 1);
+			bsset(rec, SpellPower, 3);
+			bsset(rec, Wisdow, 3);
 			bsset(rec, SkillWisdom, 2);
 			bsset(rec, SpellStoneSkin, 1);
 			break;
 		case Sorcerer:
-			objects[rec-FirstHero].attack = 0;
-			objects[rec-FirstHero].defence = 0;
-			objects[rec-FirstHero].spellpower = 3;
-			objects[rec-FirstHero].wisdow = 4;
+			bsset(rec, Attack, 0);
+			bsset(rec, Defence, 0);
+			bsset(rec, SpellPower, 3);
+			bsset(rec, Wisdow, 4);
 			bsset(rec, SkillNavigation, 2);
 			bsset(rec, SkillWisdom, 1);
 			bsset(rec, SpellBless, 1);
 			break;
 		case Necromancer:
-			objects[rec-FirstHero].attack = 1;
-			objects[rec-FirstHero].defence = 0;
-			objects[rec-FirstHero].spellpower = 3;
-			objects[rec-FirstHero].wisdow = 3;
+			objects[rec - FirstHero].attack = 1;
+			objects[rec - FirstHero].defence = 0;
+			objects[rec - FirstHero].spellpower = 3;
+			objects[rec - FirstHero].wisdow = 3;
 			bsset(rec, SkillWisdom, 1);
 			bsset(rec, SkillNecromancy, 1);
 			bsset(rec, SpellHaste, 1);
 			break;
 		}
+		create_army(rec);
 		bsset(rec, SpellPoints, game::get(rec, SpellPointsMax));
 		bsset(rec, MovePoints, game::get(rec, MovePointsMax));
 		bsset(rec, Position, -1);
 	}
 }
+
+static command game_commands[] = {
+	{"initialize", game_initialize},
+	{0}
+};
+static command::plugin commands_plugin("game", game_commands);
 
 const cost* game::getcost(int rec)
 {
@@ -202,7 +205,7 @@ void show::hero(tokens rec)
 				const char* p = bsgets(i, Name);
 				draw::text(x + (88 - draw::textw(p)) / 2, y, p);
 			}
-			sznum(temp, bsget(rec, i));
+			sznum(temp, game::get(rec, i));
 			draw::text(x + (88 - draw::textw(temp)) / 2, y + 72, temp);
 		}
 		// Skills
@@ -250,7 +253,7 @@ void show::hero(tokens rec)
 			}
 		}
 		draw::image(49, 130, res::CREST, bsget(rec, Player) - FirstPlayer);
-		draw::troops(156, 130, rec, FirstTroopsIndex, army_index);
+		draw::troops(156, 130, rec, army_index);
 		draw::button(5, 318, res::HSBTNS, Dismiss, 0, 0, 1, Alpha + 'A', 0, szt("Dismiss hero", "Уволить героя"));
 		draw::button(603, 318, res::HSBTNS, Cancel, 2, 2, 3, KeyEscape, 0, szt("Close hero window", "Закрыть окно"));
 		draw::cursor(res::ADVMCO, 0);
@@ -260,11 +263,6 @@ void show::hero(tokens rec)
 		case Cancel:
 		case 0:
 			return;
-		default:
-			if(id == Tooltips || (id >= (int)FirstTroopsIndex && id <= (int)LastTroopsIndex))
-			{
-			}
-			break;
 		}
 	}
 }

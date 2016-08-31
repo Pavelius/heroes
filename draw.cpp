@@ -494,7 +494,7 @@ static void sprite_v2m(unsigned char* dst, int scanline, const unsigned char* s,
 	}
 }
 
-void draw::image(int x, int y, res::tokens res, int n, unsigned flags, unsigned char* change)
+void draw::image(int x, int y, res::tokens res, unsigned n, unsigned flags, unsigned char* change)
 {
     res::icn* p = (res::icn*)res::get(res);
     if(!p)

@@ -442,7 +442,10 @@ static int mainmenu()
             world::game(game);
             break;
         case Credits:
-        	test_combat();
+			command::execute("game", "initialize");
+			bsset(LordKillburn, Player, FirstPlayer);
+			show::hero(LordKillburn);
+        	//test_combat();
             break;
         case HightScores:
             show::highscore();

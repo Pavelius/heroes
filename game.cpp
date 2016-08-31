@@ -247,17 +247,37 @@ int game::get(int rec, int id)
 			m += k * 100;
 		return m;
 	case Type:
-		if(rec <= (int)Dimitry || rec == Corlagon)
-			return Knight;
-		if(rec <= (int)Atlas || rec == Halton)
-			return Barbarian;
-		if(rec <= (int)Luna || rec == Eliza)
-			return Sorcerer;
-		if(rec <= (int)Wrathmont || rec == Archibald)
-			return Warlock;
-		if(rec <= (int)Mandigal || rec == Roland)
-			return Wizard;
-		return Necromancer;
+		if(rec >= FirstHero && rec <= LastHero)
+		{
+			if(rec <= Dimitry || rec == Corlagon)
+				return Knight;
+			if(rec <= Atlas || rec == Halton)
+				return Barbarian;
+			if(rec <= Luna || rec == Eliza)
+				return Sorcerer;
+			if(rec <= Wrathmont || rec == Archibald)
+				return Warlock;
+			if(rec <= Mandigal || rec == Roland)
+				return Wizard;
+			return Necromancer;
+		}
+		else if(rec >= FirstMonster && rec <= LastMonster)
+		{
+			if(rec >= Peasant && rec <= Crusader)
+				return Knight;
+			else if(rec >= Goblin && rec <= Cyclop)
+				return Barbarian;
+			else if(rec >= Centaur && rec <= BlackDragon)
+				return Warlock;
+			else if(rec >= Skeleton && rec <= BoneDragon)
+				return Necromancer;
+			else if(rec >= Sprite && rec <= Phoenix)
+				return Sorcerer;
+			else if(rec >= Halfling && rec <= Titan)
+				return Wizard;
+			return SandsWarriors;
+		}
+		return bsget(rec, id);
 	case ArmyCost:
 		m = 0;
 		for(int i = FirstTroopsIndex; i <= LastTroopsIndex; i += 2) 

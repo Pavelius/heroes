@@ -136,21 +136,6 @@ static int object_get(int rec, int id)
 		return objects[rec-FirstMonster].shots;
 	case AnimationType:
 		return objects[rec-FirstMonster].animtype;
-	case Type:
-		if(rec>=(int)Peasant && rec<=(int)Crusader)
-			return Knight;
-		else if(rec>=(int)Goblin && rec<=(int)Cyclop)
-			return Barbarian;
-		else if(rec>=(int)Centaur && rec<=(int)BlackDragon)
-			return Warlock;
-		else if(rec>=(int)Skeleton && rec<=(int)BoneDragon)
-			return Necromancer;
-		else if(rec>=(int)Sprite && rec<=(int)Phoenix)
-			return Sorcerer;
-		else if(rec>=(int)Halfling && rec<=(int)Titan)
-			return Wizard;
-		else
-            return SandsWarriors;
 	case AllAttackAnswer:
 		switch(rec)
 		{

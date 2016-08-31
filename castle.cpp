@@ -959,7 +959,7 @@ void show::castle(int rec)
         draw::image(21, draw::height-19, res::SMALLBAR, 0);
         draw::button(draw::width-21, draw::height-19, res::SMALLBAR, KeyRight, 3, 3, 4, 0, 0, szt("Next town", ""));
         panorama(0, 0, rec);
-        draw::troops(112, 262, rec, FirstTroopsIndex, army_index);
+        draw::troops(112, 262, rec, army_index);
         paint_panel(0, 256, rec, 0);
         draw::resource(552, 262, player::gcost(player));
         draw::button(553, 428, res::SWAPBTN, Cancel, 0, 0, 1, KeyEscape, 0, szt("Leave town", ""));

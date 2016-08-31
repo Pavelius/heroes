@@ -100,7 +100,7 @@ int draw::clipart(int x, int y, int id, int param, int param2)
     else if(id>=(int)FirstMonster && id<=(int)LastMonster)
     {
         res::tokens tk = res::tokens(res::MONH0000+id-FirstMonster);
-        int type = bsget(id, Type);
+        int type = game::get(id, Type);
         const int w = 80;
         const int h = 93;
         image(x-w/2, y, res::STRIP, index_by_type(type));
@@ -406,14 +406,14 @@ void draw::debug()
     text(10,10,temp);
 }
 
-void draw::troops(int x, int y, int rec, int id, int index)
+void draw::troops(int x, int y, int rec, int index)
 {
 	int w = res::width(res::STRIP, 2);
 	int h = res::width(res::STRIP, 2);
-	for(int i = 0; i<LastTroopsIndex; i += 2)
+	for(int i = FirstTroopsIndex; i<=LastTroopsIndex; i += 2)
 	{
-		int unit = bsget(rec, id);
-		int count = bsget(rec, id + 1);
+		int unit = bsget(rec, i);
+		int count = bsget(rec, i + 1);
 		if(unit==0)
 			image(x, y, res::STRIP, 2);
 		else
@@ -423,7 +423,7 @@ void draw::troops(int x, int y, int rec, int id, int index)
 		if(area(x, y, x+w, y+h))
 		{
 			if(hot::key==MouseLeft && hot::pressed)
-				execute(id+i);
+				execute(i, rec);
 			if(unit)
 				status("%1i %2", count, (int)bsgets(unit, NameMulti));
 		}

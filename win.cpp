@@ -1,4 +1,4 @@
-#include "cface/win.h"
+#include "win.h"
 #include "main.h"
 
 struct video_8t

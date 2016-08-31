@@ -25,8 +25,11 @@
     <ClInclude Include="base.h" />
     <ClInclude Include="crt.h" />
     <ClInclude Include="drawable.h" />
+    <ClInclude Include="input.h" />
     <ClInclude Include="io.h" />
     <ClInclude Include="main.h" />
+    <ClInclude Include="point.h" />
+    <ClInclude Include="rect.h" />
     <ClInclude Include="win.h" />
   </ItemGroup>
   <ItemGroup>
@@ -65,7 +68,7 @@
     <ClCompile Include="map_objects.cpp" />
     <ClCompile Include="map_route.cpp" />
     <ClCompile Include="map_show.cpp" />
-    <ClCompile Include="message.cpp" />
+    <ClCompile Include="controls.cpp" />
     <ClCompile Include="monster.cpp" />
     <ClCompile Include="mp2.cpp" />
     <ClCompile Include="pallette.cpp" />

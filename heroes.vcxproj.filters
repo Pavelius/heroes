@@ -10,6 +10,9 @@
     <ClInclude Include="array.h" />
     <ClInclude Include="io.h" />
     <ClInclude Include="win.h" />
+    <ClInclude Include="input.h" />
+    <ClInclude Include="point.h" />
+    <ClInclude Include="rect.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -48,7 +51,6 @@
     <ClCompile Include="map_objects.cpp" />
     <ClCompile Include="map_route.cpp" />
     <ClCompile Include="map_show.cpp" />
-    <ClCompile Include="message.cpp" />
     <ClCompile Include="spells.cpp" />
     <ClCompile Include="tokens.cpp" />
     <ClCompile Include="..\cface\point.cpp" />
@@ -62,5 +64,6 @@
     <ClCompile Include="base_meta.cpp" />
     <ClCompile Include="io.cpp" />
     <ClCompile Include="win_io.cpp" />
+    <ClCompile Include="controls.cpp" />
   </ItemGroup>
 </Project>
