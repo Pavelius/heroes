@@ -46,6 +46,8 @@ int                         hot::key;
 int                         hot::command;
 int                         hot::symbol;
 bool                        hot::pressed;
+int							draw::current::focus;
+int							draw::current::param;
 
 int	res::width(tokens res, int n)
 {

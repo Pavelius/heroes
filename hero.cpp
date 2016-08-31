@@ -52,6 +52,7 @@ static bsmeta::field fields[] = {
 	BSREQ(hero, player, Player, Number),
 	BSREQ(hero, recruit, Recruit, Number),
 	BSREQ(hero, experience, Experience, Number),
+	BSINT(hero, skills, FirstSkill, Number),
 	BSINT(hero, spells, FirstSpell, Number),
 	BSINT(hero, params, FirstArtifactIndex, Number),
 };
@@ -179,7 +180,7 @@ const cost* game::getcost(int rec)
 void show::hero(tokens rec)
 {
 	char temp[260];
-	int army_index = -1;
+	draw::current::focus = -1;
 	while(true)
 	{
 		draw::status(22, draw::height - 16, 22 + res::width(res::HSBTNS, 8), draw::height - 1);
@@ -190,8 +191,8 @@ void show::hero(tokens rec)
 		draw::image(0, 0, draw::isevil(res::HEROEXTE, res::HEROEXTG), 0);
 		draw::clipart(99, 31, rec, LargeSize);
 		szprint(temp, szt("%1 the %2 ( Level %3i )", "%1 - %2 ( Уровень %3i )"),
-			bsget(rec, Name),
-			bsget(bsget(rec, Type), Name),
+			bsgets(rec, Name),
+			bsgets(game::get(rec, Type), Name),
 			bsget(rec, Level));
 		draw::text((draw::width - draw::textw(temp)) / 2, 3, temp);
 		// Abilities
@@ -215,7 +216,7 @@ void show::hero(tokens rec)
 			int x = 3 + 40;
 			int y = 233;
 			const int dx = res::width(res::SECSKILL, 0) + 5;
-			for(int i = FirstSkill; i <= (int)LastSkill; i++)
+			for(int i = FirstSkill; i <= LastSkill; i++)
 			{
 				int n = bsget(rec, i);
 				if(!n)
@@ -253,7 +254,7 @@ void show::hero(tokens rec)
 			}
 		}
 		draw::image(49, 130, res::CREST, bsget(rec, Player) - FirstPlayer);
-		draw::troops(156, 130, rec, army_index);
+		draw::troops(156, 130, rec, draw::current::focus);
 		draw::button(5, 318, res::HSBTNS, Dismiss, 0, 0, 1, Alpha + 'A', 0, szt("Dismiss hero", "Уволить героя"));
 		draw::button(603, 318, res::HSBTNS, Cancel, 2, 2, 3, KeyEscape, 0, szt("Close hero window", "Закрыть окно"));
 		draw::cursor(res::ADVMCO, 0);
@@ -264,7 +265,7 @@ void show::hero(tokens rec)
 		case 0:
 			return;
 		default:
-			draw::troopsinput(id, army_index);
+			draw::troopsinput(id);
 			break;
 		}
 	}

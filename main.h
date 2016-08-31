@@ -704,6 +704,11 @@ namespace draw
 	{
 		Left, Center, Right,
 	};
+	namespace current
+	{
+		extern int			focus;
+		extern int			param;
+	}
 	const int				width = 640;
 	const int				height = 480;
 	const int				scanline = 640;
@@ -758,7 +763,7 @@ namespace draw
 	int						textw(const char* string, int count = -1);
 	void					tiles(int x, int y, res::tokens icn, int* rec, int w, int h);
 	void					troops(int x, int y, int rec, int index);
-	void					troopsinput(int id, int& index);
+	void					troopsinput(int id);
 };
 struct gamefile
 {

@@ -61,7 +61,7 @@ static int index_by_type(int id)
 int draw::clipart(int x, int y, int id, int param, int param2)
 {
     char temp[32];
-    if(id>=(int)FirstHero && id<=(int)LastHero)
+    if(id>=FirstHero && id<=LastHero)
     {
         const int w = 101;
         const int h = 93;
@@ -72,7 +72,7 @@ int draw::clipart(int x, int y, int id, int param, int param2)
             return h;
         }
     }
-    else if(id>=(int)FirstResource && id<=(int)LastResource)
+    else if(id>=FirstResource && id<=LastResource)
     {
         int id1 = id-FirstResource;
         int w = res::width(res::RESOURCE, id1);
@@ -82,7 +82,7 @@ int draw::clipart(int x, int y, int id, int param, int param2)
         text(x-textw(temp)/2, y+33, temp);
         return 50;
     }
-    else if(id>=(int)FirstBuilding && id<=(int)LastBuilding)
+    else if(id>=FirstBuilding && id<=LastBuilding)
     {
         int type = bsget(param, Type);
         const int h = 72;
@@ -97,7 +97,7 @@ int draw::clipart(int x, int y, int id, int param, int param2)
         }
         return h;
     }
-    else if(id>=(int)FirstMonster && id<=(int)LastMonster)
+    else if(id>=FirstMonster && id<=LastMonster)
     {
         res::tokens tk = res::tokens(res::MONH0000+id-FirstMonster);
         int type = game::get(id, Type);
@@ -118,18 +118,18 @@ int draw::clipart(int x, int y, int id, int param, int param2)
         }
         return h;
     }
-	else if(id>=(int)FirstSkill && id<=(int)LastSkill)
+	else if(id>=FirstSkill && id<=LastSkill)
 	{
 		const int w = 80;
 		const int h = res::height(res::SECSKILL, 0);
-		const char* p = bsgets(id,Name);
+		const char* p = bsgets(id, Name);
 		draw::image(x-40, y, res::SECSKILL, id-FirstSkill+1, 0);
 		draw::text(x-43+(w-draw::textw(p))/2, y+3, p);
 		p = bsgets(param,Name);
 		draw::text(x-43+(w-draw::textw(p))/2, y+3+52, p);
 		return h;
 	}
-	else if(id>=(int)FirstArtifact && id<=(int)LastArtifact)
+	else if(id>=FirstArtifact && id<=LastArtifact)
 	{
 		const int w = 80;
 		const int h = res::height(res::ARTIFACT, 0);
@@ -406,20 +406,22 @@ void draw::debug()
     text(10,10,temp);
 }
 
-void draw::troopsinput(int id, int& source)
+void draw::troopsinput(int id)
 {
 	static int source_rec;
 	if(id >= FirstTroopsIndex && id <= LastTroopsIndex)
 	{
-		if(source == -1)
+		if(current::focus == -1)
 		{
-			source = id;
-			source_rec = hot::param;
+			current::focus = id;
+			current::param = hot::param;
 		}
 		else
 		{
 			int dest = id;
 			int dest_rec = hot::param;
+			int source = current::focus;
+			int source_rec = current::param;
 			int v11 = bsget(dest_rec, dest);
 			int v12 = bsget(dest_rec, dest+1);
 			int v21 = bsget(source_rec, source);
@@ -428,8 +430,8 @@ void draw::troopsinput(int id, int& source)
 			bsset(source_rec, source+1, v12);
 			bsset(dest_rec, dest, v21);
 			bsset(dest_rec, dest + 1, v22);
-			source = -1;
-			source_rec = 0;
+			current::focus = -1;
+			current::param = 0;
 		}
 	}
 }

@@ -444,6 +444,7 @@ static int mainmenu()
         case Credits:
 			command::execute("game", "initialize");
 			bsset(LordKillburn, Player, FirstPlayer);
+			bsset(LordKillburn, FirstArtifactIndex, DragonSword);
 			show::hero(LordKillburn);
         	//test_combat();
             break;
