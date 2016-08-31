@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="main.h" />
+    <ClInclude Include="..\cface\point.h" />
+    <ClInclude Include="..\cface\rect.h" />
+    <ClInclude Include="base.h" />
+    <ClInclude Include="crt.h" />
+    <ClInclude Include="drawable.h" />
+    <ClInclude Include="array.h" />
+    <ClInclude Include="io.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="win.cpp" />
+    <ClCompile Include="animation.cpp" />
+    <ClCompile Include="gamefile.cpp" />
+    <ClCompile Include="list.cpp" />
+    <ClCompile Include="pallette.cpp" />
+    <ClCompile Include="text.cpp" />
+    <ClCompile Include="resource.cpp" />
+    <ClCompile Include="mp2.cpp" />
+    <ClCompile Include="player.cpp" />
+    <ClCompile Include="map.cpp" />
+    <ClCompile Include="hero.cpp" />
+    <ClCompile Include="army.cpp" />
+    <ClCompile Include="event.cpp" />
+    <ClCompile Include="monster.cpp" />
+    <ClCompile Include="sign.cpp" />
+    <ClCompile Include="spellbook.cpp" />
+    <ClCompile Include="unitinfo.cpp" />
+    <ClCompile Include="world.cpp" />
+    <ClCompile Include="castle.cpp" />
+    <ClCompile Include="artifacts.cpp" />
+    <ClCompile Include="build.cpp" />
+    <ClCompile Include="buildings.cpp" />
+    <ClCompile Include="combat.cpp" />
+    <ClCompile Include="combat_ai.cpp" />
+    <ClCompile Include="combat_dialog.cpp" />
+    <ClCompile Include="combat_effect.cpp" />
+    <ClCompile Include="combat_route.cpp" />
+    <ClCompile Include="combat_setting.cpp" />
+    <ClCompile Include="combat_spells.cpp" />
+    <ClCompile Include="cost.cpp" />
+    <ClCompile Include="hightscore.cpp" />
+    <ClCompile Include="indexes.cpp" />
+    <ClCompile Include="map_moveable.cpp" />
+    <ClCompile Include="map_objects.cpp" />
+    <ClCompile Include="map_route.cpp" />
+    <ClCompile Include="map_show.cpp" />
+    <ClCompile Include="message.cpp" />
+    <ClCompile Include="spells.cpp" />
+    <ClCompile Include="tokens.cpp" />
+    <ClCompile Include="..\cface\point.cpp" />
+    <ClCompile Include="..\cface\win_io.cpp" />
+    <ClCompile Include="adventure.cpp" />
+    <ClCompile Include="game.cpp" />
+    <ClCompile Include="draw.cpp" />
+    <ClCompile Include="base.cpp" />
+    <ClCompile Include="crt.cpp" />
+    <ClCompile Include="drawable.cpp" />
+    <ClCompile Include="array.cpp" />
+    <ClCompile Include="base_meta.cpp" />
+    <ClCompile Include="io.cpp" />
+  </ItemGroup>
+</Project>

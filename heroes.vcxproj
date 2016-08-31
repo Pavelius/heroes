@@ -1,0 +1,204 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\cface\point.h" />
+    <ClInclude Include="..\cface\rect.h" />
+    <ClInclude Include="array.h" />
+    <ClInclude Include="base.h" />
+    <ClInclude Include="crt.h" />
+    <ClInclude Include="drawable.h" />
+    <ClInclude Include="io.h" />
+    <ClInclude Include="main.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\cface\point.cpp" />
+    <ClCompile Include="..\cface\win_io.cpp" />
+    <ClCompile Include="animation.cpp" />
+    <ClCompile Include="army.cpp" />
+    <ClCompile Include="array.cpp" />
+    <ClCompile Include="artifacts.cpp" />
+    <ClCompile Include="base.cpp" />
+    <ClCompile Include="base_meta.cpp" />
+    <ClCompile Include="crt.cpp" />
+    <ClCompile Include="draw.cpp" />
+    <ClCompile Include="build.cpp" />
+    <ClCompile Include="buildings.cpp" />
+    <ClCompile Include="castle.cpp" />
+    <ClCompile Include="combat.cpp" />
+    <ClCompile Include="combat_ai.cpp" />
+    <ClCompile Include="combat_dialog.cpp" />
+    <ClCompile Include="combat_effect.cpp" />
+    <ClCompile Include="combat_route.cpp" />
+    <ClCompile Include="combat_setting.cpp" />
+    <ClCompile Include="combat_spells.cpp" />
+    <ClCompile Include="cost.cpp" />
+    <ClCompile Include="drawable.cpp" />
+    <ClCompile Include="event.cpp" />
+    <ClCompile Include="adventure.cpp" />
+    <ClCompile Include="game.cpp" />
+    <ClCompile Include="gamefile.cpp" />
+    <ClCompile Include="hero.cpp" />
+    <ClCompile Include="hightscore.cpp" />
+    <ClCompile Include="indexes.cpp" />
+    <ClCompile Include="io.cpp" />
+    <ClCompile Include="list.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="map.cpp" />
+    <ClCompile Include="map_moveable.cpp" />
+    <ClCompile Include="map_objects.cpp" />
+    <ClCompile Include="map_route.cpp" />
+    <ClCompile Include="map_show.cpp" />
+    <ClCompile Include="message.cpp" />
+    <ClCompile Include="monster.cpp" />
+    <ClCompile Include="mp2.cpp" />
+    <ClCompile Include="pallette.cpp" />
+    <ClCompile Include="player.cpp" />
+    <ClCompile Include="resource.cpp" />
+    <ClCompile Include="tokens.cpp" />
+    <ClCompile Include="sign.cpp" />
+    <ClCompile Include="spellbook.cpp" />
+    <ClCompile Include="spells.cpp" />
+    <ClCompile Include="text.cpp" />
+    <ClCompile Include="unitinfo.cpp" />
+    <ClCompile Include="win.cpp" />
+    <ClCompile Include="world.cpp" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{728AB934-3073-4ED0-967F-4BE9701BEEDC}</ProjectGuid>
+    <RootNamespace>heroes</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>NotSet</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140_xp</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>NotSet</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>d:\applications\$(ProjectName)\</OutDir>
+    <IntDir>d:\output\$(ProjectName)\$(Configuration)\</IntDir>
+    <IncludePath>d:\projects</IncludePath>
+    <CodeAnalysisRuleSet>BasicDesignGuidelineRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>d:\applications\$(ProjectName)\</OutDir>
+    <IntDir>d:\output\$(ProjectName)\$(Configuration)\</IntDir>
+    <IncludePath>d:\projects</IncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EntryPointSymbol>
+      </EntryPointSymbol>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <StringPooling>true</StringPooling>
+      <ExceptionHandling>false</ExceptionHandling>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <ControlFlowGuard>false</ControlFlowGuard>
+      <EnableParallelCodeGeneration>false</EnableParallelCodeGeneration>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <IgnoreAllDefaultLibraries>
+      </IgnoreAllDefaultLibraries>
+      <SubSystem>Windows</SubSystem>
+      <EntryPointSymbol>
+      </EntryPointSymbol>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
