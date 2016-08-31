@@ -78,7 +78,7 @@
     <ClCompile Include="spellbook.cpp" />
     <ClCompile Include="spells.cpp" />
     <ClCompile Include="text.cpp" />
-    <ClCompile Include="unitinfo.cpp" />
+    <ClCompile Include="show_unit.cpp" />
     <ClCompile Include="win.cpp" />
     <ClCompile Include="win_io.cpp" />
     <ClCompile Include="world.cpp" />

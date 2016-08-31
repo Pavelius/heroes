@@ -411,10 +411,15 @@ void draw::troopsinput(int id)
 	static int source_rec;
 	if(id >= FirstTroopsIndex && id <= LastTroopsIndex)
 	{
-		if(current::focus == -1)
+		if(!current::focus)
 		{
 			current::focus = id;
 			current::param = hot::param;
+		}
+		else if(current::focus == id && current::param == hot::param)
+		{
+			show::unit(bsget(hot::param, id), hot::param);
+			current::focus = 0;
 		}
 		else
 		{
@@ -430,8 +435,7 @@ void draw::troopsinput(int id)
 			bsset(source_rec, source+1, v12);
 			bsset(dest_rec, dest, v21);
 			bsset(dest_rec, dest + 1, v22);
-			current::focus = -1;
-			current::param = 0;
+			current::focus = 0;
 		}
 	}
 }
@@ -452,7 +456,7 @@ void draw::troops(int x, int y, int rec, int index)
 			image(x, y, res::STRIP, 1);
 		if(area(x, y, x+w, y+h))
 		{
-			if(hot::key==MouseLeft && hot::pressed)
+			if((hot::key==MouseLeft && hot::pressed) || (hot::key==MouseLeftDBL))
 				execute(i, rec);
 			if(unit)
 				status("%1i %2", count, bsgets(unit, NameMulti));

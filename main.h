@@ -12,7 +12,7 @@ enum tokens
 	Luck, LuckCursed, LuckAwful, LuckBad, LuckNormal, LuckGood, LuckGreat, LuckIrish,
 	Morale, MoraleTreason, MoraleAwful, MoralePoor, MoraleNormal, MoraleGood, MoraleGreat, MoraleBlood,
 	// Speed
-	Speed, Crawling, VerySlow, Slow, Average, Fast, VeryFast, UltraFast,
+	Speed, SpeedCrawling, SpeedVerySlow, SpeedSlow, SpeedAverage, SpeedFast, SpeedVeryFast, SpeedUltraFast,
 	// Difficulty
 	EasyDifficulty, NormalDifficulty, HardDifficulty, VeryHardDifficulty, ImpossibleDifficulty,
 	LevelEasy, LevelNormal, LevelHard, LevelExpert,
@@ -621,7 +621,7 @@ namespace show
 	void					settings();
 	int						spellbook(int mid, tokens mode = CombatSpells);
 	void                    tips(const char* text);
-	void                    unitinfo(int rec, int parent = 0);
+	void                    unit(int rec, int parent = 0);
 }
 namespace indexes
 {
@@ -1036,6 +1036,7 @@ namespace game
 	int						getartifact(int rec, int id);
 	const cost*				getcost(int rec);
 	int						geteffect(int rec, int id);
+	int						getsummary(int rec, int id, int side);
 	bool					isboosted(int rec);
 	bool					ispenalized(int rec);
 }

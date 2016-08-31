@@ -132,39 +132,51 @@ void game::addunit(int rec, int type, int count)
 	}
 }
 
+int game::getsummary(int rec, int id, int side)
+{
+	int t = rec;
+	if(t >= FirstCombatant && t <= LastCombatant)
+		t = bsget(t, Type);
+	int m = bsget(t, id);
+	if(side)
+		m += get(side, id);
+	switch(id)
+	{
+	case Attack:
+		// RULE: Spell Boold Lust.
+		if(geteffect(rec, SpellBloodLust))
+			m += 3;
+		break;
+	case Defence:
+		// RULE: Spell Stone skin.
+		if(get(rec, SpellStone))
+			m += 3;
+		// RULE: spell Steel skin.
+		else if(get(rec, SpellSteelSkin))
+			m += 5;
+		break;
+	case Morale:
+	case Luck:
+		if(m > 3)
+			m = 3;
+		else if(m < -3)
+			m = -3;
+		break;
+	}
+	return m;
+}
+
 int game::get(int rec, int id)
 {
 	int m, k;
 	switch(id)
 	{
 	case Attack:
-		if(rec >= FirstHero && rec <= LastHero)
-			return bsget(rec, id) + artifacts_bonuses(rec, id);
-		else if(rec >= FirstCombatant && rec <= LastCombatant)
-		{
-			m = get(bsget(rec, Type), id);
-			m += get(bsget(rec, Side), id);
-			// RULE: Spell Boold Lust.
-			if(get(rec, SpellBloodLust))
-				m += 3;
-			return m;
-		}
-		return bsget(rec, id);
 	case Defence:
 		if(rec >= FirstHero && rec <= LastHero)
 			return bsget(rec, id) + artifacts_bonuses(rec, id);
 		else if(rec >= FirstCombatant && rec <= LastCombatant)
-		{
-			m = get(bsget(rec, Type), id);
-			m += get(bsget(rec, Side), id);
-			// RULE: Spell Stone skin.
-			if(get(rec, SpellStone))
-				m += 3;
-			// RULE: spell Steel skin.
-			else if(get(rec, SpellSteelSkin))
-				m += 5;
-			return m;
-		}
+			return getsummary(rec, id, bsget(rec, Side));
 		return bsget(rec, id);
 	case Wisdow:
 	case SpellPower:
@@ -173,12 +185,16 @@ int game::get(int rec, int id)
 		return bsget(rec, id);
 	case Morale:
 		if(rec >= FirstHero && rec <= LastHero)
-			return MoraleNormal + artifacts_bonuses(rec, id);
-		return bsget(rec, id);
+			return bsget(rec, SkillLeadership) + artifacts_bonuses(rec, id);
+		else if(rec >= FirstCombatant && rec <= LastCombatant)
+			return getsummary(rec, id, bsget(rec, Side));
+		return 0;
 	case Luck:
 		if(rec >= FirstHero && rec <= LastHero)
-			return LuckNormal + artifacts_bonuses(rec, id);
-		return bsget(rec, id);
+			return bsget(rec, SkillLuck) + artifacts_bonuses(rec, id);
+		else if(rec >= FirstCombatant && rec <= LastCombatant)
+			return getsummary(rec, id, bsget(rec, Side));
+		return 0;
 	case Speed:
 		if(rec >= FirstCombatant && rec <= LastCombatant)
 		{
@@ -186,7 +202,7 @@ int game::get(int rec, int id)
 			m = 0;
 			if(get(rec, SpellHaste))
 				m = 2;
-			return imin(get(bsget(rec, Type), Speed) + m, (int)UltraFast);
+			return imin(get(bsget(rec, Type), Speed) + m, (int)SpeedUltraFast);
 		}
 		return bsget(rec, id);
 	case Count:
@@ -230,11 +246,11 @@ int game::get(int rec, int id)
 				int ms = 1000;
 				switch(bsget(unit, Speed))
 				{
-				case Slow: ms = 1100; break;
-				case Average: ms = 1200; break;
-				case Fast: ms = 1300; break;
-				case VeryFast: ms = 1400; break;
-				case UltraFast: ms = 1500; break;
+				case SpeedSlow: ms = 1100; break;
+				case SpeedAverage: ms = 1200; break;
+				case SpeedFast: ms = 1300; break;
+				case SpeedVeryFast: ms = 1400; break;
+				case SpeedUltraFast: ms = 1500; break;
 				}
 				if(m > ms)
 					m = ms;
@@ -280,12 +296,12 @@ int game::get(int rec, int id)
 		return bsget(rec, id);
 	case ArmyCost:
 		m = 0;
-		for(int i = FirstTroopsIndex; i <= LastTroopsIndex; i += 2) 
+		for(int i = FirstTroopsIndex; i <= LastTroopsIndex; i += 2)
 		{
 			int u = bsget(rec, i);
 			if(!u)
 				continue;
-			m += get(u, Gold) * bsget(rec, i+1);
+			m += get(u, Gold) * bsget(rec, i + 1);
 		}
 		return m;
 	default:

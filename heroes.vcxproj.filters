@@ -29,7 +29,6 @@
     <ClCompile Include="monster.cpp" />
     <ClCompile Include="sign.cpp" />
     <ClCompile Include="spellbook.cpp" />
-    <ClCompile Include="unitinfo.cpp" />
     <ClCompile Include="world.cpp" />
     <ClCompile Include="castle.cpp" />
     <ClCompile Include="artifacts.cpp" />
@@ -64,5 +63,6 @@
     <ClCompile Include="controls.cpp" />
     <ClCompile Include="point.cpp" />
     <ClCompile Include="show_hero.cpp" />
+    <ClCompile Include="show_unit.cpp" />
   </ItemGroup>
 </Project>

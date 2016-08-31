@@ -283,7 +283,7 @@ static void paint_grid(int rec)
 	if(rec != -1 && combat::setting::movement)
 	{
 		draw::fontsm push;
-		int radius = bsget(rec, Speed) - Crawling + 2;
+		int radius = bsget(rec, Speed) - SpeedCrawling + 2;
 		for(int i = 0; i < combat::awd*combat::ahd; i++)
 		{
 			if(combat::movements[i])
@@ -502,7 +502,7 @@ int show::battle::unit(int rec, int casted)
 			hilite_combatant = combat::combatant(hilite_index);
 			if(combat::movements[hilite_index] != 0)
 			{
-				int radius = bsget(rec, Speed) - Crawling + 2;
+				int radius = bsget(rec, Speed) - SpeedCrawling + 2;
 				if(combat::movements[hilite_index] < BlockSquad && combat::movements[hilite_index] <= radius)
 					action(cursor, Move, hilite_index);
 				else if(combat::movements[hilite_index] == BlockSquad)
@@ -557,7 +557,7 @@ int show::battle::unit(int rec, int casted)
 			show::settings();
 			break;
 		case Information:
-			show::unitinfo(hot::param, bsget(hot::param, Side));
+			show::unit(hot::param, bsget(hot::param, Side));
 			break;
 		case Spells:
 			if(casted)

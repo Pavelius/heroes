@@ -3,15 +3,15 @@
 static const int ox = 10;
 static const int oy = 18;
 
-static int field(int x, int y, int id, int rec, int id2 = 0, const char* name = 0, int parent = 0)
+static int field(int x, int y, int id, int rec, int side, const char* name)
 {
 	char temp[260];
 	if(!name)
 		name = bsgets(id, Name);
 	szprint(temp, "%1:", name);
 	draw::text(x - draw::textw(temp), y, temp);
-	int dm1 = bsget(rec, id) + bsget(parent, id);
-	int dm2 = bsget(rec, id2) + bsget(parent, id2);
+	int dm1 = bsget(rec, id);
+	int dm2 = game::getsummary(rec, id, side);
 	if(id == DamageMin)
 	{
 		dm2 = bsget(rec, DamageMax);
@@ -20,7 +20,7 @@ static int field(int x, int y, int id, int rec, int id2 = 0, const char* name = 
 		else
 			szprint(temp, "%1i", dm1);
 	}
-	else if(id2 && dm1 != dm2)
+	else if(dm1 != dm2)
 		szprint(temp, "%1i (%2i)", dm2, dm1);
 	else
 		szprint(temp, "%1i", dm1);
@@ -28,36 +28,36 @@ static int field(int x, int y, int id, int rec, int id2 = 0, const char* name = 
 	return oy;
 }
 
-static int fieldt(int x, int y, int id, int rec, int parent)
+static int fieldt(int x, int y, int id, int base, int rec, int side)
 {
 	char temp[260];
+	int value = game::getsummary(rec, id, side) + base;
 	szprint(temp, "%1:", bsgets(id, Name));
 	draw::text(x - draw::textw(temp), y, temp);
-	int value = bsget(rec, id);
 	draw::text(x + ox, y, bsgets(value, Name));
 	return oy;
 }
 
-static int status(int x, int y, int rec, int parent)
+static int status(int x, int y, int rec, int side)
 {
 	int	 y1 = y;
 	// attack
-	y += field(x, y, Attack, rec, AttackRaw, 0, parent);
+	y += field(x, y, Attack, rec, side, 0);
 	// defence
-	y += field(x, y, Defence, rec, DefenceRaw, 0, parent);
+	y += field(x, y, Defence, rec, side, 0);
 	// shoots
 	if(bsget(rec, Shoots))
-		y += field(x, y, Shoots, rec, 0, szt("Shoots Left", "Выстрелов"), parent);
+		y += field(x, y, Shoots, rec, side, szt("Shoots Left", "Выстрелов"));
 	// damage
-	y += field(x, y, DamageMin, rec, 0, szt("Damage", "Урон"), parent);
+	y += field(x, y, DamageMin, rec, side, szt("Damage", "Урон"));
 	// hits
-	y += field(x, y, HitPointsMax, rec, 0, szt("Hit Points", "Жизнь"), parent);
-	if(bsget(rec, HitPoints))
-		y += field(x, y, HitPoints, rec, 0, szt("Hits Left", "Жизнь ост."), parent);
+	y += field(x, y, HitPointsMax, rec, side, szt("Hit Points", "Жизнь"));
+	if(rec>=FirstCombatant && rec<=LastCombatant)
+		y += field(x, y, HitPoints, rec, side, szt("Hits Left", "Жизнь ост."));
 	// speed
-	y += fieldt(x, y, Speed, rec, parent);
-	y += fieldt(x, y, Morale, rec, parent);
-	y += fieldt(x, y, Luck, rec, parent);
+	y += fieldt(x, y, Speed, 0, rec, side);
+	y += fieldt(x, y, Morale, MoraleNormal, rec, side);
+	y += fieldt(x, y, Luck, LuckNormal, rec, side);
 	return y - y1;
 }
 
@@ -95,7 +95,7 @@ static void effects(int x, int y, int rec)
 	}
 }
 
-void show::unitinfo(int rec, int parent)
+void show::unit(int rec, int side)
 {
 	draw::screenshoot surface;
 	res::tokens back = draw::isevil(res::VIEWARME, res::VIEWARMY);
@@ -104,7 +104,7 @@ void show::unitinfo(int rec, int parent)
 	int x = (draw::width - w1) / 2 - 16;
 	int y = (draw::height - h1) / 2;
 	int mt = rec;
-	if(bsget(mt, First) == FirstCombatant)
+	if(mt >= FirstCombatant && mt <= LastCombatant)
 		mt = bsget(mt, Type);
 	animation mon(tokens(mt), Move);
 	while(true)
@@ -114,11 +114,12 @@ void show::unitinfo(int rec, int parent)
 		draw::image(x, y, back, 0);
 		int x1 = x + 24;
 		int y1 = y;
-		status(x1 + 386, y1 + 40, rec, parent);
+		status(x1 + 386, y1 + 40, rec, side);
 		effects(x1 + 140, y1 + 188, rec);
 		// name
-		const char* name = bsgets(rec, Name);
-		draw::text(x1 + 140 - draw::textw(name) / 2, y1 + 40, name);
+		const char* p = bsgets(rec, Name);
+		draw::text(x1 + 140 - draw::textw(p) / 2, y1 + 40, p);
+		// avatar
 		res::tokens icn = res::tokens(res::MONH0000 + mt - FirstMonster);
 		draw::image(x1 + 150 - res::width(icn, 0) / 2,
 			y1 + 140 - res::height(icn, 0) / 2,
@@ -135,12 +136,13 @@ void show::unitinfo(int rec, int parent)
 		{
 		case 0:
 		case Cancel:
+		case KeyEscape:
+			hot::clear();
 			return;
 		case MouseLeft:
 		case MouseRight:
-			if(!hot::pressed)
-				return;
-			break;
+			hot::clear();
+			return;
 		}
 	}
 }
@@ -199,7 +201,7 @@ bool show::recruit(int rec, int& count, int maximum)
 			count--;
 			break;
 		case Information:
-			show::unitinfo(rec);
+			show::unit(rec);
 			break;
 		}
 	}

@@ -947,3 +947,10 @@ void draw::castle(int x, int y, int tile, int race, bool town)
     for(int ii = 0; ii < 5; ++ii)
         image(x + ii*32, y + 3*32, res::OBJNTOWN, index + 11 + ii);
 }
+
+void hot::clear()
+{
+	hot::command = 0;
+	hot::param = 0;
+	hot::key = 0;
+}

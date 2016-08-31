@@ -128,7 +128,7 @@ bool combat::canattack(int rec, int target, tokens direction)
 	int i2 = combat::moveto(i1, direction);
 	if(i2 == -1)
 		return false;
-	int speed = bsget(rec, Speed) - Crawling + 2;
+	int speed = bsget(rec, Speed) - SpeedCrawling + 2;
 	return i2 == i0
 		|| (combat::movements[i2] != 0 && combat::movements[i2] <= speed);
 }
@@ -293,7 +293,7 @@ static int closest_unit(int rec, int side = -1)
 
 static int make_turn(bool interactive)
 {
-	for(unsigned i = UltraFast; i >= Crawling; i--)
+	for(unsigned i = SpeedUltraFast; i >= SpeedCrawling; i--)
 	{
 		for(unsigned rec = FirstCombatant; rec <= LastCombatant; rec++)
 		{

@@ -150,7 +150,7 @@ void combat::wave(int start, bool wide, bool fly)
 
 int combat::move(int* result, int start, int target, int speed)
 {
-	speed = speed - Crawling + 2;
+	speed = speed - SpeedCrawling + 2;
 	int* p = result;
 	while(start!=target)
 	{

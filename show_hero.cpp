@@ -3,7 +3,7 @@
 void show::hero(tokens rec)
 {
 	char temp[260];
-	draw::current::focus = -1;
+	draw::current::focus = 0;
 	while(true)
 	{
 		draw::status(22, draw::height - 16, 22 + res::width(res::HSBTNS, 8), draw::height - 1);
