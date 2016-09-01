@@ -391,8 +391,19 @@ static void test_combat()
 {
 	command::execute("game", "initialize");
 	bsset(LordKillburn, Player, PlayerBlue);
+	game::addunit(LordKillburn, Swordsman, 1);
 	bsset(Tsabu, Player, PlayerRed);
+	game::addunit(Tsabu, Troll, 1);
 	combat::start(LordKillburn, Tsabu);
+}
+
+void test_coordinates()
+{
+	auto p1 = combat::i2h(2);
+	auto p2 = combat::i2h(25);
+	auto dx = p2.x - p1.x; // 22
+	auto dy = p2.y - p1.y; // 38
+	auto dc = draw::isqrt(dx*dx + dy*dy); // 43? 44
 }
 
 static int mainmenu()
@@ -457,9 +468,15 @@ static int mainmenu()
     return 0;
 }
 
-int draw::start()
+int main()
 {
+	test_coordinates();
 	draw::font = res::FONT;
-    create("Heroes II", 50, false);
-    return mainmenu();
+	draw::create("Heroes II", 50, false);
+	return mainmenu();
+}
+
+int __stdcall WinMain(void* ci, void* pi, char* cmd, int sw)
+{
+	return main();
 }

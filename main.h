@@ -48,7 +48,7 @@ enum tokens
 	NameMulti, Level, Target, Side, Base, Expire,
 	ArmyCost,
 	SingleVersion, RequiredTarget, Hostile, Friendly, Combat, MassEffect, DamageMin, DamageMax, FrameStatus,
-	Move, Fly, MagicImmunity, ElementsImmunity, Undead, Dragon, Wide, HideAttack, AllAttackAnswer, TwiceAttack, MeleeArcher, CanDefend,
+	Move, Fly, MagicImmunity, ElementsImmunity, Undead, Dragon, Wide, HideAttack, AllAttackAnswer, TwiceAttack, MeleeArcher,
 	Upgrade, Downgrade,
 	OneTime, BuildThisTurn,
 	Difficulty, PlayerCount,
@@ -57,7 +57,7 @@ enum tokens
 	Block2, DefendThisTurn, CastThisRound, Squad, PositionNotDead, PathTo, Experience,
 	MovePoints, MovePointsMax, MovePointsSea, MovePointsLand, Moveable, Quality, LackResource,
 	Dwelve, ArtifactCount, Code,
-	AttackerWin, DefenderWin, AlreadyMoved,
+	AttackerWin, DefenderWin, AlreadyMoved, AlreadyDefended,
 	// Map size
 	SmallSize, MediumSize, LargeSize, XLargeSize,
 	// Player type
@@ -548,35 +548,12 @@ namespace res
 	void*					get(tokens res);
 	int						height(tokens res, int frame);
 	tokens					map(int object);
+	point					offset(tokens res, int n);
 	int						ox(tokens res, int n);
 	int						oy(tokens res, int n);
 	tokens					getshooting(int rec);
 	int						width(tokens res, int frame);
 }
-struct animation : public drawable
-{
-	int						rec;
-	point				    pos;
-	res::tokens			    icn;
-	short					frame, start, count;
-	unsigned				flags;
-	unsigned				stamp;
-	//
-	animation();
-	animation(int rec, int action);
-	animation(res::tokens base, int frame, int count);
-	//
-	int						getid() const override { return rec; }
-	rect				    getrect() const override;
-	point					getzpos() const override;
-	virtual unsigned		getrate() const { return 1000 / 8; }
-	void					clear();
-	bool					islast() const { return frame == (start + count - 1); }
-	static int				line(point* result, int x1, int y1, int x2, int y2, int step);
-	void				    painting(point screen) const override;
-	void				    set(int rec, int action, int param = 0);
-	void					update() override;
-};
 struct cost
 {
 	int					    gold;
@@ -600,10 +577,146 @@ struct cost
 private:
 	void				    correct();
 };
+namespace draw
+{
+	struct icon
+	{
+		res::tokens			icn;
+		int					id;
+		int					value;
+	};
+	struct clip
+	{
+		clip(rect rc);
+		clip(int x1, int y1, int x2, int y2);
+		~clip();
+	private:
+		rect				data;
+	};
+	struct fontsm
+	{
+		fontsm();
+		~fontsm();
+	private:
+		res::tokens			font;
+	};
+	struct fontgr
+	{
+		fontgr(unsigned char* data);
+		~fontgr();
+	private:
+		unsigned char*		push;
+	};
+	struct screenshoot
+	{
+		screenshoot();
+		~screenshoot();
+		void				restore();
+		void				redraw(drawable** objects, unsigned timeout);
+		void				redraw(drawable** objects, unsigned timeout, drawable* o1);
+		void				redraw(drawable** objects, unsigned timeout, drawable* o1, drawable* o2);
+	private:
+		unsigned char*		bits;
+	};
+	enum justify
+	{
+		Left, Center, Right,
+	};
+	namespace current
+	{
+		extern int			focus;
+		extern int			param;
+	}
+	const int				width = 640;
+	const int				height = 480;
+	const int				scanline = 640;
+	extern unsigned			timestamp;
+	extern res::tokens		font;
+	//
+	bool					area(int x1, int y1, int x2, int y2);
+	void					button(int x, int y, res::tokens icn, int id, int normal, int hilite, int pressed, int key = 0, unsigned flags = 0, const char* tips = 0);
+	void					castle(int x, int y, int tile, int race, bool town);
+	void					captain(int x, int y, int race, bool present);
+	int						clipart(int x, int y, int id, int param, int param2 = 0);
+	void					colors();
+	bool					create(const char* title, int frames_per_second, bool fullscreen);
+	void					cursor(res::tokens res, int id, int ox = 0, int oy = 0);
+	int						dialog(int height);
+	void					debug();
+	void					edit(int x, int y, char* value, int maximum = 260);
+	void					edit(int x, int y, int& value, int maximum, int minimum = 0);
+	void					execute(int id, int param = 0);
+	inline unsigned			getframe() { return timestamp / 100; }
+	void					building(int x, int y, int building, int race);
+	void					hexagon(int x, int y, unsigned char color);
+	void					hexagonf(int x, int y, unsigned char alpha);
+	void					image(int x, int y, res::tokens res, unsigned id, unsigned flags = 0, unsigned char* change = 0);
+	void					imager(int x, int y, res::tokens res, int id, int mode = 0);
+	int						input(bool wait_message = true);
+	res::tokens				isevil(res::tokens evil, res::tokens good);
+	int						isqrt(int num);
+	void					map(int x, int y, int* objects, int* route);
+	int						line(int x, int y, int width, icon* icons, int padding);
+	void					line(int x1, int y1, int x2, int y2, unsigned char color);
+	void					pixel(int x, int y, unsigned char color);
+	unsigned char*			ptr(int x, int y);
+	void					rectb(int x1, int y1, int x2, int y2, unsigned char color);
+	void					rectf(int x1, int y1, int x2, int y2, unsigned char color);
+	void					resize(int x, int y);
+	void					resource(int x, int y, cost& e);
+	void					resource(int x, int y, int ty, int id, int value);
+	void					route(int x, int y, int* rec, int w, int h, int distance);
+	void					shadow(int x1, int y1, int x2, int y2, int intense);
+	void					status(const char* format, ...);
+	void					status(int x1, int y1, int x2, int y2);
+	int						sysinput(bool wait_input);
+	void					text(int x, int y, const char* string, int count = -1);
+	void					text(int x, int y, int width, justify jf, const char* string, int count = -1);
+	int						textbc(const char* string, int count, int width);
+	int						textf(int x, int y, int width, const char* text, bool calculate);
+	int						texth();
+	int						texth(const char* string, int width);
+	int						textm(int x, int y, int width, justify jf, const char* string);
+	void					textm(int x, int y, int width, int height, justify jf, const char* string);
+	int						textw(char ch);
+	int						textw(const char* string, int count = -1);
+	void					tiles(int x, int y, res::tokens icn, int* rec, int w, int h);
+	void					troops(int x, int y, int rec, int index);
+	void					troopsinput(int id);
+};
+struct animation : public drawable
+{
+	int						rec;
+	point				    pos;
+	res::tokens			    icn;
+	short					frame, start, count;
+	unsigned				flags;
+	unsigned				stamp;
+	//
+	animation();
+	animation(int rec, int action);
+	animation(res::tokens base, int frame, int count);
+	//
+	static animation*		find(drawable** objects, int rec);
+	int						getid() const override { return rec; }
+	rect				    getrect() const override;
+	point					getzpos() const override;
+	virtual unsigned		getrate() const { return 1000 / 8; }
+	point					getoffset(int start = -1) const;
+	void					clear();
+	virtual bool			incframe();
+	bool					islast() const { return frame == (start + count - 1); }
+	void					move(int x1, int y1, int x2, int y2, int step);
+	void				    painting(point screen) const override;
+	void				    set(int rec, int action, int param = 0);
+	virtual void			setaction(tokens action, int param = 0) { set(rec, action, param); }
+	void					update() override;
+};
 namespace show
 {
 	namespace battle
 	{
+		void				attack(int rec, int enemy, int damage);
 		int					dialog(int side); // dialog surrender, cast, flee
 		void				fly(int rec, int target);
 		void				move(int rec, int target);
@@ -614,6 +727,7 @@ namespace show
 	void				    build(int rec);
 	void				    castle(int rec);
 	void					fadeback(int count);
+	animation*				find(drawable** objects, int rec);
 	int					    game();
 	void				    hero(tokens rec);
 	void				    highscore();
@@ -664,110 +778,6 @@ namespace animate
 	void					heroflag(int x, int y, int rec, int ticket);
 	void					monster(int x, int y, int mid, int ticket);
 }
-namespace draw
-{
-	struct icon
-	{
-		res::tokens			icn;
-		int					id;
-		int					value;
-	};
-	struct clip
-	{
-		clip(rect rc);
-		clip(int x1, int y1, int x2, int y2);
-		~clip();
-	private:
-		rect				data;
-	};
-	struct fontsm
-	{
-		fontsm();
-		~fontsm();
-	private:
-		res::tokens			font;
-	};
-	struct fontgr
-	{
-		fontgr(unsigned char* data);
-		~fontgr();
-	private:
-		unsigned char*		push;
-	};
-	struct screenshoot
-	{
-		screenshoot();
-		~screenshoot();
-		void				restore();
-	private:
-		unsigned char*		bits;
-	};
-	enum justify
-	{
-		Left, Center, Right,
-	};
-	namespace current
-	{
-		extern int			focus;
-		extern int			param;
-	}
-	const int				width = 640;
-	const int				height = 480;
-	const int				scanline = 640;
-	extern unsigned			timestamp;
-	extern res::tokens		font;
-	//
-	bool					area(int x1, int y1, int x2, int y2);
-	void					button(int x, int y, res::tokens icn, int id, int normal, int hilite, int pressed, int key = 0, unsigned flags = 0, const char* tips = 0);
-	void					castle(int x, int y, int tile, int race, bool town);
-	void					captain(int x, int y, int race, bool present);
-	int						clipart(int x, int y, int id, int param, int param2 = 0);
-	void					colors();
-	bool					create(const char* title, int frames_per_second, bool fullscreen);
-	void					cursor(res::tokens res, int id, int ox = 0, int oy = 0);
-	int						dialog(int height);
-	void					debug();
-	void					edit(int x, int y, char* value, int maximum = 260);
-	void					edit(int x, int y, int& value, int maximum, int minimum = 0);
-	void					execute(int id, int param = 0);
-	inline unsigned			getframe() { return timestamp / 100; }
-	void					building(int x, int y, int building, int race);
-	void					hexagon(int x, int y, unsigned char color);
-	void					hexagonf(int x, int y, unsigned char alpha);
-	void					image(int x, int y, res::tokens res, unsigned id, unsigned flags = 0, unsigned char* change = 0);
-	void					imager(int x, int y, res::tokens res, int id, int mode = 0);
-	int						input(bool wait_message = true);
-	res::tokens				isevil(res::tokens evil, res::tokens good);
-	void					map(int x, int y, int* objects, int* route);
-	int						line(int x, int y, int width, icon* icons, int padding);
-	void					line(int x1, int y1, int x2, int y2, unsigned char color);
-	void					pixel(int x, int y, unsigned char color);
-	unsigned char*			ptr(int x, int y);
-	void					rectb(int x1, int y1, int x2, int y2, unsigned char color);
-	void					rectf(int x1, int y1, int x2, int y2, unsigned char color);
-	void					resize(int x, int y);
-	void					resource(int x, int y, cost& e);
-	void					resource(int x, int y, int ty, int id, int value);
-	void					route(int x, int y, int* rec, int w, int h, int distance);
-	void					shadow(int x1, int y1, int x2, int y2, int intense);
-	int						start();
-	void					status(const char* format, ...);
-	void					status(int x1, int y1, int x2, int y2);
-	int						sysinput(bool wait_input);
-	void					text(int x, int y, const char* string, int count = -1);
-	void					text(int x, int y, int width, justify jf, const char* string, int count = -1);
-	int						textbc(const char* string, int count, int width);
-	int						textf(int x, int y, int width, const char* text, bool calculate);
-	int						texth();
-	int						texth(const char* string, int width);
-	int						textm(int x, int y, int width, justify jf, const char* string);
-	void					textm(int x, int y, int width, int height, justify jf, const char* string);
-	int						textw(char ch);
-	int						textw(const char* string, int count = -1);
-	void					tiles(int x, int y, res::tokens icn, int* rec, int w, int h);
-	void					troops(int x, int y, int rec, int index);
-	void					troopsinput(int id);
-};
 struct gamefile
 {
 	char					file[32];
@@ -980,23 +990,23 @@ namespace combat
 		extern int			info;
 		extern bool			spells;
 	}
-	int						add(int id, int count, int side);
+	void					add(int id, int count, int side);
 	void					applyeffect(int rec, int effect, int value);
 	int						attack(int att, int def);
 	tokens					backward(tokens direction);
 	void					board(int attacker, int defender);
+	tokens					direction(int from, int to);
 	bool					canshoot(int rec, int target);
 	bool					canattack(int rec, int target, tokens direction);
 	bool					cast(int side, int sid, int cid, int pos, bool run, bool free);
 	int						combatant(int index);
-	extern int				damage;
 	int						opposition(int side);
 	bool					isenemy(int rec, int object);
 	bool					isattacker(int rec);
 	point					i2h(int index);
-	extern int				killed;
-	void					melee(int att, int def);
+	void					melee(int att, int def, bool interactive);
 	extern unsigned char	movements[ahd*awd];
+	void					move(int rec, int index, bool interactive);
 	int						move(int* result, int start, int target, int speed);
 	int						moveto(int index, int direction);
 	extern int				rounds;
@@ -1041,6 +1051,7 @@ namespace game
 	int						geteffect(int rec, int id);
 	int						getsummary(int rec, int id, int side);
 	bool					isboosted(int rec);
+	bool					ishideattack(int rec);
 	bool					ismeleearcher(int rec);
 	bool					ispenalized(int rec);
 }

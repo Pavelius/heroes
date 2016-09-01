@@ -28,45 +28,62 @@ struct til
 #pragma pack(pop)
 }
 
-static unsigned char        bits[draw::width*draw::height];
-static rect                 clipa = {0, 0, draw::width, draw::height};
-static rect                 status_rect;
-static char                 status_text[260];
-static char                 tooltips_text[260];
-extern unsigned char        pallette[256][4];
-extern unsigned char        pallette2[256];
-extern unsigned char        pallette3[256];
-extern unsigned char        pallette4[256];
-extern unsigned char        pallette_yellow[256];
-unsigned					draw::timestamp;
-int                         hot::param;
-int                         hot::param2;
-point                       hot::mouse;
-int                         hot::key;
-int                         hot::command;
-int                         hot::symbol;
-bool                        hot::pressed;
-int							draw::current::focus;
-int							draw::current::param;
+static unsigned char	bits[draw::width*draw::height];
+static rect             clipa = {0, 0, draw::width, draw::height};
+static rect             status_rect;
+static char             status_text[260];
+static char             tooltips_text[260];
+extern unsigned char    pallette[256][4];
+extern unsigned char    pallette2[256];
+extern unsigned char    pallette3[256];
+extern unsigned char    pallette4[256];
+extern unsigned char    pallette_yellow[256];
+unsigned				draw::timestamp;
+int                     hot::param;
+int                     hot::param2;
+point                   hot::mouse;
+int                     hot::key;
+int                     hot::command;
+int                     hot::symbol;
+bool                    hot::pressed;
+int						draw::current::focus;
+int						draw::current::param;
+
+int draw::isqrt(int num)
+{
+	int res = 0;
+	int bit = 1 << 30;
+	// "bit" starts at the highest power of four <= the argument.
+	while(bit > num)
+		bit >>= 2;
+	while(bit != 0)
+	{
+		if(num >= res + bit)
+		{
+			num -= res + bit;
+			res = (res >> 1) + bit;
+		}
+		else
+			res >>= 1;
+		bit >>= 2;
+	}
+	return res;
+}
 
 int	res::width(tokens res, int n)
 {
     icn* p = (icn*)get(res);
-    if(!p)
-        return 0;
-    if(n >= p->count)
-        return 0;
-    return p->records[n].width;
+	if(!p || !p->count)
+		return 0;
+	return p->records[n % p->count].width;
 }
 
 int	res::height(tokens res, int n)
 {
     icn* p = (icn*)get(res);
-    if(!p)
-        return 0;
-    if(n >= p->count)
-        return 0;
-    return p->records[n].height;
+	if(!p || !p->count)
+		return 0;
+	return p->records[n % p->count].height;
 }
 
 int res::frames(tokens res)
@@ -80,28 +97,34 @@ int res::frames(tokens res)
 int	res::ox(tokens res, int n)
 {
     icn* p = (icn*)get(res);
-    if(!p)
+    if(!p || !p->count)
         return 0;
-    if(n >= p->count)
-        return 0;
-    return p->records[n].x;
+    return p->records[n%p->count].x;
+}
+
+point res::offset(tokens res, int n)
+{
+	icn* p = (icn*)get(res);
+	if(!p || !p->count)
+		return{0, 0};
+	n = n % p->count;
+	return{p->records[n].x, p->records[n].y};
 }
 
 int	res::oy(tokens res, int n)
 {
     icn* p = (icn*)res::get(res);
-    if(!p)
-        return 0;
-    if(n >= p->count)
-        return 0;
-    return p->records[n].y;
+	if(!p || !p->count)
+		return 0;
+	return p->records[n%p->count].y;
 }
 
 rect res::box(int x, int y, res::tokens res, int n, unsigned flags)
 {
     icn* p = (icn*)get(res);
-    if(!p || n >= p->count)
-        return {0,0,0,0};
+	if(!p || !p->count)
+		return {0,0,0,0};
+	n = n % p->count;
     if((flags&AFNoOffset) == 0)
     {
         x += p->records[n].x;
@@ -819,6 +842,41 @@ draw::screenshoot::~screenshoot()
 void draw::screenshoot::restore()
 {
     memcpy(::bits, this->bits, width*height);
+}
+
+void draw::screenshoot::redraw(drawable** objects, unsigned timeout)
+{
+	restore();
+	dwpaint(objects, {0, 0, draw::width, draw::height}, {0, 0});
+	draw::input(false);
+	sleep(timeout);
+}
+
+void draw::screenshoot::redraw(drawable** objects, unsigned timeout, drawable* e1)
+{
+	auto a1 = static_cast<animation*>(e1);
+	while(true)
+	{
+		redraw(objects, timeout);
+		if(a1->incframe())
+			break;
+	}
+}
+
+void draw::screenshoot::redraw(drawable** objects, unsigned timeout, drawable* e1, drawable* e2)
+{
+	auto a1 = static_cast<animation*>(e1);
+	auto a2 = static_cast<animation*>(e2);
+	bool a1_run = true;
+	bool a2_run = true;
+	while(a1_run && a2_run)
+	{
+		redraw(objects, timeout);
+		if(a1->incframe())
+			a1_run = false;
+		if(a2->incframe())
+			a2_run = false;
+	}
 }
 
 void draw::cursor(res::tokens icn, int id, int ox, int oy)

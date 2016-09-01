@@ -8,19 +8,20 @@ struct leader : public animation
 		int player = bsget(rec, Player);
 		if(player >= PlayerBlue && player <= LastPlayer)
 		{
-			res::tokens icn = res::tokens(res::HEROFL00 + player -PlayerBlue);
-			draw::image(pos.x + screen.x, pos.y + screen.y, icn, (draw::timestamp/6) % 5, flags);
+			res::tokens icn = res::tokens(res::HEROFL00 + player - PlayerBlue);
+			draw::image(pos.x + screen.x, pos.y + screen.y, icn, (draw::timestamp / 200) % 5, flags);
 		}
 	}
 };
 
+const unsigned			combat_timeout = 1000 / 24;
 static res::tokens		back;
 static res::tokens		frng;
 static unsigned char	hexagon_color;
 bool					combat::setting::movement = true;
 bool					combat::setting::cursor = true;
-bool					combat::setting::grid = true;
-bool					combat::setting::index = false;
+bool					combat::setting::grid;
+bool					combat::setting::index;
 int						combat::setting::speed;
 int						combat::setting::info;
 bool					combat::setting::shadow = true;
@@ -181,9 +182,9 @@ static void hittest_grid()
 
 static void paint_grid(int rec)
 {
-	if(rec != -1 && combat::setting::shadow)
+	if(rec && combat::setting::shadow)
 	{
-		for(int rec= FirstCombatant; rec<=LastCombatant; rec++)
+		for(int rec = FirstCombatant; rec <= LastCombatant; rec++)
 		{
 			if(!bsget(rec, Type))
 				continue;
@@ -195,7 +196,7 @@ static void paint_grid(int rec)
 			draw::hexagonf(x, y, 0);
 		}
 	}
-	if(rec != -1 && combat::setting::movement)
+	if(rec && combat::setting::movement)
 	{
 		draw::fontsm push;
 		int radius = game::get(rec, Speed) - SpeedCrawling + 2;
@@ -218,7 +219,7 @@ static void paint_grid(int rec)
 			}
 		}
 	}
-	if(combat::setting::cursor)
+	if(rec && combat::setting::cursor)
 	{
 		if(hilite_index != -1)
 		{
@@ -236,7 +237,7 @@ static void paint_grid(int rec)
 			draw::hexagon(x, y, hexagon_color);
 		}
 	}
-	if(combat::setting::index)
+	if(rec && combat::setting::index)
 	{
 		draw::fontsm push;
 		for(int i = 0; i < combat::awd*combat::ahd; i++)
@@ -312,7 +313,8 @@ static void paint_field(int rec, drawable** objects)
 	paint_grid(rec);
 	if(frng != res::Empthy)
 		draw::image(0, 0, frng, 0);
-	dwpaint(objects, {0, 0, 640, 480}, {0, 0});
+	if(objects)
+		dwpaint(objects, {0, 0, 640, 480}, {0, 0});
 }
 
 static int missile9(int dx, int dy)
@@ -405,16 +407,151 @@ int show::battle::target(int side, int sid)
 	}
 }
 
-void show::battle::shoot(int rec, int target)
+void show::battle::shoot(int rec, int enemy)
 {
+	drawable* objects[64];
+	select_animation(objects);
+	paint_field(0, 0);
+	auto pa = animation::find(objects, rec);
+	auto pe = animation::find(objects, enemy);
+	if(!pa || !pe)
+		return;
+	int i1 = bsget(rec, Index);
+	int i2 = bsget(enemy, Index);
 }
 
 void show::battle::fly(int rec, int target)
 {
 }
 
+void show::battle::attack(int rec, int enemy, int damage)
+{
+	drawable* objects[64];
+	select_animation(objects);
+	paint_field(0, 0);
+	auto pa = animation::find(objects, rec);
+	auto pe = animation::find(objects, enemy);
+	if(!pa || !pe)
+		return;
+	int i1 = bsget(rec, Index);
+	int i2 = bsget(enemy, Index);
+	auto d = combat::direction(i1, i2);
+	draw::screenshoot screen;
+	unsigned pa_flags = pa->flags;
+	unsigned pe_flags = pe->flags;
+	if(d == HexLeft || d == HexLeftUp || d == HexLeftDown)
+	{
+		pa->flags = AFMirror;
+		pe->flags = 0;
+	}
+	else
+	{
+		pa->flags = 0;
+		pe->flags = AFMirror;
+	}
+	pa->setaction(Attack, 0);
+	if(pa->count)
+		screen.redraw(objects, combat_timeout, pa);
+	if(d == HexRightUp || d == HexLeftUp)
+		pa->setaction(Attack, 1);
+	else if(d == HexRightDown || d == HexLeftDown)
+		pa->setaction(Attack, 3);
+	else
+		pa->setaction(Attack, 2);
+	screen.redraw(objects, combat_timeout, pa);
+	pa->setaction(ActorWarn);
+	pe->setaction(ActorWarn);
+	combat::applydamage(enemy, damage);
+	screen.redraw(objects, combat_timeout, pe);
+	pa->flags = pa_flags;
+	pe->flags = pe_flags;
+}
+
+inline int sin_a(int a)
+{
+	return a * 38 / 43;
+}
+
+inline int cos_a(int a)
+{
+	return a * 22 / 43;
+}
+
 void show::battle::move(int rec, int target)
 {
+	int steps[64];
+	drawable* objects[64];
+	select_animation(objects);
+	paint_field(0, 0);
+	auto pa = animation::find(objects, rec);
+	if(!pa)
+		return;
+	draw::screenshoot screen;
+	int count = combat::move(steps, bsget(rec, Index), target, game::get(rec, Speed));
+	for(int i = count - 1; i >= 0; i--)
+	{
+		int i1 = bsget(rec, Index);
+		int i2 = steps[i];
+		auto d = combat::direction(i1, i2);
+		pa->setaction(Move, d);
+		if(i != count - 1)
+			pa->frame++;
+		unsigned old_flags = pa->flags;
+		point move_base = res::offset(pa->icn, pa->frame);
+		point move_start = pa->pos;
+		if(d == HexLeft || d == HexLeftUp || d == HexLeftDown)
+		{
+			pa->flags = AFNoOffset | AFMirror;
+			move_start.x -= move_base.x;
+		}
+		else
+		{
+			pa->flags = AFNoOffset;
+			move_start.x += move_base.x;
+		}
+		move_start.y += move_base.y;
+		while(true)
+		{
+			point pt = res::offset(pa->icn, pa->frame) - move_base;
+			// cosA = 22/44 or 1/2
+			// sinA = 38/44 or 19/22
+			if(d == HexLeft)
+			{
+				pa->pos.x = move_start.x - pt.x;
+				pa->pos.y = move_start.y + pt.y;
+			}
+			else if(d == HexRight)
+			{
+				pa->pos.x = move_start.x + pt.x;
+				pa->pos.y = move_start.y + pt.y;
+			}
+			else if(d == HexRightUp)
+			{
+				pa->pos.x = move_start.x + (cos_a(pt.x) - sin_a(pt.y));
+				pa->pos.y = move_start.y - (sin_a(pt.x) - cos_a(pt.y));
+			}
+			else if(d == HexRightDown)
+			{
+				pa->pos.x = move_start.x + (cos_a(pt.x) - sin_a(pt.y));
+				pa->pos.y = move_start.y + (sin_a(pt.x) - cos_a(pt.y));
+			}
+			else if(d == HexLeftUp)
+			{
+				pa->pos.x = move_start.x - (cos_a(pt.x) - sin_a(pt.y));
+				pa->pos.y = move_start.y - (sin_a(pt.x) - pt.y/2);
+			}
+			else if(d == HexLeftDown)
+			{
+				pa->pos.x = move_start.x - (cos_a(pt.x) - sin_a(pt.y));
+				pa->pos.y = move_start.y + (sin_a(pt.x) - pt.y/2);
+			}
+			screen.redraw(objects, combat_timeout);
+			if(pa->incframe())
+				break;
+		}
+		pa->flags = old_flags;
+		combat::setindex(rec, i2);
+	}
 }
 
 int show::battle::unit(int rec, int casted)

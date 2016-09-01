@@ -178,18 +178,6 @@ static int object_get(int rec, int id)
 		default:
 			return 0;
 		}
-	case HideAttack:
-		switch(rec)
-		{
-		case Sprite:
-		case Hydra:
-		case Vampire:
-		case VampireLord:
-		case Rogue:
-			return 1;
-		default:
-			return 0;
-		}
 	case TwiceAttack:
 		switch(rec)
 		{

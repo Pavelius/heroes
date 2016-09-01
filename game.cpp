@@ -331,8 +331,25 @@ bool game::ismeleearcher(int rec)
 	case ArchMage:
 	case Lich:
 	case PowerLich:
-		return 1;
+		return true;
 	default:
-		return 0;
+		return false;
+	}
+}
+
+bool game::ishideattack(int rec)
+{
+	if(rec >= FirstCombatant && rec <= LastCombatant)
+		rec = bsget(rec, Type);
+	switch(rec)
+	{
+	case Sprite:
+	case Hydra:
+	case Vampire:
+	case VampireLord:
+	case Rogue:
+		return true;
+	default:
+		return false;
 	}
 }

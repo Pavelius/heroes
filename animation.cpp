@@ -27,7 +27,7 @@ struct combat_monsters_info
 combat_monsters_info combat_monsters[] =
 {
 	// Knight
-	{res::PEASANT, {1, 4}, {5, 8}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {16, 6}, {22, 6}, {28, 6}, {13, 3}, {34, 4}, res::WavPSNTATTK, res::WavPSNTKILL, res::WavPSNTMOVE, res::WavPSNTWNCE},
+	{res::PEASANT, {1, 4}, {5, 8}, /*Fly*/{0, 0}, {0, 0}, {0, 0}, /*Shoot*/{0, 0}, {0, 0}, {0, 0}, {0, 0}, /*Attack*/{0, 0}, {16, 6}, {22, 6}, {28, 6}, {13, 3}, {34, 4}, res::WavPSNTATTK, res::WavPSNTKILL, res::WavPSNTMOVE, res::WavPSNTWNCE},
 	{res::ARCHER, {1, 4}, {5, 8}, {0, 0}, {0, 0}, {0, 0}, {16, 4}, {20, 4}, {24, 4}, {28, 4}, {32, 4}, {36, 3}, {39, 3}, {42, 3}, {13, 3}, {45, 6}, res::WavARCHATTK, res::WavARCHKILL, res::WavARCHMOVE, res::WavARCHWNCE},
 	{res::ARCHER2, {1, 4}, {5, 8}, {0, 0}, {0, 0}, {0, 0}, {16, 4}, {20, 4}, {24, 4}, {28, 4}, {32, 4}, {36, 3}, {39, 3}, {42, 3}, {13, 3}, {45, 6}, res::WavARCHATTK, res::WavARCHKILL, res::WavARCHMOVE, res::WavARCHWNCE},
 	{res::PIKEMAN, {1, 4}, {5, 8}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {17, 3}, {20, 4}, {24, 6}, {13, 4}, {30, 6}, res::WavPIKEATTK, res::WavPIKEKILL, res::WavPIKEMOVE, res::WavPIKEWNCE},
@@ -39,7 +39,7 @@ combat_monsters_info combat_monsters[] =
 	{res::PALADIN, {1, 11}, {12, 8}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {20, 2}, {22, 3}, {25, 3}, {28, 3}, {31, 2}, {34, 5}, res::WavPLDNATTK, res::WavPLDNKILL, res::WavPLDNMOVE, res::WavPLDNWNCE},
 	{res::PALADIN2, {1, 11}, {12, 8}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {20, 2}, {22, 3}, {25, 3}, {28, 3}, {31, 2}, {34, 5}, res::WavPLDNATTK, res::WavPLDNKILL, res::WavPLDNMOVE, res::WavPLDNWNCE},
 	// Barbarian
-	{res::GOBLIN, {33, 7}, {1, 9}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {10, 3}, {17, 4}, {13, 4}, {21, 4}, {25, 4}, {29, 4}, res::WavGBLNATTK, res::WavGBLNKILL, res::WavGBLNMOVE, res::WavGBLNWNCE},
+	{res::GOBLIN, {33, 7}, {1, 9}, /*Fly*/{0, 0}, {0, 0}, {0, 0}, /*Shoot*/{0, 0}, {0, 0}, {0, 0}, {0, 0}, /*Attack*/{10, 3}, {17, 4}, {13, 4}, {21, 4}, {25, 4}, {29, 4}, res::WavGBLNATTK, res::WavGBLNKILL, res::WavGBLNMOVE, res::WavGBLNWNCE},
 	{res::ORC, {1, 4}, {5, 8}, {0, 0}, {0, 0}, {0, 0}, {16, 13}, {0, 0}, {0, 0}, {0, 0}, {28, 2}, {30, 3}, {33, 4}, {37, 3}, {13, 3}, {40, 4}, res::WavORC_ATTK, res::WavORC_KILL, res::WavORC_MOVE, res::WavORC_WNCE},
 	{res::ORC2, {1, 4}, {5, 8}, {0, 0}, {0, 0}, {0, 0}, {16, 13}, {0, 0}, {0, 0}, {0, 0}, {28, 2}, {30, 3}, {33, 4}, {37, 3}, {13, 3}, {40, 4}, res::WavORC_ATTK, res::WavORC_KILL, res::WavORC_MOVE, res::WavORC_WNCE},
 	{res::WOLF, {20, 6}, {7, 6}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {13, 3}, {2, 5}, {16, 4}, {26, 3}, {28, 5}, res::WavWOLFATTK, res::WavWOLFKILL, res::WavWOLFMOVE, res::WavWOLFWNCE},
@@ -107,6 +107,8 @@ combat_monsters_info combat_monsters[] =
 	{res::Empthy, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, res::Empthy, res::Empthy, res::Empthy, res::Empthy},
 };
 
+const unsigned animation_rate = 1000 / 8;
+
 animation::animation() :icn(res::Empthy), frame(0), start(0), count(0), stamp(0), flags(0)
 {
 	rec = 0;
@@ -151,6 +153,7 @@ void animation::painting(point pt) const
 
 void animation::set(int id, int value, int param)
 {
+	stamp = draw::timestamp;
 	if(id >= Peasant && id <= MonsterRnd)
 	{
 		combat_monsters_info& e = combat_monsters[id - Peasant];
@@ -187,10 +190,6 @@ void animation::set(int id, int value, int param)
 			start = e.move[0];
 			count = e.move[1];
 			break;
-		case Dead:
-			start = e.kill[0] + e.kill[1] - 1;
-			count = 1;
-			break;
 		case Damage:
 			start = e.wcne[0];
 			count = e.wcne[1];
@@ -200,8 +199,25 @@ void animation::set(int id, int value, int param)
 			count = e.kill[1];
 			break;
 		case Attack:
-			start = e.attk2[0];
-			count = e.attk2[1];
+			switch(param)
+			{
+			case 0:
+				start = e.attk0[0];
+				count = e.attk0[1];
+				break;
+			case 1:
+				start = e.attk1[0];
+				count = e.attk1[1];
+				break;
+			case 2:
+				start = e.attk2[0];
+				count = e.attk2[1];
+				break;
+			default:
+				start = e.attk3[0];
+				count = e.attk3[1];
+				break;
+			}
 			break;
 		case Shoot:
 			start = e.shot0[0];
@@ -573,14 +589,23 @@ void animation::set(int id, int value, int param)
 	frame = start;
 }
 
+bool animation::incframe()
+{
+	if(++frame >= start + count)
+	{
+		frame = start;
+		return true;
+	}
+	return false;
+}
+
 void animation::update()
 {
 	if(!stamp)
 		stamp = draw::timestamp;
 	while(draw::timestamp > stamp)
 	{
-		if(++frame >= start + count)
-			frame = start;
+		incframe();
 		stamp += getrate();
 	}
 }
@@ -600,11 +625,23 @@ rect animation::getrect() const
 	return result;
 }
 
-int animation::line(point* result, int x1, int y1, int x2, int y2, int step)
+point animation::getoffset(int start) const
+{
+	point result = {0, 0};
+	if(start == -1)
+		start = this->start;
+	for(int i = start; i < frame; i++)
+	{
+		result.x = res::ox(icn, i);
+		result.y = res::oy(icn, i);
+	}
+	return result;
+}
+
+void animation::move(int x1, int y1, int x2, int y2, int step)
 {
 	const int dx = iabs(x2 - x1);
 	const int dy = iabs(y2 - y1);
-	point* p = result;
 	int ns = (dx > dy ? dx : dy) / 2;
 	for(int i = 0; i <= (dx > dy ? dx : dy); i++)
 	{
@@ -631,12 +668,21 @@ int animation::line(point* result, int x1, int y1, int x2, int y2, int step)
 				ns += dy;
 			}
 		}
-		if(0 == (i % step))
+		if((i % step)==0)
 		{
-			p->x = x1;
-			p->y = y1;
-			p++;
+			//pos.x = x1;
+			//pos.y = y1;
 		}
 	}
-	return p - result;
+}
+
+animation* animation::find(drawable** objects, int rec)
+{
+	while(*objects)
+	{
+		if((*objects)->getid() == rec)
+			return static_cast<animation*>(*objects);
+		objects++;
+	}
+	return 0;
 }

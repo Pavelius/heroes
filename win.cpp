@@ -272,6 +272,11 @@ bool draw::create(const char* title, int frames_per_second, bool fullscreen)
 	return true;
 }
 
+void sleep(unsigned ms)
+{
+	Sleep(ms);
+}
+
 static void update(HWND hwnd)
 {
 	if(!IsWindowVisible((HWND)hwnd))
@@ -329,18 +334,4 @@ int draw::sysinput(bool wait_message)
 		}
 		return InputResize;
 	}
-}
-
-int main()
-{
-	int result = draw::start();
-	//if(window_fullscreen)
-	//	ChangeDisplaySettings(0, 0);
-	ShowCursor(1);
-	return result;
-}
-
-int __stdcall WinMain(void* ci, void* pi, char* cmd, int sw)
-{
-	return main();
 }

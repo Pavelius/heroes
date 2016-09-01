@@ -27,11 +27,11 @@ static struct combatant : public animation
 
 	void painting(point pt) const override
 	{
-		animation::painting(pt);
+		draw::image(pt.x + pos.x, pt.y + pos.y, icn, frame, flags);
 		// Draw count
 		int rec = getid();
 		int count = game::get(rec, Count);
-		if(count)
+		if(count && action != Move)
 		{
 			draw::fontsm push;
 			char temp[32];
@@ -43,46 +43,39 @@ static struct combatant : public animation
 			int y1 = y;
 			if(combat::isattacker(rec))
 			{
-				y1 -= res::height(res::TEXTBAR, frame);
 				x1 += 12;
+				y1 -= res::height(res::TEXTBAR, frame);
 			}
 			else
+			{
 				x1 -= 32;
+				y1 -= res::height(res::TEXTBAR, frame) * 2;
+			}
 			draw::image(x1, y1, res::TEXTBAR, frame);
 			draw::text(x1 + (res::width(res::TEXTBAR, frame) - draw::textw(temp)) / 2, y1 + 2, temp);
 		}
 	}
 
-	void setaction(tokens action)
+	void setaction(tokens action, int param = 0) override
 	{
+		set(rec, action, param);
 		this->action = action;
-		if(!combat::isattacker(side))
-			flags = AFMirror;
-		else
-			flags = 0;
-		set(rec, action, 0);
-		stamp = clock();
 	}
 
-	void update() override
+	bool incframe() override
 	{
-		unsigned tm = clock();
-		if(!stamp)
-			stamp = tm;
-		while(tm > stamp)
+		if(++frame >= start + count)
 		{
-			if(++frame >= start + count)
-			{
-				frame = start;
-				if(action == Damage)
-					setaction(ActorWarn);
-				else if(action == Killed)
-					setaction(Dead);
-				else
-					stamp += xrand(2, 5) * 1000;
-			}
-			stamp += getrate();
+			frame = start;
+			if(action == Killed)
+				frame = start + count - 1;
+			else if(action != ActorWarn)
+				setaction(ActorWarn);
+			else
+				stamp += xrand(2, 5) * 1000;
+			return true;
 		}
+		return false;
 	}
 
 } objects[LastCombatant - FirstCombatant + 1];
@@ -92,7 +85,7 @@ static bsmeta::field fields[] = {
 	BSREQ(combatant, side, Side, Number),
 	BSREQ(combatant, hits, HitPoints, Number),
 	BSREQ(combatant, moved, AlreadyMoved, Number),
-	BSREQ(combatant, defended, Defence, Number),
+	BSREQ(combatant, defended, AlreadyDefended, Number),
 	BSREQ(combatant, shoots, Shoots, Number),
 	{0}
 };
@@ -113,6 +106,11 @@ void combat::setindex(int rec, int index)
 	auto& e = objects[rec - FirstCombatant];
 	e.index = index;
 	e.pos = combat::i2h(index);
+	e.pos.y += 12;
+	if(!combat::isattacker(e.side))
+		e.flags = AFMirror;
+	else
+		e.flags = 0;
 	setaction(rec, ActorWarn);
 }
 

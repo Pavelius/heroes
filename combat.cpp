@@ -2,8 +2,6 @@
 
 static int			attacker, defender;
 static int			combat_order[LastCombatant - FirstCombatant + 2];
-int					combat::damage;
-int					combat::killed;
 unsigned char		combat::movements[combat::ahd*combat::awd];
 int					combat::rounds;
 static int			casting[2];
@@ -43,33 +41,45 @@ int combat::attack(int att, int def)
 	return correct_damage(result);
 }
 
-void combat::melee(int att, int def)
+void combat::melee(int att, int def, bool interactive)
 {
 	int result = attack(att, def);
 	if(bsget(att, Shoots) && !game::ismeleearcher(att))
 	{
-		damage /= 2;
+		result /= 2;
 		result = correct_damage(result);
 	}
-	applydamage(def, result);
-	if(game::get(def, CanDefend) && !bsget(att, HideAttack)
+	if(interactive)
+		show::battle::attack(att, def, result);
+	else
+		applydamage(def, result);
+	if(!game::get(def, Count))
+		return;
+	if(bsget(def, AlreadyDefended)==0
+		&& !game::ishideattack(att)
 		&& (bsget(def, AllAttackAnswer) || !bsget(def, DefendThisTurn)))
 	{
+		bsadd(def, AlreadyDefended, 1);
 		result = attack(def, att);
-		bsset(def, DefendThisTurn, 1);
 		if(bsget(def, Shoots) && !bsget(def, MeleeArcher))
 		{
-			damage /= 2;
+			result /= 2;
 			result = correct_damage(result);
 		}
-		applydamage(att, result);
+		if(interactive)
+			show::battle::attack(def, att, result);
+		else
+			applydamage(att, result);
 		if(!game::get(att, Count))
 			return;
 	}
 	if(bsget(att, TwiceAttack) && !bsget(att, Shoots))
 	{
 		result = attack(att, def);
-		bsset(def, Damage, 2);
+		if(interactive)
+			show::battle::attack(att, def, result);
+		else
+			applydamage(att, result);
 	}
 }
 
@@ -141,13 +151,10 @@ bool combat::isenemy(int rec, int object)
 
 void combat::applydamage(int rec, int value)
 {
-	combat::killed = 0;
 	if(!value)
 		return;
 	// Calculate killed
-	int m = game::get(rec, Count);
 	bsadd(rec, HitPoints, -value, 0);
-	combat::killed = m - game::get(rec, Count);
 	// RULE: clean all mind-affect spells when damaged
 	bsset(rec, SpellBlind, 0);
 	bsset(rec, SpellParalyze, 0);
@@ -156,12 +163,7 @@ void combat::applydamage(int rec, int value)
 	bsset(rec, SpellHypnotize, 0);
 	// Make visible effect
 	if(!bsget(rec, HitPoints))
-	{
-		if(m)
-			setaction(rec, Killed);
-		else
-			setaction(rec, Dead);
-	}
+		setaction(rec, Killed);
 	else
 		setaction(rec, Damage);
 }
@@ -204,7 +206,7 @@ static void prepare_index()
 	}
 }
 
-static void add_unit(int id, int count, int side)
+void combat::add(int id, int count, int side)
 {
 	if(count <= 0)
 		return;
@@ -225,7 +227,7 @@ static void add_army(int id, int count, int side)
 	{
 		if(mcount > count)
 			mcount = count;
-		add_unit(id, mcount, side);
+		combat::add(id, mcount, side);
 		count -= mcount;
 		if(!count)
 			break;
@@ -246,7 +248,7 @@ static void add_army(int rec)
 			int u = bsget(rec, i);
 			if(!u)
 				continue;
-			add_unit(u, bsget(rec, i + 1), rec);
+			combat::add(u, bsget(rec, i + 1), rec);
 		}
 	}
 	else if(rec >= FirstMoveable && rec <= LastMoveable)
@@ -337,7 +339,7 @@ static int closest_unit(int rec, int side = -1)
 	return -1;
 }
 
-static void move_to_index(int rec, int index, bool interactive)
+void combat::move(int rec, int index, bool interactive)
 {
 	if(interactive)
 	{
@@ -357,6 +359,7 @@ static void shoot_creature(int attacker, int defender, bool interactive)
 
 static int make_turn(bool interactive)
 {
+	int enemy, index;
 	for(int i = SpeedUltraFast; i >= SpeedCrawling; i--)
 	{
 		for(unsigned rec = FirstCombatant; rec <= LastCombatant; rec++)
@@ -370,8 +373,7 @@ static int make_turn(bool interactive)
 				continue;
 			if(!game::get(rec, Count))
 				continue;
-			int index = bsget(rec, Index);
-			combat::wave(index,
+			combat::wave(bsget(rec, Index),
 				bsget(rec, Wide) != 0,
 				bsget(rec, Fly) != 0);
 			int id = 0;
@@ -415,16 +417,17 @@ static int make_turn(bool interactive)
 			case Skip:
 				break;
 			case Move:
-				move_to_index(rec, hot::param, interactive);
+				combat::move(rec, hot::param, interactive);
 				break;
 			case Shoot:
 				shoot_creature(rec, hot::param, interactive);
 				combat::shoot(rec, hot::param);
 				break;
 			case Attack:
-				// TODO: Animation for moving and attack.
-				move_to_index(rec, hot::param2, interactive);
-				combat::melee(rec, hot::param);
+				enemy = hot::param;
+				index = hot::param2;
+				combat::move(rec, index, interactive);
+				combat::melee(rec, enemy, interactive);
 				break;
 			case RunAway:
 				return RunAway;

@@ -167,8 +167,8 @@ bool combat::cast(int side, int sid, int cid, int pos, bool run, bool free)
 	case SpellColdRay:
 		if(run)
 		{
-			combat::damage = bsget(sid, SpellPower)*bsget(side, SpellPower);
-			bsset(cid, Damage, 1);
+			int result = bsget(sid, SpellPower)*bsget(side, SpellPower);
+			combat::applydamage(cid, result);
 		}
 		break;
 	case SpellColdRing:
@@ -201,46 +201,46 @@ bool combat::cast(int side, int sid, int cid, int pos, bool run, bool free)
 	case SpellDeathWave:
 		if(!select_squads(su,-1,0))
 			return false;
-		combat::damage = bsget(sid, SpellPower)*bsget(side, SpellPower);
+		m = bsget(sid, SpellPower)*bsget(side, SpellPower);
 		for(auto e : su)
 		{
 			if(!e)
 				break;
-			bsset(e, Damage, 1);
+			combat::applydamage(e, m);
 		}
 		break;
 	case SpellHolyWord:
 	case SpellHolyShout:
 		if(!select_squads(su,-1,1))
 			return false;
-		combat::damage = bsget(sid, SpellPower)*bsget(side, SpellPower);
+		m = bsget(sid, SpellPower)*bsget(side, SpellPower);
 		for(auto e : su)
 		{
 			if(!e)
 				break;
-			bsset(cid, Damage, 1);
+			combat::applydamage(e, m);
 		}
 		break;
 	case SpellArmagedon:
 		if(!select_squads(su))
 			return false;
-		combat::damage = bsget(sid, SpellPower)*bsget(side, SpellPower);
+		m = bsget(sid, SpellPower)*bsget(side, SpellPower);
 		for(auto e : su)
 		{
 			if(!e)
 				break;
-			bsset(cid, Damage, 1);
+			combat::applydamage(e, m);
 		}
 		break;
 	case SpellElementalStorm:
 		if(!select_squads(su,-1,-1,-1,0,-1))
 			return false;
-		combat::damage = bsget(sid, SpellPower)*bsget(side, SpellPower);
+		m = bsget(sid, SpellPower)*bsget(side, SpellPower);
 		for(auto e : su)
 		{
 			if(!e)
 				break;
-			bsset(cid, Damage, 1);
+			combat::applydamage(e, m);
 		}
 		break;
 	default:

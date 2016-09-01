@@ -38,27 +38,38 @@ tokens combat::backward(tokens direction)
 	}
 }
 
-static tokens gnode(int index, int start)
+static int gnode(int index, int start)
 {
 	static const tokens directions[] = {HexLeftUp, HexRightDown, HexLeftDown, HexRightUp, HexLeft, HexRight};
-	tokens d1 = Empthy;
-	unsigned m1 = 255*255;
+	int r1 = -1;
+	unsigned char m1 = 255;
 	for(auto d : directions)
 	{
 		int i1 = combat::moveto(index, d);
 		if(i1==-1)
 			continue;
 		if(i1==start)
-			return d;
+			return i1;
 		if(combat::movements[i1]>=BlockSquad)
 			continue;
 		if(combat::movements[i1]<m1)
 		{
 			m1 = combat::movements[i1];
-			d1 = d;
+			r1 = i1;
 		}
 	}
-	return d1;
+	return r1;
+}
+
+tokens combat::direction(int from, int to)
+{
+	static tokens dir[] = {HexRight, HexLeft, HexLeftUp, HexLeftDown, HexRightUp, HexRightDown};
+	for(auto d : dir)
+	{
+		if(moveto(from, d) == to)
+			return d;
+	}
+	return Empthy;
 }
 
 int combat::moveto(int index, int direction)
@@ -156,10 +167,9 @@ int combat::move(int* result, int start, int target, int speed)
 	{
 		if(movements[target] && movements[target]<=speed)
 			*p++ = target;
-		tokens d = gnode(target, start);
-		if(d==Empthy)
+		target = gnode(target, start);
+		if(target ==-1)
 			return 0;
-		target = moveto(target, d);
 	}
 	return p - result;
 }
