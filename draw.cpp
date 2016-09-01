@@ -847,6 +847,7 @@ void draw::screenshoot::restore()
 void draw::screenshoot::redraw(drawable** objects, unsigned timeout)
 {
 	restore();
+	dworder(objects, zlen(objects));
 	dwpaint(objects, {0, 0, draw::width, draw::height}, {0, 0});
 	draw::input(false);
 	sleep(timeout);

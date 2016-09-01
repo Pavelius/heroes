@@ -83,19 +83,30 @@ void combat::melee(int att, int def, bool interactive)
 	}
 }
 
-void combat::shoot(int att, int def)
+void combat::shoot(int att, int def, bool interactive)
 {
 	int result = attack(att, def);
 	// RULE: Spell Shield implementation.
 	if(bsget(def, SpellShield))
 		result = correct_damage(result / 2);
-	applydamage(def, result);
 	bsadd(att, Shoots, -1, 0);
+	if(interactive)
+		show::battle::shoot(att, def, result);
+	else
+		applydamage(def, result);
 }
 
 int combat::combatant(int index)
 {
-	return bsfind(FirstCombatant, Index, index);
+	int last = bsget(FirstCombatant, Last);
+	for(int rec = FirstCombatant; rec <= last; rec++)
+	{
+		if(bsget(rec, HitPoints) == 0)
+			continue;
+		if(bsget(rec, Index) == index)
+			return rec;
+	}
+	return 0;
 }
 
 static bool enemypos(int index, int rec)
@@ -351,12 +362,6 @@ void combat::move(int rec, int index, bool interactive)
 	combat::setindex(rec, index);
 }
 
-static void shoot_creature(int attacker, int defender, bool interactive)
-{
-	if(interactive)
-		show::battle::shoot(attacker, defender);
-}
-
 static int make_turn(bool interactive)
 {
 	int enemy, index;
@@ -420,8 +425,7 @@ static int make_turn(bool interactive)
 				combat::move(rec, hot::param, interactive);
 				break;
 			case Shoot:
-				shoot_creature(rec, hot::param, interactive);
-				combat::shoot(rec, hot::param);
+				combat::shoot(rec, hot::param, interactive);
 				break;
 			case Attack:
 				enemy = hot::param;

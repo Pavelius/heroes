@@ -686,6 +686,14 @@ namespace draw
 };
 struct animation : public drawable
 {
+	struct state
+	{
+		state(animation* a);
+		~state();
+	private:
+		animation*			a;
+		unsigned			flags;
+	};
 	int						rec;
 	point				    pos;
 	res::tokens			    icn;
@@ -708,6 +716,7 @@ struct animation : public drawable
 	bool					islast() const { return frame == (start + count - 1); }
 	void					move(int x1, int y1, int x2, int y2, int step);
 	void				    painting(point screen) const override;
+	int						priority() const override { return rec; }
 	void				    set(int rec, int action, int param = 0);
 	virtual void			setaction(tokens action, int param = 0) { set(rec, action, param); }
 	void					update() override;
@@ -720,7 +729,7 @@ namespace show
 		int					dialog(int side); // dialog surrender, cast, flee
 		void				fly(int rec, int target);
 		void				move(int rec, int target);
-		void				shoot(int rec, int target);
+		void				shoot(int rec, int target, int damage);
 		int					target(int side, int spell);
 		int					unit(int rec, int casted);
 	}
@@ -1012,7 +1021,7 @@ namespace combat
 	extern int				rounds;
 	void					setaction(int rec, tokens action);
 	void					setindex(int rec, int index);
-	void					shoot(int att, int def);
+	void					shoot(int att, int def, bool interactive);
 	void					start(int attacker, int defender);
 	void					applydamage(int rec, int value);
 	void					wave(int start, bool wide, bool fly);

@@ -686,3 +686,19 @@ animation* animation::find(drawable** objects, int rec)
 	}
 	return 0;
 }
+
+animation::state::state(animation* a) : a(a), flags(0)
+{
+	if(a)
+	{
+		flags = a->flags;
+	}
+}
+
+animation::state::~state()
+{
+	if(a)
+	{
+		a->flags = flags;
+	}
+}

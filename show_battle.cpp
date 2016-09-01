@@ -41,6 +41,16 @@ static int i2y(int index)
 	return 20 + 85 + ((cell_hd / 4) * 3 - 1) * (index / combat::awd);
 }
 
+inline int sin_a(int a)
+{
+	return a * 38 / 43;
+}
+
+inline int cos_a(int a)
+{
+	return a * 22 / 43;
+}
+
 point combat::i2h(int index)
 {
 	return{(short)i2x(index), (short)i2y(index)};
@@ -289,7 +299,6 @@ static void select_animation(drawable** objects)
 	dwselect(zend(objects), 1);
 	zcat(objects, static_cast<drawable*>(&attacker_leader));
 	zcat(objects, static_cast<drawable*>(&defender_leader));
-	dworder(objects, zlen(objects));
 }
 
 static void paint_field(int rec, drawable** objects)
@@ -314,7 +323,10 @@ static void paint_field(int rec, drawable** objects)
 	if(frng != res::Empthy)
 		draw::image(0, 0, frng, 0);
 	if(objects)
+	{
+		dworder(objects, zlen(objects));
 		dwpaint(objects, {0, 0, 640, 480}, {0, 0});
+	}
 }
 
 static int missile9(int dx, int dy)
@@ -407,7 +419,7 @@ int show::battle::target(int side, int sid)
 	}
 }
 
-void show::battle::shoot(int rec, int enemy)
+void show::battle::shoot(int rec, int enemy, int damage)
 {
 	drawable* objects[64];
 	select_animation(objects);
@@ -416,8 +428,12 @@ void show::battle::shoot(int rec, int enemy)
 	auto pe = animation::find(objects, enemy);
 	if(!pa || !pe)
 		return;
+	draw::screenshoot screen;
+	animation::state a1(pa);
 	int i1 = bsget(rec, Index);
 	int i2 = bsget(enemy, Index);
+	combat::applydamage(enemy, damage);
+	screen.redraw(objects, combat_timeout, pe);
 }
 
 void show::battle::fly(int rec, int target)
@@ -437,8 +453,8 @@ void show::battle::attack(int rec, int enemy, int damage)
 	int i2 = bsget(enemy, Index);
 	auto d = combat::direction(i1, i2);
 	draw::screenshoot screen;
-	unsigned pa_flags = pa->flags;
-	unsigned pe_flags = pe->flags;
+	animation::state a1(pa);
+	animation::state a2(pe);
 	if(d == HexLeft || d == HexLeftUp || d == HexLeftDown)
 	{
 		pa->flags = AFMirror;
@@ -463,18 +479,6 @@ void show::battle::attack(int rec, int enemy, int damage)
 	pe->setaction(ActorWarn);
 	combat::applydamage(enemy, damage);
 	screen.redraw(objects, combat_timeout, pe);
-	pa->flags = pa_flags;
-	pe->flags = pe_flags;
-}
-
-inline int sin_a(int a)
-{
-	return a * 38 / 43;
-}
-
-inline int cos_a(int a)
-{
-	return a * 22 / 43;
 }
 
 void show::battle::move(int rec, int target)
@@ -486,6 +490,7 @@ void show::battle::move(int rec, int target)
 	auto pa = animation::find(objects, rec);
 	if(!pa)
 		return;
+	animation::state a1(pa);
 	draw::screenshoot screen;
 	int count = combat::move(steps, bsget(rec, Index), target, game::get(rec, Speed));
 	for(int i = count - 1; i >= 0; i--)
@@ -496,7 +501,6 @@ void show::battle::move(int rec, int target)
 		pa->setaction(Move, d);
 		if(i != count - 1)
 			pa->frame++;
-		unsigned old_flags = pa->flags;
 		point move_base = res::offset(pa->icn, pa->frame);
 		point move_start = pa->pos;
 		if(d == HexLeft || d == HexLeftUp || d == HexLeftDown)
@@ -549,7 +553,6 @@ void show::battle::move(int rec, int target)
 			if(pa->incframe())
 				break;
 		}
-		pa->flags = old_flags;
 		combat::setindex(rec, i2);
 	}
 }
@@ -566,7 +569,7 @@ int show::battle::unit(int rec, int casted)
 		{
 			int radius = game::get(rec, Speed) - SpeedCrawling + 2;
 			int hilite_combatant = combat::combatant(hilite_index);
-			if(hilite_combatant)
+			if(hilite_combatant && game::get(hilite_combatant, Count))
 			{
 				if(combat::canshoot(rec, hilite_combatant))
 					action(cursor, Shoot, hilite_combatant);
@@ -581,16 +584,11 @@ int show::battle::unit(int rec, int casted)
 						action(cursor, Attack, hilite_combatant, d);
 					}
 				}
-				else
-					cursor.set(CursorCombat, Information);
-			}
-			else if(combat::movements[hilite_index] < BlockSquad && combat::movements[hilite_index] <= radius)
-				action(cursor, Move, hilite_index);
-			if(hilite_combatant != -1)
-			{
 				if(hot::key == MouseRight && hot::pressed)
 					draw::execute(Information, hilite_combatant);
 			}
+			else if(combat::movements[hilite_index] < BlockSquad && combat::movements[hilite_index] <= radius)
+				action(cursor, Move, hilite_index);
 		}
 		else if(hot::mouse.in(attacker_leader.getrect()))
 		{

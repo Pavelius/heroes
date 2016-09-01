@@ -78,6 +78,14 @@ static struct combatant : public animation
 		return false;
 	}
 
+	point getzpos() const
+	{
+		point pt = pos;
+		if(action == Killed && frame >= start + count - 1)
+			pt.y -= 500;
+		return pt;
+	}
+
 } objects[LastCombatant - FirstCombatant + 1];
 static bsmeta::field fields[] = {
 	BSREQ(combatant, rec, Type, Number),
