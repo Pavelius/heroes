@@ -58,7 +58,7 @@ static int object_get(int rec, int id)
     auto& e = objects[rec-FirstMoveable];
     switch(id)
     {
-    case Position:
+    case Index:
         return e.index;
     case Type:
         return e.id;
@@ -74,7 +74,7 @@ static void object_set(int rec, int id, int value)
     auto& e = objects[rec-FirstMoveable];
     switch(id)
     {
-    case Position:
+    case Index:
         e.index = value;
         break;
     case Type:
@@ -128,5 +128,5 @@ void map::moveable::reaction(int rec, int user)
 	}
     else
 		return;
-	bsset(rec, Position, -1);
+	bsset(rec, Index, -1);
 }

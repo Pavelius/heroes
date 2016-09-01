@@ -41,11 +41,11 @@ enum tokens
 	NewGame, LoadGame, Credits, HightScores, QuitGame,
 	StandartGame, CampaignGame, MultiplayerGame,
 	HotSeatGame,
-	AutoCombat, Character, RunAway, Surrender, CastSpell, Recruit, Position, MoveTo, MakeAction,
+	AutoCombat, Character, RunAway, Surrender, CastSpell, Recruit, Index, MoveTo, MakeAction,
 	Cursor, CursorAdventure, CursorCombat, All, AttackDefence, SpellPowerWisdow, CombatStrenght, Tooltips,
 	Accept, Count, Random, Portrait, Rating, ChangeMode, Dismiss,
 	EndTurn, Damage, Block, Income,
-	NameMulti, Level, Target, Side, Base, /*Action, */Expire,
+	NameMulti, Level, Target, Side, Base, Expire,
 	ArmyCost,
 	SingleVersion, RequiredTarget, Hostile, Friendly, Combat, MassEffect, DamageMin, DamageMax, FrameStatus,
 	Move, Fly, MagicImmunity, ElementsImmunity, Undead, Dragon, Wide, HideAttack, AllAttackAnswer, TwiceAttack, MeleeArcher, CanDefend,
@@ -246,6 +246,7 @@ enum image_flags
 {
 	AFMirror = 1,
 	AFNoOffset = 2,
+	AFOnce = 4,
 };
 namespace res
 {
@@ -560,20 +561,20 @@ struct animation : public drawable
 	short					frame, start, count;
 	unsigned				flags;
 	unsigned				stamp;
-	unsigned				rate;
 	//
 	animation();
-	animation(tokens id, tokens action);
+	animation(int rec, int action);
 	animation(res::tokens base, int frame, int count);
 	//
 	int						getid() const override { return rec; }
 	rect				    getrect() const override;
 	point					getzpos() const override;
+	virtual unsigned		getrate() const { return 1000 / 8; }
 	void					clear();
 	bool					islast() const { return frame == (start + count - 1); }
 	static int				line(point* result, int x1, int y1, int x2, int y2, int step);
 	void				    painting(point screen) const override;
-	void				    set(tokens rec, tokens action, int param = 0);
+	void				    set(int rec, int action, int param = 0);
 	void					update() override;
 };
 struct cost
@@ -713,8 +714,8 @@ namespace draw
 	const int				width = 640;
 	const int				height = 480;
 	const int				scanline = 640;
+	extern unsigned			timestamp;
 	extern res::tokens		font;
-	extern int				frame;
 	//
 	bool					area(int x1, int y1, int x2, int y2);
 	void					button(int x, int y, res::tokens icn, int id, int normal, int hilite, int pressed, int key = 0, unsigned flags = 0, const char* tips = 0);
@@ -729,13 +730,13 @@ namespace draw
 	void					edit(int x, int y, char* value, int maximum = 260);
 	void					edit(int x, int y, int& value, int maximum, int minimum = 0);
 	void					execute(int id, int param = 0);
+	inline unsigned			getframe() { return timestamp / 100; }
 	void					building(int x, int y, int building, int race);
 	void					hexagon(int x, int y, unsigned char color);
 	void					hexagonf(int x, int y, unsigned char alpha);
 	void					image(int x, int y, res::tokens res, unsigned id, unsigned flags = 0, unsigned char* change = 0);
 	void					imager(int x, int y, res::tokens res, int id, int mode = 0);
-	int						input();
-	void					inputex();
+	int						input(bool wait_message = true);
 	res::tokens				isevil(res::tokens evil, res::tokens good);
 	void					map(int x, int y, int* objects, int* route);
 	int						line(int x, int y, int width, icon* icons, int padding);
@@ -752,6 +753,7 @@ namespace draw
 	int						start();
 	void					status(const char* format, ...);
 	void					status(int x1, int y1, int x2, int y2);
+	int						sysinput(bool wait_input);
 	void					text(int x, int y, const char* string, int count = -1);
 	void					text(int x, int y, int width, justify jf, const char* string, int count = -1);
 	int						textbc(const char* string, int count, int width);
@@ -980,7 +982,7 @@ namespace combat
 	}
 	int						add(int id, int count, int side);
 	void					applyeffect(int rec, int effect, int value);
-	void					attack(int att, int def);
+	int						attack(int att, int def);
 	tokens					backward(tokens direction);
 	void					board(int attacker, int defender);
 	bool					canshoot(int rec, int target);
@@ -999,7 +1001,7 @@ namespace combat
 	int						moveto(int index, int direction);
 	extern int				rounds;
 	void					setaction(int rec, tokens action);
-	void					setpos(int rec, int index);
+	void					setindex(int rec, int index);
 	void					shoot(int att, int def);
 	void					start(int attacker, int defender);
 	void					applydamage(int rec, int value);
@@ -1039,5 +1041,6 @@ namespace game
 	int						geteffect(int rec, int id);
 	int						getsummary(int rec, int id, int side);
 	bool					isboosted(int rec);
+	bool					ismeleearcher(int rec);
 	bool					ispenalized(int rec);
 }

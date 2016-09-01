@@ -7,7 +7,8 @@ static struct combatant : public animation
 	int		hits;
 	int		moved;
 	int		defended;
-	int		shooted;
+	int		shoots;
+	tokens	action;
 
 	int getid() const override;
 
@@ -38,45 +39,93 @@ static struct combatant : public animation
 			int y = pos.y + pt.y;
 			sznum(temp, count);
 			int frame = getbarframe(rec);
-			draw::image(x, y, res::TEXTBAR, frame);
-			draw::text(x + (res::width(res::TEXTBAR, frame) - draw::textw(temp)) / 2, y + 2, temp);
+			int x1 = x;
+			int y1 = y;
+			if(combat::isattacker(rec))
+			{
+				y1 -= res::height(res::TEXTBAR, frame);
+				x1 += 12;
+			}
+			else
+				x1 -= 32;
+			draw::image(x1, y1, res::TEXTBAR, frame);
+			draw::text(x1 + (res::width(res::TEXTBAR, frame) - draw::textw(temp)) / 2, y1 + 2, temp);
+		}
+	}
+
+	void setaction(tokens action)
+	{
+		this->action = action;
+		if(!combat::isattacker(side))
+			flags = AFMirror;
+		else
+			flags = 0;
+		set(rec, action, 0);
+		stamp = clock();
+	}
+
+	void update() override
+	{
+		unsigned tm = clock();
+		if(!stamp)
+			stamp = tm;
+		while(tm > stamp)
+		{
+			if(++frame >= start + count)
+			{
+				frame = start;
+				if(action == Damage)
+					setaction(ActorWarn);
+				else if(action == Killed)
+					setaction(Dead);
+				else
+					stamp += xrand(2, 5) * 1000;
+			}
+			stamp += getrate();
 		}
 	}
 
 } objects[LastCombatant - FirstCombatant + 1];
 static bsmeta::field fields[] = {
 	BSREQ(combatant, rec, Type, Number),
-	BSREQ(combatant, index, Position, Number),
+	BSREQ(combatant, index, Index, Number),
 	BSREQ(combatant, side, Side, Number),
 	BSREQ(combatant, hits, HitPoints, Number),
 	BSREQ(combatant, moved, AlreadyMoved, Number),
 	BSREQ(combatant, defended, Defence, Number),
-	BSREQ(combatant, shooted, Shoot, Number),
+	BSREQ(combatant, shoots, Shoots, Number),
 	{0}
 };
 BSMETA(combatant, "Combatants", "Участники боя", FirstCombatant);
 
 int combatant::getid() const
 {
-	return objects - this + FirstCombatant;
+	return this - objects + FirstCombatant;
 }
 
 void combat::setaction(int rec, tokens action)
 {
-	auto side = bsget(rec, Side);
-	auto& e = objects[rec - FirstCombatant];
-	if(!isattacker(side))
-		e.flags = AFMirror;
-	e.set(tokens(e.rec), action, 0);
+	objects[rec - FirstCombatant].setaction(action);
 }
 
-void combat::setpos(int rec, int index)
+void combat::setindex(int rec, int index)
 {
 	auto& e = objects[rec - FirstCombatant];
 	e.index = index;
 	e.pos = combat::i2h(index);
-	setaction(rec, ActorWait);
+	setaction(rec, ActorWarn);
 }
+
+static void battle_initialize()
+{
+	combatants.clear();
+}
+
+static command battle_commands[] = {
+	{"initialize", battle_initialize},
+	{0}
+};
+static command::plugin commands_plugin("battle", battle_commands);
 
 static struct creature_drawable_plugin : public drawable::plugin
 {

@@ -111,9 +111,9 @@ void combat::wave(int start, bool wide, bool fly)
 	{
 		if(!bsget(i, Type))
 			continue;
-		if(!bsget(i, Count))
+		if(!game::get(i, Count))
 			continue;
-		movements[bsget(i, Position)] = BlockSquad;
+		movements[bsget(i, Index)] = BlockSquad;
 	}
 	if(fly)
 	{

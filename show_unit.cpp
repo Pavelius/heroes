@@ -10,20 +10,32 @@ static int field(int x, int y, int id, int rec, int side, const char* name)
 		name = bsgets(id, Name);
 	szprint(temp, "%1:", name);
 	draw::text(x - draw::textw(temp), y, temp);
-	int dm1 = bsget(rec, id);
-	int dm2 = game::getsummary(rec, id, side);
-	if(id == DamageMin)
+	int mt = rec;
+	if(mt >= FirstCombatant)
+		mt = bsget(mt, Type);
+	if(id == HitPoints || id==HitPointsMax)
 	{
-		dm2 = bsget(rec, DamageMax);
+		int dm1 = game::get(rec, id);
+		szprint(temp, "%1i", dm1);
+	}
+	else if(id == DamageMin)
+	{
+		int dm1 = game::get(rec, DamageMin);
+		int dm2 = game::get(rec, DamageMax);
 		if(dm1 != dm2)
 			szprint(temp, "%1i - %2i", dm1, dm2);
 		else
 			szprint(temp, "%1i", dm1);
 	}
-	else if(dm1 != dm2)
-		szprint(temp, "%1i (%2i)", dm2, dm1);
 	else
-		szprint(temp, "%1i", dm1);
+	{
+		int dm1 = bsget(mt, id);
+		int dm2 = game::getsummary(rec, id, side);
+		if(dm1 != dm2)
+			szprint(temp, "%1i (%2i)", dm2, dm1);
+		else
+			szprint(temp, "%1i", dm1);
+	}
 	draw::text(x + ox, y, temp);
 	return oy;
 }
@@ -52,7 +64,7 @@ static int status(int x, int y, int rec, int side)
 	y += field(x, y, DamageMin, rec, side, szt("Damage", "Урон"));
 	// hits
 	y += field(x, y, HitPointsMax, rec, side, szt("Hit Points", "Жизнь"));
-	if(rec>=FirstCombatant && rec<=LastCombatant)
+	if(rec >= FirstCombatant && rec <= LastCombatant)
 		y += field(x, y, HitPoints, rec, side, szt("Hits Left", "Жизнь ост."));
 	// speed
 	y += fieldt(x, y, Speed, 0, rec, side);
@@ -97,6 +109,8 @@ static void effects(int x, int y, int rec)
 
 void show::unit(int rec, int side)
 {
+	if(!rec)
+		return;
 	draw::screenshoot surface;
 	res::tokens back = draw::isevil(res::VIEWARME, res::VIEWARMY);
 	int w1 = res::width(back, 0);

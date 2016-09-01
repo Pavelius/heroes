@@ -143,7 +143,7 @@ static void all_heroes_refresh()
 {
     for(int rec = FirstHero; rec<=(int)LastHero; rec++)
     {
-        if(bsget(rec, Position)==-1)
+        if(bsget(rec, Index)==-1)
             continue;
         // Spell points
         int sp = bsget(rec, SpellPoints);

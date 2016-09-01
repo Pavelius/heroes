@@ -6,7 +6,7 @@ static struct sign
 	const char*	text;
 } objects[LastSign-FirstSign+1];
 static bsmeta::field fields[] = {
-	BSREQ(sign, index, Position, Number),
+	BSREQ(sign, index, Index, Number),
 	BSREQ(sign, text, Name, Text),
 	{0}
 };

@@ -149,10 +149,10 @@ int game::getsummary(int rec, int id, int side)
 		break;
 	case Defence:
 		// RULE: Spell Stone skin.
-		if(get(rec, SpellStone))
+		if(geteffect(rec, SpellStone))
 			m += 3;
 		// RULE: spell Steel skin.
-		else if(get(rec, SpellSteelSkin))
+		else if(geteffect(rec, SpellSteelSkin))
 			m += 5;
 		break;
 	case Morale:
@@ -161,6 +161,20 @@ int game::getsummary(int rec, int id, int side)
 			m = 3;
 		else if(m < -3)
 			m = -3;
+		break;
+	case Speed:
+		if(m < SpeedCrawling)
+			m = SpeedCrawling;
+		else if(m > SpeedUltraFast)
+			m = SpeedUltraFast;
+		break;
+	case DamageMin:
+		if(geteffect(rec, SpellBless))
+			m = bsget(t, DamageMax);
+		break;
+	case DamageMax:
+		if(geteffect(rec, SpellCurse))
+			m = bsget(t, DamageMin);
 		break;
 	}
 	return m;
@@ -173,6 +187,9 @@ int game::get(int rec, int id)
 	{
 	case Attack:
 	case Defence:
+	case Speed:
+	case DamageMin:
+	case DamageMax:
 		if(rec >= FirstHero && rec <= LastHero)
 			return bsget(rec, id) + artifacts_bonuses(rec, id);
 		else if(rec >= FirstCombatant && rec <= LastCombatant)
@@ -195,22 +212,13 @@ int game::get(int rec, int id)
 		else if(rec >= FirstCombatant && rec <= LastCombatant)
 			return getsummary(rec, id, bsget(rec, Side));
 		return 0;
-	case Speed:
-		if(rec >= FirstCombatant && rec <= LastCombatant)
-		{
-			// RULE: spell Haste implementation
-			m = 0;
-			if(get(rec, SpellHaste))
-				m = 2;
-			return imin(get(bsget(rec, Type), Speed) + m, (int)SpeedUltraFast);
-		}
-		return bsget(rec, id);
 	case Count:
 		if(rec >= FirstCombatant && rec <= LastCombatant)
 		{
 			int t = bsget(rec, Type);
 			int m = bsget(t, HitPointsMax);
-			return (bsget(rec, HitPoints) + m - 1) / m;
+			int c = bsget(rec, HitPoints);
+			return (c + m - 1) / m;
 		}
 		return 0;
 	case HitPoints:
@@ -218,9 +226,13 @@ int game::get(int rec, int id)
 		{
 			int t = bsget(rec, Type);
 			int m = bsget(t, HitPointsMax);
-			return 1 + (bsget(rec, HitPointsMax) - 1) % m;
+			return 1 + (bsget(rec, HitPoints) - 1) % m;
 		}
 		return 0;
+	case HitPointsMax:
+		if(rec >= FirstCombatant && rec <= LastCombatant)
+			rec = bsget(rec, Type);
+		return rec = bsget(rec, id);
 	case SpellPointsMax:
 		return get(rec, Wisdow) * 10;
 	case MovePointsMax:
@@ -306,5 +318,21 @@ int game::get(int rec, int id)
 		return m;
 	default:
 		return bsget(rec, id);
+	}
+}
+
+bool game::ismeleearcher(int rec)
+{
+	if(rec >= FirstCombatant && rec <= LastCombatant)
+		rec = bsget(rec, Type);
+	switch(rec)
+	{
+	case Mage:
+	case ArchMage:
+	case Lich:
+	case PowerLich:
+		return 1;
+	default:
+		return 0;
 	}
 }

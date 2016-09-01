@@ -10,6 +10,8 @@ static int			casting[2];
 
 bool combat::isattacker(int rec)
 {
+	if(rec >= FirstCombatant && rec <= LastCombatant)
+		rec = bsget(rec, Side);
 	return attacker == rec;
 }
 
@@ -18,75 +20,72 @@ int	combat::opposition(int side)
 	return isattacker(side) ? defender : attacker;
 }
 
-static void correct_damage()
+static int correct_damage(int result)
 {
-	if(combat::damage < 1)
-		combat::damage = 1;
+	if(result < 1)
+		result = 1;
+	return result;
 }
 
-void combat::attack(int att, int def)
+int combat::attack(int att, int def)
 {
-	int dm1 = bsget(att, DamageMin);
-	int dm2 = bsget(att, DamageMax);
-	if(bsget(att, SpellBless))
-		dm1 = dm2; // RULE: apply spell Bless
-	else if(bsget(att, SpellCurse))
-		dm2 = dm1; // RULE: apply spell Curse
-	int count = bsget(att, Count);
-	damage = xrand(dm1*count, dm2*count);
-	int a1 = bsget(att, Attack);
-	int d1 = bsget(def, Defence);
+	int dm1 = game::get(att, DamageMin);
+	int dm2 = game::get(att, DamageMax);
+	int count = game::get(att, Count);
+	int result = xrand(dm1*count, dm2*count);
+	int a1 = game::get(att, Attack);
+	int d1 = game::get(def, Defence);
 	int r = a1 - d1;
 	if(r > 0)
-		damage += (damage*imin(r, 30)) / 10;
+		result += (result*imin(r, 30)) / 10;
 	else if(r < 0)
-		damage -= (damage*imin(-r, 12) * 5) / 100;
-	correct_damage();
+		result -= (result*imin(-r, 12) * 5) / 100;
+	return correct_damage(result);
 }
 
 void combat::melee(int att, int def)
 {
-	attack(att, def);
-	if(bsget(att, Shoots) && !bsget(att, MeleeArcher))
+	int result = attack(att, def);
+	if(bsget(att, Shoots) && !game::ismeleearcher(att))
 	{
 		damage /= 2;
-		correct_damage();
+		result = correct_damage(result);
 	}
-	bsset(def, Damage, 1);
-	if(bsget(def, CanDefend) && !bsget(att, HideAttack)
+	applydamage(def, result);
+	if(game::get(def, CanDefend) && !bsget(att, HideAttack)
 		&& (bsget(def, AllAttackAnswer) || !bsget(def, DefendThisTurn)))
 	{
-		attack(def, att);
+		result = attack(def, att);
 		bsset(def, DefendThisTurn, 1);
 		if(bsget(def, Shoots) && !bsget(def, MeleeArcher))
 		{
 			damage /= 2;
-			correct_damage();
+			result = correct_damage(result);
 		}
-		bsset(att, Damage, 1);
-		if(bsget(att, Dead))
+		applydamage(att, result);
+		if(!game::get(att, Count))
 			return;
 	}
 	if(bsget(att, TwiceAttack) && !bsget(att, Shoots))
 	{
-		attack(att, def);
+		result = attack(att, def);
 		bsset(def, Damage, 2);
 	}
 }
 
 void combat::shoot(int att, int def)
 {
-	attack(att, def);
+	int result = attack(att, def);
 	// RULE: Spell Shield implementation.
 	if(bsget(def, SpellShield))
-		combat::damage = imax(1, combat::damage / 2);
-	bsset(def, Damage, 1);
-	bsadd(def, Shoots, -1, 0);
+		result = correct_damage(result / 2);
+	applydamage(def, result);
+	bsadd(att, Shoots, -1, 0);
 }
 
 int combat::combatant(int index)
 {
-	return bsfind(FirstCombatant, Position, index);
+	return bsfind(FirstCombatant, Index, index);
 }
 
 static bool enemypos(int index, int rec)
@@ -103,7 +102,7 @@ bool combat::canshoot(int rec, int target)
 		return false;
 	if(!bsget(rec, Shoots))
 		return false;
-	int i = bsget(rec, Position);
+	int i = bsget(rec, Index);
 	if(enemypos(combat::moveto(i, HexLeft), rec))
 		return false;
 	if(enemypos(combat::moveto(i, HexRight), rec))
@@ -123,19 +122,19 @@ bool combat::canattack(int rec, int target, tokens direction)
 {
 	if(!combat::isenemy(rec, target))
 		return false;
-	int i0 = bsget(rec, Position);
-	int i1 = bsget(target, Position);
+	int i0 = bsget(rec, Index);
+	int i1 = bsget(target, Index);
 	int i2 = combat::moveto(i1, direction);
 	if(i2 == -1)
 		return false;
-	int speed = bsget(rec, Speed) - SpeedCrawling + 2;
+	int speed = game::get(rec, Speed) - SpeedCrawling + 2;
 	return i2 == i0
 		|| (combat::movements[i2] != 0 && combat::movements[i2] <= speed);
 }
 
 bool combat::isenemy(int rec, int object)
 {
-	if(bsget(object, Count) == 0)
+	if(game::get(object, Count) == 0)
 		return false;
 	return bsget(rec, Side) != bsget(object, Side);
 }
@@ -194,27 +193,29 @@ static void prepare_index()
 			continue;
 		if(combat::isattacker(bsget(rec, Side)))
 		{
-			combat::setpos(rec, attacker_index);
+			combat::setindex(rec, attacker_index);
 			attacker_index += combat::awd * 2;
 		}
 		else
 		{
-			combat::setpos(rec, defender_index);
+			combat::setindex(rec, defender_index);
 			defender_index += combat::awd * 2;
 		}
 	}
 }
 
-static int add_unit(int id, int count, int side)
+static void add_unit(int id, int count, int side)
 {
+	if(count <= 0)
+		return;
 	int rec = bscreate(FirstCombatant);
 	if(!rec)
-		return 0;
+		return;
 	bsset(rec, Type, id);
 	bsset(rec, Count, count);
 	bsset(rec, Side, side);
+	bsset(rec, Shoots, bsget(id, Shoots));
 	bsset(rec, HitPoints, count * bsget(id, HitPointsMax));
-	return rec;
 }
 
 static void add_army(int id, int count, int side)
@@ -269,7 +270,7 @@ static bool test_victory(int side)
 	{
 		if(!bsget(rec, Type))
 			continue;
-		if(bsget(rec, Side) != side && bsget(rec, Count))
+		if(bsget(rec, Side) != side && game::get(rec, Count))
 			return false;
 	}
 	return true;
@@ -303,7 +304,7 @@ static void prepare_order()
 
 static void prepare_turn()
 {
-	for(unsigned i = FirstCombatant; i <= LastCombatant; i++)
+	for(int i = FirstCombatant; i <= LastCombatant; i++)
 	{
 		if(!bsget(i, Type))
 			continue;
@@ -330,10 +331,28 @@ static int side_index(int rec)
 
 static int closest_unit(int rec, int side = -1)
 {
-	for(unsigned rec = FirstCombatant; rec <= LastCombatant; rec++)
+	for(int rec = FirstCombatant; rec <= LastCombatant; rec++)
 	{
 	}
 	return -1;
+}
+
+static void move_to_index(int rec, int index, bool interactive)
+{
+	if(interactive)
+	{
+		if(bsget(rec, Fly))
+			show::battle::fly(rec, index);
+		else
+			show::battle::move(rec, index);
+	}
+	combat::setindex(rec, index);
+}
+
+static void shoot_creature(int attacker, int defender, bool interactive)
+{
+	if(interactive)
+		show::battle::shoot(attacker, defender);
 }
 
 static int make_turn(bool interactive)
@@ -344,18 +363,20 @@ static int make_turn(bool interactive)
 		{
 			if(!bsget(rec, Type))
 				continue;
-			if(game::get(rec, Speed) != i)
+			auto speed = tokens(game::get(rec, Speed));
+			if(speed != i)
 				continue;
 			if(bsget(rec, AlreadyMoved))
 				continue;
 			if(!game::get(rec, Count))
 				continue;
-			combat::wave(bsget(rec, Position),
+			int index = bsget(rec, Index);
+			combat::wave(index,
 				bsget(rec, Wide) != 0,
 				bsget(rec, Fly) != 0);
 			int id = 0;
 			// RULE: spell Berserker implementation
-			if(bsget(rec, SpellBerserker))
+			if(game::geteffect(rec, SpellBerserker))
 			{
 				int target = closest_unit(rec);
 				if(target != -1)
@@ -369,7 +390,7 @@ static int make_turn(bool interactive)
 				while(true)
 				{
 					id = show::battle::unit(rec, casting[side_index(rec)]);
-					if(bsget(id, First) == FirstSpell)
+					if(id>=FirstSpell && id<=LastSpell)
 					{
 						int side = bsget(rec, Side);
 						int target = -1;
@@ -394,23 +415,15 @@ static int make_turn(bool interactive)
 			case Skip:
 				break;
 			case Move:
-				if(interactive)
-				{
-					if(bsget(rec, Fly))
-						show::battle::fly(rec, hot::param);
-					else
-						show::battle::move(rec, hot::param);
-				}
-				bsset(rec, Position, hot::param);
+				move_to_index(rec, hot::param, interactive);
 				break;
 			case Shoot:
-				if(interactive)
-					show::battle::shoot(rec, hot::param);
+				shoot_creature(rec, hot::param, interactive);
 				combat::shoot(rec, hot::param);
 				break;
 			case Attack:
 				// TODO: Animation for moving and attack.
-				bsset(rec, Position, hot::param2);
+				move_to_index(rec, hot::param2, interactive);
 				combat::melee(rec, hot::param);
 				break;
 			case RunAway:

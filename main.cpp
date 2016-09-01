@@ -393,7 +393,6 @@ static void test_combat()
 	bsset(LordKillburn, Player, PlayerBlue);
 	bsset(Tsabu, Player, PlayerRed);
 	combat::start(LordKillburn, Tsabu);
-	//show::battle::area();
 }
 
 static int mainmenu()
@@ -402,7 +401,6 @@ static int mainmenu()
     int game_type;
     gamefile game;
     game.clear();
-	latern.rate = 200;
     while(true)
     {
 		latern.update();
@@ -462,9 +460,6 @@ static int mainmenu()
 int draw::start()
 {
 	draw::font = res::FONT;
-	//sheme::initialize();
-    create("Heroes II", 50, true);
-    //test_sprite(); return 0;
-    //test_animation(); return 0;
+    create("Heroes II", 50, false);
     return mainmenu();
 }

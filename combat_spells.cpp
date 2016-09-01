@@ -152,7 +152,7 @@ bool combat::cast(int side, int sid, int cid, int pos, bool run, bool free)
 		break;
 	case SpellTeleport:
 		if(run)
-			bsset(cid, Position, pos);
+			bsset(cid, Index, pos);
 		break;
 	case SpellResurrect:
 		break;

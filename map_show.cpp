@@ -120,20 +120,20 @@ void animate::heroshad(int x, int y, int mid, int index)
 
 void animate::monster(int x, int y, int mid, int ticket)
 {
-	if(mid>=(int)MonsterRnd1)
-		draw::image(x, y, res::MONS32, mid-FirstMonster);
+	if(mid >= (int)MonsterRnd1)
+		draw::image(x, y, res::MONS32, mid - FirstMonster);
 	else
 	{
-		draw::image(x, y, res::MINIMON, (mid-FirstMonster) * 9);
+		draw::image(x, y, res::MINIMON, (mid - FirstMonster) * 9);
 		switch(bsget(mid, AnimationType))
 		{
 		case 1:
-			draw::image(x, y, res::MINIMON, (mid-FirstMonster) * 9
-				+ 1 + monster_animation_cicl1[(draw::frame + ticket*ticket)%(sizeof(monster_animation_cicl1)/sizeof(monster_animation_cicl1[0]))]);
+			draw::image(x, y, res::MINIMON, (mid - FirstMonster) * 9
+				+ 1 + monster_animation_cicl1[((draw::timestamp / 100) + ticket*ticket) % (sizeof(monster_animation_cicl1) / sizeof(monster_animation_cicl1[0]))]);
 			break;
 		default:
-			draw::image(x, y, res::MINIMON, (mid-FirstMonster) * 9
-				+ 1 + monster_animation_cicle[(draw::frame + ticket*ticket)%(sizeof(monster_animation_cicle)/sizeof(monster_animation_cicle[0]))]);
+			draw::image(x, y, res::MINIMON, (mid - FirstMonster) * 9
+				+ 1 + monster_animation_cicle[((draw::timestamp / 100) + ticket*ticket) % (sizeof(monster_animation_cicle) / sizeof(monster_animation_cicle[0]))]);
 			break;
 		}
 	}
@@ -141,8 +141,8 @@ void animate::monster(int x, int y, int mid, int ticket)
 
 void animate::artifact(int x, int y, int mid, int ticket)
 {
-	draw::image(x-32, y, res::OBJNARTI, (mid-FirstArtifact)*2);
-	draw::image(x, y, res::OBJNARTI, (mid-FirstArtifact)*2+1);
+	draw::image(x - 32, y, res::OBJNARTI, (mid - FirstArtifact) * 2);
+	draw::image(x, y, res::OBJNARTI, (mid - FirstArtifact) * 2 + 1);
 }
 
 void draw::map(int x, int y, int* objects, int* route)
@@ -156,16 +156,16 @@ void draw::map(int x, int y, int* objects, int* route)
 	// 1) Герои, города, ресурсы
 	// 2) Высокие объекты, которые закрывают другие собою
 	int i = map::view();
-    int ix1 = map::i2x(i);
+	int ix1 = map::i2x(i);
 	int iy1 = map::i2y(i);
-    // Landscape and overlays
-	for(int y1 = y; y1<y2; y1 += dy)
+	// Landscape and overlays
+	for(int y1 = y; y1 < y2; y1 += dy)
 	{
-		for(int x1 = x; x1<x2; x1 += dx)
+		for(int x1 = x; x1 < x2; x1 += dx)
 		{
-			if(hot::mouse.x>=x1 && hot::mouse.y>=y1 && hot::mouse.x<=x1+31 && hot::mouse.y<=y1+31)
+			if(hot::mouse.x >= x1 && hot::mouse.y >= y1 && hot::mouse.x <= x1 + 31 && hot::mouse.y <= y1 + 31)
 				hot::index = i;
-			imager(x1, y1, res::TisGROUND32, map::show::tiles[i], map::show::flags[i]%4);
+			imager(x1, y1, res::TisGROUND32, map::show::tiles[i], map::show::flags[i] % 4);
 			for(auto e : map::show::objects[i])
 			{
 				if(!e[0])
@@ -175,7 +175,7 @@ void draw::map(int x, int y, int* objects, int* route)
 				if(res::ishight(res, index))
 					continue;
 				image(x1, y1, res, index);
-				index = indexes::animate(res, index, frame + index*index, false);
+				index = indexes::animate(res, index, (draw::timestamp / 100) + index*index, false);
 				if(index)
 					image(x1, y1, res, index);
 			}
@@ -185,9 +185,9 @@ void draw::map(int x, int y, int* objects, int* route)
 	}
 	// Object is last layer in render
 	i = map::view();
-	for(int y1 = y; y1<y2; y1 += dy)
+	for(int y1 = y; y1 < y2; y1 += dy)
 	{
-		for(int x1 = x; x1<x2; x1 += dx)
+		for(int x1 = x; x1 < x2; x1 += dx)
 		{
 			int ticket = i*i;
 			int ix = map::i2x(i) - ix1;
@@ -195,29 +195,29 @@ void draw::map(int x, int y, int* objects, int* route)
 			int j = iy*viewx1 + ix;
 			int id = objects[j];
 			if(id)
-            {
-                //draw::rectb(x1,y1,x1+32,y1+32, 0xC4);
-                if(id>=(int)FirstResource && id<=(int)LastResource)
-                {
-                    draw::image(x1-32, y1, res::OBJNRSRC, (id-FirstResource)*2);
-                    draw::image(x1, y1, res::OBJNRSRC, (id-FirstResource)*2+1);
-                }
-                else if(id>=(int)FirstMonster && id<=(int)LastMonster)
-                    animate::monster(x1+16, y1+30, id, ticket);
-                else if(id>=(int)FirstArtifact && id<=(int)LastArtifact)
-                    animate::artifact(x1, y1, id, ticket);
-                else if(id==TreasureChest)
-                {
-                    draw::image(x1-32, y1, res::OBJNRSRC, 18);
-                    draw::image(x1, y1, res::OBJNRSRC, 19);
-                }
-                else if(id>=(int)FirstHero && id<=(int)LastHero)
-                {
-					animate::heroshad(x1, y1+26, id, 0);
-					animate::hero(x1, y1+26, id, 0);
-					animate::heroflag(x1, y1+26, id, 0);
-                }
-            }
+			{
+				//draw::rectb(x1,y1,x1+32,y1+32, 0xC4);
+				if(id >= (int)FirstResource && id <= (int)LastResource)
+				{
+					draw::image(x1 - 32, y1, res::OBJNRSRC, (id - FirstResource) * 2);
+					draw::image(x1, y1, res::OBJNRSRC, (id - FirstResource) * 2 + 1);
+				}
+				else if(id >= (int)FirstMonster && id <= (int)LastMonster)
+					animate::monster(x1 + 16, y1 + 30, id, ticket);
+				else if(id >= (int)FirstArtifact && id <= (int)LastArtifact)
+					animate::artifact(x1, y1, id, ticket);
+				else if(id == TreasureChest)
+				{
+					draw::image(x1 - 32, y1, res::OBJNRSRC, 18);
+					draw::image(x1, y1, res::OBJNRSRC, 19);
+				}
+				else if(id >= (int)FirstHero && id <= (int)LastHero)
+				{
+					animate::heroshad(x1, y1 + 26, id, 0);
+					animate::hero(x1, y1 + 26, id, 0);
+					animate::heroflag(x1, y1 + 26, id, 0);
+				}
+			}
 			for(auto e : map::show::objects[i])
 			{
 				if(!e[0])
@@ -227,7 +227,7 @@ void draw::map(int x, int y, int* objects, int* route)
 				if(!res::ishight(res, index))
 					continue;
 				image(x1, y1, res, index);
-				index = indexes::animate(res, index, draw::frame + ticket, false);
+				index = indexes::animate(res, index, (draw::timestamp / 100) + ticket, false);
 				if(index)
 					image(x1, y1, res, index);
 			}

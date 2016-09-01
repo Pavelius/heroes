@@ -30,6 +30,7 @@ static int controt(int x, int y, int side, int id)
 int show::battle::dialog(int side)
 {
 	char temp[128];
+	draw::fontsm push;
 	draw::screenshoot surface;
 	res::tokens back = draw::isevil(res::VGENBKGE, res::VGENBKG);
 	int w1 = res::width(back, 0);
@@ -44,7 +45,7 @@ int show::battle::dialog(int side)
     	draw::clipart(x+27+50, y+42, side, LargeSize, 0);
 		int col = 1;
 		draw::image(x + 148, y + 36, res::VIEWGEN, col);
-		szprint(temp, "%1 - %2", bsgets(side,Name), bsgets(bsget(side, Type),Name));
+		szprint(temp, "%1 - %2", bsgets(side,Name), bsgets(game::get(side, Type),Name));
 		draw::text((draw::width-draw::textw(temp))/2, y + 12, temp);
 		int y1 = y + 40 + 8;
 		y1 += control(x+205, y1, side, Attack);

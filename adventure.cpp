@@ -213,7 +213,7 @@ static void hero_load(int* rec, int index, int w, int h)
     int y2 = y1 + h;
     for(int e=FirstHero; e<=(int)LastHero; e++)
     {
-        int pos = bsget(e, Position);
+        int pos = bsget(e, Index);
         if(pos==-1)
             continue;
         int x = map::i2x(pos);
@@ -299,18 +299,18 @@ int show::game()
     selected_object = bsfind(FirstHero, Player, world::get(Player));
     if(selected_object==-1)
         selected_object = bsfind(FirstCastle, Player, world::get(Player));
-    int index = bsget(selected_object, Position);
+    int index = bsget(selected_object, Index);
     if(index>0)
         map::jumpto(index);
     while(true)
     {
         if(bsget(selected_object, First)==FirstHero && selected_wave!=selected_object)
         {
-            map::route::wave(bsget(selected_object, Position),
+            map::route::wave(bsget(selected_object, Index),
                              bsget(selected_object, SkillPathfinding),
                              0);
             if(bsget(selected_object, MoveTo)!=-1)
-                map::route::path(bsget(selected_object, Position),
+                map::route::path(bsget(selected_object, Index),
                                  bsget(selected_object, MoveTo));
             selected_wave = selected_object;
             cashe_index = -1;
@@ -355,7 +355,7 @@ int show::game()
             break;
         case InputChoose:
             //selected_object = tokens(hot::object);
-            //index = bsget(selected_object, Position);
+            //index = bsget(selected_object, Index);
             //if(index>0)
             //    map::jumpto(index);
             break;

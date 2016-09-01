@@ -11,7 +11,7 @@ static struct monster
 	unsigned short	hp;
 	unsigned char	speed;
 	unsigned char	grown;
-	unsigned char	shots;
+	unsigned char	shoots;
 	const char*		name[2];
 	const char*		multiname[2];
 	struct cost		cost;
@@ -104,7 +104,7 @@ static bsmeta::field fields[] = {
 	BSREQ(monster, damageMin, DamageMin, Number),
 	BSREQ(monster, damageMax, DamageMax, Number),
 	BSREQ(monster, hp, HitPointsMax, Number),
-	BSREQ(monster, shots, Shoots, Number),
+	BSREQ(monster, shoots, Shoots, Number),
 	BSREQ(monster, speed, Speed, Number),
 	BSREQ(monster, level, Level, Number),
 };
@@ -124,14 +124,6 @@ static int object_get(int rec, int id)
 		default:
 			return MoraleNormal;
 		}
-	case Gold:
-		return objects[rec - FirstMonster].cost.gold;
-	case HitPointsMax:
-		return objects[rec - FirstMonster].hp;
-	case Shoots:
-		return objects[rec - FirstMonster].shots;
-	case AnimationType:
-		return objects[rec - FirstMonster].animtype;
 	case AllAttackAnswer:
 		switch(rec)
 		{
@@ -194,17 +186,6 @@ static int object_get(int rec, int id)
 		case Vampire:
 		case VampireLord:
 		case Rogue:
-			return 1;
-		default:
-			return 0;
-		}
-	case MeleeArcher:
-		switch(rec)
-		{
-		case Mage:
-		case ArchMage:
-		case Lich:
-		case PowerLich:
 			return 1;
 		default:
 			return 0;

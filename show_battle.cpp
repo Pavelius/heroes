@@ -9,7 +9,7 @@ struct leader : public animation
 		if(player >= PlayerBlue && player <= LastPlayer)
 		{
 			res::tokens icn = res::tokens(res::HEROFL00 + player -PlayerBlue);
-			draw::image(pos.x + screen.x, pos.y + screen.y, icn, (draw::frame/6) % 5, flags);
+			draw::image(pos.x + screen.x, pos.y + screen.y, icn, (draw::timestamp/6) % 5, flags);
 		}
 	}
 };
@@ -27,7 +27,6 @@ bool					combat::setting::shadow = true;
 bool					combat::setting::spells;
 bool					combat::setting::distance;
 static int				hilite_index;
-static int				hilite_combatant;
 static leader			attacker_leader;
 static leader			defender_leader;
 
@@ -95,7 +94,7 @@ void combat::board(int attacker, int defender)
 	tokens area = Lava;
 	if(defender >= (int)FirstMoveable && defender <= (int)LastMoveable)
 	{
-		int pos = bsget(defender, Position);
+		int pos = bsget(defender, Index);
 		area = map::gtile(pos);
 	}
 	switch(area)
@@ -190,7 +189,7 @@ static void paint_grid(int rec)
 				continue;
 			if(!bsget(rec, HitPoints))
 				continue;
-			int index = bsget(rec, Position);
+			int index = bsget(rec, Index);
 			int x = i2x(index);
 			int y = i2y(index);
 			draw::hexagonf(x, y, 0);
@@ -199,7 +198,7 @@ static void paint_grid(int rec)
 	if(rec != -1 && combat::setting::movement)
 	{
 		draw::fontsm push;
-		int radius = bsget(rec, Speed) - SpeedCrawling + 2;
+		int radius = game::get(rec, Speed) - SpeedCrawling + 2;
 		for(int i = 0; i < combat::awd*combat::ahd; i++)
 		{
 			if(combat::movements[i])
@@ -283,6 +282,15 @@ static tokens hexagon_orient(int x1, int y1, int x2, int y2)
 	return Empthy;
 }
 
+static void select_animation(drawable** objects)
+{
+	objects[0] = 0;
+	dwselect(zend(objects), 1);
+	zcat(objects, static_cast<drawable*>(&attacker_leader));
+	zcat(objects, static_cast<drawable*>(&defender_leader));
+	dworder(objects, zlen(objects));
+}
+
 static void paint_field(int rec, drawable** objects)
 {
 	int h1 = res::height(res::TEXTBAR, 4);
@@ -292,7 +300,6 @@ static void paint_field(int rec, drawable** objects)
 	int h9 = res::height(res::TEXTBAR, 9);
 	int w3 = res::width(res::TEXTBAR, 0);
 	hilite_index = -1;
-	hilite_combatant = -1;
 	draw::image(0, 0, back, 0);
 	int x = res::width(res::TEXTBAR, 4);
 	draw::image(x, draw::height - h8 - h9, res::TEXTBAR, 8);
@@ -305,11 +312,6 @@ static void paint_field(int rec, drawable** objects)
 	paint_grid(rec);
 	if(frng != res::Empthy)
 		draw::image(0, 0, frng, 0);
-	objects[0] = 0;
-	dwselect(zend(objects), 1);
-	zcat(objects, static_cast<drawable*>(&attacker_leader));
-	zcat(objects, static_cast<drawable*>(&defender_leader));
-	dworder(objects, zlen(objects));
 	dwpaint(objects, {0, 0, 640, 480}, {0, 0});
 }
 
@@ -368,6 +370,8 @@ int show::battle::target(int side, int sid)
 	drawable* objects[64];
 	while(true)
 	{
+		int hilite_combatant = 0;
+		select_animation(objects);
 		paint_field(-1, objects);
 		if(hot::key == KeyEscape)
 			draw::execute(Cancel);
@@ -419,37 +423,32 @@ int show::battle::unit(int rec, int casted)
 	while(true)
 	{
 		animation cursor(CursorCombat, Cursor);
+		select_animation(objects);
 		paint_field(rec, objects);
 		if(hilite_index != -1)
 		{
-			hilite_combatant = combat::combatant(hilite_index);
-			if(combat::movements[hilite_index] != 0)
+			int radius = game::get(rec, Speed) - SpeedCrawling + 2;
+			int hilite_combatant = combat::combatant(hilite_index);
+			if(hilite_combatant)
 			{
-				int radius = bsget(rec, Speed) - SpeedCrawling + 2;
-				if(combat::movements[hilite_index] < BlockSquad && combat::movements[hilite_index] <= radius)
-					action(cursor, Move, hilite_index);
-				else if(combat::movements[hilite_index] == BlockSquad)
+				if(combat::canshoot(rec, hilite_combatant))
+					action(cursor, Shoot, hilite_combatant);
+				else if(combat::isenemy(rec, hilite_combatant))
 				{
-					if(combat::isenemy(rec, hilite_combatant))
+					int x = i2x(hilite_index);
+					int y = i2y(hilite_index);
+					tokens d = hexagon_orient(x, y, hot::mouse.x, hot::mouse.y);
+					if(combat::canattack(rec, hilite_combatant, d))
 					{
-						if(combat::canshoot(rec, hilite_combatant))
-							action(cursor, Shoot, hilite_combatant);
-						else
-						{
-							int x = i2x(hilite_index);
-							int y = i2y(hilite_index);
-							tokens d = hexagon_orient(x, y, hot::mouse.x, hot::mouse.y);
-							if(combat::canattack(rec, hilite_combatant, d))
-							{
-								hot::param2 = combat::moveto(hilite_index, d);
-								action(cursor, Attack, hilite_combatant, d);
-							}
-						}
+						hot::param2 = combat::moveto(hilite_index, d);
+						action(cursor, Attack, hilite_combatant, d);
 					}
-					else
-						cursor.set(CursorCombat, Information);
 				}
+				else
+					cursor.set(CursorCombat, Information);
 			}
+			else if(combat::movements[hilite_index] < BlockSquad && combat::movements[hilite_index] <= radius)
+				action(cursor, Move, hilite_index);
 			if(hilite_combatant != -1)
 			{
 				if(hot::key == MouseRight && hot::pressed)

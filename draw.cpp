@@ -38,7 +38,7 @@ extern unsigned char        pallette2[256];
 extern unsigned char        pallette3[256];
 extern unsigned char        pallette4[256];
 extern unsigned char        pallette_yellow[256];
-int							draw::frame;
+unsigned					draw::timestamp;
 int                         hot::param;
 int                         hot::param2;
 point                       hot::mouse;
@@ -496,14 +496,12 @@ static void sprite_v2m(unsigned char* dst, int scanline, const unsigned char* s,
 	}
 }
 
-void draw::image(int x, int y, res::tokens res, unsigned n, unsigned flags, unsigned char* change)
+void draw::image(int x, int y, res::tokens res, unsigned frame, unsigned flags, unsigned char* change)
 {
     res::icn* p = (res::icn*)res::get(res);
-    if(!p)
+    if(!p || !p->count)
         return;
-    if(n >= p->count)
-        return;
-    res::icn::record& r = p->records[n];
+    res::icn::record& r = p->records[frame % p->count];
     unsigned char* d = (unsigned char*)p->records + r.offset;
     if((flags&AFNoOffset) == 0)
     {
@@ -953,4 +951,19 @@ void hot::clear()
 	hot::command = 0;
 	hot::param = 0;
 	hot::key = 0;
+}
+
+int draw::input(bool wait_input)
+{
+	int i = hot::command;
+	int p = hot::param;
+	hot::clear();
+	draw::timestamp = clock();
+	if(i)
+	{
+		hot::key = i;
+		hot::param = p;
+		return hot::key;
+	}
+	return draw::sysinput(wait_input);
 }

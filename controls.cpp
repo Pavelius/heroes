@@ -470,7 +470,7 @@ void show::fadeback(int count)
 	for(int i=0; i<count; i++)
 	{
 		draw::shadow(0,0,draw::width-1, draw::height-1,0);
-        draw::inputex();
+        draw::input(false);
         //sleep(10);
 	}
 }

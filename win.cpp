@@ -283,61 +283,52 @@ static void update(HWND hwnd)
 	UpdateWindow((HWND)hwnd);
 }
 
-void draw::inputex()
+static void add_modificators()
 {
-	MSG	msg;
-	hot::symbol = 0;
-	hot::key = 0;
-	if(!main_window)
-		return;
-	update((HWND)main_window);
-	while(PeekMessageA(&msg, 0, 0, 0, PM_REMOVE))
+	if(hot::key >= (int)KeyLeft)
 	{
-		TranslateMessage(&msg);
-		DispatchMessageA(&msg);
-		handle(main_window, msg);
+		if(GetKeyState(VK_SHIFT)<0)
+			hot::key |= Shift;
+		if(GetKeyState(VK_MENU)<0)
+			hot::key |= Alt;
+		if(GetKeyState(VK_CONTROL)<0)
+			hot::key |= Ctrl;
 	}
 }
 
-int draw::input()
+int draw::sysinput(bool wait_message)
 {
 	MSG	msg;
-	hot::symbol = 0;
-	hot::key = hot::command;
-	if(hot::command)
-	{
-		hot::command = 0;
-		return hot::key;
-	}
 	if(!main_window)
 		return 0;
 	update(main_window);
-	while(GetMessageA(&msg, 0, 0, 0))
+	if(wait_message)
 	{
-		TranslateMessage(&msg);
-		DispatchMessageA(&msg);
-		hot::key = handle(main_window, msg);
-		if(hot::key)
+		while(GetMessageA(&msg, 0, 0, 0))
 		{
-			switch(hot::key)
+			TranslateMessage(&msg);
+			DispatchMessageA(&msg);
+			hot::key = handle(main_window, msg);
+			if(hot::key)
 			{
-			case InputTimer: draw::frame++; break;
-			default:
-				if(hot::key>=(int)KeyLeft)
-				{
-					if(GetKeyState(VK_SHIFT)<0)
-						hot::key |= Shift;
-					if(GetKeyState(VK_MENU)<0)
-						hot::key |= Alt;
-					if(GetKeyState(VK_CONTROL)<0)
-						hot::key |= Ctrl;
-				}
-				break;
+				add_modificators();
+				return hot::key;
 			}
-			return hot::key;
 		}
+		return 0;
 	}
-	return 0;
+	else
+	{
+		while(PeekMessageA(&msg, 0, 0, 0, PM_REMOVE))
+		{
+			TranslateMessage(&msg);
+			DispatchMessageA(&msg);
+			hot::key = handle(main_window, msg);
+			if(hot::key)
+				add_modificators();
+		}
+		return InputResize;
+	}
 }
 
 int main()

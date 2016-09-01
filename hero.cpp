@@ -45,7 +45,7 @@ static bsmeta::field fields[] = {
 	BSREQ(hero, wisdow, Wisdow, Number),
 	BSREQ(hero, spell_points, SpellPoints, Number),
 	BSREQ(hero, move_points, MovePoints, Number),
-	BSREQ(hero, index, Position, Number),
+	BSREQ(hero, index, Index, Number),
 	BSREQ(hero, direction, Direction, Number),
 	BSREQ(hero, portrait, Portrait, Number),
 	BSREQ(hero, player, Player, Number),
@@ -94,7 +94,7 @@ static void game_initialize()
 {
 	for(int rec = FirstHero; rec <= LastHero; rec++)
 	{
-		bsset(rec, Position, -1);
+		bsset(rec, Index, -1);
 		bsset(rec, Player, PlayerNeutral); // neutral player
 		bsset(rec, Portrait, rec - FirstHero);
 		bsset(rec, Direction, map::Up);
@@ -156,7 +156,7 @@ static void game_initialize()
 		create_army(rec);
 		bsset(rec, SpellPoints, game::get(rec, SpellPointsMax));
 		bsset(rec, MovePoints, game::get(rec, MovePointsMax));
-		bsset(rec, Position, -1);
+		bsset(rec, Index, -1);
 	}
 }
 

@@ -495,7 +495,7 @@ int map::route::get(int index)
 static bool makestep(int rec, int pos2)
 {
 	int mp = bsget(rec, MovePoints);
-    int pos1 = bsget(rec, Position);
+    int pos1 = bsget(rec, Index);
 	map::directions d = map::orient(pos1, pos2);
 	bsset(rec, Direction, d);
 	int mc = movecost2(pos1, d, bsget(rec, SkillPathfinding));
@@ -511,7 +511,7 @@ static bool movingto(int rec, int pos2, void(*callback)())
 		return false;
 	if(callback)
 		callback();
-	bsset(rec, Position, pos2);
+	bsset(rec, Index, pos2);
 	return true;
 }
 
@@ -519,11 +519,11 @@ static bool reactionto(int rec, int pos2, void(*callback)())
 {
 	if(!makestep(rec, pos2))
 		return false;
-	int m = bsfind(FirstMoveable, Position, pos2);
+	int m = bsfind(FirstMoveable, Index, pos2);
     if(!m)
         return false;
 	map::moveable::reaction(m, rec);
-	bsset(rec, MoveTo, bsget(rec, Position));
+	bsset(rec, MoveTo, bsget(rec, Index));
 	if(callback)
 		callback();
 	return true;
@@ -533,7 +533,7 @@ static void battle(int rec, int pos2, void(*callback)())
 {
 	if(!makestep(rec, pos2))
 		return;
-	bsset(rec, Position, pos2);
+	bsset(rec, Index, pos2);
 	int enemy = map::moveable::nearest(pos2, FirstMonster, LastMonster, 1);
 	if(enemy==-1)
 		return;
@@ -561,7 +561,7 @@ void map::route::move(int rec, void(*callback)())
         reactionto(rec, path_goal, callback);
 	else if(pv==Attack)
 		battle(rec, path_goal, callback);
-	wave(bsget(rec, Position),
+	wave(bsget(rec, Index),
       bsget(rec, SkillPathfinding),
       bsget(rec, ShipMaster));
 }

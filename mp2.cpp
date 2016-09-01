@@ -379,7 +379,7 @@ static tokens get_free_hero(tokens type)
             continue;
         if(bsget(rec, Recruit))
             continue;
-        if(bsget(rec, Position)!=-1)
+        if(bsget(rec, Index)!=-1)
             continue;
         *p++ = rec;
     }
@@ -391,7 +391,7 @@ static tokens get_free_hero(tokens type)
     {
         if(bsget(rec, Recruit)!=Empthy)
             continue;
-        if(bsget(rec, Position)!=-1)
+        if(bsget(rec, Index)!=-1)
             continue;
         *p++ = rec;
     }
@@ -612,7 +612,7 @@ static void add_moveable(int index, int id, int quality)
 {
 	int rec = bscreate(FirstMoveable);
 	bsset(rec, Type, id);
-	bsset(rec, Position, index);
+	bsset(rec, Index, index);
 	// Count depends on type
 	int count = 0;
 	switch(bsget(id, First))
@@ -699,7 +699,7 @@ void map::load(gamefile& game)
         case 0x86: // castle: random
 			rec = bscreate(FirstCastle);
             index = map::m2i(cx, cy);
-            bsset(rec, Position, index);
+            bsset(rec, Index, index);
             break;
         default:
             break;
@@ -765,7 +765,7 @@ void map::load(gamefile& game)
                 // add castle
                 if(sizeblock==sizeof(mp2::castle))
                 {
-                    int rec = bsfind(FirstCastle, Position, findobject);
+                    int rec = bsfind(FirstCastle, Index, findobject);
                     load_object((mp2::castle*)pblock, rec);
                     if(tile.generalObject==mp2obj(RndTown) || tile.generalObject==mp2obj(RndCastle))
                         update_castle(findobject, bsget(rec, Type), tiles, addons);
@@ -788,7 +788,7 @@ void map::load(gamefile& game)
                     if(!rec)
                         rec = get_free_hero(type);
                     bsset(rec, Player, pla);
-                    bsset(rec, Position, findobject);
+                    bsset(rec, Index, findobject);
                     bsset(rec, Direction, map::Right);
                 }
                 break;
@@ -798,7 +798,7 @@ void map::load(gamefile& game)
                 if(sizeblock>sizeof(mp2::info)-1 && pblock[0]==0x01)
                 {
 					int rec = bscreate(FirstSign);
-                    bsset(rec, Position, findobject);
+                    bsset(rec, Index, findobject);
 					bsset(rec, Name, (char*)&pblock[9]);
                 }
                 break;
@@ -808,7 +808,7 @@ void map::load(gamefile& game)
                 {
                     mp2::eventcoord& e = (mp2::eventcoord&)pblock;
 					int rec = bscreate(FirstEvent);
-                    bsset(rec, Position, findobject);
+                    bsset(rec, Index, findobject);
                     bsset(rec, Name, e.text);
                     bsset(rec, OneTime, e.cancel);
                     bsset(rec, Computer, e.computer);
@@ -835,7 +835,7 @@ void map::load(gamefile& game)
                 {
                     mp2::riddle& e = (mp2::riddle&)pblock;
 					int rec = bscreate(FirstEvent);
-                    bsset(rec, Position, findobject);
+                    bsset(rec, Index, findobject);
                     bsset(rec, Name, e.text);
                     bsset(rec, Gold, e.golds);
                     bsset(rec, Mercury, e.mercury);
@@ -867,7 +867,7 @@ void map::load(gamefile& game)
             else if(sizeblock>sizeof(mp2::rumor)-1 && pblock[8])
             {
                 //int mid = signs::add();
-                //signs::set(mid, Position, e.id);
+                //signs::set(mid, Index, e.id);
                 //signs::set(mid, Name, e.text);
             }
         }
@@ -983,7 +983,7 @@ void map::load(gamefile& game)
             {
                 hrc = get_free_hero(type);
                 bsset(hrc, Player, i);
-                bsset(hrc, Position, bsget(rec, Position));
+                bsset(hrc, Index, bsget(rec, Index));
                 bsset(hrc, Direction, Right);
             }
             // Two hero recruit in castle
