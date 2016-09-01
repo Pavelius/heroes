@@ -450,14 +450,15 @@ void show::battle::shoot(int rec, int enemy, int damage)
 	point p1 = combat::i2h(i1); p1.y -= 32;
 	point p2 = combat::i2h(i2); p2.y -= 32;
 	point points[256];
-	int dx = p2.x - p1.x;
-	int dy = p2.y - p1.y;
+	int dx = p1.x - p2.x;
+	int dy = p1.y - p2.y;
 	arrow.icn = res::getshooting(rec);
 	arrow.frame = get_missile_index(arrow.icn, dx, dy);
 	arrow.start = arrow.frame;
+	arrow.flags = pa->flags;
 	arrow.count = 1;
-	int count = animation::fly(points, p1, p2, 32);
-	for(int i = 2; i < count - 1; i++)
+	int count = animation::fly(points, p1, p2, 48);
+	for(int i = 1; i < count - 1; i++)
 	{
 		arrow.pos = points[i];
 		screen.redraw(objects, combat_timeout);
