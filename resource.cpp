@@ -388,6 +388,8 @@ bool res::ishight(res::tokens icn, int index)
 
 res::tokens res::getshooting(int rec)
 {
+	if(rec >= FirstCombatant && rec <= LastCombatant)
+		rec = bsget(rec, Type);
 	switch(rec)
 	{
 	case Orc:
@@ -408,7 +410,13 @@ res::tokens res::getshooting(int rec)
 		return res::LICH_MSL;
 	case Mage:
 	case ArchMage:
+	case Centaur:
+	case Archer:
+	case Ranger:
 		return res::ARCH_MSL;
+	case Elf:
+	case GrandElf:
+		return res::ELF__MSL;
 	default:
 		return res::Empthy;
 	}

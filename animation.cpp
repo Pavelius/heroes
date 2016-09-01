@@ -40,12 +40,12 @@ combat_monsters_info combat_monsters[] =
 	{res::PALADIN2, {1, 11}, {12, 8}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {20, 2}, {22, 3}, {25, 3}, {28, 3}, {31, 2}, {34, 5}, res::WavPLDNATTK, res::WavPLDNKILL, res::WavPLDNMOVE, res::WavPLDNWNCE},
 	// Barbarian
 	{res::GOBLIN, {33, 7}, {1, 9}, /*Fly*/{0, 0}, {0, 0}, {0, 0}, /*Shoot*/{0, 0}, {0, 0}, {0, 0}, {0, 0}, /*Attack*/{10, 3}, {17, 4}, {13, 4}, {21, 4}, {25, 4}, {29, 4}, res::WavGBLNATTK, res::WavGBLNKILL, res::WavGBLNMOVE, res::WavGBLNWNCE},
-	{res::ORC, {1, 4}, {5, 8}, {0, 0}, {0, 0}, {0, 0}, {16, 13}, {0, 0}, {0, 0}, {0, 0}, {28, 2}, {30, 3}, {33, 4}, {37, 3}, {13, 3}, {40, 4}, res::WavORC_ATTK, res::WavORC_KILL, res::WavORC_MOVE, res::WavORC_WNCE},
+	{res::ORC, {1, 4}, {5, 8}, /*Fly*/{0, 0}, {0, 0}, {0, 0}, /*Shoot*/{16, 13}, {0, 0}, {0, 0}, {0, 0}, /*Attack*/{28, 2}, {30, 3}, {33, 4}, {37, 3}, {13, 3}, {40, 4}, res::WavORC_ATTK, res::WavORC_KILL, res::WavORC_MOVE, res::WavORC_WNCE},
 	{res::ORC2, {1, 4}, {5, 8}, {0, 0}, {0, 0}, {0, 0}, {16, 13}, {0, 0}, {0, 0}, {0, 0}, {28, 2}, {30, 3}, {33, 4}, {37, 3}, {13, 3}, {40, 4}, res::WavORC_ATTK, res::WavORC_KILL, res::WavORC_MOVE, res::WavORC_WNCE},
 	{res::WOLF, {20, 6}, {7, 6}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {13, 3}, {2, 5}, {16, 4}, {26, 3}, {28, 5}, res::WavWOLFATTK, res::WavWOLFKILL, res::WavWOLFMOVE, res::WavWOLFWNCE},
 	{res::OGRE, {1, 4}, {5, 8}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {16, 6}, {22, 7}, {29, 8}, {13, 3}, {37, 4}, res::WavOGREATTK, res::WavOGREKILL, res::WavOGREMOVE, res::WavOGREWNCE},
 	{res::OGRE2, {1, 4}, {5, 8}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {16, 6}, {22, 7}, {29, 8}, {13, 3}, {37, 4}, res::WavOGREATTK, res::WavOGREKILL, res::WavOGREMOVE, res::WavOGREWNCE},
-	{res::TROLL, {16, 7}, {1, 15}, {0, 0}, {0, 0}, {0, 0}, {23, 5}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {48, 6}, {23, 6}, {29, 5}, {54, 3}, {57, 9}, res::WavTRLLATTK, res::WavTRLLKILL, res::WavTRLLMOVE, res::WavTRLLWNCE},
+	{res::TROLL, {16, 7}, {1, 15}, /*Fly*/{0, 0}, {0, 0}, {0, 0}, /*Shoot*/{23, 5}, {0, 0}, {0, 0}, {0, 0}, /*Attack*/{0, 0}, {48, 6}, {23, 6}, {29, 5}, {54, 3}, {57, 9}, res::WavTRLLATTK, res::WavTRLLKILL, res::WavTRLLMOVE, res::WavTRLLWNCE},
 	{res::TROLL2, {16, 7}, {1, 15}, {0, 0}, {0, 0}, {0, 0}, {23, 5}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {48, 6}, {23, 6}, {29, 5}, {54, 3}, {57, 9}, res::WavTRLLATTK, res::WavTRLLKILL, res::WavTRLLMOVE, res::WavTRLLWNCE},
 	{res::CYCLOPS, {30, 9}, {1, 7}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {16, 2}, {11, 2}, {21, 2}, {0, 0}, {14, 3}, {8, 3}, {18, 3}, {23, 2}, {25, 5}, res::WavCYCLATTK, res::WavCYCLKILL, res::WavCYCLMOVE, res::WavCYCLWNCE},
 	// Sorcerer
@@ -53,13 +53,13 @@ combat_monsters_info combat_monsters[] =
 	{res::DWARF, {44, 5}, {1, 9}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {20, 7}, {10, 10}, {27, 9}, {36, 8}, {49, 7}, res::WavDWRFATTK, res::WavDWRFKILL, res::WavDWRFMOVE, res::WavDWRFWNCE},
 	{res::DWARF2, {44, 5}, {1, 9}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {20, 7}, {10, 10}, {27, 9}, {36, 8}, {49, 7}, res::WavDWRFATTK, res::WavDWRFKILL, res::WavDWRFMOVE, res::WavDWRFWNCE},
 	{res::ELF, {42, 6}, {1, 12}, {0, 0}, {0, 0}, {0, 0}, {13, 10}, {0, 0}, {0, 0}, {0, 0}, {23, 3}, {26, 3}, {29, 3}, {32, 4}, {36, 2}, {38, 4}, res::WavELF_ATTK, res::WavELF_KILL, res::WavELF_MOVE, res::WavELF_WNCE},
-	{res::ELF2, {42, 6}, {1, 12}, {0, 0}, {0, 0}, {0, 0}, {13, 10}, {0, 0}, {0, 0}, {0, 0}, {23, 3}, {26, 3}, {29, 3}, {32, 4}, {36, 2}, {38, 4}, res::WavELF_ATTK, res::WavELF_KILL, res::WavELF_MOVE, res::WavELF_WNCE},
+	{res::ELF2, {42, 6}, {1, 12}, /*Fly*/{0, 0}, {0, 0}, {0, 0}, /*Shoot*/{13, 10}, {0, 0}, {0, 0}, {0, 0}, {23, 3}, {26, 3}, {29, 3}, {32, 4}, {36, 2}, {38, 4}, res::WavELF_ATTK, res::WavELF_KILL, res::WavELF_MOVE, res::WavELF_WNCE},
 	{res::DRUID, {46, 4}, {3, 11}, {0, 0}, {0, 0}, {0, 0}, {14, 8}, {35, 4}, {22, 4}, {39, 5}, {14, 8}, {35, 4}, {22, 4}, {39, 4}, {44, 2}, {26, 9}, res::WavDRUIATTK, res::WavDRUIKILL, res::WavDRUIMOVE, res::WavDRUIWNCE},
 	{res::DRUID2, {46, 4}, {3, 11}, {0, 0}, {0, 0}, {0, 0}, {14, 8}, {35, 4}, {22, 4}, {39, 5}, {14, 8}, {35, 4}, {22, 4}, {39, 4}, {44, 2}, {26, 9}, res::WavDRUIATTK, res::WavDRUIKILL, res::WavDRUIMOVE, res::WavDRUIWNCE},
 	{res::UNICORN, {1, 9}, {10, 8}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {18, 9}, {27, 7}, {34, 7}, {41, 4}, {45, 7}, res::WavUNICATTK, res::WavUNICKILL, res::WavUNICMOVE, res::WavUNICWNCE},
 	{res::PHOENIX, {30, 5}, {0, 0}, {1, 3}, {4, 6}, {0, 0}, {0, 0}, {25, 3}, {23, 2}, {28, 2}, {0, 0}, {13, 4}, {10, 4}, {17, 4}, {35, 2}, {37, 11}, res::WavPHOEATTK, res::WavPHOEKILL, res::WavPHOEMOVE, res::WavPHOEWNCE},
 	// Warlock
-	{res::CENTAUR, {65, 6}, {2, 6}, {0, 0}, {0, 0}, {0, 0}, {18, 4}, {27, 3}, {22, 5}, {30, 3}, {33, 1}, {38, 4}, {34, 4}, {42, 4}, {46, 2}, {48, 7}, res::WavCNTRATTK, res::WavCNTRKILL, res::WavCNTRMOVE, res::WavCNTRWNCE},
+	{res::CENTAUR, {65, 6}, {2, 6}, /*Fly*/{0, 0}, {0, 0}, {0, 0}, /*Shoot*/{18, 4}, {27, 3}, {22, 5}, {30, 3}, {33, 1}, {38, 4}, {34, 4}, {42, 4}, {46, 2}, {48, 7}, res::WavCNTRATTK, res::WavCNTRKILL, res::WavCNTRMOVE, res::WavCNTRWNCE},
 	{res::GARGOYLE, {1, 4}, {0, 0}, {5, 2}, {7, 4}, {11, 1}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {14, 1}, {15, 4}, {19, 4}, {23, 4}, {12, 2}, {27, 5}, res::WavGARGATTK, res::WavGARGKILL, res::WavGARGMOVE, res::WavGARGWNCE},
 	{res::GRIFFIN, {16, 9}, {0, 0}, {1, 3}, {3, 3}, {5, 2}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {7, 1}, {8, 2}, {14, 2}, {11, 3}, {9, 2}, {25, 9}, res::WavGRIFATTK, res::WavGRIFKILL, res::WavGRIFMOVE, res::WavGRIFWNCE},
 	{res::MINOTAUR, {1, 5}, {6, 7}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {13, 3}, {20, 3}, {16, 4}, {23, 4}, {27, 2}, {29, 6}, res::WavMINOATTK, res::WavMINOKILL, res::WavMINOMOVE, res::WavMINOWNCE},
@@ -220,8 +220,25 @@ void animation::set(int id, int value, int param)
 			}
 			break;
 		case Shoot:
-			start = e.shot0[0];
-			count = e.shot0[1];
+			switch(param)
+			{
+			case 0:
+				start = e.shot0[0];
+				count = e.shot0[1];
+				break;
+			case 1:
+				start = e.shot1[0];
+				count = e.shot1[1];
+				break;
+			case 2:
+				start = e.shot2[0];
+				count = e.shot2[1];
+				break;
+			default:
+				start = e.shot3[0];
+				count = e.shot3[1];
+				break;
+			}
 			break;
 		case Fly:
 			switch(param)
@@ -589,6 +606,13 @@ void animation::set(int id, int value, int param)
 	frame = start;
 }
 
+bool animation::hasanimation(tokens id, int param) const
+{
+	animation test;
+	test.set(rec, id, param);
+	return test.count != 0;
+}
+
 bool animation::incframe()
 {
 	if(++frame >= start + count)
@@ -638,8 +662,11 @@ point animation::getoffset(int start) const
 	return result;
 }
 
-void animation::move(int x1, int y1, int x2, int y2, int step)
+int animation::fly(point* result, point from, point to, int step)
 {
+	auto p = result;
+	int x1 = from.x; int y1 = from.y;
+	int x2 = to.x; int y2 = to.y;
 	const int dx = iabs(x2 - x1);
 	const int dy = iabs(y2 - y1);
 	int ns = (dx > dy ? dx : dy) / 2;
@@ -670,10 +697,12 @@ void animation::move(int x1, int y1, int x2, int y2, int step)
 		}
 		if((i % step)==0)
 		{
-			//pos.x = x1;
-			//pos.y = y1;
+			p->x = x1;
+			p->y = y1;
+			p++;
 		}
 	}
+	return p - result;
 }
 
 animation* animation::find(drawable** objects, int rec)

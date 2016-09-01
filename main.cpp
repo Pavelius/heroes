@@ -392,6 +392,7 @@ static void test_combat()
 	command::execute("game", "initialize");
 	bsset(LordKillburn, Player, PlayerBlue);
 	game::addunit(LordKillburn, Swordsman, 1);
+	game::addunit(LordKillburn, Centaur, 5);
 	bsset(Tsabu, Player, PlayerRed);
 	game::addunit(Tsabu, Troll, 1);
 	combat::start(LordKillburn, Tsabu);

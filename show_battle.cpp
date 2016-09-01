@@ -358,7 +358,7 @@ static int missile7(int dx, int dy)
 	return dy > 0 ? 1 : 5;
 }
 
-static int missile_index(res::tokens icn, int dx, int dy)
+static int get_missile_index(res::tokens icn, int dx, int dy)
 {
 	switch(icn)
 	{
@@ -430,10 +430,42 @@ void show::battle::shoot(int rec, int enemy, int damage)
 		return;
 	draw::screenshoot screen;
 	animation::state a1(pa);
+	// Prepare shoot
+	if(pa->hasanimation(Shoot, 2))
+	{
+		pa->setaction(Shoot, 0);
+		screen.redraw(objects, combat_timeout, pa);
+		pa->setaction(Shoot, 2);
+		screen.redraw(objects, combat_timeout, pa, pa->start + pa->count - 1);
+	}
+	else
+	{
+		pa->setaction(Shoot, 0);
+		screen.redraw(objects, combat_timeout, pa, pa->start + pa->count - 1);
+	}
+	// Projectile
+	animation arrow; zcat(objects, static_cast<drawable*>(&arrow));
 	int i1 = bsget(rec, Index);
 	int i2 = bsget(enemy, Index);
+	point p1 = combat::i2h(i1); p1.y -= 32;
+	point p2 = combat::i2h(i2); p2.y -= 32;
+	point points[256];
+	int dx = p2.x - p1.x;
+	int dy = p2.y - p1.y;
+	arrow.icn = res::getshooting(rec);
+	arrow.frame = get_missile_index(arrow.icn, dx, dy);
+	arrow.start = arrow.frame;
+	arrow.count = 1;
+	int count = animation::fly(points, p1, p2, 32);
+	for(int i = 2; i < count - 1; i++)
+	{
+		arrow.pos = points[i];
+		screen.redraw(objects, combat_timeout);
+	}
+	arrow.icn = res::Empthy;
+	// Last phase
 	combat::applydamage(enemy, damage);
-	screen.redraw(objects, combat_timeout, pe);
+	screen.redraw(objects, combat_timeout, pa, pe);
 }
 
 void show::battle::fly(int rec, int target)
@@ -542,12 +574,12 @@ void show::battle::move(int rec, int target)
 			else if(d == HexLeftUp)
 			{
 				pa->pos.x = move_start.x - (cos_a(pt.x) - sin_a(pt.y));
-				pa->pos.y = move_start.y - (sin_a(pt.x) - pt.y/2);
+				pa->pos.y = move_start.y - (sin_a(pt.x) - pt.y / 2);
 			}
 			else if(d == HexLeftDown)
 			{
 				pa->pos.x = move_start.x - (cos_a(pt.x) - sin_a(pt.y));
-				pa->pos.y = move_start.y + (sin_a(pt.x) - pt.y/2);
+				pa->pos.y = move_start.y + (sin_a(pt.x) - pt.y / 2);
 			}
 			screen.redraw(objects, combat_timeout);
 			if(pa->incframe())

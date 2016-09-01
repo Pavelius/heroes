@@ -853,13 +853,17 @@ void draw::screenshoot::redraw(drawable** objects, unsigned timeout)
 	sleep(timeout);
 }
 
-void draw::screenshoot::redraw(drawable** objects, unsigned timeout, drawable* e1)
+void draw::screenshoot::redraw(drawable** objects, unsigned timeout, drawable* e1, int stop)
 {
 	auto a1 = static_cast<animation*>(e1);
+	if(!a1->count)
+		return;
 	while(true)
 	{
 		redraw(objects, timeout);
 		if(a1->incframe())
+			break;
+		if(stop && a1->frame >= stop)
 			break;
 	}
 }
@@ -870,7 +874,7 @@ void draw::screenshoot::redraw(drawable** objects, unsigned timeout, drawable* e
 	auto a2 = static_cast<animation*>(e2);
 	bool a1_run = true;
 	bool a2_run = true;
-	while(a1_run && a2_run)
+	while(a1_run || a2_run)
 	{
 		redraw(objects, timeout);
 		if(a1->incframe())

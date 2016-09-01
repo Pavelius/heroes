@@ -613,8 +613,8 @@ namespace draw
 		~screenshoot();
 		void				restore();
 		void				redraw(drawable** objects, unsigned timeout);
-		void				redraw(drawable** objects, unsigned timeout, drawable* o1);
-		void				redraw(drawable** objects, unsigned timeout, drawable* o1, drawable* o2);
+		void				redraw(drawable** objects, unsigned timeout, drawable* e1, int stop = 0);
+		void				redraw(drawable** objects, unsigned timeout, drawable* e1, drawable* e2);
 	private:
 		unsigned char*		bits;
 	};
@@ -705,16 +705,18 @@ struct animation : public drawable
 	animation(int rec, int action);
 	animation(res::tokens base, int frame, int count);
 	//
+	void					clear();
 	static animation*		find(drawable** objects, int rec);
+	static int				fly(point* result, point from, point to, int step);
 	int						getid() const override { return rec; }
+	point					gethead() const;
 	rect				    getrect() const override;
 	point					getzpos() const override;
 	virtual unsigned		getrate() const { return 1000 / 8; }
 	point					getoffset(int start = -1) const;
-	void					clear();
+	bool					hasanimation(tokens id, int param = 0) const;
 	virtual bool			incframe();
 	bool					islast() const { return frame == (start + count - 1); }
-	void					move(int x1, int y1, int x2, int y2, int step);
 	void				    painting(point screen) const override;
 	int						priority() const override { return rec; }
 	void				    set(int rec, int action, int param = 0);
