@@ -316,38 +316,105 @@ int game::get(int rec, int id)
 			m += get(u, Gold) * bsget(rec, i + 1);
 		}
 		return m;
+	case MeleeArcher:
+		if(rec >= FirstCombatant && rec <= LastCombatant)
+			rec = bsget(rec, Type);
+		switch(rec)
+		{
+		case Mage:
+		case ArchMage:
+		case Lich:
+		case PowerLich:
+			return 1;
+		default:
+			return 0;
+		}
+	case HideAttack:
+		if(rec >= FirstCombatant && rec <= LastCombatant)
+			rec = bsget(rec, Type);
+		switch(rec)
+		{
+		case Sprite:
+		case Hydra:
+		case Vampire:
+		case VampireLord:
+		case Rogue:
+			return 1;
+		default:
+			return 0;
+		}
+	case AllAttackAnswer:
+		if(rec >= FirstCombatant && rec <= LastCombatant)
+			rec = bsget(rec, Type);
+		switch(rec)
+		{
+		case Griffin:
+			return 1;
+		default:
+			return 0;
+		}
+	case Fly:
+		if(rec >= FirstCombatant && rec <= LastCombatant)
+			rec = bsget(rec, Type);
+		switch(rec)
+		{
+		case Sprite:
+		case Phoenix:
+		case Gargoyle:
+		case Griffin:
+		case GreenDragon:
+		case RedDragon:
+		case BlackDragon:
+		case Roc:
+		case Vampire:
+		case VampireLord:
+		case BoneDragon:
+		case Ghost:
+		case Genie:
+			return 1;
+		default:
+			return 0;
+		}
+	case TwiceAttack:
+		if(rec >= FirstCombatant && rec <= LastCombatant)
+			rec = bsget(rec, Type);
+		switch(rec)
+		{
+		case Ranger:
+		case Crusader:
+		case Paladin:
+		case Wolf:
+		case Elf:
+		case GrandElf:
+			return 1;
+		default:
+			return 0;
+		}
 	default:
 		return bsget(rec, id);
 	}
 }
 
-bool game::ismeleearcher(int rec)
+bool game::iswide(int rec)
 {
-	if(rec >= FirstCombatant && rec <= LastCombatant)
-		rec = bsget(rec, Type);
 	switch(rec)
 	{
-	case Mage:
-	case ArchMage:
-	case Lich:
-	case PowerLich:
-		return true;
-	default:
-		return false;
-	}
-}
-
-bool game::ishideattack(int rec)
-{
-	if(rec >= FirstCombatant && rec <= LastCombatant)
-		rec = bsget(rec, Type);
-	switch(rec)
-	{
-	case Sprite:
+	case Cavalry:
+	case Champion:
+	case Wolf:
+	case Unicorn:
+	case Phoenix:
+	case Centaur:
+	case Griffin:
 	case Hydra:
-	case Vampire:
-	case VampireLord:
-	case Rogue:
+	case GreenDragon:
+	case RedDragon:
+	case BlackDragon:
+	case Boar:
+	case Roc:
+	case BoneDragon:
+	case Nomand:
+	case Medusa:
 		return true;
 	default:
 		return false;

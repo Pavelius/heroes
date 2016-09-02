@@ -44,7 +44,7 @@ int combat::attack(int att, int def)
 void combat::melee(int att, int def, bool interactive)
 {
 	int result = attack(att, def);
-	if(bsget(att, Shoots) && !game::ismeleearcher(att))
+	if(bsget(att, Shoots) && !game::get(att, MeleeArcher))
 	{
 		result /= 2;
 		result = correct_damage(result);
@@ -56,8 +56,8 @@ void combat::melee(int att, int def, bool interactive)
 	if(!game::get(def, Count))
 		return;
 	if(bsget(def, AlreadyDefended)==0
-		&& !game::ishideattack(att)
-		&& (bsget(def, AllAttackAnswer) || !bsget(def, DefendThisTurn)))
+		&& !game::get(att, HideAttack)
+		&& (game::get(def, AllAttackAnswer) || !bsget(def, DefendThisTurn)))
 	{
 		bsadd(def, AlreadyDefended, 1);
 		result = attack(def, att);
@@ -379,8 +379,9 @@ static int make_turn(bool interactive)
 			if(!game::get(rec, Count))
 				continue;
 			combat::wave(bsget(rec, Index),
-				bsget(rec, Wide) != 0,
-				bsget(rec, Fly) != 0);
+				game::iswide(bsget(rec, Type)),
+				bsget(rec, Fly) != 0,
+				combat::isattacker(rec) ? HexRight : HexLeft);
 			int id = 0;
 			// RULE: spell Berserker implementation
 			if(game::geteffect(rec, SpellBerserker))

@@ -109,18 +109,18 @@ combat_monsters_info combat_monsters[] =
 
 const unsigned animation_rate = 1000 / 8;
 
-animation::animation() :icn(res::Empthy), frame(0), start(0), count(0), stamp(0), flags(0)
+animation::animation() :icn(res::Empthy), frame(0), start(0), count(0), wait(0), flags(0)
 {
 	rec = 0;
 	pos.x = 0;
 	pos.y = 0;
 }
 
-animation::animation(res::tokens icn, int start, int count) :start(start), stamp(0), flags(0)
+animation::animation(res::tokens icn, int start, int count) :start(start), wait(0), flags(0)
 {
 	rec = 0;
 	if(count == -1)
-		count = res::frames(icn);
+		count = res::getcount(icn);
 	pos.x = 0;
 	pos.y = 0;
 	this->icn = icn;
@@ -128,7 +128,7 @@ animation::animation(res::tokens icn, int start, int count) :start(start), stamp
 	this->count = count;
 }
 
-animation::animation(int rec, int action) :icn(res::Empthy), stamp(0), flags(0)
+animation::animation(int rec, int action) :icn(res::Empthy), wait(0), flags(0)
 {
 	this->rec = 0;
 	pos.x = 0;
@@ -140,9 +140,8 @@ void animation::clear()
 {
 	rec = 0;
 	pos.clear();
-	frame = start = count = 0;;
+	frame = start = count = wait = 0;;
 	flags = 0;
-	stamp = 0;
 	icn = res::Empthy;
 }
 
@@ -153,7 +152,7 @@ void animation::painting(point pt) const
 
 void animation::set(int id, int value, int param)
 {
-	stamp = draw::timestamp;
+	wait = 0;
 	if(id >= Peasant && id <= MonsterRnd)
 	{
 		combat_monsters_info& e = combat_monsters[id - Peasant];
@@ -175,16 +174,8 @@ void animation::set(int id, int value, int param)
 			}
 			break;
 		case ActorWarn:
-			if(e.idle[1] == 4)
-			{
-				start = e.idle[0] + xrand(1, 3);
-				count = 1;
-			}
-			else
-			{
-				start = e.idle[0];
-				count = e.idle[1];
-			}
+			start = e.idle[0];
+			count = e.idle[1];
 			break;
 		case Move:
 			start = e.move[0];
@@ -615,6 +606,11 @@ bool animation::hasanimation(tokens id, int param) const
 
 bool animation::incframe()
 {
+	if(wait)
+	{
+		wait--;
+		return false;
+	}
 	if(++frame >= start + count)
 	{
 		frame = start;
@@ -625,13 +621,7 @@ bool animation::incframe()
 
 void animation::update()
 {
-	if(!stamp)
-		stamp = draw::timestamp;
-	while(draw::timestamp > stamp)
-	{
-		incframe();
-		stamp += getrate();
-	}
+	incframe();
 }
 
 point animation::getzpos() const

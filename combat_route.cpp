@@ -4,13 +4,22 @@ unsigned char		path_stack[256];
 unsigned char		path_pop;
 unsigned char		path_push;
 
-static void snode(unsigned char index, unsigned char cost)
+static void snode(unsigned char index, unsigned char cost, bool iswide, tokens widedir)
 {
 	if(index==0xFF)
 		return;
 	unsigned char a = combat::movements[index];
 	if(a>=BlockSquad)
 		return;
+	if(iswide)
+	{
+		int indexw = combat::moveto(index, widedir);
+		if(indexw != -1)
+		{
+			if(combat::movements[indexw] >= BlockSquad)
+				return;
+		}
+	}
 	if(a!=0 && cost>=a)
 		return;
 	path_stack[path_push++] = index;
@@ -113,7 +122,7 @@ int combat::moveto(int index, int direction)
 	}
 }
 
-void combat::wave(int start, bool wide, bool fly)
+void combat::wave(int start, bool wide, bool fly, tokens widedir)
 {
 	memset(combat::movements, 0, sizeof(combat::movements));
 	if(start==-1)
@@ -124,7 +133,16 @@ void combat::wave(int start, bool wide, bool fly)
 			continue;
 		if(!game::get(i, Count))
 			continue;
-		movements[bsget(i, Index)] = BlockSquad;
+		int index = bsget(i, Index);
+		if(index == start)
+			continue;
+		movements[index] = BlockSquad;
+		if(game::iswide(bsget(i, Type)))
+		{
+			int indexw = combat::moveto(index, combat::isattacker(i) ? HexRight : HexLeft);
+			if(indexw !=-1)
+				movements[indexw] = BlockSquad;
+		}
 	}
 	if(fly)
 	{
@@ -147,13 +165,12 @@ void combat::wave(int start, bool wide, bool fly)
 			if(cost>=BlockSquad)
 				break;
 			cost++;
-			snode(combat::moveto(pos, HexLeft), cost);
-			snode(combat::moveto(pos, HexLeft), cost);
-			snode(combat::moveto(pos, HexRight), cost);
-			snode(combat::moveto(pos, HexLeftUp), cost);
-			snode(combat::moveto(pos, HexLeftDown), cost);
-			snode(combat::moveto(pos, HexRightUp), cost);
-			snode(combat::moveto(pos, HexRightDown), cost);
+			snode(combat::moveto(pos, HexLeft), cost, wide, widedir);
+			snode(combat::moveto(pos, HexRight), cost, wide, widedir);
+			snode(combat::moveto(pos, HexLeftUp), cost, wide, widedir);
+			snode(combat::moveto(pos, HexLeftDown), cost, wide, widedir);
+			snode(combat::moveto(pos, HexRightUp), cost, wide, widedir);
+			snode(combat::moveto(pos, HexRightDown), cost, wide, widedir);
 		}
 	}
 	movements[start] = BlockSquad;

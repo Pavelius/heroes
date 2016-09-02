@@ -9,7 +9,7 @@ struct leader : public animation
 		if(player >= PlayerBlue && player <= LastPlayer)
 		{
 			res::tokens icn = res::tokens(res::HEROFL00 + player - PlayerBlue);
-			draw::image(pos.x + screen.x, pos.y + screen.y, icn, (draw::timestamp / 200) % 5, flags);
+			draw::image(pos.x + screen.x, pos.y + screen.y, icn, draw::counter % 5, flags);
 		}
 	}
 };
@@ -360,23 +360,15 @@ static int missile7(int dx, int dy)
 
 static int get_missile_index(res::tokens icn, int dx, int dy)
 {
-	switch(icn)
+	switch(res::getcount(icn))
 	{
-	case res::KEEP:
-	case res::ARCH_MSL:
-	case res::ORC__MSL:
+	case 9:
 		return missile9(dx, dy);
-	case res::ELF__MSL:
-	case res::DRUIDMSL:
-	case res::HALFLMSL:
-	case res::TITANMSL:
+	case 7:
 		return missile7(dx, dy);
-	case res::TROLLMSL:
-	case res::LICH_MSL:
 	default:
-		break;
+		return 0;
 	}
-	return 0;
 }
 
 int show::battle::target(int side, int sid)
@@ -670,11 +662,14 @@ int show::battle::unit(int rec, int casted)
 				draw::execute(Spells);
 			return id;
 		case InputTimer:
-			for(auto e : objects)
+			if((draw::counter % 4) == 0)
 			{
-				if(!e)
-					break;
-				e->update();
+				for(auto e : objects)
+				{
+					if(!e)
+						break;
+					e->update();
+				}
 			}
 			break;
 		}

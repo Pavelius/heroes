@@ -123,7 +123,7 @@ static int search_image()
             y += 6;
             x += 4;
             draw::text(x,y,temp);
-            sznum(temp, res::frames(res::tokens(id)));
+            sznum(temp, res::getcount(res::tokens(id)));
             draw::text(x+150,y,temp);
         }
 
@@ -172,18 +172,13 @@ static int view()
 		char temp[256];
 		char temp2[64];
 		res::tokens icn = resdata[current_resource];
-		int max_frame = res::frames(icn);
+		int max_frame = res::getcount(icn);
 		if(current_frame>max_frame)
 			current_frame = max_frame - 1;
 		draw::rectf(0, 0, draw::width - 1, draw::height - 1, 0x12);
-		int x = (draw::width - res::width(icn, current_frame))/ 2;
-		int y = (draw::height - res::height(icn, current_frame)) / 2;
-		if(!center_image)
-		{
-			x = 640 / 2;
-			y = 480 / 2 - res::height(icn, current_frame);
-		}
-		draw::image(x, y, icn, current_frame, AFNoOffset);
+		int x = draw::width/2;
+		int y = draw::height/2;
+		draw::image(x, y, icn, current_frame, center_image ? AFNoOffset : 0);
 		if(border_image)
 		{
 			draw::line(x-32, y, x+32, y, 0xBD);
@@ -256,10 +251,15 @@ static int view()
 	}
 }
 
-int draw::start()
+int main()
 {
 	draw::font = res::FONT;
 	draw::create("Heroes II - Resource Viewer", 0, false);
 	view();
 	return 0;
+}
+
+int __stdcall WinMain(void* ci, void* pi, char* cmd, int sw)
+{
+	return main();
 }

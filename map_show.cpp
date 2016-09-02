@@ -129,11 +129,11 @@ void animate::monster(int x, int y, int mid, int ticket)
 		{
 		case 1:
 			draw::image(x, y, res::MINIMON, (mid - FirstMonster) * 9
-				+ 1 + monster_animation_cicl1[((draw::timestamp / 100) + ticket*ticket) % (sizeof(monster_animation_cicl1) / sizeof(monster_animation_cicl1[0]))]);
+				+ 1 + monster_animation_cicl1[(draw::counter + ticket*ticket) % (sizeof(monster_animation_cicl1) / sizeof(monster_animation_cicl1[0]))]);
 			break;
 		default:
 			draw::image(x, y, res::MINIMON, (mid - FirstMonster) * 9
-				+ 1 + monster_animation_cicle[((draw::timestamp / 100) + ticket*ticket) % (sizeof(monster_animation_cicle) / sizeof(monster_animation_cicle[0]))]);
+				+ 1 + monster_animation_cicle[(draw::counter + ticket*ticket) % (sizeof(monster_animation_cicle) / sizeof(monster_animation_cicle[0]))]);
 			break;
 		}
 	}
@@ -175,7 +175,7 @@ void draw::map(int x, int y, int* objects, int* route)
 				if(res::ishight(res, index))
 					continue;
 				image(x1, y1, res, index);
-				index = indexes::animate(res, index, (draw::timestamp / 100) + index*index, false);
+				index = indexes::animate(res, index, draw::counter + index*index, false);
 				if(index)
 					image(x1, y1, res, index);
 			}
@@ -227,7 +227,7 @@ void draw::map(int x, int y, int* objects, int* route)
 				if(!res::ishight(res, index))
 					continue;
 				image(x1, y1, res, index);
-				index = indexes::animate(res, index, (draw::timestamp / 100) + ticket, false);
+				index = indexes::animate(res, index, draw::counter + ticket, false);
 				if(index)
 					image(x1, y1, res, index);
 			}

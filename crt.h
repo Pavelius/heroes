@@ -36,7 +36,7 @@ extern "C" void*					memcpy(void* destination, const void* source, unsigned size
 extern "C" void*					memset(void* destination, int value, unsigned size);
 extern "C" void						qsort(void* base, unsigned num, unsigned size, int(*compar)(const void*, const void*));
 extern "C" int						rand(void); // Get next random value
-extern "C" void						sleep(unsigned seconds); // Suspend execution for an interval of time
+extern void							sleep(unsigned seconds); // Suspend execution for an interval of time
 extern "C" void						srand(unsigned seed); // Set random seed
 extern "C" int						strcmp(const char* s1, const char* s2); // Compare two strings
 extern "C" int						system(const char* command); // Execute system command

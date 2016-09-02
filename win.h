@@ -532,21 +532,21 @@ struct MINMAXINFO {
 	POINT		ptMaxTrackSize;
 };
 struct BITMAPINFOHEADER {
-	unsigned	biSize;
-	LONG		biWidth;
-	LONG		biHeight;
-	WORD		biPlanes;
-	WORD		biBitCount;
-	unsigned	biCompression;
-	unsigned	biSizeImage;
-	LONG		biXPelsPerMeter;
-	LONG		biYPelsPerMeter;
-	unsigned	biClrUsed;
-	unsigned	biClrImportant;
+	unsigned			biSize;
+	long				biWidth;
+	long				biHeight;
+	unsigned short		biPlanes;
+	unsigned short		biBitCount;
+	unsigned			biCompression;
+	unsigned			biSizeImage;
+	unsigned			biXPelsPerMeter;
+	unsigned			biYPelsPerMeter;
+	unsigned			biClrUsed;
+	unsigned			biClrImportant;
 };
 struct BITMAPINFO {
 	BITMAPINFOHEADER	bmiHeader;
-	RGBQUAD		bmiColors[1];
+	RGBQUAD				bmiColors[1];
 };
 struct MSG {
 	HWND		hwnd;
@@ -750,7 +750,7 @@ DLL void WINAPI				ExitProcess(unsigned uExitCode);
 DLL int WINAPI				FindClose(void* hFindFile);
 DLL void* WINAPI			FindFirstFileA(const char* lpFileName, WIN32_FIND_DATA* lpFindFileData);
 DLL int WINAPI				FindNextFileA(void* hFindFile, WIN32_FIND_DATA* lpFindFileData);
-DLL unsigned WINAPI			FlsAlloc(void (_stdcall *lpCallback)(void* pfd));
+DLL unsigned WINAPI			FlsAlloc(void(_stdcall *lpCallback)(void* pfd));
 DLL int WINAPI				FlsFree(unsigned dwFlsIndex);
 DLL void* WINAPI			FlsGetValue(unsigned dwFlsIndex);
 DLL int WINAPI				FlsSetValue(unsigned dwFlsIndex, void* lpFlsData);

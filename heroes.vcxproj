@@ -43,6 +43,7 @@
     <ClCompile Include="castle.cpp" />
     <ClCompile Include="combatant.cpp" />
     <ClCompile Include="combat.cpp" />
+    <ClCompile Include="draw_screenshot.cpp" />
     <ClCompile Include="show_battle_dialog.cpp" />
     <ClCompile Include="combat_effect.cpp" />
     <ClCompile Include="combat_route.cpp" />

@@ -1,17 +1,17 @@
+#include "input.h"
 #include "win.h"
-#include "main.h"
 
-struct video_8t
+struct videohead
 {
-	BITMAPINFO		bmp;
-	unsigned char	bmp_pallette[256*4];
+	BITMAPINFO			bmp;
+	unsigned char		bmp_pallette[256*4];
 };
 
-static const char*	window_class_name = "UIWindow32";
-static HWND			main_window;
-static bool			window_fullscreen;
-video_8t			video;
-extern unsigned char pallette[256][4];
+static const char*		window_class_name = "UIWindow32";
+static HWND				main_window;
+static bool				window_fullscreen;
+static videohead		video;
+static unsigned char*	video_bits;
 
 static int tokey(int vk)
 {
@@ -92,44 +92,8 @@ static int tokey(int vk)
 	}
 }
 
-static void colorize(unsigned char* pallette, int index, int count)
-{
-	unsigned char b1[4];
-	unsigned char* p1 = &pallette[index*4];
-	b1[0] = p1[0];
-	b1[1] = p1[1];
-	b1[2] = p1[2];
-	b1[3] = p1[3];
-	//
-	for(int i = 1; i<count; i++)
-	{
-		p1[(i-1)*4+0] = p1[i*4+0];
-		p1[(i-1)*4+1] = p1[i*4+1];
-		p1[(i-1)*4+2] = p1[i*4+2];
-		p1[(i-1)*4+3] = p1[i*4+3];
-	}
-	p1[(count-1)*4+0] = b1[0];
-	p1[(count-1)*4+1] = b1[1];
-	p1[(count-1)*4+2] = b1[2];
-	p1[(count-1)*4+3] = b1[3];
-}
-
-static void colorize()
-{
-	static unsigned tick = clock();
-	if(tick<clock())
-	{
-		colorize(&video.bmp.bmiColors[0].rgbBlue, 0xD6, 4);
-		colorize(&video.bmp.bmiColors[0].rgbBlue, 0xDA, 4);
-		colorize(&video.bmp.bmiColors[0].rgbBlue, 0xEE, 4);
-		colorize(&video.bmp.bmiColors[0].rgbBlue, 0xE7, 4);
-		tick += 250;
-	}
-}
-
 static int handle(HWND hwnd, MSG& msg)
 {
-    colorize();
 	switch(msg.message)
 	{
 	case WM_MOUSEMOVE:
@@ -176,7 +140,7 @@ static int handle(HWND hwnd, MSG& msg)
 	case WM_KEYDOWN:
 		return tokey(msg.wParam);
 	case WM_CHAR:
-		hot::symbol = msg.wParam;
+		hot::param = msg.wParam;
 		return InputSymbol;
 	case WM_COMMAND:
 		if(HIWORD(msg.wParam)==0)
@@ -191,9 +155,10 @@ static LRESULT CALLBACK WndProc(HWND hwnd, unsigned uMsg, WPARAM wParam, LPARAM 
 	switch(uMsg)
 	{
 	case WM_ERASEBKGND:
-		SetDIBitsToDevice((void*)wParam, 0, 0, draw::width, draw::height, 0, 0,
-			0, draw::height,
-			draw::ptr(0, 0), &video.bmp, DIB_RGB_COLORS);
+		SetDIBitsToDevice((void*)wParam, 0, 0,
+			video.bmp.bmiHeader.biWidth, -video.bmp.bmiHeader.biHeight, 0, 0,
+			0, -video.bmp.bmiHeader.biHeight,
+			video_bits, &video.bmp, DIB_RGB_COLORS);
 		return 1;
 	case WM_CLOSE:
 		PostQuitMessage(-1);
@@ -202,79 +167,6 @@ static LRESULT CALLBACK WndProc(HWND hwnd, unsigned uMsg, WPARAM wParam, LPARAM 
 		return DefWindowProcA(hwnd, uMsg, wParam, lParam);
 	}
 	return 0;
-}
-
-bool draw::create(const char* title, int frames_per_second, bool fullscreen)
-{
-
-	WNDCLASS    wc;								// Windows Class Structure
-	DWORD       dwStyle = WS_CAPTION|WS_SYSMENU|WS_BORDER;	// Windows Style;
-	RECT		WindowRect = {0, 0, width, height}; // Grabs Rectangle Upper Left / Lower Right Values
-	void*		hInstance = GetModuleHandleA(0);	// Grab An Instance For Our Window
-
-	wc.style = CS_OWNDC|CS_DBLCLKS;		                // Own DC For Window.
-	wc.lpfnWndProc = WndProc;							// WndProc Handles Messages
-	wc.cbClsExtra = 0;									// No Extra Window Data
-	wc.cbWndExtra = 0;									// No Extra Window Data
-	wc.hInstance = hInstance;							// Set The Instance
-	wc.hIcon = LoadIconA(GetModuleHandleA(0), (const char*)1);			// Load The Default Icon
-	wc.hCursor = LoadCursorA(0, IDC_ARROW);				// Load The Arrow Pointer
-	wc.hbrBackground = 0;								// No Background Required For GL
-	wc.lpszMenuName = 0;								// We Don't Want A Menu
-	wc.lpszClassName = window_class_name;				// Set The Class Name
-
-	if(!RegisterClassA(&wc))								// Attempt To Register The Window Class
-		return false;									// Return FALSE
-
-	if(fullscreen)										// Attempt Fullscreen Mode?
-	{
-	//	DEVMODE	dmScreenSettings;						// Device Mode
-	//	memset(&dmScreenSettings, 0, sizeof(dmScreenSettings));	// Makes Sure Memory's Cleared
-	//	dmScreenSettings.dmSize = sizeof(dmScreenSettings);		// Size Of The Devmode Structure
-	//	dmScreenSettings.dmPelsWidth = width;			// Selected Screen Width
-	//	dmScreenSettings.dmPelsHeight = height;			// Selected Screen Height
-	//	dmScreenSettings.dmBitsPerPel = 32;						// Selected Bits Per Pixel
-	//	dmScreenSettings.dmFields = DM_BITSPERPEL|DM_PELSWIDTH|DM_PELSHEIGHT;
-	//	// Try To Set Selected Mode And Get Results.  NOTE: CDS_FULLSCREEN Gets Rid Of Start Bar.
-	//	if(ChangeDisplaySettings(&dmScreenSettings, CDS_FULLSCREEN) != DISP_CHANGE_SUCCESSFUL)
-	//		return false;
-		dwStyle = WS_POPUP;								// Windows Style
-	}
-
-	window_fullscreen = fullscreen;
-	AdjustWindowRectEx(&WindowRect, dwStyle, 0, 0);	// Adjust Window To True Requested Size
-
-	// Create The Window
-	main_window = CreateWindowExA(0, window_class_name, title, dwStyle,	// Required Window Style
-		0x80000000, 0x80000000, WindowRect.right-WindowRect.left, WindowRect.bottom-WindowRect.top,
-		0, 0, hInstance, 0);
-
-	if(!main_window)
-		return false;								// Return FALSE
-
-	ShowCursor(0);
-	if(frames_per_second)
-		SetTimer(main_window, InputTimer, 1000/frames_per_second, 0);
-	ShowWindow(main_window, SW_SHOW);				// Show The Window
-	SetForegroundWindow(main_window);				// Slightly Higher Priority
-	SetFocus(main_window);						    // Sets Keyboard Focus To The Window
-
-	memset(&video.bmp, 0, sizeof(video.bmp));
-	memcpy(video.bmp.bmiColors, pallette, sizeof(pallette));
-	video.bmp.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-	video.bmp.bmiHeader.biWidth = draw::width;
-	video.bmp.bmiHeader.biHeight = -draw::height;
-	video.bmp.bmiHeader.biPlanes = 1;
-	video.bmp.bmiHeader.biBitCount = 8;
-	video.bmp.bmiHeader.biCompression = 0;
-	video.bmp.bmiHeader.biSizeImage = draw::width*draw::height;
-
-	return true;
-}
-
-void sleep(unsigned ms)
-{
-	Sleep(ms);
 }
 
 static void update(HWND hwnd)
@@ -301,7 +193,81 @@ static void add_modificators()
 	}
 }
 
-int draw::sysinput(bool wait_message)
+// Wait system for milliseconds
+void sleep(unsigned ms)
+{
+	Sleep(ms);
+}
+
+// Create specified window
+bool sys_create(const char* title, int milliseconds, bool fullscreen, unsigned char* bits, int width, int height)
+{
+
+	WNDCLASS    wc;								// Windows Class Structure
+	DWORD       dwStyle = WS_CAPTION | WS_SYSMENU | WS_BORDER;	// Windows Style;
+	RECT		WindowRect = {0, 0, width, height}; // Grabs Rectangle Upper Left / Lower Right Values
+	void*		hInstance = GetModuleHandleA(0);	// Grab An Instance For Our Window
+
+	wc.style = CS_OWNDC | CS_DBLCLKS;		                // Own DC For Window.
+	wc.lpfnWndProc = WndProc;							// WndProc Handles Messages
+	wc.cbClsExtra = 0;									// No Extra Window Data
+	wc.cbWndExtra = 0;									// No Extra Window Data
+	wc.hInstance = hInstance;							// Set The Instance
+	wc.hIcon = LoadIconA(GetModuleHandleA(0), (const char*)1);			// Load The Default Icon
+	wc.hCursor = LoadCursorA(0, IDC_ARROW);				// Load The Arrow Pointer
+	wc.hbrBackground = 0;								// No Background Required For GL
+	wc.lpszMenuName = 0;								// We Don't Want A Menu
+	wc.lpszClassName = window_class_name;				// Set The Class Name
+
+	if(!RegisterClassA(&wc))								// Attempt To Register The Window Class
+		return false;									// Return FALSE
+
+	if(fullscreen)										// Attempt Fullscreen Mode?
+	{
+		//	DEVMODE	dmScreenSettings;						// Device Mode
+		//	memset(&dmScreenSettings, 0, sizeof(dmScreenSettings));	// Makes Sure Memory's Cleared
+		//	dmScreenSettings.dmSize = sizeof(dmScreenSettings);		// Size Of The Devmode Structure
+		//	dmScreenSettings.dmPelsWidth = width;			// Selected Screen Width
+		//	dmScreenSettings.dmPelsHeight = height;			// Selected Screen Height
+		//	dmScreenSettings.dmBitsPerPel = 32;						// Selected Bits Per Pixel
+		//	dmScreenSettings.dmFields = DM_BITSPERPEL|DM_PELSWIDTH|DM_PELSHEIGHT;
+		//	// Try To Set Selected Mode And Get Results.  NOTE: CDS_FULLSCREEN Gets Rid Of Start Bar.
+		//	if(ChangeDisplaySettings(&dmScreenSettings, CDS_FULLSCREEN) != DISP_CHANGE_SUCCESSFUL)
+		//		return false;
+		dwStyle = WS_POPUP;								// Windows Style
+	}
+
+	window_fullscreen = fullscreen;
+	AdjustWindowRectEx(&WindowRect, dwStyle, 0, 0);	// Adjust Window To True Requested Size
+
+													// Create The Window
+	main_window = CreateWindowExA(0, window_class_name, title, dwStyle,	// Required Window Style
+		0x80000000, 0x80000000, WindowRect.right - WindowRect.left, WindowRect.bottom - WindowRect.top,
+		0, 0, hInstance, 0);
+
+	if(!main_window)
+		return false;								// Return FALSE
+
+	ShowCursor(0);
+	if(milliseconds)
+		SetTimer(main_window, InputTimer, milliseconds, 0);
+	ShowWindow(main_window, SW_SHOW);				// Show The Window
+	SetForegroundWindow(main_window);				// Slightly Higher Priority
+	SetFocus(main_window);						    // Sets Keyboard Focus To The Window
+
+	video.bmp.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+	video.bmp.bmiHeader.biWidth = width;
+	video.bmp.bmiHeader.biHeight = -height;
+	video.bmp.bmiHeader.biPlanes = 1;
+	video.bmp.bmiHeader.biBitCount = 8;
+	video.bmp.bmiHeader.biCompression = 0;
+	video.bmp.bmiHeader.biSizeImage = width*height;
+	video_bits = bits;
+
+	return true;
+}
+
+int sys_input(bool wait_message)
 {
 	MSG	msg;
 	if(!main_window)
@@ -334,4 +300,9 @@ int draw::sysinput(bool wait_message)
 		}
 		return InputResize;
 	}
+}
+
+void* sys_get_pallette()
+{
+	return &video.bmp.bmiColors[0].rgbBlue;
 }

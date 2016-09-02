@@ -64,15 +64,64 @@ static struct combatant : public animation
 
 	bool incframe() override
 	{
+		if(wait)
+		{
+			wait--;
+			return false;
+		}
 		if(++frame >= start + count)
 		{
 			frame = start;
 			if(action == Killed)
 				frame = start + count - 1;
-			else if(action != ActorWarn)
-				setaction(ActorWarn);
 			else
-				stamp += xrand(2, 5) * 1000;
+			{
+				set(rec, ActorWarn);
+				int d = d100();
+				switch(count)
+				{
+				case 4: // Peasant, Archer,
+					if(d < 40)
+						frame += xrand(1, count-1);
+					else
+						wait = xrand(5, 10);
+					break;
+				case 6: // Swordsman
+					if(d < 20)
+						frame += xrand(3, count - 1);
+					else if(d < 20)
+						count = 2;
+					else
+					{
+						frame += 2;
+						wait = xrand(5, 10);
+					}
+					break;
+				case 7:
+					if(icn == res::TROLL || icn == res::TROLL2)
+					{
+						if(d100()<25)
+							count = 4;
+						else
+						{
+							frame += 4;
+							wait = xrand(4, 10);
+						}
+					}
+					else
+					{
+						// Goblin, Roc
+						if(d100()<25)
+							count = 2;
+						else
+						{
+							frame += 2;
+							wait = xrand(4, 10);
+						}
+					}
+					break;
+				}
+			}
 			return true;
 		}
 		return false;
@@ -83,6 +132,8 @@ static struct combatant : public animation
 		point pt = pos;
 		if(action == Killed && frame >= start + count - 1)
 			pt.y -= 500;
+		else if(action == Move)
+			pt.y -= res::oy(icn, start);
 		return pt;
 	}
 
@@ -119,7 +170,12 @@ void combat::setindex(int rec, int index)
 		e.flags = AFMirror;
 	else
 		e.flags = 0;
-	setaction(rec, ActorWarn);
+	e.action = ActorWarn;
+	e.frame = 0;
+	e.start = 0;
+	e.count = 0;
+	e.wait = 0;
+	e.incframe();
 }
 
 static void battle_initialize()

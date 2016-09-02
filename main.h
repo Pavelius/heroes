@@ -48,7 +48,7 @@ enum tokens
 	NameMulti, Level, Target, Side, Base, Expire,
 	ArmyCost,
 	SingleVersion, RequiredTarget, Hostile, Friendly, Combat, MassEffect, DamageMin, DamageMax, FrameStatus,
-	Move, Fly, MagicImmunity, ElementsImmunity, Undead, Dragon, Wide, HideAttack, AllAttackAnswer, TwiceAttack, MeleeArcher,
+	Move, Fly, MagicImmunity, ElementsImmunity, Undead, Dragon, HideAttack, AllAttackAnswer, TwiceAttack, MeleeArcher,
 	Upgrade, Downgrade,
 	OneTime, BuildThisTurn,
 	Difficulty, PlayerCount,
@@ -544,7 +544,7 @@ namespace res
 	rect					box(int x, int y, tokens res, int frame, unsigned flags = 0);
 	tokens					buildings(int race);
 	bool					ishight(res::tokens icn, int index);
-	int						frames(tokens res);
+	int						getcount(tokens res);
 	void*					get(tokens res);
 	int						height(tokens res, int frame);
 	tokens					map(int object);
@@ -630,8 +630,6 @@ namespace draw
 	const int				width = 640;
 	const int				height = 480;
 	const int				scanline = 640;
-	extern unsigned			timestamp;
-	extern res::tokens		font;
 	//
 	bool					area(int x1, int y1, int x2, int y2);
 	void					button(int x, int y, res::tokens icn, int id, int normal, int hilite, int pressed, int key = 0, unsigned flags = 0, const char* tips = 0);
@@ -639,14 +637,15 @@ namespace draw
 	void					captain(int x, int y, int race, bool present);
 	int						clipart(int x, int y, int id, int param, int param2 = 0);
 	void					colors();
-	bool					create(const char* title, int frames_per_second, bool fullscreen);
+	extern unsigned			counter; // increse every 100 milliseconds
+	bool					create(const char* title, unsigned milliseconds, bool fullscreen);
 	void					cursor(res::tokens res, int id, int ox = 0, int oy = 0);
 	int						dialog(int height);
 	void					debug();
 	void					edit(int x, int y, char* value, int maximum = 260);
 	void					edit(int x, int y, int& value, int maximum, int minimum = 0);
 	void					execute(int id, int param = 0);
-	inline unsigned			getframe() { return timestamp / 100; }
+	extern res::tokens		font;
 	void					building(int x, int y, int building, int race);
 	void					hexagon(int x, int y, unsigned char color);
 	void					hexagonf(int x, int y, unsigned char alpha);
@@ -662,14 +661,12 @@ namespace draw
 	unsigned char*			ptr(int x, int y);
 	void					rectb(int x1, int y1, int x2, int y2, unsigned char color);
 	void					rectf(int x1, int y1, int x2, int y2, unsigned char color);
-	void					resize(int x, int y);
 	void					resource(int x, int y, cost& e);
 	void					resource(int x, int y, int ty, int id, int value);
 	void					route(int x, int y, int* rec, int w, int h, int distance);
 	void					shadow(int x1, int y1, int x2, int y2, int intense);
 	void					status(const char* format, ...);
 	void					status(int x1, int y1, int x2, int y2);
-	int						sysinput(bool wait_input);
 	void					text(int x, int y, const char* string, int count = -1);
 	void					text(int x, int y, int width, justify jf, const char* string, int count = -1);
 	int						textbc(const char* string, int count, int width);
@@ -697,9 +694,8 @@ struct animation : public drawable
 	int						rec;
 	point				    pos;
 	res::tokens			    icn;
-	short					frame, start, count;
+	short					frame, start, count, wait;
 	unsigned				flags;
-	unsigned				stamp;
 	//
 	animation();
 	animation(int rec, int action);
@@ -758,13 +754,7 @@ namespace hot
 {
 	extern int				index;
 	extern int				command;
-	extern int				key;
-	extern point			mouse;
-	//extern tokens			object;
-	extern int				param;
 	extern int				param2;
-	extern bool				pressed;
-	extern int				symbol;
 };
 struct spellbook
 {
@@ -1026,7 +1016,7 @@ namespace combat
 	void					shoot(int att, int def, bool interactive);
 	void					start(int attacker, int defender);
 	void					applydamage(int rec, int value);
-	void					wave(int start, bool wide, bool fly);
+	void					wave(int start, bool wide, bool fly, tokens widedir);
 }
 namespace sheme
 {
@@ -1062,7 +1052,6 @@ namespace game
 	int						geteffect(int rec, int id);
 	int						getsummary(int rec, int id, int side);
 	bool					isboosted(int rec);
-	bool					ishideattack(int rec);
-	bool					ismeleearcher(int rec);
 	bool					ispenalized(int rec);
+	bool					iswide(int rec);
 }

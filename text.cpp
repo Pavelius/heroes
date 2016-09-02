@@ -164,12 +164,12 @@ void draw::edit(int x, int y, char* value, int maximum)
         if(value!=p)
             p[-1] = 0;
     }
-    else if(hot::symbol>=0x20)
+    else if(hot::key==InputSymbol && hot::param>=0x20)
     {
         char* p = zend(value);
-        p[0] = szupper(hot::symbol);
+        p[0] = szupper(hot::param);
         p[1] = 0;
-        hot::symbol = 0;
+        hot::param = 0;
     }
     text(x-draw::width/2, y, draw::width, Center, value);
 }
@@ -178,8 +178,8 @@ void draw::edit(int x, int y, int& value, int maximum, int minimum)
 {
     if(hot::key==KeyBackspace)
         value = value/10;
-    else if(hot::symbol>='0' && hot::symbol<='9')
-        value = value*10 + hot::symbol - '0';
+    else if(hot::key == InputSymbol && hot::param>='0' && hot::param <='9')
+        value = value*10 + hot::param - '0';
     if(value<minimum)
         value = minimum;
     if(value>maximum)

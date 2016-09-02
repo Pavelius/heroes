@@ -55,31 +55,6 @@ enum events {
 	Disabled		= 0x40000000, // Control not grant any input.
 	FirstInput = InputSymbol,
 };
-enum window_flags {
-	WFResize		= 0x0010,
-	WFMinmax		= 0x0020,
-	WFMaximized		= 0x0040,
-	WFAbsolutePos	= 0x0080,
-};
-enum cursors {
-	CursorArrow, CursorHand, CursorLeftRight, CursorUpDown, CursorAll, CursorNo, CursorEdit, CursorWait,
-};
-enum cliparts {
-	ClipartNone, ClipartDropdown, ClipartCheck, ClipartRadio,
-	ClipartGripV, ClipartLeft, ClipartRight,
-};
-enum widget_states {
-	RealSize		= 0x0010, ChooseMode = 0x0010,
-	HiliteRows		= 0x0020, // Dropdown menu like table
-	HideToolbar		= 0x0040, // Hide control toolbar
-	HideClose		= 0x0100, // Hide control close button
-	HiliteEventRows	= 0x0200,
-	FulllLineSelect	= 0x0400,
-	NoClipMode		= 0x1000,
-};
-enum treeflags {
-	TIGroup = 1, TICheck = 2,
-};
 enum areas {
 	AreaNormal, // Area not have mouse
 	AreaHilited, // Area have mouse
@@ -87,15 +62,9 @@ enum areas {
 };
 namespace hot
 {
-	extern int					animate;
-	//extern int				command; // if not zero input procedure return this event immideatly
 	void						clear();
-	extern cursors				cursor; // set this mouse cursor
 	extern int					key; // [in] if pressed key or mouse this field has key
 	extern point				mouse; // current mouse coordinates
 	extern bool					pressed; // flag if any of mouse keys is pressed
 	extern int					param; // command or input event parameter
-	extern char					link[1024];
-	extern rect					element; // Рамка для выделенного элемента управления
-	extern const struct menu*	menu;
 }

@@ -124,14 +124,6 @@ static int object_get(int rec, int id)
 		default:
 			return MoraleNormal;
 		}
-	case AllAttackAnswer:
-		switch(rec)
-		{
-		case Griffin:
-			return 1;
-		default:
-			return 0;
-		}
 	case Downgrade:
 		switch(rec)
 		{
@@ -157,62 +149,6 @@ static int object_get(int rec, int id)
 		case VampireLord: return Vampire;
 		case PowerLich: return Lich;
 		default: return rec;
-		}
-	case Fly:
-		switch(rec)
-		{
-		case Sprite:
-		case Phoenix:
-		case Gargoyle:
-		case Griffin:
-		case GreenDragon:
-		case RedDragon:
-		case BlackDragon:
-		case Roc:
-		case Vampire:
-		case VampireLord:
-		case BoneDragon:
-		case Ghost:
-		case Genie:
-			return 1;
-		default:
-			return 0;
-		}
-	case TwiceAttack:
-		switch(rec)
-		{
-		case Ranger:
-		case Crusader:
-		case Paladin:
-		case Wolf:
-		case Elf:
-		case GrandElf:
-			return 1;
-		default:
-			return 0;
-		}
-	case Wide:
-		switch(rec)
-		{
-		case Cavalry:
-		case Champion:
-		case Wolf:
-		case Unicorn:
-		case Phoenix:
-		case Centaur:
-		case Griffin:
-		case Hydra:
-		case GreenDragon:
-		case RedDragon:
-		case BlackDragon:
-		case Boar:
-		case Roc:
-		case BoneDragon:
-		case Nomand:
-		case Medusa:
-			return 1;
-		default:
-			return 0;
 		}
 	case Undead:
 		switch(rec)

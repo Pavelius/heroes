@@ -827,7 +827,7 @@ static void panorama(int x, int y, int mid)
 		break;
 	case Barbarian:
 		draw::image(x, y, res::TOWNBKG1, 0, 0);
-		draw::image(x, y, res::TWNBEXT1, 1 + (draw::getframe() % 5), 0);
+		draw::image(x, y, res::TWNBEXT1, 1 + draw::counter % 5, 0);
 		break;
 	case Sorcerer:
 		draw::image(x, y, res::TOWNBKG2, 0, 0);
@@ -848,27 +848,27 @@ static void panorama(int x, int y, int mid)
 		{
 		case Knight:
 			draw::image(x, y, res::TWNKEXT0, 0, 0);
-			draw::image(x, y, res::TWNKEXT0, 0, 1 + draw::getframe() % 5);
+			draw::image(x, y, res::TWNKEXT0, 0, 1 + draw::counter % 5);
 			break;
 		case Barbarian:
 			draw::image(x, y, res::TWNBEXT0, 0, 0);
-			draw::image(x, y, res::TWNBEXT0, 0, 1 + draw::getframe() % 5);
+			draw::image(x, y, res::TWNBEXT0, 0, 1 + draw::counter % 5);
 			break;
 		case Sorcerer:
 			draw::image(x, y, res::TWNSEXT0, 0, 0);
-			draw::image(x, y, res::TWNSEXT0, 0, 1 + draw::getframe() % 5);
+			draw::image(x, y, res::TWNSEXT0, 0, 1 + draw::counter % 5);
 			break;
 		case Necromancer:
 			draw::image(x, y, res::TWNNEXT0, 0, 0);
-			draw::image(x, y, res::TWNNEXT0, 0, 1 + draw::getframe() % 5);
+			draw::image(x, y, res::TWNNEXT0, 0, 1 + draw::counter % 5);
 			break;
 		case Warlock:
 			draw::image(x, y, res::TWNWEXT0, 0, 0);
-			draw::image(x, y, res::TWNWEXT0, 0, 1 + draw::getframe() % 5);
+			draw::image(x, y, res::TWNWEXT0, 0, 1 + draw::counter % 5);
 			break;
 		default:
 			draw::image(x, y, res::TWNZEXT0, 0, 0);
-			draw::image(x, y, res::TWNZEXT0, 0, 1 + draw::getframe() % 5);
+			draw::image(x, y, res::TWNZEXT0, 0, 1 + draw::counter % 5);
 			break;
 		}
 	}
@@ -915,7 +915,7 @@ static void panorama(int x, int y, int mid)
 			else if(hot::key == MouseRight && hot::pressed)
 				draw::execute(building + Information);
 		}
-		index = indexes::animate(icn, index, draw::getframe(), false);
+		index = indexes::animate(icn, index, draw::counter, false);
 		if(index)
 			draw::image(x, y, icn, index);
 	}

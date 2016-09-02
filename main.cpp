@@ -415,7 +415,6 @@ static int mainmenu()
     game.clear();
     while(true)
     {
-		latern.update();
         draw::image(0, 0, res::HEROES, 0);
         draw::button(0, 0, res::BTNSHNGL, NewGame, 1, 2, 3, 0, 0,
                      szt("Begin new single or multiplayer game.", "Начать новую одиночную или мультиплеер игру."));
@@ -462,6 +461,9 @@ static int mainmenu()
             break;
 		case QuitGame:
 			return Cancel;
+		case InputTimer:
+			latern.update();
+			break;
         case 0:
             return 0;
         }
@@ -473,7 +475,7 @@ int main()
 {
 	test_coordinates();
 	draw::font = res::FONT;
-	draw::create("Heroes II", 50, false);
+	draw::create("Heroes II", 100, false);
 	return mainmenu();
 }
 
