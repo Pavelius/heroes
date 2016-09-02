@@ -707,6 +707,7 @@ namespace show
 		void				fly(int rec, int target);
 		void				move(int rec, int target);
 		void				shoot(int rec, int target, int damage);
+		void				settings();
 		int					target(int side, int spell);
 		int					unit(int rec, int casted);
 	}

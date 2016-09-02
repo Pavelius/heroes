@@ -14,6 +14,7 @@ struct leader : public animation
 	}
 };
 
+static unsigned			combat_timeout_values[] = {1000 / 10, 1000 / 22, 1000 / 32};
 static unsigned			combat_timeout = 1000 / 24;
 static res::tokens		back;
 static res::tokens		frng;
@@ -285,6 +286,7 @@ static tokens getdirection(int x1, int y1, int x2, int y2)
 
 static void select_animation(drawable** objects)
 {
+	combat_timeout = combat_timeout_values[combat::setting::speed];
 	objects[0] = 0;
 	dwselect(zend(objects), 1);
 	zcat(objects, static_cast<drawable*>(&attacker_leader));
@@ -666,7 +668,7 @@ int show::battle::unit(int rec, int casted)
 		case Move:
 			return id;
 		case Setting:
-			show::settings();
+			show::battle::settings();
 			break;
 		case Information:
 			show::unit(hot::param, bsget(hot::param, Side));

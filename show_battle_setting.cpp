@@ -1,7 +1,5 @@
 #include "main.h"
 
-static int combat_timeout_values[] = {1000/12, 1000/20, 1000/28, 0};
-
 static void checkbox(int x, int y, res::tokens icn, bool& value, int off, int on, const char* text)
 {
 	if(draw::area(x, y, x + res::width(icn, off), y + res::height(icn, off)))
@@ -28,7 +26,7 @@ static void radiobox(int x, int y, res::tokens icn, int& value, int min, int max
 	draw::image(x, y, icn, i);
 }
 
-void show::settings()
+void show::battle::settings()
 {
 	draw::screenshoot surface;
 	res::tokens icn = draw::isevil(res::CSPANBKE, res::CSPANBKG);
