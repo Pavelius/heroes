@@ -60,7 +60,7 @@ combat_monsters_info combat_monsters[] =
 	{res::PHOENIX, {30, 5}, {0, 0}, {1, 3}, {4, 6}, {0, 0}, {0, 0}, {25, 3}, {23, 2}, {28, 2}, {0, 0}, {13, 4}, {10, 4}, {17, 4}, {35, 2}, {37, 11}, res::WavPHOEATTK, res::WavPHOEKILL, res::WavPHOEMOVE, res::WavPHOEWNCE},
 	// Warlock
 	{res::CENTAUR, {65, 6}, {2, 6}, /*Fly*/{0, 0}, {0, 0}, {0, 0}, /*Shoot*/{18, 4}, {27, 3}, {22, 5}, {30, 3}, {33, 1}, {38, 4}, {34, 4}, {42, 4}, {46, 2}, {48, 7}, res::WavCNTRATTK, res::WavCNTRKILL, res::WavCNTRMOVE, res::WavCNTRWNCE},
-	{res::GARGOYLE, {1, 4}, {0, 0}, {5, 2}, {7, 4}, {11, 1}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {14, 1}, {15, 4}, {19, 4}, {23, 4}, {12, 2}, {27, 5}, res::WavGARGATTK, res::WavGARGKILL, res::WavGARGMOVE, res::WavGARGWNCE},
+	{res::GARGOYLE, {1, 4}, {0, 0}, /*Fly*/{5, 2}, {7, 4}, {11, 1}, /*Shoot*/{0, 0}, {0, 0}, {0, 0}, {0, 0}, {14, 1}, {15, 4}, {19, 4}, {23, 4}, {12, 2}, {27, 5}, res::WavGARGATTK, res::WavGARGKILL, res::WavGARGMOVE, res::WavGARGWNCE},
 	{res::GRIFFIN, {16, 9}, {0, 0}, {1, 3}, {3, 3}, {5, 2}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {7, 1}, {8, 2}, {14, 2}, {11, 3}, {9, 2}, {25, 9}, res::WavGRIFATTK, res::WavGRIFKILL, res::WavGRIFMOVE, res::WavGRIFWNCE},
 	{res::MINOTAUR, {1, 5}, {6, 7}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {13, 3}, {20, 3}, {16, 4}, {23, 4}, {27, 2}, {29, 6}, res::WavMINOATTK, res::WavMINOKILL, res::WavMINOMOVE, res::WavMINOWNCE},
 	{res::MINOTAU2, {1, 5}, {6, 7}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {13, 3}, {20, 3}, {16, 4}, {23, 4}, {27, 2}, {29, 6}, res::WavMINOATTK, res::WavMINOKILL, res::WavMINOMOVE, res::WavMINOWNCE},
@@ -238,13 +238,13 @@ void animation::set(int id, int value, int param)
 				start = e.fly1[0];
 				count = e.fly1[1];
 				break;
+			case 1:
+				start = e.fly2[0];
+				count = e.fly2[1];
+				break;
 			case 2:
 				start = e.fly3[0];
 				count = e.fly3[1];
-				break;
-			default:
-				start = e.fly2[0];
-				count = e.fly2[1];
 				break;
 			}
 			break;

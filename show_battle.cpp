@@ -24,7 +24,6 @@ bool					combat::setting::grid;
 bool					combat::setting::index;
 int						combat::setting::speed;
 int						combat::setting::info;
-bool					combat::setting::shadow = true;
 bool					combat::setting::spells;
 bool					combat::setting::distance;
 static int				hilite_index;
@@ -192,20 +191,7 @@ static void hittest_grid()
 
 static void paint_grid(int rec)
 {
-	if(rec && combat::setting::shadow)
-	{
-		for(int rec = FirstCombatant; rec <= LastCombatant; rec++)
-		{
-			if(!bsget(rec, Type))
-				continue;
-			if(!bsget(rec, HitPoints))
-				continue;
-			int index = bsget(rec, Index);
-			int x = i2x(index);
-			int y = i2y(index);
-			draw::hexagonf(x, y, 0);
-		}
-	}
+	// Shadow movement indecies
 	if(rec && combat::setting::movement)
 	{
 		draw::fontsm push;
@@ -218,8 +204,6 @@ static void paint_grid(int rec)
 				int y = i2y(i);
 				if(combat::movements[i] <= radius)
 					draw::hexagonf(x, y, 0);
-				else if(combat::movements[i] == BlockSquad)
-					draw::hexagonf(x, y, 1);
 				if(combat::movements[i] < BlockSquad && combat::setting::distance)
 				{
 					char temp[32];
@@ -229,6 +213,7 @@ static void paint_grid(int rec)
 			}
 		}
 	}
+	// Shadow cursor index
 	if(rec && combat::setting::cursor)
 	{
 		if(hilite_index != -1)
@@ -238,6 +223,7 @@ static void paint_grid(int rec)
 			draw::hexagonf(x, y, 0);
 		}
 	}
+	// Show grid
 	if(combat::setting::grid)
 	{
 		for(int i = 0; i < combat::awd*combat::ahd; i++)
@@ -247,6 +233,7 @@ static void paint_grid(int rec)
 			draw::hexagon(x, y, hexagon_color);
 		}
 	}
+	// Show index (only debug)
 	if(rec && combat::setting::index)
 	{
 		draw::fontsm push;
@@ -463,6 +450,36 @@ void show::battle::shoot(int rec, int enemy, int damage)
 
 void show::battle::fly(int rec, int target)
 {
+	point points[256];
+	drawable* objects[64];
+	select_animation(objects);
+	paint_field(0, 0);
+	auto pa = animation::find(objects, rec);
+	if(!pa)
+		return;
+	int i1 = bsget(rec, Index);
+	int i2 = target;
+	point p1 = combat::i2h(i1);
+	point p2 = combat::i2h(i2);
+	draw::screenshoot screen;
+	animation::state a1(pa);
+	// Flying Up
+	pa->setaction(Fly, 0);
+	screen.redraw(objects, combat_timeout, pa);
+	// Main phase
+	pa->setaction(Fly, 1);
+	int count = animation::fly(points, p1, p2, 16);
+	for(int i = 1; i < count - 1; i++)
+	{
+		pa->pos = points[i];
+		screen.redraw(objects, combat_timeout);
+		if(pa->incframe())
+			pa->setaction(Fly, 1);
+	}
+	// Flying Down
+	pa->pos = points[count - 1];
+	pa->setaction(Fly, 2);
+	screen.redraw(objects, combat_timeout, pa);
 }
 
 void show::battle::attack(int rec, int enemy, int damage)

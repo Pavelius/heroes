@@ -1052,6 +1052,7 @@ namespace game
 	int						geteffect(int rec, int id);
 	int						getsummary(int rec, int id, int side);
 	bool					isboosted(int rec);
+	bool					isfly(int rec);
 	bool					ispenalized(int rec);
 	bool					iswide(int rec);
 }

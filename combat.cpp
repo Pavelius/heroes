@@ -354,7 +354,7 @@ void combat::move(int rec, int index, bool interactive)
 {
 	if(interactive)
 	{
-		if(bsget(rec, Fly))
+		if(game::isfly(rec))
 			show::battle::fly(rec, index);
 		else
 			show::battle::move(rec, index);
@@ -379,8 +379,8 @@ static int make_turn(bool interactive)
 			if(!game::get(rec, Count))
 				continue;
 			combat::wave(bsget(rec, Index),
-				game::iswide(bsget(rec, Type)),
-				bsget(rec, Fly) != 0,
+				game::iswide(rec),
+				game::isfly(rec),
 				combat::isattacker(rec) ? HexRight : HexLeft);
 			int id = 0;
 			// RULE: spell Berserker implementation

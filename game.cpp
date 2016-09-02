@@ -353,28 +353,6 @@ int game::get(int rec, int id)
 		default:
 			return 0;
 		}
-	case Fly:
-		if(rec >= FirstCombatant && rec <= LastCombatant)
-			rec = bsget(rec, Type);
-		switch(rec)
-		{
-		case Sprite:
-		case Phoenix:
-		case Gargoyle:
-		case Griffin:
-		case GreenDragon:
-		case RedDragon:
-		case BlackDragon:
-		case Roc:
-		case Vampire:
-		case VampireLord:
-		case BoneDragon:
-		case Ghost:
-		case Genie:
-			return 1;
-		default:
-			return 0;
-		}
 	case TwiceAttack:
 		if(rec >= FirstCombatant && rec <= LastCombatant)
 			rec = bsget(rec, Type);
@@ -397,6 +375,8 @@ int game::get(int rec, int id)
 
 bool game::iswide(int rec)
 {
+	if(rec >= FirstCombatant && rec <= LastCombatant)
+		rec = bsget(rec, Type);
 	switch(rec)
 	{
 	case Cavalry:
@@ -415,6 +395,31 @@ bool game::iswide(int rec)
 	case BoneDragon:
 	case Nomand:
 	case Medusa:
+		return true;
+	default:
+		return false;
+	}
+}
+
+bool game::isfly(int rec)
+{
+	if(rec >= FirstCombatant && rec <= LastCombatant)
+		rec = bsget(rec, Type);
+	switch(rec)
+	{
+	case Sprite:
+	case Phoenix:
+	case Gargoyle:
+	case Griffin:
+	case GreenDragon:
+	case RedDragon:
+	case BlackDragon:
+	case Roc:
+	case Vampire:
+	case VampireLord:
+	case BoneDragon:
+	case Ghost:
+	case Genie:
 		return true;
 	default:
 		return false;

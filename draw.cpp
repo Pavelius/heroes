@@ -38,7 +38,7 @@ extern unsigned char    pallette[256][4];
 extern unsigned char    pallette2[256];
 extern unsigned char    pallette3[256];
 extern unsigned char    pallette4[256];
-extern unsigned char    pallette_yellow[256];
+//extern unsigned char    pallette_yellow[256];
 bool					sys_create(const char* title, int milliseconds, bool fullscreen, unsigned char* bits, int width, int height); // Create system window
 int						sys_input(bool wait); // Wait for system input
 void*					sys_get_pallette(); // Get system pallette

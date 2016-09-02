@@ -298,7 +298,7 @@ int sys_input(bool wait_message)
 			if(hot::key)
 				add_modificators();
 		}
-		return InputResize;
+		return hot::key;
 	}
 }
 
