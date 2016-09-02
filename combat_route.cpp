@@ -1,49 +1,91 @@
 #include "main.h"
 
-unsigned char		path_stack[256];
-unsigned char		path_pop;
-unsigned char		path_push;
+static unsigned char movements[combat::ahd*combat::awd];
+static unsigned char path_stack[256];
+static unsigned char path_pop;
+static unsigned char path_push;
 
-static void snode(unsigned char index, unsigned char cost, bool iswide, tokens widedir)
+bool combat::ispassable(int index)
+{
+	return movements[index] < BlockSquad;
+}
+
+int combat::getindex(int index)
+{
+	if(index<0 || index >= sizeof(movements) / sizeof(movements[0]))
+		return -1;
+	switch(movements[index])
+	{
+	case PassableSquadWideRight:
+	case BlockSquadWideRight:
+		return getindex(moveto(index, HexLeft));
+	case PassableSquadWideLeft:
+	case BlockSquadWideLeft:
+		return getindex(moveto(index, HexRight));
+	default:
+		return index;
+	}
+}
+
+static void update_wide_index(tokens wdir, int speed)
+{
+	if(wdir == Empthy || !speed)
+		return;
+	auto wval = (wdir == HexRight) ? PassableSquadWideRight : PassableSquadWideLeft;
+	for(int i = 0; i <= sizeof(movements) / sizeof(movements[0]); i++)
+	{
+		if(movements[i] >= PassableSquadWideLeft)
+			continue;
+		if(movements[i] == speed)
+		{
+			auto i2 = combat::moveto(i, wdir);
+			if(i2 != -1 && movements[i2]<BlockSquad)
+				movements[i2] = wval;
+		}
+	}
+}
+
+unsigned char combat::getpassable(int index)
+{
+	index = getindex(index);
+	if(index<0)
+		return BlockTerrain;
+	return movements[index];
+}
+
+static void snode(unsigned char index, unsigned char cost, tokens wdir)
 {
 	if(index==0xFF)
 		return;
-	unsigned char a = combat::movements[index];
+	unsigned char a = movements[index];
 	if(a>=BlockSquad)
 		return;
-	if(iswide)
+	if(wdir!=Empthy)
 	{
-		int indexw = combat::moveto(index, widedir);
+		int indexw = combat::moveto(index, wdir);
 		if(indexw != -1)
 		{
-			if(combat::movements[indexw] >= BlockSquad)
+			if(movements[indexw] >= BlockSquad)
 				return;
 		}
 	}
 	if(a!=0 && cost>=a)
 		return;
 	path_stack[path_push++] = index;
-	combat::movements[index] = cost;
+	movements[index] = cost;
 }
 
 tokens combat::backward(tokens direction)
 {
 	switch(direction)
 	{
-	case HexLeft:
-		return HexRight;
-	case HexRight:
-		return HexLeft;
-	case HexLeftUp:
-		return HexRightDown;
-	case HexLeftDown:
-		return HexRightUp;
-	case HexRightUp:
-		return HexLeftDown;
-	case HexRightDown:
-		return HexLeftUp;
-	default:
-		return direction;
+	case HexLeft: return HexRight;
+	case HexRight: return HexLeft;
+	case HexLeftUp: return HexRightDown;
+	case HexLeftDown: return HexRightUp;
+	case HexRightUp: return HexLeftDown;
+	case HexRightDown: return HexLeftUp;
+	default: return direction;
 	}
 }
 
@@ -59,11 +101,11 @@ static int gnode(int index, int start)
 			continue;
 		if(i1==start)
 			return i1;
-		if(combat::movements[i1]>=BlockSquad)
+		if(movements[i1]>=BlockSquad)
 			continue;
-		if(combat::movements[i1]<m1)
+		if(movements[i1]<m1)
 		{
-			m1 = combat::movements[i1];
+			m1 = movements[i1];
 			r1 = i1;
 		}
 	}
@@ -72,6 +114,7 @@ static int gnode(int index, int start)
 
 tokens combat::direction(int from, int to)
 {
+	// TODO: Make most common algorithm. Not only nearest.
 	static tokens dir[] = {HexRight, HexLeft, HexLeftUp, HexLeftDown, HexRightUp, HexRightDown};
 	for(auto d : dir)
 	{
@@ -122,9 +165,18 @@ int combat::moveto(int index, int direction)
 	}
 }
 
-void combat::wave(int start, bool wide, bool fly, tokens widedir)
+static void block_terrain()
 {
-	memset(combat::movements, 0, sizeof(combat::movements));
+	for(int i = 0; i <= sizeof(movements) / sizeof(movements[0]); i++)
+	{
+		if(movements[i] == 0)
+			movements[i] = BlockTerrain;
+	}
+}
+
+void combat::wave(int start, bool fly, tokens wdir, int speed)
+{
+	memset(movements, 0, sizeof(movements));
 	if(start==-1)
 		return;
 	for(unsigned i = FirstCombatant; i<=LastCombatant; i++)
@@ -139,9 +191,10 @@ void combat::wave(int start, bool wide, bool fly, tokens widedir)
 		movements[index] = BlockSquad;
 		if(game::iswide(bsget(i, Type)))
 		{
-			int indexw = combat::moveto(index, combat::isattacker(i) ? HexRight : HexLeft);
-			if(indexw !=-1)
-				movements[indexw] = BlockSquad;
+			auto wdir = combat::isattacker(i) ? HexRight : HexLeft;
+			auto wind = combat::moveto(index, wdir);
+			if(wind !=-1)
+				movements[wind] = (wdir==HexRight) ? BlockSquadWideRight : BlockSquadWideLeft;
 		}
 	}
 	if(fly)
@@ -165,24 +218,25 @@ void combat::wave(int start, bool wide, bool fly, tokens widedir)
 			if(cost>=BlockSquad)
 				break;
 			cost++;
-			snode(combat::moveto(pos, HexLeft), cost, wide, widedir);
-			snode(combat::moveto(pos, HexRight), cost, wide, widedir);
-			snode(combat::moveto(pos, HexLeftUp), cost, wide, widedir);
-			snode(combat::moveto(pos, HexLeftDown), cost, wide, widedir);
-			snode(combat::moveto(pos, HexRightUp), cost, wide, widedir);
-			snode(combat::moveto(pos, HexRightDown), cost, wide, widedir);
+			snode(combat::moveto(pos, HexLeft), cost, wdir);
+			snode(combat::moveto(pos, HexRight), cost, wdir);
+			snode(combat::moveto(pos, HexLeftUp), cost, wdir);
+			snode(combat::moveto(pos, HexLeftDown), cost, wdir);
+			snode(combat::moveto(pos, HexRightUp), cost, wdir);
+			snode(combat::moveto(pos, HexRightDown), cost, wdir);
 		}
 	}
 	movements[start] = BlockSquad;
+	block_terrain();
+	update_wide_index(wdir, speed);
 }
 
 int combat::move(int* result, int start, int target, int speed)
 {
-	speed = speed - SpeedCrawling + 2;
 	int* p = result;
 	while(start!=target)
 	{
-		if(movements[target] && movements[target]<=speed)
+		if(movements[target]<=speed+2 || movements[target]==PassableSquadWideLeft || movements[target] == PassableSquadWideRight)
 			*p++ = target;
 		target = gnode(target, start);
 		if(target ==-1)

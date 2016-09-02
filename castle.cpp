@@ -940,7 +940,8 @@ static void paint_panel(int x, int y, int mid, int hid)
 
 static void name()
 {
-	draw::fontsm push;
+	draw::state push;
+	draw::font = res::SMALFONT;
 	draw::image(0, 0, res::TOWNNAME, 0);
 	draw::text(231 + 179 / 2, 248 + 2, "Вертиго", 0);
 }

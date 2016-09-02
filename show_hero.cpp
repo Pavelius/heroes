@@ -25,7 +25,8 @@ void show::hero(tokens rec)
 			int y = 36;
 			if(true)
 			{
-				draw::fontsm push;
+				draw::state push;
+				draw::font = res::SMALFONT;
 				const char* p = bsgets(i, Name);
 				draw::text(x + (88 - draw::textw(p)) / 2, y, p);
 			}
@@ -35,7 +36,8 @@ void show::hero(tokens rec)
 		// Skills
 		if(true)
 		{
-			draw::fontsm push;
+			draw::state push;
+			draw::font = res::SMALFONT;
 			int x = 3 + 40;
 			int y = 233;
 			const int dx = res::width(res::SECSKILL, 0) + 5;

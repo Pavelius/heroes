@@ -82,7 +82,8 @@ static void building(int x, int y, int building, int rec)
 			draw::status(temp);
 		}
 	}
-	draw::fontsm push;
+	draw::state push;
+	draw::font = res::SMALFONT;
 	draw::text(x+(132-draw::textw(name))/2, y+61, name);
 }
 
@@ -159,8 +160,9 @@ static void captain(int x, int y, tokens race, bool present)
         draw::image(x+85, y-4, res::CAPTCOVR, 0);
     else
     {
-        draw::fontsm push;
-        int x1 = x + 85;
+		draw::state push;
+		draw::font = res::SMALFONT;
+		int x1 = x + 85;
         int y1 = y + 16;
         for(int i=Attack; i<=(int)Wisdow; i++)
         {

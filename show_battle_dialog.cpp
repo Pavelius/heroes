@@ -2,7 +2,8 @@
 
 static int control(int x, int y, int side, int id)
 {
-	draw::fontsm push;
+	draw::state push;
+	draw::font = res::SMALFONT;
 	char temp[128];
 	szprint(temp, "%1: %2i", bsgets(id, Name), game::get(side, id));
 	draw::text(x-draw::textw(temp)/2, y, temp);
@@ -11,7 +12,8 @@ static int control(int x, int y, int side, int id)
 
 static int control(int x, int y, int side, int id, int id2)
 {
-	draw::fontsm push;
+	draw::state push;
+	draw::font = res::SMALFONT;
 	char temp[128];
 	szprint(temp, "%1: %2i/%3i", bsgets(id, Name), game::get(side, id), game::get(side, id2));
 	draw::text(x-draw::textw(temp)/2, y, temp);
@@ -20,7 +22,8 @@ static int control(int x, int y, int side, int id, int id2)
 
 static int controt(int x, int y, int side, int id)
 {
-	draw::fontsm push;
+	draw::state push;
+	draw::font = res::SMALFONT;
 	char temp[128];
 	szprint(temp, "%1: %2", bsgets(id, Name), bsgets(game::get(side, id), Name));
 	draw::text(x-draw::textw(temp)/2, y, temp);
@@ -30,8 +33,9 @@ static int controt(int x, int y, int side, int id)
 int show::battle::dialog(int side)
 {
 	char temp[128];
-	draw::fontsm push;
+	draw::state push;
 	draw::screenshoot surface;
+	draw::font = res::SMALFONT;
 	res::tokens back = draw::isevil(res::VGENBKGE, res::VGENBKG);
 	int w1 = res::width(back, 0);
 	int h1 = res::height(back, 0);

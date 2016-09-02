@@ -168,7 +168,7 @@ bool combat::cast(int side, int sid, int cid, int pos, bool run, bool free)
 		if(run)
 		{
 			int result = bsget(sid, SpellPower)*bsget(side, SpellPower);
-			combat::applydamage(cid, result);
+			combat::damage(cid, result);
 		}
 		break;
 	case SpellColdRing:
@@ -206,7 +206,7 @@ bool combat::cast(int side, int sid, int cid, int pos, bool run, bool free)
 		{
 			if(!e)
 				break;
-			combat::applydamage(e, m);
+			combat::damage(e, m);
 		}
 		break;
 	case SpellHolyWord:
@@ -218,7 +218,7 @@ bool combat::cast(int side, int sid, int cid, int pos, bool run, bool free)
 		{
 			if(!e)
 				break;
-			combat::applydamage(e, m);
+			combat::damage(e, m);
 		}
 		break;
 	case SpellArmagedon:
@@ -229,7 +229,7 @@ bool combat::cast(int side, int sid, int cid, int pos, bool run, bool free)
 		{
 			if(!e)
 				break;
-			combat::applydamage(e, m);
+			combat::damage(e, m);
 		}
 		break;
 	case SpellElementalStorm:
@@ -240,7 +240,7 @@ bool combat::cast(int side, int sid, int cid, int pos, bool run, bool free)
 		{
 			if(!e)
 				break;
-			combat::applydamage(e, m);
+			combat::damage(e, m);
 		}
 		break;
 	default:

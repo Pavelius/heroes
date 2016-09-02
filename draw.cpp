@@ -29,7 +29,7 @@ namespace res
 }
 
 static unsigned char	bits[draw::width*draw::height];
-static rect             clipa = {0, 0, draw::width, draw::height};
+rect					draw::clipping = {0, 0, draw::width, draw::height};
 unsigned				draw::counter;
 static rect             status_rect;
 static char             status_text[260];
@@ -38,7 +38,6 @@ extern unsigned char    pallette[256][4];
 extern unsigned char    pallette2[256];
 extern unsigned char    pallette3[256];
 extern unsigned char    pallette4[256];
-//extern unsigned char    pallette_yellow[256];
 bool					sys_create(const char* title, int milliseconds, bool fullscreen, unsigned char* bits, int width, int height); // Create system window
 int						sys_input(bool wait); // Wait for system input
 void*					sys_get_pallette(); // Get system pallette
@@ -540,36 +539,36 @@ void draw::image(int x, int y, res::tokens res, unsigned frame, unsigned flags, 
 	{
 		if(flags&AFMirror)
 		{
-			sprite_v2m(ptr(x, y), width, d, clipa.y2 - y,
-				ptr(clipa.x1, 0),
-				ptr(clipa.x2, height));
+			sprite_v2m(ptr(x, y), width, d, clipping.y2 - y,
+				ptr(clipping.x1, 0),
+				ptr(clipping.x2, height));
 		}
 		else
 		{
-			sprite_v2(ptr(x, y), width, d, clipa.y2 - y,
-				ptr(clipa.x1, y),
-				ptr(clipa.x2, y));
+			sprite_v2(ptr(x, y), width, d, clipping.y2 - y,
+				ptr(clipping.x1, y),
+				ptr(clipping.x2, y));
 		}
 	}
 	else
 	{
-		if(y < clipa.y1)
+		if(y < clipping.y1)
 		{
-			d = skip_v1(d, clipa.y1 - y);
-			y = clipa.y1;
+			d = skip_v1(d, clipping.y1 - y);
+			y = clipping.y1;
 		}
 		if(flags&AFMirror)
 		{
-			sprite_v1m(ptr(x, y), width, d, clipa.y2 - y,
-				ptr(clipa.x1, y),
-				ptr(clipa.x2, y),
+			sprite_v1m(ptr(x, y), width, d, clipping.y2 - y,
+				ptr(clipping.x1, y),
+				ptr(clipping.x2, y),
 				change);
 		}
 		else
 		{
-			sprite_v1(ptr(x, y), width, d, clipa.y2 - y,
-				ptr(clipa.x1, y),
-				ptr(clipa.x2, y),
+			sprite_v1(ptr(x, y), width, d, clipping.y2 - y,
+				ptr(clipping.x1, y),
+				ptr(clipping.x2, y),
 				change);
 		}
 	}
@@ -685,7 +684,7 @@ inline void line_v1(unsigned char* p1, unsigned char* p2, unsigned char m, int s
 
 void draw::pixel(int x, int y, unsigned char a)
 {
-	if(x >= clipa.x1 && x < clipa.x2 && y >= clipa.y1 && y < clipa.y2)
+	if(x >= clipping.x1 && x < clipping.x2 && y >= clipping.y1 && y < clipping.y2)
 		*ptr(x, y) = a;
 }
 
@@ -693,7 +692,7 @@ void draw::line(int x1, int y1, int x2, int y2, unsigned char m)
 {
 	if(y1 == y2)
 	{
-		if(y1 < clipa.y1)
+		if(y1 < clipping.y1)
 			return;
 		line_v1(ptr(imin(x1, x2), y1), ptr(imax(x1, x2), y1), m, 1);
 	}
@@ -824,17 +823,6 @@ void draw::status(const char* format, ...)
 	szprintv(status_text, format, xva_start(format));
 }
 
-draw::fontsm::fontsm()
-{
-	this->font = draw::font;
-	draw::font = res::SMALFONT;
-}
-
-draw::fontsm::~fontsm()
-{
-	draw::font = this->font;
-}
-
 void draw::execute(int id, int param)
 {
 	hot::command = id;
@@ -848,19 +836,14 @@ res::tokens draw::isevil(res::tokens evil, res::tokens good)
 	return evil;
 }
 
-draw::clip::clip(rect rc) : data(clipa)
+draw::state::state() : font(draw::font), clipping(draw::clipping)
 {
-	clip(rc.x1, rc.y1, rc.x2, rc.y2);
 }
 
-draw::clip::clip(int x1, int y1, int x2, int y2) : data(clipa)
+draw::state::~state()
 {
-	clipa.set(x1, y1, x2, y2);
-}
-
-draw::clip::~clip()
-{
-	clipa = data;
+	draw::font = font;
+	draw::clipping = clipping;
 }
 
 void draw::cursor(res::tokens icn, int id, int ox, int oy)

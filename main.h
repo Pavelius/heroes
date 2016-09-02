@@ -240,7 +240,8 @@ enum tokens
 };
 enum blocks
 {
-	BlockSquad = 250, BlockCover, BlockTerrain,
+	PassableSquadWideLeft = 245, PassableSquadWideRight,
+	BlockSquad, BlockSquadWideLeft, BlockSquadWideRight, BlockTerrain,
 };
 enum image_flags
 {
@@ -579,33 +580,13 @@ private:
 };
 namespace draw
 {
-	struct icon
+	struct state
 	{
-		res::tokens			icn;
-		int					id;
-		int					value;
-	};
-	struct clip
-	{
-		clip(rect rc);
-		clip(int x1, int y1, int x2, int y2);
-		~clip();
-	private:
-		rect				data;
-	};
-	struct fontsm
-	{
-		fontsm();
-		~fontsm();
+		state();
+		~state();
 	private:
 		res::tokens			font;
-	};
-	struct fontgr
-	{
-		fontgr(unsigned char* data);
-		~fontgr();
-	private:
-		unsigned char*		push;
+		rect				clipping;
 	};
 	struct screenshoot
 	{
@@ -636,7 +617,7 @@ namespace draw
 	void					castle(int x, int y, int tile, int race, bool town);
 	void					captain(int x, int y, int race, bool present);
 	int						clipart(int x, int y, int id, int param, int param2 = 0);
-	void					colors();
+	extern rect				clipping;
 	extern unsigned			counter; // increse every 100 milliseconds
 	bool					create(const char* title, unsigned milliseconds, bool fullscreen);
 	void					cursor(res::tokens res, int id, int ox = 0, int oy = 0);
@@ -655,7 +636,6 @@ namespace draw
 	res::tokens				isevil(res::tokens evil, res::tokens good);
 	int						isqrt(int num);
 	void					map(int x, int y, int* objects, int* route);
-	int						line(int x, int y, int width, icon* icons, int padding);
 	void					line(int x1, int y1, int x2, int y2, unsigned char color);
 	void					pixel(int x, int y, unsigned char color);
 	unsigned char*			ptr(int x, int y);
@@ -987,7 +967,6 @@ namespace combat
 		extern bool			grid;
 		extern bool			index;
 		extern int			speed;
-		extern bool			shadow;
 		extern int			info;
 		extern bool			spells;
 	}
@@ -996,27 +975,29 @@ namespace combat
 	int						attack(int att, int def);
 	tokens					backward(tokens direction);
 	void					board(int attacker, int defender);
-	tokens					direction(int from, int to);
 	bool					canshoot(int rec, int target);
 	bool					canattack(int rec, int target, tokens direction);
 	bool					cast(int side, int sid, int cid, int pos, bool run, bool free);
-	int						combatant(int index);
-	int						opposition(int side);
-	bool					isenemy(int rec, int object);
+	void					damage(int rec, int value);
+	tokens					direction(int from, int to);
 	bool					isattacker(int rec);
+	bool					isenemy(int rec, int object);
+	bool					ispassable(int index);
 	point					i2h(int index);
+	int						getcombatant(int index);
+	unsigned char			getpassable(int index);
+	int						getindex(int index);
 	void					melee(int att, int def, bool interactive);
-	extern unsigned char	movements[ahd*awd];
 	void					move(int rec, int index, bool interactive);
 	int						move(int* result, int start, int target, int speed);
 	int						moveto(int index, int direction);
+	int						opposition(int side);
 	extern int				rounds;
 	void					setaction(int rec, tokens action);
 	void					setindex(int rec, int index);
 	void					shoot(int att, int def, bool interactive);
 	void					start(int attacker, int defender);
-	void					applydamage(int rec, int value);
-	void					wave(int start, bool wide, bool fly, tokens widedir);
+	void					wave(int start, bool fly, tokens wdir, int speed);
 }
 namespace sheme
 {
@@ -1051,6 +1032,7 @@ namespace game
 	const cost*				getcost(int rec);
 	int						geteffect(int rec, int id);
 	int						getsummary(int rec, int id, int side);
+	bool					hasspellbook(int rec);
 	bool					isboosted(int rec);
 	bool					isfly(int rec);
 	bool					ispenalized(int rec);

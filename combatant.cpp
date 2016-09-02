@@ -31,9 +31,10 @@ static struct combatant : public animation
 		// Draw count
 		int rec = getid();
 		int count = game::get(rec, Count);
-		if(count && action != Move)
+		if(count && action != Move && action!=Fly)
 		{
-			draw::fontsm push;
+			draw::state push;
+			draw::font = res::SMALFONT;
 			char temp[32];
 			int x = pos.x + pt.x;
 			int y = pos.y + pt.y;

@@ -163,8 +163,9 @@ static void information(int x, int y)
         case Resource:
             if(true)
             {
-                draw::fontsm push;
-                draw::image(x, y, res::RESSMALL, 0);
+				draw::state push;
+				draw::font = res::SMALFONT;
+				draw::image(x, y, res::RESSMALL, 0);
                 draw::text(x + 26, y + 31, "1"); // castle
                 draw::text(x + 78, y + 31, "0"); // town
                 sznum(temp, player::gcost(world::get(Player)).get(Gold));
@@ -190,8 +191,9 @@ static void information(int x, int y)
             draw::image(x, y, draw::isevil(res::SUNMOONE, res::SUNMOON), 3-((world::get(Week)-1)%4)+1);
             if(true)
             {
-                draw::fontsm push;
-                szprint(temp, "%1: %3i, %2: %4i",
+				draw::state push;
+				draw::font = res::SMALFONT;
+				szprint(temp, "%1: %3i, %2: %4i",
 					szt("Month", "Месяц"), szt("Week", "Неделя"),
                     world::get(Month), world::get(Week));
                 draw::textm(x, y+34, 140, draw::Center, temp);

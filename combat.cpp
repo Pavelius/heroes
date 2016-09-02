@@ -2,9 +2,15 @@
 
 static int			attacker, defender;
 static int			combat_order[LastCombatant - FirstCombatant + 2];
-unsigned char		combat::movements[combat::ahd*combat::awd];
 int					combat::rounds;
 static int			casting[2];
+
+static int correct_damage(int result)
+{
+	if(result < 1)
+		result = 1;
+	return result;
+}
 
 bool combat::isattacker(int rec)
 {
@@ -16,13 +22,6 @@ bool combat::isattacker(int rec)
 int	combat::opposition(int side)
 {
 	return isattacker(side) ? defender : attacker;
-}
-
-static int correct_damage(int result)
-{
-	if(result < 1)
-		result = 1;
-	return result;
 }
 
 int combat::attack(int att, int def)
@@ -52,10 +51,10 @@ void combat::melee(int att, int def, bool interactive)
 	if(interactive)
 		show::battle::attack(att, def, result);
 	else
-		applydamage(def, result);
+		damage(def, result);
 	if(!game::get(def, Count))
 		return;
-	if(bsget(def, AlreadyDefended)==0
+	if(bsget(def, AlreadyDefended) == 0
 		&& !game::get(att, HideAttack)
 		&& (game::get(def, AllAttackAnswer) || !bsget(def, DefendThisTurn)))
 	{
@@ -69,7 +68,7 @@ void combat::melee(int att, int def, bool interactive)
 		if(interactive)
 			show::battle::attack(def, att, result);
 		else
-			applydamage(att, result);
+			damage(att, result);
 		if(!game::get(att, Count))
 			return;
 	}
@@ -79,7 +78,7 @@ void combat::melee(int att, int def, bool interactive)
 		if(interactive)
 			show::battle::attack(att, def, result);
 		else
-			applydamage(att, result);
+			damage(att, result);
 	}
 }
 
@@ -93,11 +92,12 @@ void combat::shoot(int att, int def, bool interactive)
 	if(interactive)
 		show::battle::shoot(att, def, result);
 	else
-		applydamage(def, result);
+		damage(def, result);
 }
 
-int combat::combatant(int index)
+int combat::getcombatant(int index)
 {
+	index = getindex(index);
 	int last = bsget(FirstCombatant, Last);
 	for(int rec = FirstCombatant; rec <= last; rec++)
 	{
@@ -111,7 +111,7 @@ int combat::combatant(int index)
 
 static bool enemypos(int index, int rec)
 {
-	int e = combat::combatant(index);
+	int e = combat::getcombatant(index);
 	if(e == -1)
 		return false;
 	return combat::isenemy(rec, e);
@@ -148,19 +148,18 @@ bool combat::canattack(int rec, int target, tokens direction)
 	int i2 = combat::moveto(i1, direction);
 	if(i2 == -1)
 		return false;
-	int speed = game::get(rec, Speed) - SpeedCrawling + 2;
-	return i2 == i0
-		|| (combat::movements[i2] != 0 && combat::movements[i2] <= speed);
+	int speed = game::get(rec, Speed) + 2;
+	return i2 == i0 || (getpassable(i2) != 0 && getpassable(i2) <= speed);
 }
 
 bool combat::isenemy(int rec, int object)
 {
-	if(game::get(object, Count) == 0)
+	if(bsget(object, HitPoints) == 0)
 		return false;
 	return bsget(rec, Side) != bsget(object, Side);
 }
 
-void combat::applydamage(int rec, int value)
+void combat::damage(int rec, int value)
 {
 	if(!value)
 		return;
@@ -252,7 +251,7 @@ static void add_army(int id, int count, int side)
 
 static void add_army(int rec)
 {
-	if(rec>=FirstHero && rec<=LastHero)
+	if(rec >= FirstHero && rec <= LastHero)
 	{
 		for(int i = FirstTroopsIndex; i <= LastTroopsIndex; i += 2)
 		{
@@ -365,23 +364,24 @@ void combat::move(int rec, int index, bool interactive)
 static int make_turn(bool interactive)
 {
 	int enemy, index;
-	for(int i = SpeedUltraFast; i >= SpeedCrawling; i--)
+	for(int i = 6; i >= 0; i--)
 	{
 		for(unsigned rec = FirstCombatant; rec <= LastCombatant; rec++)
 		{
 			if(!bsget(rec, Type))
 				continue;
-			auto speed = tokens(game::get(rec, Speed));
+			auto speed = game::get(rec, Speed);
 			if(speed != i)
 				continue;
 			if(bsget(rec, AlreadyMoved))
 				continue;
 			if(!game::get(rec, Count))
 				continue;
+			bool wide = game::iswide(rec);
 			combat::wave(bsget(rec, Index),
-				game::iswide(rec),
 				game::isfly(rec),
-				combat::isattacker(rec) ? HexRight : HexLeft);
+				wide ? (combat::isattacker(rec) ? HexRight : HexLeft) : Empthy,
+				speed + 2);
 			int id = 0;
 			// RULE: spell Berserker implementation
 			if(game::geteffect(rec, SpellBerserker))
@@ -398,7 +398,7 @@ static int make_turn(bool interactive)
 				while(true)
 				{
 					id = show::battle::unit(rec, casting[side_index(rec)]);
-					if(id>=FirstSpell && id<=LastSpell)
+					if(id >= FirstSpell && id <= LastSpell)
 					{
 						int side = bsget(rec, Side);
 						int target = -1;

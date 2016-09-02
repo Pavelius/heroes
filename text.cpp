@@ -188,14 +188,3 @@ void draw::edit(int x, int y, int& value, int maximum, int minimum)
     sznum(temp, value);
     text(x-draw::width/2, y, draw::width, Center, temp);
 }
-
-draw::fontgr::fontgr(unsigned char* data)
-{
-	push = text_color;
-	text_color = data;
-}
-
-draw::fontgr::~fontgr()
-{
-	text_color = push;
-}

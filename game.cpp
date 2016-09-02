@@ -137,7 +137,7 @@ int game::getsummary(int rec, int id, int side)
 	int t = rec;
 	if(t >= FirstCombatant && t <= LastCombatant)
 		t = bsget(t, Type);
-	int m = bsget(t, id);
+	int m = get(t, id);
 	if(side)
 		m += get(side, id);
 	switch(id)
@@ -163,10 +163,10 @@ int game::getsummary(int rec, int id, int side)
 			m = -3;
 		break;
 	case Speed:
-		if(m < SpeedCrawling)
-			m = SpeedCrawling;
-		else if(m > SpeedUltraFast)
-			m = SpeedUltraFast;
+		if(m < 0)
+			m = 0;
+		else if(m > 6)
+			m = 6;
 		break;
 	case DamageMin:
 		if(geteffect(rec, SpellBless))
@@ -205,13 +205,32 @@ int game::get(int rec, int id)
 			return bsget(rec, SkillLeadership) + artifacts_bonuses(rec, id);
 		else if(rec >= FirstCombatant && rec <= LastCombatant)
 			return getsummary(rec, id, bsget(rec, Side));
-		return 0;
+		else
+		{
+			switch(rec)
+			{
+			case MinotaurKing:
+			case BattleDwarf:
+				return 1;
+			default:
+				return 0;
+			}
+		}
 	case Luck:
 		if(rec >= FirstHero && rec <= LastHero)
 			return bsget(rec, SkillLuck) + artifacts_bonuses(rec, id);
 		else if(rec >= FirstCombatant && rec <= LastCombatant)
 			return getsummary(rec, id, bsget(rec, Side));
-		return 0;
+		else
+		{
+			switch(rec)
+			{
+			case Sprite:
+				return 1;
+			default:
+				return 0;
+			}
+		}
 	case Count:
 		if(rec >= FirstCombatant && rec <= LastCombatant)
 		{
@@ -232,7 +251,7 @@ int game::get(int rec, int id)
 	case HitPointsMax:
 		if(rec >= FirstCombatant && rec <= LastCombatant)
 			rec = bsget(rec, Type);
-		return rec = bsget(rec, id);
+		return bsget(rec, id);
 	case SpellPointsMax:
 		return get(rec, Wisdow) * 10;
 	case MovePointsMax:
@@ -424,4 +443,14 @@ bool game::isfly(int rec)
 	default:
 		return false;
 	}
+}
+
+bool game::hasspellbook(int rec)
+{
+	for(int i = FirstArtifactIndex; i <= LastArtifactIndex; i++)
+	{
+		if(bsget(rec, i) == MagicBook)
+			return true;
+	}
+	return false;
 }

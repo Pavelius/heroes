@@ -75,7 +75,8 @@ int show::spellbook(int rec, tokens mode)
 	qsort(names, names_count, sizeof(names[0]), compare);
 	char temp[32];
 	draw::screenshoot surface;
-	draw::fontsm push;
+	draw::state push;
+	draw::font = res::SMALFONT;
 	while(true)
 	{
 		int x1 = x - w1 - 1;

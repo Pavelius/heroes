@@ -77,8 +77,9 @@ int draw::clipart(int x, int y, int id, int param, int param2)
         int id1 = id-FirstResource;
         int w = res::width(res::RESOURCE, id1);
         image(x-w/2, y+30-res::height(res::RESOURCE, id1), res::RESOURCE, id1, AFNoOffset);
-        fontsm push;
-        sznum(temp, param);
+		draw::state push;
+		draw::font = res::SMALFONT;
+		sznum(temp, param);
         text(x-textw(temp)/2, y+33, temp);
         return 50;
     }
@@ -92,8 +93,9 @@ int draw::clipart(int x, int y, int id, int param, int param2)
         const char* name = bsgets(param, id);
         if(name)
         {
-            fontsm push;
-            text(x-textw(name)/2, y+h-texth()-1, name);
+			draw::state push;
+			draw::font = res::SMALFONT;
+			text(x-textw(name)/2, y+h-texth()-1, name);
         }
         return h;
     }
@@ -108,8 +110,9 @@ int draw::clipart(int x, int y, int id, int param, int param2)
         if(param)
         {
             sznum(temp, param);
-            fontsm push;
-            text(x+w/2-4-draw::textw(temp), y+h-draw::texth(), temp);
+			draw::state push;
+			draw::font = res::SMALFONT;
+			text(x+w/2-4-draw::textw(temp), y+h-draw::texth(), temp);
         }
         if(draw::area(x-w/2, y, x+w/2, y+h))
         {
@@ -401,8 +404,9 @@ void draw::tiles(int x, int y, res::tokens icn, int* rec, int w, int h)
 void draw::debug()
 {
     char temp[64];
-    fontsm push;
-    szprint(temp, "Mouse %1i, %2i", hot::mouse.x, hot::mouse.y);
+	draw::state push;
+	draw::font = res::SMALFONT;
+	szprint(temp, "Mouse %1i, %2i", hot::mouse.x, hot::mouse.y);
     text(10,10,temp);
 }
 

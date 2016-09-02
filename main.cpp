@@ -156,8 +156,9 @@ static void button_difficult(int x, int y, int id, int id_select)
         if(hot::key==MouseLeft && hot::pressed)
             draw::execute(id);
     }
-    draw::fontsm push;
-    const char* p = bsgets(id,Name);
+	draw::state push;
+	draw::font = res::SMALFONT;
+	const char* p = bsgets(id,Name);
     draw::text(x+(rc.width()-draw::textw(p))/2, y+rc.height()+2, p);
 }
 
@@ -214,8 +215,9 @@ static void button_type(int x, int y, tokens type, int i, bool show_name = true)
     rect rc = {x,y,x+res::width(res::NGEXTRA,3),y+res::height(res::NGEXTRA,3)};
     if(show_name)
     {
-        draw::fontsm push;
-        const char* p = bsgets(FirstPlayer+i+1,Name);
+		draw::state push;
+		draw::font = res::SMALFONT;
+		const char* p = bsgets(FirstPlayer+i+1,Name);
         draw::text(x+(rc.width()-draw::textw(p))/2, y+rc.height(), p);
     }
     if(hot::mouse.in(rc))
@@ -240,8 +242,9 @@ static void button_race(int x, int y, int race, int i, bool show_name, bool disa
     int h = res::height(res::NGEXTRA, index);
     if(show_name)
     {
-        draw::fontsm push;
-        const char* p = bsgets(race,Name);
+		draw::state push;
+		draw::font = res::SMALFONT;
+		const char* p = bsgets(race,Name);
         if(race==Necromancer)
             p = szt("Necrom.", "Некром.");
         else if(race==Warlock)

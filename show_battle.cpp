@@ -194,20 +194,22 @@ static void paint_grid(int rec)
 	// Shadow movement indecies
 	if(rec && combat::setting::movement)
 	{
-		draw::fontsm push;
-		int radius = game::get(rec, Speed) - SpeedCrawling + 2;
+		draw::state push;
+		draw::font = res::SMALFONT;
+		int radius = game::get(rec, Speed) + 2;
 		for(int i = 0; i < combat::awd*combat::ahd; i++)
 		{
-			if(combat::movements[i])
+			auto m = combat::getpassable(i);
+			if(m)
 			{
 				int x = i2x(i);
 				int y = i2y(i);
-				if(combat::movements[i] <= radius)
+				if(m <= radius)
 					draw::hexagonf(x, y, 0);
-				if(combat::movements[i] < BlockSquad && combat::setting::distance)
+				if(m < BlockSquad && combat::setting::distance)
 				{
 					char temp[32];
-					sznum(temp, combat::movements[i] - 1);
+					sznum(temp, m - 1);
 					draw::text(x - draw::textw(temp) / 2, y - 5, temp);
 				}
 			}
@@ -236,7 +238,8 @@ static void paint_grid(int rec)
 	// Show index (only debug)
 	if(rec && combat::setting::index)
 	{
-		draw::fontsm push;
+		draw::state push;
+		draw::font = res::SMALFONT;
 		for(int i = 0; i < combat::awd*combat::ahd; i++)
 		{
 			char temp[8];
@@ -248,7 +251,7 @@ static void paint_grid(int rec)
 	}
 }
 
-static tokens hexagon_orient(int x1, int y1, int x2, int y2)
+static tokens getdirection(int x1, int y1, int x2, int y2)
 {
 	const int INFL = 12;
 	point pt = {(short)x2, (short)y2};
@@ -371,7 +374,7 @@ int show::battle::target(int side, int sid)
 		int i = bsget(sid, Portrait);
 		if(hilite_index != -1)
 		{
-			hilite_combatant = combat::combatant(hilite_index);
+			hilite_combatant = combat::getcombatant(hilite_index);
 			if(!combat::cast(side, sid, hilite_combatant, hilite_index, false, false))
 				i = -1;
 		}
@@ -409,12 +412,26 @@ void show::battle::shoot(int rec, int enemy, int damage)
 		return;
 	draw::screenshoot screen;
 	animation::state a1(pa);
+	int i1 = bsget(rec, Index);
+	int i2 = bsget(enemy, Index);
+	point p1 = combat::i2h(i1); p1.y -= 32;
+	point p2 = combat::i2h(i2); p2.y -= 32;
 	// Prepare shoot
 	if(pa->hasanimation(Shoot, 2))
 	{
 		pa->setaction(Shoot, 0);
 		screen.redraw(objects, combat_timeout, pa);
-		pa->setaction(Shoot, 2);
+		auto d = getdirection(p1.x, p1.y, p2.x, p2.y);
+		if(d == HexLeft || d == HexLeftDown || d == HexLeftUp)
+			pa->flags = AFMirror;
+		else
+			pa->flags = 0;
+		if(d==HexLeft || d==HexRight)
+			pa->setaction(Shoot, 2);
+		else if(d==HexLeftUp || d==HexLeftDown)
+			pa->setaction(Shoot, 1);
+		else
+			pa->setaction(Shoot, 3);
 		screen.redraw(objects, combat_timeout, pa, pa->start + pa->count - 1);
 	}
 	else
@@ -424,10 +441,6 @@ void show::battle::shoot(int rec, int enemy, int damage)
 	}
 	// Projectile
 	animation arrow; zcat(objects, static_cast<drawable*>(&arrow));
-	int i1 = bsget(rec, Index);
-	int i2 = bsget(enemy, Index);
-	point p1 = combat::i2h(i1); p1.y -= 32;
-	point p2 = combat::i2h(i2); p2.y -= 32;
 	point points[256];
 	int dx = p1.x - p2.x;
 	int dy = p1.y - p2.y;
@@ -444,7 +457,7 @@ void show::battle::shoot(int rec, int enemy, int damage)
 	}
 	arrow.icn = res::Empthy;
 	// Last phase
-	combat::applydamage(enemy, damage);
+	combat::damage(enemy, damage);
 	screen.redraw(objects, combat_timeout, pa, pe);
 }
 
@@ -519,7 +532,7 @@ void show::battle::attack(int rec, int enemy, int damage)
 	screen.redraw(objects, combat_timeout, pa);
 	pa->setaction(ActorWarn);
 	pe->setaction(ActorWarn);
-	combat::applydamage(enemy, damage);
+	combat::damage(enemy, damage);
 	screen.redraw(objects, combat_timeout, pe);
 }
 
@@ -609,8 +622,8 @@ int show::battle::unit(int rec, int casted)
 		paint_field(rec, objects);
 		if(hilite_index != -1)
 		{
-			int radius = game::get(rec, Speed) - SpeedCrawling + 2;
-			int hilite_combatant = combat::combatant(hilite_index);
+			int radius = game::get(rec, Speed) + 2;
+			int hilite_combatant = combat::getcombatant(hilite_index);
 			if(hilite_combatant && game::get(hilite_combatant, Count))
 			{
 				if(combat::canshoot(rec, hilite_combatant))
@@ -619,7 +632,7 @@ int show::battle::unit(int rec, int casted)
 				{
 					int x = i2x(hilite_index);
 					int y = i2y(hilite_index);
-					tokens d = hexagon_orient(x, y, hot::mouse.x, hot::mouse.y);
+					tokens d = getdirection(x, y, hot::mouse.x, hot::mouse.y);
 					if(combat::canattack(rec, hilite_combatant, d))
 					{
 						hot::param2 = combat::moveto(hilite_index, d);
@@ -629,8 +642,8 @@ int show::battle::unit(int rec, int casted)
 				if(hot::key == MouseRight && hot::pressed)
 					draw::execute(Information, hilite_combatant);
 			}
-			else if(combat::movements[hilite_index] < BlockSquad && combat::movements[hilite_index] <= radius)
-				action(cursor, Move, hilite_index);
+			else if(combat::getpassable(hilite_index) <= radius)
+				action(cursor, Move, combat::getindex(hilite_index));
 		}
 		else if(hot::mouse.in(attacker_leader.getrect()))
 		{
@@ -661,6 +674,8 @@ int show::battle::unit(int rec, int casted)
 		case Spells:
 			if(casted)
 				dlgmsg(0, szt("You can\'t cast spell twice per combat round.", "¬ы не можете создать заклинание дважды за ход."));
+			else if(!game::hasspellbook(bsget(rec, Side)))
+				dlgmsg(0, szt("You don't have a spellbook.", "” вас нету книги заклинаний."));
 			else
 			{
 				id = show::spellbook(bsget(rec, Side), CombatSpells);

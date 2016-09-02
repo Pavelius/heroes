@@ -67,7 +67,7 @@ static int status(int x, int y, int rec, int side)
 	if(rec >= FirstCombatant && rec <= LastCombatant)
 		y += field(x, y, HitPoints, rec, side, szt("Hits Left", "Жизнь ост."));
 	// speed
-	y += fieldt(x, y, Speed, 0, rec, side);
+	y += fieldt(x, y, Speed, SpeedCrawling, rec, side);
 	y += fieldt(x, y, Morale, MoraleNormal, rec, side);
 	y += fieldt(x, y, Luck, LuckNormal, rec, side);
 	return y - y1;
@@ -82,7 +82,8 @@ static void effects(int x, int y, int rec)
 		SpellDragonSlayer, SpellSteelSkin, SpellAntimagic, SpellCurse, SpellSlow,
 		SpellBerserker, SpellHypnotize, SpellBlind, SpellParalyze, SpellStone
 	};
-	draw::fontsm push;
+	draw::state push;
+	draw::font = res::SMALFONT;
 	int dx = 0;
 	for(auto sid : modes)
 	{
