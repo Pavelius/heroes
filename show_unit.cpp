@@ -13,7 +13,7 @@ static int field(int x, int y, int id, int rec, int side, const char* name)
 	int mt = rec;
 	if(mt >= FirstCombatant)
 		mt = bsget(mt, Type);
-	if(id == HitPoints || id==HitPointsMax)
+	if(id == HitPoints || id==HitPointsMax || id==Shoots)
 	{
 		int dm1 = game::get(rec, id);
 		szprint(temp, "%1i", dm1);

@@ -8,6 +8,7 @@ draw::screenshoot::screenshoot()
 
 draw::screenshoot::~screenshoot()
 {
+	memcpy(draw::ptr(0, 0), this->bits, width*height);
 	delete this->bits;
 	this->bits = 0;
 }

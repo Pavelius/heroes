@@ -43,7 +43,7 @@ int combat::attack(int att, int def)
 void combat::melee(int att, int def, bool interactive)
 {
 	int result = attack(att, def);
-	if(bsget(att, Shoots) && !game::get(att, MeleeArcher))
+	if(bsget(att, Shoots) && !game::ismeleearcher(att))
 	{
 		result /= 2;
 		result = correct_damage(result);
@@ -55,12 +55,12 @@ void combat::melee(int att, int def, bool interactive)
 	if(!game::get(def, Count))
 		return;
 	if(bsget(def, AlreadyDefended) == 0
-		&& !game::get(att, HideAttack)
+		&& !game::isstealth(att)
 		&& (game::get(def, AllAttackAnswer) || !bsget(def, DefendThisTurn)))
 	{
 		bsadd(def, AlreadyDefended, 1);
 		result = attack(def, att);
-		if(bsget(def, Shoots) && !bsget(def, MeleeArcher))
+		if(bsget(def, Shoots) && !game::ismeleearcher(def))
 		{
 			result /= 2;
 			result = correct_damage(result);
@@ -135,6 +135,15 @@ bool combat::canshoot(int rec, int target)
 	if(enemypos(combat::moveto(i, HexRightUp), rec))
 		return false;
 	if(enemypos(combat::moveto(i, HexRightDown), rec))
+		return false;
+	return true;
+}
+
+bool combat::candefend(int rec)
+{
+	if(bsget(rec, HitPoints) == 0)
+		return false;
+	if(game::geteffect(rec, SpellParalyze) != 0)
 		return false;
 	return true;
 }
@@ -349,6 +358,23 @@ static int closest_unit(int rec, int side = -1)
 	return -1;
 }
 
+int combat::getarmycost(int side)
+{
+	int m = 0;
+	for(int i = FirstCombatant; i <= LastCombatant; i++)
+	{
+		int mt = bsget(i, Type);
+		if(!mt)
+			continue;
+		if(bsget(i, Side)!=side)
+			continue;
+		m += game::get(mt, Gold) * game::get(i, Count);
+	}
+	// RULE: Diplomacy reduce bribe price
+	m -= (m * bsget(side, SkillDiplomacy) * 20) / 100;
+	return m;
+}
+
 void combat::move(int rec, int index, bool interactive)
 {
 	if(interactive)
@@ -412,6 +438,30 @@ static int make_turn(bool interactive)
 						casting[side_index(rec)]++;
 						continue;
 					}
+					else if(id == Surrender)
+					{
+						int side = bsget(rec, Side);
+						int cost = combat::getarmycost(side);
+						if(interactive)
+						{
+							char temp[260];
+							szprint(temp, szt("%1 leave you away if you pay bribe. Would you pay %2i golds to save your troops and go away?",
+								"%1 оставит тебя в покое если вы заплатите взятку. Вы готовы заплатить %2i золотых, чтобы сохранить вашу армию и уйти прочь?"),
+								bsgets(combat::opposition(side), Name), cost);
+							if(!dlgask(0, temp))
+								continue;
+							// TODO: pay bribe to opposition hero
+						}
+					}
+					else if(id == RunAway)
+					{
+						if(interactive)
+						{
+							if(!dlgask(0,
+								szt("Do you really want to leave your army and flee away?", "Вы действительно хотите покинуть армию и бежать прочь?")))
+								continue;
+						}
+					}
 					break;
 				}
 			}
@@ -434,6 +484,8 @@ static int make_turn(bool interactive)
 				combat::move(rec, index, interactive);
 				combat::melee(rec, enemy, interactive);
 				break;
+			case Surrender:
+				return Surrender;
 			case RunAway:
 				return RunAway;
 			}
@@ -469,7 +521,11 @@ void combat::start(int attacker, int defender)
 			prepare_turn();
 			break;
 		case RunAway:
-			show::fadeback(6);
+			show::fadeback(3);
+			dlgmsg(0, "Test");
+			return;
+		case Surrender:
+			show::fadeback(3);
 			dlgmsg(0, "Test");
 			return;
 		}

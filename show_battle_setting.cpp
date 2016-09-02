@@ -1,5 +1,7 @@
 #include "main.h"
 
+static int combat_timeout_values[] = {1000/12, 1000/20, 1000/28, 0};
+
 static void checkbox(int x, int y, res::tokens icn, bool& value, int off, int on, const char* text)
 {
 	if(draw::area(x, y, x + res::width(icn, off), y + res::height(icn, off)))

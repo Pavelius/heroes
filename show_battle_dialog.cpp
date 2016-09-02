@@ -72,11 +72,7 @@ int show::battle::dialog(int side)
             return 0;
 		case Spells:
 		case Surrender:
-			return id;
 		case RunAway:
-			if(!show::question(
-					szt("Do you really want to leave your army and flee away?", "Вы действительно хотите покинуть армию и бежать прочь?")))
-					break;
 			return id;
         }
     }

@@ -105,6 +105,7 @@ char*								loadt(const char* url, int* size = 0); // Load text file and decode
 extern int							locale; // Current system locale. Use in szt() and alike functions.
 void								printc(const char* format, ...); // Analog prinf() but use format of this library
 void								printcnf(const char* text); // Write to console this text
+bool								dlgask(const char* title, const char* text); // System message ask dialog
 void								dlgerr(const char* title, const char* format, ...); // Show error.
 void								dlgmsg(const char* title, const char* text); // System message dialog
 bool								rmblock(void* ptr); // Is memory ptr was previously allocated?

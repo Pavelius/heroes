@@ -14,7 +14,7 @@ static struct monster
 	unsigned char	shoots;
 	const char*		name[2];
 	const char*		multiname[2];
-	struct cost		cost;
+	int				cost[LastResource-FirstResource+1];
 } objects[LastMonster - FirstMonster + 1] =
 {
 	{1, 0, 1, 1, 1, 1, 1, 1, 12, 0, {"Peasant", "Крестьянин"}, {"Peasants", "Крестьян"}, {20, 0, 0, 0, 0, 0, 0}},
@@ -107,6 +107,7 @@ static bsmeta::field fields[] = {
 	BSREQ(monster, shoots, Shoots, Number),
 	BSREQ(monster, speed, Speed, Number),
 	BSREQ(monster, level, Level, Number),
+	BSINT(monster, cost, Gold, Number),
 };
 BSMETA(monster, "Monsters", "Монстры", FirstMonster);
 
@@ -284,16 +285,6 @@ static int object_get(int rec, int id)
 	default:
 		return 0;
 	}
-}
-
-const char* monster_get_name(int rec)
-{
-	return objects[rec - FirstMonster].name[0];
-}
-
-const char* monster_get_name_multi(int rec, int id)
-{
-	return objects[rec - FirstMonster].multiname[0];
 }
 
 int random::monster(int level)

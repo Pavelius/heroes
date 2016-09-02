@@ -28,8 +28,8 @@ enum tokens
 	SpellPoints, SpellPointsMax,
 	HitPoints, HitPointsMax, Shoots,
 	// Resources
-	Wood, Mercury, Ore, Sulfur, Crystal, Gems, Gold,
-	FirstResource = Wood, LastResource = Gold,
+	Gold, Wood, Mercury, Ore, Sulfur, Crystal, Gems,
+	FirstResource = Gold, LastResource = Gems,
 	// Players
 	PlayerNeutral, PlayerBlue, PlayerGreen, PlayerRed, PlayerYellow, PlayerOrange, PlayerPurple,
 	FirstPlayer = PlayerNeutral, LastPlayer = PlayerPurple,
@@ -46,9 +46,8 @@ enum tokens
 	Accept, Count, Random, Portrait, Rating, ChangeMode, Dismiss,
 	EndTurn, Damage, Block, Income,
 	NameMulti, Level, Target, Side, Base, Expire,
-	ArmyCost,
 	SingleVersion, RequiredTarget, Hostile, Friendly, Combat, MassEffect, DamageMin, DamageMax, FrameStatus,
-	Move, Fly, MagicImmunity, ElementsImmunity, Undead, Dragon, HideAttack, AllAttackAnswer, TwiceAttack, MeleeArcher,
+	Move, Fly, MagicImmunity, ElementsImmunity, Undead, Dragon, AllAttackAnswer, TwiceAttack,
 	Upgrade, Downgrade,
 	OneTime, BuildThisTurn,
 	Difficulty, PlayerCount,
@@ -718,7 +717,6 @@ namespace show
 	int					    game();
 	void				    hero(tokens rec);
 	void				    highscore();
-	bool                    question(const char* text);
 	bool                    recruit(int rec, int& count, int maximum);
 	void					settings();
 	int						spellbook(int mid, tokens mode = CombatSpells);
@@ -975,18 +973,20 @@ namespace combat
 	int						attack(int att, int def);
 	tokens					backward(tokens direction);
 	void					board(int attacker, int defender);
+	bool					candefend(int rec);
 	bool					canshoot(int rec, int target);
 	bool					canattack(int rec, int target, tokens direction);
 	bool					cast(int side, int sid, int cid, int pos, bool run, bool free);
 	void					damage(int rec, int value);
 	tokens					direction(int from, int to);
+	int						getarmycost(int side);
+	int						getcombatant(int index);
+	unsigned char			getpassable(int index);
+	int						getindex(int index);
 	bool					isattacker(int rec);
 	bool					isenemy(int rec, int object);
 	bool					ispassable(int index);
 	point					i2h(int index);
-	int						getcombatant(int index);
-	unsigned char			getpassable(int index);
-	int						getindex(int index);
 	void					melee(int att, int def, bool interactive);
 	void					move(int rec, int index, bool interactive);
 	int						move(int* result, int start, int target, int speed);
@@ -1026,7 +1026,6 @@ namespace game
 {
 	void					addunit(int rec, int type, int count);
 	void					cleararmy(int rec);
-	bool					candefend(int rec);
 	int						get(int rec, int id);
 	int						getartifact(int rec, int id);
 	const cost*				getcost(int rec);
@@ -1036,5 +1035,7 @@ namespace game
 	bool					isboosted(int rec);
 	bool					isfly(int rec);
 	bool					ispenalized(int rec);
+	bool					isstealth(int rec);
 	bool					iswide(int rec);
+	bool					ismeleearcher(int rec);
 }

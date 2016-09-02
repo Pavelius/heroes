@@ -58,7 +58,7 @@ static struct token
 	{{"Barbarian"}}, {{"Knight"}}, {{"Necromancer"}}, {{"Sorcerer"}}, {{"Warlock"}}, {{"Wizard"}}, {{"Elementals"}},
 	{{"Magic"}}, {{"Magic (max)"}},
 	{{"Hits"}}, {{"Hits"}}, {{"Shoots"}},
-	{{"Wood"}}, {{"Mercury"}}, {{"Ore"}}, {{"Sulfur"}}, {{"Crystal"}}, {{"Gems"}}, {{"Gold"}},
+	{{"Gold"}}, {{"Wood"}}, {{"Mercury"}}, {{"Ore"}}, {{"Sulfur"}}, {{"Crystal"}}, {{"Gems"}},
 	{{"Neutral"}}, {{"Blue"}}, {{"Green"}}, {{"Red"}}, {{"Yellow"}}, {{"Orange"}}, {{"Purple"}},
 	//
 	{{"Basic"}}, {{"Advanced"}}, {{"Expert"}},

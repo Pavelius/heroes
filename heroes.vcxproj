@@ -47,7 +47,7 @@
     <ClCompile Include="show_battle_dialog.cpp" />
     <ClCompile Include="combat_effect.cpp" />
     <ClCompile Include="combat_route.cpp" />
-    <ClCompile Include="combat_setting.cpp" />
+    <ClCompile Include="show_battle_setting.cpp" />
     <ClCompile Include="combat_spells.cpp" />
     <ClCompile Include="cost.cpp" />
     <ClCompile Include="drawable.cpp" />

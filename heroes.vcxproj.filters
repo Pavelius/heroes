@@ -36,7 +36,6 @@
     <ClCompile Include="buildings.cpp" />
     <ClCompile Include="combat_effect.cpp" />
     <ClCompile Include="combat_route.cpp" />
-    <ClCompile Include="combat_setting.cpp" />
     <ClCompile Include="combat_spells.cpp" />
     <ClCompile Include="cost.cpp" />
     <ClCompile Include="hightscore.cpp" />
@@ -66,5 +65,6 @@
     <ClCompile Include="show_battle_dialog.cpp" />
     <ClCompile Include="combat.cpp" />
     <ClCompile Include="draw_screenshot.cpp" />
+    <ClCompile Include="show_battle_setting.cpp" />
   </ItemGroup>
 </Project>

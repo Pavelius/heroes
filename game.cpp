@@ -62,15 +62,6 @@ bool game::ispenalized(int rec)
 	return false;
 }
 
-bool game::candefend(int rec)
-{
-	if(bsget(rec, HitPoints) == 0)
-		return false;
-	if(geteffect(rec, SpellParalyze) != 0)
-		return false;
-	return true;
-}
-
 int game::getartifact(int rec, int id)
 {
 	int type = bsget(rec, Type);
@@ -325,43 +316,6 @@ int game::get(int rec, int id)
 			return SandsWarriors;
 		}
 		return bsget(rec, id);
-	case ArmyCost:
-		m = 0;
-		for(int i = FirstTroopsIndex; i <= LastTroopsIndex; i += 2)
-		{
-			int u = bsget(rec, i);
-			if(!u)
-				continue;
-			m += get(u, Gold) * bsget(rec, i + 1);
-		}
-		return m;
-	case MeleeArcher:
-		if(rec >= FirstCombatant && rec <= LastCombatant)
-			rec = bsget(rec, Type);
-		switch(rec)
-		{
-		case Mage:
-		case ArchMage:
-		case Lich:
-		case PowerLich:
-			return 1;
-		default:
-			return 0;
-		}
-	case HideAttack:
-		if(rec >= FirstCombatant && rec <= LastCombatant)
-			rec = bsget(rec, Type);
-		switch(rec)
-		{
-		case Sprite:
-		case Hydra:
-		case Vampire:
-		case VampireLord:
-		case Rogue:
-			return 1;
-		default:
-			return 0;
-		}
 	case AllAttackAnswer:
 		if(rec >= FirstCombatant && rec <= LastCombatant)
 			rec = bsget(rec, Type);
@@ -389,6 +343,39 @@ int game::get(int rec, int id)
 		}
 	default:
 		return bsget(rec, id);
+	}
+}
+
+bool game::isstealth(int rec)
+{
+	if(rec >= FirstCombatant && rec <= LastCombatant)
+		rec = bsget(rec, Type);
+	switch(rec)
+	{
+	case Sprite:
+	case Hydra:
+	case Vampire:
+	case VampireLord:
+	case Rogue:
+		return true;
+	default:
+		return false;
+	}
+}
+
+bool game::ismeleearcher(int rec)
+{
+	if(rec >= FirstCombatant && rec <= LastCombatant)
+		rec = bsget(rec, Type);
+	switch(rec)
+	{
+	case Mage:
+	case ArchMage:
+	case Lich:
+	case PowerLich:
+		return true;
+	default:
+		return false;
 	}
 }
 

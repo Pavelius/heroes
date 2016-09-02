@@ -98,7 +98,7 @@ static bool build_structure(int mid, int building, cost& e, bool tips = false)
         zcat(temp, p);
     e.tostring(zend(temp));
     if(!tips)
-        return show::question(temp);
+        return dlgask(0, temp);
     show::tips(temp);
     return false;
 }
@@ -115,7 +115,7 @@ static bool hire_hero(int rec, int player, const cost* e)
         szprint(zend(temp), szt(" with %1i artifacts", " с %1i артифактами"), bsget(rec, ArtifactCount));
     zcat(temp, szt("can work for you. Did you want to hire?","может работать на вас. Хотите его нанять?"));
     e->tostring(zend(temp));
-    return show::question(temp);
+    return dlgask(0, temp);
 }
 
 static res::tokens captainicn(int race)

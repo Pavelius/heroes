@@ -14,7 +14,7 @@ struct leader : public animation
 	}
 };
 
-const unsigned			combat_timeout = 1000 / 24;
+static unsigned			combat_timeout = 1000 / 24;
 static res::tokens		back;
 static res::tokens		frng;
 static unsigned char	hexagon_color;

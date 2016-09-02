@@ -1,6 +1,5 @@
 #include "main.h"
 
-//tokens			hot::object;
 static int		selected_object;
 static int		information_mode;
 static int      cashe_index;
