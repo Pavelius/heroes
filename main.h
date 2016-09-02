@@ -246,7 +246,6 @@ enum image_flags
 {
 	AFMirror = 1,
 	AFNoOffset = 2,
-	AFOnce = 4,
 };
 namespace res
 {
@@ -944,12 +943,6 @@ namespace player
 	cost&					gcost(int rec);
 	void					set(int rec, int id, int value);
 }
-namespace effect
-{
-	void					clear();
-	int						get(int rec, int id);
-	void					set(int rec, int id, int value);
-}
 const int					cell_wd = 45;
 const int					cell_hd = 52;
 const int					cell_wr = 22;
@@ -982,6 +975,7 @@ namespace combat
 	tokens					direction(int from, int to);
 	int						getarmycost(int side);
 	int						getcombatant(int index);
+	int						geteffect(int rec, int id);
 	unsigned char			getpassable(int index);
 	int						getindex(int index);
 	bool					isattacker(int rec);
@@ -995,6 +989,7 @@ namespace combat
 	int						opposition(int side);
 	extern int				rounds;
 	void					setaction(int rec, tokens action);
+	void					seteffect(int rec, int id, int rounds);
 	void					setindex(int rec, int index);
 	void					shoot(int att, int def, bool interactive);
 	void					start(int attacker, int defender);
@@ -1026,11 +1021,11 @@ private:
 namespace game
 {
 	void					addunit(int rec, int type, int count);
+	bool					additem(int rec, int type);
 	void					cleararmy(int rec);
 	int						get(int rec, int id);
 	int						getartifact(int rec, int id);
 	const cost*				getcost(int rec);
-	int						geteffect(int rec, int id);
 	int						getsummary(int rec, int id, int side);
 	bool					hasspellbook(int rec);
 	bool					isboosted(int rec);

@@ -394,11 +394,14 @@ static void test_combat()
 {
 	command::execute("game", "initialize");
 	bsset(LordKillburn, Player, PlayerBlue);
+	bsset(LordKillburn, SpellBless, 1);
+	bsset(LordKillburn, SpellCurse, 1);
 	game::addunit(LordKillburn, Swordsman, 1);
 	game::addunit(LordKillburn, Centaur, 5);
-	game::addunit(LordKillburn, Gargoyle, 2);
+	game::additem(LordKillburn, MagicBook);
 	bsset(Tsabu, Player, PlayerRed);
 	game::addunit(Tsabu, Troll, 1);
+	game::addunit(Tsabu, Gargoyle, 1);
 	combat::start(LordKillburn, Tsabu);
 }
 

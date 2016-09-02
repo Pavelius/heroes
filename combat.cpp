@@ -143,7 +143,7 @@ bool combat::candefend(int rec)
 {
 	if(bsget(rec, HitPoints) == 0)
 		return false;
-	if(game::geteffect(rec, SpellParalyze) != 0)
+	if(geteffect(rec, SpellParalyze))
 		return false;
 	return true;
 }
@@ -282,7 +282,6 @@ static void prepare_army(int att, int def)
 	add_army(attacker);
 	add_army(defender);
 	prepare_index();
-	effect::clear();
 }
 
 static bool test_victory(int side)
@@ -332,14 +331,16 @@ static void prepare_turn()
 		bsset(i, AlreadyMoved, 0);
 	}
 	combat::rounds++;
+	// Apply combat effects
 	for(unsigned i = FirstEffect; i <= LastEffect; i++)
 	{
-		if(!effect::get(i, Type))
+		if(!bsget(i, Type))
 			continue;
-		if(effect::get(i, Expire) > combat::rounds)
+		if(bsget(i, Expire) > combat::rounds)
 			continue;
-		effect::set(i, Type, 0);
+		bsset(i, Type, 0);
 	}
+	// Reset casting operations
 	memset(casting, 0, sizeof(casting));
 }
 
@@ -387,6 +388,24 @@ void combat::move(int rec, int index, bool interactive)
 	combat::setindex(rec, index);
 }
 
+int combat::geteffect(int rec, int id)
+{
+	int effect = bsfind(FirstEffect, Type, id, Parent, rec);
+	if(!effect)
+		return 0;
+	return bsget(effect, Value) - combat::rounds;
+}
+
+void combat::seteffect(int rec, int id, int rounds)
+{
+	int effect = bscreate(FirstEffect);
+	if(!effect)
+		return;
+	bsset(effect, Type, id);
+	bsset(effect, Parent, rec);
+	bsset(effect, Value, combat::rounds + rounds);
+}
+
 static int make_turn(bool interactive)
 {
 	int enemy, index;
@@ -410,7 +429,7 @@ static int make_turn(bool interactive)
 				speed + 2);
 			int id = 0;
 			// RULE: spell Berserker implementation
-			if(game::geteffect(rec, SpellBerserker))
+			if(combat::geteffect(rec, SpellBerserker))
 			{
 				int target = closest_unit(rec);
 				if(target != -1)

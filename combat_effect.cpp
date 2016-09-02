@@ -1,56 +1,26 @@
 #include "main.h"
 
-static struct effect_t
+static struct combat_effect
 {
-	int			id;
-	int			target;
-	int			expire;
-} objects[LastEffect-FirstEffect+1];
+	int		type;
+	int		parent;
+	int		expire;
+} objects[LastEffect - FirstEffect + 1];
+static bsmeta::field fields[] = {
+	BSREQ(combat_effect, type, Type, Number),
+	BSREQ(combat_effect, parent, Parent, Number),
+	BSREQ(combat_effect, expire, Value, Number),
+	{0}
+};
+BSMETA(combat_effect, "Effects", "Ёфекты", FirstEffect);
 
-void effect::clear()
+static void battle_initialize()
 {
-	memset(objects, 0, sizeof(objects));
+	combat_effects.clear();
 }
 
-int effect::get(int rec, int id)
-{
-	if(rec<(int)FirstEffect || rec>(int)LastEffect)
-		return 0;
-	effect_t& e = objects[rec-FirstEffect];
-	switch(id)
-	{
-	case Type:
-		return e.id;
-	case Target:
-		return e.target;
-	case Expire:
-		return e.expire;
-	case Last:
-		return LastEffect;
-	default:
-		return 0;
-	}
-}
-
-void effect::set(int rec, int id, int value)
-{
-	if(rec<(int)FirstEffect || rec>(int)LastEffect)
-		return;
-	effect_t& e = objects[rec-FirstEffect];
-	switch(id)
-	{
-	case Type:
-		e.id = value;
-		break;
-	case Target:
-		e.target = value;
-		break;
-	case Expire:
-		e.expire = value;
-		break;
-	case Clear:
-		if(value)
-			set(rec, Type, 0);
-		break;
-	}
-}
+static command battle_commands[] = {
+	{"initialize", battle_initialize},
+	{0}
+};
+static command::plugin commands_plugin("battle", battle_commands);

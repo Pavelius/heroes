@@ -15,11 +15,6 @@ int artifacts_bonuses(int rec, int id)
 	return result;
 }
 
-int game::geteffect(int rec, int id)
-{
-	return 0;
-}
-
 bool game::isboosted(int rec)
 {
 	for(int eid = FirstEffect; eid <= LastEffect; eid++)
@@ -97,30 +92,44 @@ void game::cleararmy(int rec)
 
 void game::addunit(int rec, int type, int count)
 {
-	// Add in existing troops
-	for(int i = FirstTroopsIndex; i <= LastTroopsIndex; i += 2)
+	if(type >= FirstMonster && type <= LastMonster)
 	{
-		if(bsget(rec, i) == type)
+		for(int i = FirstTroopsIndex; i <= LastTroopsIndex; i += 2)
 		{
-			count += bsget(rec, i + 1);
-			if(count < 0)
-				count = 0;
-			bsset(rec, i + 1, count);
-			if(!count)
-				bsset(rec, i, 0);
-			return;
+			if(bsget(rec, i) == type)
+			{
+				count += bsget(rec, i + 1);
+				if(count < 0)
+					count = 0;
+				bsset(rec, i + 1, count);
+				if(!count)
+					bsset(rec, i, 0);
+				return;
+			}
+		}
+		// Add new one
+		for(int i = FirstTroopsIndex; i <= LastTroopsIndex; i += 2)
+		{
+			if(!bsget(rec, i))
+			{
+				bsset(rec, i, type);
+				bsset(rec, i + 1, count);
+				return;
+			}
 		}
 	}
-	// Add new one
-	for(int i = FirstTroopsIndex; i <= LastTroopsIndex; i += 2)
+}
+
+bool game::additem(int rec, int type)
+{
+	for(int i = FirstArtifactIndex; i <= LastArtifactIndex; i++)
 	{
-		if(!bsget(rec, i))
-		{
-			bsset(rec, i, type);
-			bsset(rec, i + 1, count);
-			return;
-		}
+		if(bsget(rec, i))
+			continue;
+		bsset(rec, i, type);
+		return true;
 	}
+	return false;
 }
 
 int game::getsummary(int rec, int id, int side)
@@ -134,16 +143,16 @@ int game::getsummary(int rec, int id, int side)
 	switch(id)
 	{
 	case Attack:
-		// RULE: Spell Boold Lust.
-		if(geteffect(rec, SpellBloodLust))
+		// RULE: Boold Lust
+		if(combat::geteffect(rec, SpellBloodLust))
 			m += 3;
 		break;
 	case Defence:
-		// RULE: Spell Stone skin.
-		if(geteffect(rec, SpellStone))
+		// RULE: Stone skin.
+		if(combat::geteffect(rec, SpellStone))
 			m += 3;
-		// RULE: spell Steel skin.
-		else if(geteffect(rec, SpellSteelSkin))
+		// RULE: Steel skin.
+		else if(combat::geteffect(rec, SpellSteelSkin))
 			m += 5;
 		break;
 	case Morale:
@@ -160,11 +169,13 @@ int game::getsummary(int rec, int id, int side)
 			m = 6;
 		break;
 	case DamageMin:
-		if(geteffect(rec, SpellBless))
+		// RULE: Bless
+		if(combat::geteffect(rec, SpellBless))
 			m = bsget(t, DamageMax);
 		break;
 	case DamageMax:
-		if(geteffect(rec, SpellCurse))
+		// RULE: Curse
+		if(combat::geteffect(rec, SpellCurse))
 			m = bsget(t, DamageMin);
 		break;
 	}
