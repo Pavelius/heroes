@@ -3,27 +3,25 @@
 static int select_squads(int* result, int side = -1, int undead = -1, int dragon = -1, int elements_immunity = -1, int exclude = -1, int sid = -1)
 {
 	int count = 0;
-	for(unsigned i = FirstCombatant; i<=LastCombatant; i++)
-    {
-    	if(!bsget(i, Type))
+	for(unsigned i = FirstCombatant; i <= LastCombatant; i++)
+	{
+		if(!bsget(i, Type))
 			continue;
-        if(bsget(i, MagicImmunity))
-            continue;
+		if(bsget(i, MagicImmunity))
+			continue;
 		if(bsget(i, SpellAntimagic))
 			continue;
-		if(side!=-1 && bsget(i, Side)!=side)
+		if(side != -1 && bsget(i, Side) != side)
 			continue;
-		if(undead!=-1 && bsget(i, Undead)!=undead)
+		if(undead != -1 && bsget(i, Undead) != undead)
 			continue;
-		if(dragon!=-1 && bsget(i, Dragon)!=dragon)
+		if(dragon != -1 && bsget(i, Dragon) != dragon)
 			continue;
-		if(exclude!=-1 && bsget(i, Type)==exclude)
+		if(exclude != -1 && bsget(i, Type) == exclude)
 			continue;
-		if(elements_immunity!=-1 && bsget(i, ElementsImmunity)!=elements_immunity)
+		if(elements_immunity != -1 && bsget(i, ElementsImmunity) != elements_immunity)
 			continue;
-		if(result==0 && sid!=-1 && (bsget(i, sid) || !combat::cast(bsget(i,Side), sid, i, -1, false, false)))
-			continue;
-		if(result && sid!=-1 && !combat::cast(bsget(i,Side), sid, i, -1, false, false))
+		if(sid && !combat::cast(bsget(i, Side), sid, i, false, false, false))
 			continue;
 		if(result)
 			result[count] = i;
@@ -34,40 +32,42 @@ static int select_squads(int* result, int side = -1, int undead = -1, int dragon
 	return count;
 }
 
-bool combat::cast(int side, int sid, int cid, int pos, bool run, bool free)
+bool combat::cast(int side, int sid, int cid, bool run, bool free, bool interactive)
 {
-	int m;
-	int su[LastCombatant-FirstCombatant+1];
+	if(sid<FirstSpell || sid>LastSpell)
+		return false;
+	int su[LastCombatant - FirstCombatant + 1];
+	int target_type = game::gettarget(sid);
 	if(!free)
 	{
 		// We need enought spell points to cast spell
-		if(bsget(side, SpellPoints)<bsget(sid, SpellPoints))
+		if(bsget(side, SpellPoints) < bsget(sid, SpellPoints))
 			return false;
 	}
-	if(cid!=-1)
+	if(target_type == TargetUnit)
 	{
+		// Need target unit
+		if(cid == -1 || !cid)
+			return false;
 		// Target has magic immunity (like Black Dragon)
 		if(bsget(cid, MagicImmunity))
 			return false;
 		// Target has active anti-magic spell
-		if(bsget(cid, SpellAntimagic))
+		if(combat::geteffect(cid, SpellAntimagic))
 			return false;
 		// No stack spells
-		if(bsget(cid, sid))
+		if(combat::geteffect(cid, sid))
 			return false;
 		// Hostile spells required enemy unit as target
-		if(bsget(sid, Hostile) && bsget(cid, Side)==side)
+		if(game::ishostile(sid) && bsget(cid, Side) == side)
 			return false;
 		// Friendly spells required friendly unit as target
-		if(bsget(sid, Friendly) && bsget(cid, Side)!=side)
+		if(game::isfriendly(sid) && bsget(cid, Side) != side)
 			return false;
 	}
-	else
-	{
-		// Spell required target must be error
-		if(bsget(sid, RequiredTarget)!=0)
-			return false;
-	}
+	int m;
+	int duration = game::get(side, SpellPower);
+	int damage = bsget(sid, Value) * duration;
 	switch(sid)
 	{
 	case SpellMassHaste:
@@ -78,25 +78,26 @@ bool combat::cast(int side, int sid, int cid, int pos, bool run, bool free)
 	case SpellMassCurse:
 	case SpellMassSlow:
 		// All mass spell cast single version on each valid units
-		if(!select_squads(0,-1,-1,-1,-1,-1,bsget(sid,SingleVersion)))
+		if(!select_squads(0, -1, -1, -1, -1, -1, bsget(sid, SingleVersion)))
 			return false;
 		if(run)
 		{
-			select_squads(su,-1,-1,-1,-1,-1,bsget(sid,SingleVersion));
+			select_squads(su, -1, -1, -1, -1, -1, bsget(sid, SingleVersion));
 			for(auto e : su)
 			{
 				if(!e)
 					break;
-				cast(side, sid, bsget(sid,SingleVersion), pos, run, true);
+				//cast(side, sid, bsget(sid, SingleVersion), pos, run, true);
 			}
 		}
 		break;
 	case SpellCure:
 		m = bsget(cid, HitPointsMax);
-		if(bsget(cid, HitPoints)>=m)
+		if(bsget(cid, HitPoints) >= m)
 			return false;
 		if(run)
-			bsset(cid, HitPoints, m);
+		{
+		}
 		break;
 	case SpellAntimagic:
 		break;
@@ -107,8 +108,13 @@ bool combat::cast(int side, int sid, int cid, int pos, bool run, bool free)
 	case SpellDragonSlayer:
 	case SpellHaste:
 	case SpellShield:
+	case SpellCurse:
+	case SpellBlind:
+	case SpellBerserker:
+	case SpellParalyze:
+	case SpellSlow:
 		// RULEX: This spell not cast on metal golem
-		if(sid==SpellSteelSkin || sid==SpellStoneSkin)
+		if(sid == SpellSteelSkin || sid == SpellStoneSkin)
 		{
 			switch(bsget(cid, Type))
 			{
@@ -119,20 +125,9 @@ bool combat::cast(int side, int sid, int cid, int pos, bool run, bool free)
 				return false;
 			}
 		}
-		if(run)
-			bsset(cid, sid, bsget(side, SpellPower));
-		break;
-	case SpellDispel:
-		if(run)
-			bsset(cid, SpellDispel, 0);
-		break;
-	case SpellCurse:
-	case SpellBlind:
-	case SpellBerserker:
-	case SpellParalyze:
-		// RULE: Curse don't work on Titan and Giant
-		if(sid==SpellCurse)
+		else if(sid == SpellCurse)
 		{
+			// RULE: Curse don't work on Titan and Giant
 			switch(bsget(cid, Type))
 			{
 			case Titan:
@@ -141,18 +136,33 @@ bool combat::cast(int side, int sid, int cid, int pos, bool run, bool free)
 			}
 		}
 		if(run)
-			bsset(cid, sid, bsget(side, SpellPower));
+		{
+			if(interactive)
+				show::battle::effect(cid, sid);
+			seteffect(cid, sid, duration);
+		}
+		break;
+	case SpellDispel:
+		if(run)
+		{
+			// Clear all spells
+			for(int i = FirstEffect; i <= LastEffect; i++)
+			{
+				if(!bsget(i, Type))
+					continue;
+				if(bsget(i, Parent) != cid)
+					continue;
+				bsset(i, Type, 0);
+			}
+		}
 		break;
 	case SpellDisruptingRay:
-	case SpellSlow:
 		if(run)
-			bsset(cid, sid, bsget(side, SpellPower));
+			seteffect(cid, sid, duration);
 		break;
 	case SpellHypnotize:
 		break;
 	case SpellTeleport:
-		if(run)
-			bsset(cid, Index, pos);
 		break;
 	case SpellResurrect:
 		break;
@@ -166,52 +176,32 @@ bool combat::cast(int side, int sid, int cid, int pos, bool run, bool free)
 	case SpellLightingBolt:
 	case SpellColdRay:
 		if(run)
-		{
-			int result = bsget(sid, SpellPower)*bsget(side, SpellPower);
-			combat::damage(cid, result);
-		}
+			combat::damage(cid, damage);
 		break;
 	case SpellColdRing:
 		break;
 	case SpellChainLighting:
 		break;
 	case SpellFireBall:
-		if(pos==-1)
-			return false;
-		if(run)
-		{
-		}
 		break;
 	case SpellFireBlast:
-		if(pos==-1)
-			return false;
-		if(run)
-		{
-		}
 		break;
 	case SpellMeteorShower:
-		if(pos==-1)
-			return false;
-		if(run)
-		{
-
-		}
 		break;
 	case SpellDeathRipple:
 	case SpellDeathWave:
-		if(!select_squads(su,-1,0))
+		if(!select_squads(su, -1, 0))
 			return false;
-		m = bsget(sid, SpellPower)*bsget(side, SpellPower);
 		for(auto e : su)
 		{
 			if(!e)
 				break;
-			combat::damage(e, m);
+			combat::damage(e, damage);
 		}
 		break;
 	case SpellHolyWord:
 	case SpellHolyShout:
-		if(!select_squads(su,-1,1))
+		if(!select_squads(su, -1, 1))
 			return false;
 		m = bsget(sid, SpellPower)*bsget(side, SpellPower);
 		for(auto e : su)
@@ -233,7 +223,7 @@ bool combat::cast(int side, int sid, int cid, int pos, bool run, bool free)
 		}
 		break;
 	case SpellElementalStorm:
-		if(!select_squads(su,-1,-1,-1,0,-1))
+		if(!select_squads(su, -1, -1, -1, 0, -1))
 			return false;
 		m = bsget(sid, SpellPower)*bsget(side, SpellPower);
 		for(auto e : su)
@@ -250,7 +240,7 @@ bool combat::cast(int side, int sid, int cid, int pos, bool run, bool free)
 	{
 		if(!free)
 			bsset(side, SpellPoints, bsget(side, SpellPoints) - bsget(sid, SpellPoints));
-		if(cid!=-1)
+		if(cid != -1)
 		{
 			// RULE: Spells that cancel each other
 			switch(sid)

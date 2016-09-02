@@ -293,8 +293,8 @@ void animation::set(int id, int value, int param)
 				count = 5;
 				break;
 			case CastSpell:
-				start = 6;
-				count = 9;
+				start = 12;
+				count = 2;
 				break;
 			default:
 				break;
@@ -593,6 +593,39 @@ void animation::set(int id, int value, int param)
 			break;
 		}
 		count = 1;
+	}
+	else if(id == AnimationType)
+	{
+		pos.x = 0;
+		pos.y = 0;
+		switch(value)
+		{
+		case SpellBless: icn = res::BLESS; break;
+		case SpellBlind: icn = res::BLIND; break;
+		case SpellCure: icn = res::MAGIC01; break;
+		case SpellSlow: icn = res::MAGIC02; break;
+		case SpellShield: icn = res::SHIELD; break;
+		case SpellHaste: icn = res::HASTE; break;
+		case SpellCurse: icn = res::CURSE; break;
+		case SpellAntimagic: icn = res::MAGIC06; break;
+		case SpellStoneSkin: icn = res::STONSKIN; break;
+		case SpellSteelSkin: icn = res::STELSKIN; break;
+		case SpellParalyze: icn = res::PARALYZE; break;
+		case SpellHypnotize: icn = res::HYPNOTIZ; break;
+		case SpellDragonSlayer: icn = res::DRAGSLAY; break;
+		case SpellBerserker: icn = res::BERZERK; break;
+		default: icn = res::MAGIC07; break; // As dispell magic
+		}
+		switch(value)
+		{
+		case SpellBless:
+		case SpellCurse:
+		case SpellBerserker:
+			pos.y = -24;
+			break;
+		}
+		start = 0;
+		count = res::getcount(icn);
 	}
 	frame = start;
 }

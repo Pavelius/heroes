@@ -19,7 +19,7 @@ bool game::isboosted(int rec)
 {
 	for(int eid = FirstEffect; eid <= LastEffect; eid++)
 	{
-		if(bsget(eid, Target) != rec)
+		if(bsget(eid, Parent) != rec)
 			continue;
 		switch(bsget(eid, Type))
 		{
@@ -40,7 +40,7 @@ bool game::ispenalized(int rec)
 {
 	for(int eid = FirstEffect; eid <= LastEffect; eid++)
 	{
-		if(bsget(eid, Target) != rec)
+		if(bsget(eid, Parent) != rec)
 			continue;
 		switch(bsget(eid, Type))
 		{

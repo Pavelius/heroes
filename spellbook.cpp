@@ -1,30 +1,5 @@
 #include "main.h"
 
-int spellbook::get(int id) const
-{
-    if(id>=(int)FirstSpell && id<=(int)LastSpell)
-		return (known[(id-FirstSpell)/32]&(1<<((id-FirstSpell)%32)))!=0 ? 1 : 0;
-    return 0;
-}
-
-void spellbook::clear()
-{
-    memset(known,0,sizeof(known));
-}
-
-bool spellbook::set(int id, int value)
-{
-    if(id>=(int)FirstSpell && id<=(int)LastSpell)
-    {
-        if(value)
-			known[(id-FirstSpell)/32] |= 1<<((id-FirstSpell)%32);
-        else
-			known[(id-FirstSpell)/32] &= ~(1<<((id-FirstSpell)%32));
-        return true;
-    }
-    return false;
-}
-
 static int compare(const void* p1, const void* p2)
 {
 	int m1 = bsget(*(int*)p1, Level);
@@ -32,6 +7,25 @@ static int compare(const void* p1, const void* p2)
 	if(m1==m2)
 		return strcmp(bsgets(*(int*)p1, Name), bsgets(*(int*)p2, Name));
 	return m1-m2;
+}
+
+static int select_spells(int* result, int rec, tokens mode)
+{
+	int* p = result;
+	for(int i = FirstSpell; i <= (int)LastSpell; i++)
+	{
+		if(!bsget(rec, i))
+			continue;
+		if(i == SpellStone)
+			continue;
+		if(mode == CombatSpells && !game::iscombat(i))
+			continue;
+		if(mode == AdventureSpells && game::iscombat(i))
+			continue;
+		*p++ = i;
+	}
+	*p = 0;
+	return p - result;
 }
 
 int show::spellbook(int rec, tokens mode)
@@ -50,28 +44,7 @@ int show::spellbook(int rec, tokens mode)
 	int y = (draw::height - h1) / 2 - 32;
 	int current_page = 0;
 	// fill knowing spells
-	memset(names, 0, sizeof(names));
-	int* p = names;
-	for(int i = FirstSpell; i<=(int)LastSpell; i++)
-	{
-		if(bsget(rec, i)==0)
-			continue;
-		if(i==SpellStone)
-			continue;
-		if(mode==CombatSpells)
-		{
-			if(!bsget(i, Combat))
-				continue;
-		}
-		else if(mode==AdventureSpells)
-		{
-			if(bsget(i, Combat))
-				continue;
-		}
-		*p++ = i;
-	}
-	*p++ = 0;
-	int names_count = zlen(names);
+	int names_count = select_spells(names, rec, mode);
 	qsort(names, names_count, sizeof(names[0]), compare);
 	char temp[32];
 	draw::screenshoot surface;

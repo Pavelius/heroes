@@ -15,7 +15,7 @@ static struct combatant : public animation
 	static int getbarframe(int rec)
 	{
 		bool isboosted = game::isboosted(rec);
-		bool ispenalized = game::isboosted(rec);
+		bool ispenalized = game::ispenalized(rec);
 		if(isboosted && ispenalized)
 			return 13;
 		else if(isboosted)

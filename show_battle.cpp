@@ -2,6 +2,12 @@
 
 struct leader : public animation
 {
+
+	void setaction(tokens type, int param) override
+	{
+		set(game::get(rec, Type), type, param);
+	}
+
 	void painting(point screen) const override
 	{
 		animation::painting(screen);
@@ -14,8 +20,8 @@ struct leader : public animation
 	}
 };
 
-static unsigned			combat_timeout_values[] = {1000 / 10, 1000 / 22, 1000 / 32};
-static unsigned			combat_timeout = 1000 / 24;
+static unsigned			combat_timeout_values[] = {1000 / 10, 1000 / 30, 1000 / 80};
+static unsigned			combat_timeout = 1000 / 10;
 static res::tokens		back;
 static res::tokens		frng;
 static unsigned char	hexagon_color;
@@ -363,21 +369,21 @@ static int get_missile_index(res::tokens icn, int dx, int dy)
 	}
 }
 
-int show::battle::target(int side, int sid)
+int show::battle::target(int side, int sid, int target)
 {
+	if(!target)
+		return -1;
 	drawable* objects[64];
 	while(true)
 	{
 		int hilite_combatant = 0;
 		select_animation(objects);
 		paint_field(-1, objects);
-		if(hot::key == KeyEscape)
-			draw::execute(Cancel);
 		int i = bsget(sid, Portrait);
 		if(hilite_index != -1)
 		{
 			hilite_combatant = combat::getcombatant(hilite_index);
-			if(!combat::cast(side, sid, hilite_combatant, hilite_index, false, false))
+			if(!combat::cast(side, sid, hilite_combatant, false, false, false))
 				i = -1;
 		}
 		if(hot::key == MouseLeft && hot::pressed)
@@ -387,6 +393,8 @@ int show::battle::target(int side, int sid)
 			else
 				draw::execute(Cancel);
 		}
+		else if(hot::key == MouseRight && hot::pressed)
+			draw::execute(Cancel);
 		if(i == -1)
 			draw::cursor(res::SPELCO, 0, -res::width(res::SPELCO, 0) / 2, -res::height(res::SPELCO, 0) / 2);
 		else
@@ -397,10 +405,55 @@ int show::battle::target(int side, int sid)
 		case Cancel:
 		case 0:
 			return 0;
+		case KeyEscape:
+			draw::execute(Cancel);
+			break;
 		case Spells:
 			return hilite_combatant;
 		}
 	}
+}
+
+void show::battle::leader(int side, tokens type)
+{
+	drawable* objects[64];
+	select_animation(objects);
+	paint_field(0, 0);
+	draw::screenshoot screen;
+	auto pa = combat::isattacker(side) ? &attacker_leader : &defender_leader;
+	pa->setaction(type, 0);
+	screen.redraw(objects, combat_timeout*2, pa);
+	pa->setaction(ActorWait, 0);
+}
+
+void show::battle::effect(int rec, int type)
+{
+	struct animation_effect : public animation
+	{
+
+		animation_effect(int type, point pt)
+		{
+			set(AnimationType, type);
+			pos = pos + pt;
+		}
+
+		point getzpos() const override
+		{
+			return{pos.x, pos.y + 72};
+		}
+	};
+	drawable* objects[64];
+	select_animation(objects);
+	auto pa = animation::find(objects, rec);
+	if(!pa)
+		return;
+	paint_field(0, 0);
+	draw::screenshoot screen;
+	int i1 = bsget(rec, Index);
+	point pt = combat::i2h(i1);
+	pt.y -= res::height(pa->icn, pa->frame) / 2;
+	animation_effect e1(type, pt); zcat(objects, static_cast<drawable*>(&e1));
+	screen.redraw(objects, combat_timeout, &e1);
 }
 
 void show::battle::shoot(int rec, int enemy, int damage)
@@ -682,10 +735,7 @@ int show::battle::unit(int rec, int casted)
 			{
 				id = show::spellbook(bsget(rec, Side), CombatSpells);
 				if(id)
-				{
-					draw::execute(0);
 					return id;
-				}
 			}
 			break;
 		case Hero:

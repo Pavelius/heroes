@@ -396,6 +396,10 @@ static void test_combat()
 	bsset(LordKillburn, Player, PlayerBlue);
 	bsset(LordKillburn, SpellBless, 1);
 	bsset(LordKillburn, SpellCurse, 1);
+	bsset(LordKillburn, SpellSlow, 1);
+	bsset(LordKillburn, SpellCure, 1);
+	bsset(LordKillburn, SpellBlind, 1);
+	bsset(LordKillburn, SpellDispel, 1);
 	game::addunit(LordKillburn, Swordsman, 1);
 	game::addunit(LordKillburn, Centaur, 5);
 	game::additem(LordKillburn, MagicBook);

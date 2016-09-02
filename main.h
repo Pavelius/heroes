@@ -46,14 +46,15 @@ enum tokens
 	Accept, Count, Random, Portrait, Rating, ChangeMode, Dismiss,
 	EndTurn, Damage, Block, Income,
 	NameMulti, Level, Target, Side, Base, Expire,
-	SingleVersion, RequiredTarget, Hostile, Friendly, Combat, MassEffect, DamageMin, DamageMax, FrameStatus,
+	SingleVersion, RequiredTarget, MassEffect, DamageMin, DamageMax, FrameStatus,
 	Move, Fly, MagicImmunity, ElementsImmunity, Undead, Dragon, AllAttackAnswer, TwiceAttack,
+	TargetUnit, TargetIndex,
 	Upgrade, Downgrade,
 	OneTime, BuildThisTurn,
 	Difficulty, PlayerCount,
 	ShipMaster, Direction, Player, PlayerType, Effect,
 	AttackRaw, DefenceRaw, AnimationType, Boosted, Penalized, Attacker,
-	Block2, DefendThisTurn, CastThisRound, Squad, PositionNotDead, PathTo, Experience,
+	DefendThisTurn, CastThisRound, Squad, PositionNotDead, Experience,
 	MovePoints, MovePointsMax, MovePointsSea, MovePointsLand, Moveable, Quality, LackResource,
 	Dwelve, ArtifactCount, Code,
 	AttackerWin, DefenderWin, AlreadyMoved, AlreadyDefended,
@@ -703,11 +704,13 @@ namespace show
 	{
 		void				attack(int rec, int enemy, int damage);
 		int					dialog(int side); // dialog surrender, cast, flee
+		void				effect(int rec, int type);
 		void				fly(int rec, int target);
+		void				leader(int side, tokens type);
 		void				move(int rec, int target);
 		void				shoot(int rec, int target, int damage);
 		void				settings();
-		int					target(int side, int spell);
+		int					target(int side, int spell, int target);
 		int					unit(int rec, int casted);
 	}
 	void				    build(int rec);
@@ -733,13 +736,6 @@ namespace hot
 	extern int				index;
 	extern int				command;
 	extern int				param2;
-};
-struct spellbook
-{
-	unsigned				known[5];
-	void					clear();
-	int						get(int id) const;
-	bool					set(int id, int value);
 };
 struct order
 {
@@ -968,9 +964,10 @@ namespace combat
 	tokens					backward(tokens direction);
 	void					board(int attacker, int defender);
 	bool					candefend(int rec);
+	bool					canmove(int rec);
 	bool					canshoot(int rec, int target);
 	bool					canattack(int rec, int target, tokens direction);
-	bool					cast(int side, int sid, int cid, int pos, bool run, bool free);
+	bool					cast(int side, int sid, int cid, bool run, bool free, bool interative);
 	void					damage(int rec, int value);
 	tokens					direction(int from, int to);
 	int						getarmycost(int side);
@@ -980,6 +977,7 @@ namespace combat
 	int						getindex(int index);
 	bool					isattacker(int rec);
 	bool					isenemy(int rec, int object);
+	bool					ismoveable(int rec);
 	bool					ispassable(int index);
 	point					i2h(int index);
 	void					melee(int att, int def, bool interactive);
@@ -1026,10 +1024,16 @@ namespace game
 	int						get(int rec, int id);
 	int						getartifact(int rec, int id);
 	const cost*				getcost(int rec);
+	int						getlevel(int rec);
+	int						getframe(int rec);
 	int						getsummary(int rec, int id, int side);
+	int						gettarget(int rec);
 	bool					hasspellbook(int rec);
 	bool					isboosted(int rec);
+	bool					iscombat(int rec);
 	bool					isfly(int rec);
+	bool					isfriendly(int rec);
+	bool					ishostile(int rec);
 	bool					ispenalized(int rec);
 	bool					isstealth(int rec);
 	bool					iswide(int rec);

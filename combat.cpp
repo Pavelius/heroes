@@ -161,6 +161,15 @@ bool combat::canattack(int rec, int target, tokens direction)
 	return i2 == i0 || (getpassable(i2) != 0 && getpassable(i2) <= speed);
 }
 
+bool combat::canmove(int rec)
+{
+	if(combat::geteffect(rec, SpellBlind))
+		return false;
+	if(combat::geteffect(rec, SpellParalyze))
+		return false;
+	return true;
+}
+
 bool combat::isenemy(int rec, int object)
 {
 	if(bsget(object, HitPoints) == 0)
@@ -422,6 +431,8 @@ static int make_turn(bool interactive)
 				continue;
 			if(!game::get(rec, Count))
 				continue;
+			if(!combat::canmove(rec))
+				continue;
 			bool wide = game::iswide(rec);
 			combat::wave(bsget(rec, Index),
 				game::isfly(rec),
@@ -446,14 +457,16 @@ static int make_turn(bool interactive)
 					if(id >= FirstSpell && id <= LastSpell)
 					{
 						int side = bsget(rec, Side);
-						int target = -1;
-						if(bsget(id, RequiredTarget))
+						int target = game::gettarget(id);
+						if(target)
 						{
-							target = show::battle::target(side, id);
+							target = show::battle::target(side, id, target);
 							if(!target)
 								continue;
 						}
-						combat::cast(side, id, target, 0, true, false);
+						if(interactive)
+							show::battle::leader(side, CastSpell);
+						combat::cast(side, id, target, true, false, interactive);
 						casting[side_index(rec)]++;
 						continue;
 					}
