@@ -61,10 +61,10 @@
     <ClCompile Include="show_hero.cpp" />
     <ClCompile Include="show_unit.cpp" />
     <ClCompile Include="show_battle.cpp" />
-    <ClCompile Include="combatant.cpp" />
     <ClCompile Include="show_battle_dialog.cpp" />
     <ClCompile Include="combat.cpp" />
     <ClCompile Include="draw_screenshot.cpp" />
     <ClCompile Include="show_battle_setting.cpp" />
+    <ClCompile Include="combat_unit.cpp" />
   </ItemGroup>
 </Project>

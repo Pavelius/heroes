@@ -41,7 +41,7 @@
     <ClCompile Include="build.cpp" />
     <ClCompile Include="buildings.cpp" />
     <ClCompile Include="castle.cpp" />
-    <ClCompile Include="combatant.cpp" />
+    <ClCompile Include="combat_unit.cpp" />
     <ClCompile Include="combat.cpp" />
     <ClCompile Include="draw_screenshot.cpp" />
     <ClCompile Include="show_battle_dialog.cpp" />

@@ -1,6 +1,6 @@
 #include "main.h"
 
-static struct combatant : public animation
+static struct combat_unit : public animation
 {
 	int		index;
 	int		side;
@@ -140,18 +140,18 @@ static struct combatant : public animation
 
 } objects[LastCombatant - FirstCombatant + 1];
 static bsmeta::field fields[] = {
-	BSREQ(combatant, rec, Type, Number),
-	BSREQ(combatant, index, Index, Number),
-	BSREQ(combatant, side, Side, Number),
-	BSREQ(combatant, hits, HitPoints, Number),
-	BSREQ(combatant, moved, AlreadyMoved, Number),
-	BSREQ(combatant, defended, AlreadyDefended, Number),
-	BSREQ(combatant, shoots, Shoots, Number),
+	BSREQ(combat_unit, rec, Type, Number),
+	BSREQ(combat_unit, index, Index, Number),
+	BSREQ(combat_unit, side, Side, Number),
+	BSREQ(combat_unit, hits, HitPoints, Number),
+	BSREQ(combat_unit, moved, AlreadyMoved, Number),
+	BSREQ(combat_unit, defended, AlreadyDefended, Number),
+	BSREQ(combat_unit, shoots, Shoots, Number),
 	{0}
 };
-BSMETA(combatant, "Combatants", "Участники боя", FirstCombatant);
+BSMETA(combat_unit, "Combatants", "Участники боя", FirstCombatant);
 
-int combatant::getid() const
+int combat_unit::getid() const
 {
 	return this - objects + FirstCombatant;
 }
@@ -181,7 +181,7 @@ void combat::setindex(int rec, int index)
 
 static void battle_initialize()
 {
-	combatants.clear();
+	combat_units.clear();
 }
 
 static command battle_commands[] = {
@@ -197,7 +197,7 @@ static struct creature_drawable_plugin : public drawable::plugin
 		if((flags & 1) == 0)
 			return;
 		auto p = result;
-		for(int i = 0; i < combatants.count; i++)
+		for(int i = 0; i < combat_units.count; i++)
 		{
 			if(!objects[i].rec)
 				continue;
