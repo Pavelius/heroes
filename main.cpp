@@ -392,8 +392,8 @@ static int newgame()
 
 static void test_combat()
 {
-	command::execute("game", "initialize");
-	command::execute("game", "prepare");
+	game::initialize();
+	game::prepare();
 	bsset(LordKillburn, Player, PlayerBlue);
 	bsset(LordKillburn, SpellBless, 1);
 	bsset(LordKillburn, SpellCurse, 1);

@@ -13,14 +13,3 @@ static bsmeta::field fields[] = {
 	{0}
 };
 BSMETA(combat_effect, "Effects", "Ёфекты", FirstEffect);
-
-static void battle_initialize()
-{
-	combat_effects.clear();
-}
-
-static command battle_commands[] = {
-	{"initialize", battle_initialize},
-	{0}
-};
-static command::plugin commands_plugin("battle", battle_commands);

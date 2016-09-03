@@ -607,7 +607,8 @@ static int make_turn(bool interactive)
 
 void combat::start(int attacker, int defender)
 {
-	command::execute("battle", "initialize");
+	bsmeta::getbase("combat_unit")->clear();
+	bsmeta::getbase("combat_effect")->clear();
 	combat::board(attacker, defender);
 	prepare_army(attacker, defender);
 	// RULEX: Scouting can increase start morale

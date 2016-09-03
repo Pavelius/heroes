@@ -179,17 +179,6 @@ void combat::setindex(int rec, int index)
 	e.incframe();
 }
 
-static void battle_initialize()
-{
-	combat_units.clear();
-}
-
-static command battle_commands[] = {
-	{"initialize", battle_initialize},
-	{0}
-};
-static command::plugin commands_plugin("battle", battle_commands);
-
 static struct creature_drawable_plugin : public drawable::plugin
 {
 	void selecting(drawable** result, unsigned flags) override

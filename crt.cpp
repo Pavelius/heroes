@@ -835,25 +835,3 @@ unsigned xdecode(const char* name, void* output, unsigned output_size, const voi
 	}
 	return 0;
 }
-
-command::plugin* command::plugin::first;
-
-command::plugin::plugin(const char* name, const command* commands) : name(name), commands(commands)
-{
-	seqlink(this);
-}
-
-void command::execute(const char* group, const char* name)
-{
-	for(auto p = command::plugin::first; p; p = p->next)
-	{
-		if(strcmp(p->name, group) != 0)
-			continue;
-		for(auto pc = p->commands; pc->name; pc++)
-		{
-			if(strcmp(pc->name, name) != 0)
-				continue;
-			pc->proc();
-		}
-	}
-}

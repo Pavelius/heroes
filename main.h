@@ -1020,6 +1020,7 @@ namespace game
 	int						getunit(int race, int building);
 	int						getweek();
 	bool					hasspellbook(int rec);
+	void					initialize();
 	bool					isboosted(int rec);
 	bool					iscombat(int rec);
 	bool					isfly(int rec);
@@ -1031,5 +1032,6 @@ namespace game
 	bool					iswide(int rec);
 	bool					ismeleearcher(int rec);
 	int						play(gamefile& game);
+	void					prepare();
 	int						turn();
 }

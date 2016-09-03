@@ -75,20 +75,6 @@ struct converter
 	virtual unsigned				encode(void* output, int output_size, const void* input, int input_size) const = 0;
 	static converter*				find(const char* name);
 };
-struct command
-{
-	struct plugin
-	{
-		const char*					name;
-		const command*				commands;
-		plugin*						next;
-		static command::plugin*		first;
-		plugin(const char* name, const command* commands);
-	};
-	const char*						name;
-	void							(*proc)();
-	static void						execute(const char* group, const char* name);
-};
 namespace metrics
 {
 	const codepages					code = CP1251;

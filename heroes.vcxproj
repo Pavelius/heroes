@@ -53,7 +53,7 @@
     <ClCompile Include="event.cpp" />
     <ClCompile Include="adventure.cpp" />
     <ClCompile Include="game.cpp" />
-    <ClCompile Include="gamefile.cpp" />
+    <ClCompile Include="game_file.cpp" />
     <ClCompile Include="hero.cpp" />
     <ClCompile Include="hightscore.cpp" />
     <ClCompile Include="indexes.cpp" />
