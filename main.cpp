@@ -410,15 +410,6 @@ static void test_combat()
 	combat::start(LordKillburn, Tsabu);
 }
 
-void test_coordinates()
-{
-	auto p1 = combat::i2h(2);
-	auto p2 = combat::i2h(25);
-	auto dx = p2.x - p1.x; // 22
-	auto dy = p2.y - p1.y; // 38
-	auto dc = draw::isqrt(dx*dx + dy*dy); // 43? 44
-}
-
 static int mainmenu()
 {
 	animation latern(res::SHNGANIM, 1, 39);
@@ -449,10 +440,7 @@ static int mainmenu()
                 {
                     game.players(1);
                     if(tune_scenario(game))
-                    {
-                        game.validate();
 						game::play(game);
-                    }
                 }
                 break;
             }
@@ -485,7 +473,6 @@ static int mainmenu()
 
 int main()
 {
-	test_coordinates();
 	draw::font = res::FONT;
 	draw::create("Heroes II", 100, false);
 	return mainmenu();

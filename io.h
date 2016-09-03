@@ -41,6 +41,8 @@ namespace io
 		stream&				operator<<(const char* t); // Post text string into stream data in correct coding.
 		stream&				operator<<(const int n); // Post number as string into stream data in correct coding.
 		unsigned char		get();
+		unsigned short		get16();
+		unsigned			get32();
 		unsigned short		getLE16();
 		unsigned			getLE32();
 		unsigned			getsize();

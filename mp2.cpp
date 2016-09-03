@@ -509,11 +509,10 @@ static void load_object(mp2::hero* p, int rec)
     }
 }
 
-bool gamefile::load(const char* filename)
+bool gamefile::load(const char* url)
 {
-	char temp[260];
     clear();
-	io::file st(szurl(temp, "maps", filename));
+	io::file st(url);
     if(!st)
         return false;
     mp2::header header; // (36,36), (72,72), (108,108), (144,144)
@@ -542,7 +541,7 @@ bool gamefile::load(const char* filename)
     if(header.hero)
         start_hero = true;
     // text info
-    zcpy(file, filename);
+    szfnamewe(file, url);
     zcpy(description, header.text, sizeof(description)-1);
     zcpy(name, header.name, sizeof(name)-1);
     for(int i=0; i<6; i++)
@@ -645,7 +644,7 @@ static void add_moveable(int index, int id, int quality)
 void map::load(gamefile& game)
 {
     char temp[260];
-    io::file st(szurl(temp,"maps",game.file));
+    io::file st(szurl(temp,"maps",game.file,"mp2"));
     if(!st)
         return;
     // apply players
@@ -663,7 +662,7 @@ void map::load(gamefile& game)
     mp2::tile* tiles = new mp2::tile[tiles_count];
     st.read(tiles, tiles_count*sizeof(mp2::tile));
     // addons loading
-    int addon_count = st.getLE32();
+    int addon_count = st.get32();
     mp2::addon* addons = new mp2::addon[addon_count];
     st.read(addons, addon_count*sizeof(mp2::addon));
     // normalize addon

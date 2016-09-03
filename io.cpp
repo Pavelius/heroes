@@ -73,6 +73,20 @@ unsigned io::stream::getLE32()
 	return (u4<<24) | (u3<<16) | (u2<<8) | u1;
 }
 
+short unsigned io::stream::get16()
+{
+	short unsigned r = 0;
+	read(&r, sizeof(r));
+	return r;
+}
+
+unsigned io::stream::get32()
+{
+	unsigned r = 0;
+	read(&r, sizeof(r));
+	return r;
+}
+
 unsigned io::stream::getsize()
 {
 	unsigned s = seek(0, SeekCur);

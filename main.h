@@ -766,8 +766,8 @@ struct gamefile
 	tokens					difficult;
 	bool					start_hero;
 	//
+	operator bool() const { return file[0] != 0; }
 	void					clear();
-	bool					isvalid() const { return file[0] != 0; }
 	bool					load(const char* filename);
 	void					players(int count);
 	int						sides() const;

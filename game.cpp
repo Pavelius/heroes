@@ -694,15 +694,17 @@ static void create_army(int rec)
 	}
 }
 
-static void game_initialize_hero()
+static void game_initialize_heroes()
 {
 	for(int rec = FirstHero; rec <= LastHero; rec++)
 	{
-		bsset(rec, Index, -1);
 		bsset(rec, Player, 0);
 		bsset(rec, Recruit, 0);
 		bsset(rec, Portrait, rec - FirstHero);
 		bsset(rec, Direction, map::Up);
+		bsset(rec, SpellPoints, game::get(rec, SpellPointsMax));
+		bsset(rec, MovePoints, game::get(rec, MovePointsMax));
+		bsset(rec, Index, -1);
 		for(int i = FirstSkill; i <= LastSkill; i++)
 			bsset(rec, i, 0);
 		for(int i = FirstSpell; i <= LastSpell; i++)
@@ -761,9 +763,6 @@ static void game_initialize_hero()
 			break;
 		}
 		create_army(rec);
-		bsset(rec, SpellPoints, game::get(rec, SpellPointsMax));
-		bsset(rec, MovePoints, game::get(rec, MovePointsMax));
-		bsset(rec, Index, -1);
 	}
 }
 void game::initialize()
@@ -771,7 +770,7 @@ void game::initialize()
 	day = 0;
 	week_of = Empthy;
 	month_of = Empthy;
-	game_initialize_hero();
+	game_initialize_heroes();
 }
 
 void game::prepare()
