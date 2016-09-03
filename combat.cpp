@@ -3,6 +3,7 @@
 static int			attacker, defender;
 static int			combat_order[LastCombatant - FirstCombatant + 2];
 int					combat::rounds;
+int					combat::enviroment::morale;
 static int			casting[2];
 
 static int correct_damage(int result)
@@ -10,6 +11,18 @@ static int correct_damage(int result)
 	if(result < 1)
 		result = 1;
 	return result;
+}
+
+static void change_morale_to_side(bool attacker)
+{
+	if(attacker)
+		combat::enviroment::morale++;
+	else
+		combat::enviroment::morale--;
+	if(combat::enviroment::morale < -3)
+		combat::enviroment::morale = -3;
+	else if(combat::enviroment::morale > 3)
+		combat::enviroment::morale = 3;
 }
 
 bool combat::isattacker(int rec)
@@ -171,8 +184,11 @@ bool combat::canattack(int rec, int target, int target_index, tokens from_direct
 	int i0 = combat::moveto(target_index, from_direction);
 	if(i0 == -1)
 		return false;
-	if(getcombatant(i0) != rec && !combat::ispassable(i0))
-		return false;
+	if(getcombatant(i0) != rec)
+	{
+		if(combat::getpassable(i0)>(game::getspeed(game::get(rec, Speed)) + 2))
+			return false;
+	}
 	return true;
 }
 
@@ -432,10 +448,10 @@ void combat::seteffect(int rec, int id, int rounds)
 	bsset(effect, Value, combat::rounds + rounds);
 }
 
-static int make_turn_unit(int rec, bool interactive)
+static int make_turn_unit(int rec, bool second, bool interactive)
 {
 	int enemy, index;
-	int speed = game::get(rec, Speed);
+	int speed = game::getspeed(game::get(rec, Speed));
 	bool wide = game::iswide(rec);
 	combat::wave(bsget(rec, Index),
 		game::isfly(rec),
@@ -513,12 +529,18 @@ static int make_turn_unit(int rec, bool interactive)
 		break;
 	case Shoot:
 		combat::shoot(rec, hot::param, interactive);
+		// RULEX: Each shoot change morale
+		if(!second)
+			change_morale_to_side(combat::isattacker(rec));
 		break;
 	case Attack:
 		enemy = hot::param;
 		index = hot::param2;
 		combat::move(rec, index, interactive);
 		combat::melee(rec, enemy, interactive);
+		// RULEX: Each melee attack change morale to this side
+		if(!second)
+			change_morale_to_side(combat::isattacker(rec));
 		break;
 	case Surrender:
 		return Surrender;
@@ -541,7 +563,7 @@ static int make_turn(bool interactive)
 		{
 			if(!bsget(rec, Type))
 				continue;
-			auto speed = game::get(rec, Speed);
+			auto speed = game::getspeed(game::get(rec, Speed));
 			if(speed != i)
 				continue;
 			if(bsget(rec, AlreadyMoved))
@@ -561,7 +583,7 @@ static int make_turn(bool interactive)
 					return Accept;
 				}
 			}
-			int id = make_turn_unit(rec, interactive);
+			int id = make_turn_unit(rec, false, interactive);
 			if(id == Accept)
 			{
 				morale = game::get(rec, Morale);
@@ -573,7 +595,7 @@ static int make_turn(bool interactive)
 					{
 						if(interactive)
 							show::battle::effect(rec, Morale, 1);
-						id = make_turn_unit(rec, interactive);
+						id = make_turn_unit(rec, true, interactive);
 					}
 				}
 			}
@@ -588,6 +610,8 @@ void combat::start(int attacker, int defender)
 	command::execute("battle", "initialize");
 	combat::board(attacker, defender);
 	prepare_army(attacker, defender);
+	// RULEX: Scouting can increase start morale
+	combat::enviroment::morale = bsget(attacker, SkillScounting) - bsget(defender, SkillScounting);
 	bool interactive = true;
 	while(true)
 	{

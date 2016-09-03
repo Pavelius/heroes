@@ -40,10 +40,14 @@ static int field(int x, int y, int id, int rec, int side, const char* name)
 	return oy;
 }
 
-static int fieldt(int x, int y, int id, int base, int rec, int side)
+static int fieldt(int x, int y, int id, int base, int min, int max, int rec, int side)
 {
 	char temp[260];
 	int value = game::getsummary(rec, id, side) + base;
+	if(value < min)
+		value = min;
+	else if(value > max)
+		value = max;
 	szprint(temp, "%1:", bsgets(id, Name));
 	draw::text(x - draw::textw(temp), y, temp);
 	draw::text(x + ox, y, bsgets(value, Name));
@@ -67,9 +71,9 @@ static int status(int x, int y, int rec, int side)
 	if(rec >= FirstCombatant && rec <= LastCombatant)
 		y += field(x, y, HitPoints, rec, side, szt("Hits Left", "Жизнь ост."));
 	// speed
-	y += fieldt(x, y, Speed, SpeedCrawling, rec, side);
-	y += fieldt(x, y, Morale, MoraleNormal, rec, side);
-	y += fieldt(x, y, Luck, LuckNormal, rec, side);
+	y += fieldt(x, y, Speed, SpeedCrawling, SpeedCrawling, SpeedUltraFast, rec, side);
+	y += fieldt(x, y, Morale, MoraleNormal, MoraleTreason, MoraleBlood, rec, side);
+	y += fieldt(x, y, Luck, LuckNormal, LuckCursed, LuckIrish, rec, side);
 	return y - y1;
 }
 

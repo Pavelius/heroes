@@ -132,14 +132,50 @@ bool game::additem(int rec, int type)
 	return false;
 }
 
+static int get_morale_troops(int i1, int i2, int side)
+{
+	int troops[SandsWarriors - Barbarian + 1];
+	memset(troops, 0, sizeof(troops));
+	for(int i = i1; i <= i2; i++)
+	{
+		int rec = i;
+		if(rec >= FirstCombatant && rec <= LastCombatant)
+		{
+			if(!bsget(rec, Type))
+				continue;
+			if(bsget(rec, Side) != side)
+				continue;
+			rec = bsget(rec, Type);
+		}
+		else if(rec >= FirstTroopsIndex && rec <= LastTroopsIndex)
+		{
+			rec = bsget(side, rec);
+			i++;
+			if(!rec)
+				continue;
+		}
+		int type = game::get(rec, Type);
+		if(type >= Barbarian && type <= SandsWarriors)
+			troops[type - Barbarian] = 1;
+	}
+	int m = 0;
+	for(auto a : troops)
+		m += a;
+	if(m == 2)
+		return -1;
+	else if(m >= 3)
+		return -2;
+	return 0;
+}
+
 int game::getsummary(int rec, int id, int side)
 {
 	int t = rec;
 	if(t >= FirstCombatant && t <= LastCombatant)
 		t = bsget(t, Type);
-	int m = get(t, id);
+	int m = game::get(t, id);
 	if(side)
-		m += get(side, id);
+		m += game::get(side, id);
 	switch(id)
 	{
 	case Attack:
@@ -156,6 +192,14 @@ int game::getsummary(int rec, int id, int side)
 			m += 5;
 		break;
 	case Morale:
+		if(rec >= FirstCombatant && rec <= LastCombatant)
+		{
+			if(combat::isattacker(rec))
+				m += combat::enviroment::morale;
+			else
+				m -= combat::enviroment::morale;
+		}
+		break;
 	case Luck:
 		if(m > 3)
 			m = 3;
@@ -204,7 +248,9 @@ int game::get(int rec, int id)
 		return bsget(rec, id);
 	case Morale:
 		if(rec >= FirstHero && rec <= LastHero)
-			return bsget(rec, SkillLeadership) + artifacts_bonuses(rec, id);
+			return bsget(rec, SkillLeadership)
+			+ artifacts_bonuses(rec, id)
+			+ get_morale_troops(FirstTroopsIndex, LastTroopsIndex, rec);
 		else if(rec >= FirstCombatant && rec <= LastCombatant)
 			return getsummary(rec, id, bsget(rec, Side));
 		else
@@ -455,5 +501,23 @@ bool game::hasspellbook(int rec)
 
 int game::getmoralechance(int value)
 {
-	return value * 10;
+	return getmorale(value) * 10;
+}
+
+int game::getmorale(int value)
+{
+	if(value < -3)
+		value = -3;
+	else if(value > 3)
+		value = 3;
+	return value;
+}
+
+int game::getspeed(int value)
+{
+	if(value < 0)
+		value = 0;
+	else if(value > (SpeedUltraFast-SpeedCrawling))
+		value = (SpeedUltraFast - SpeedCrawling);
+	return value;
 }

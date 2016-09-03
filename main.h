@@ -1028,10 +1028,11 @@ namespace game
 	void					cleararmy(int rec);
 	int						get(int rec, int id);
 	int						getartifact(int rec, int id);
-	const cost*				getcost(int rec);
-	int						getlevel(int rec);
-	int						getmoralechance(int value);
 	int						getframe(int rec);
+	const cost*				getcost(int rec);
+	int						getmorale(int value);
+	int						getmoralechance(int value);
+	int						getspeed(int value);
 	int						getsummary(int rec, int id, int side);
 	int						gettarget(int rec);
 	bool					hasspellbook(int rec);
