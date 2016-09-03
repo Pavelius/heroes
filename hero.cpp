@@ -3,21 +3,22 @@
 struct hero
 {
 	const char*			name[2];
-	int					attack;
-	int					defence;
-	int					spellpower;
-	int					wisdow;
-	short int			spell_points;
-	short int			move_points;
-	int					index;
-	int					index_move;
+	unsigned char		level;
+	unsigned char		attack;
+	unsigned char		defence;
+	unsigned char		spellpower;
+	unsigned char		wisdow;
+	short unsigned		spell_points;
+	short unsigned		move_points;
+	short unsigned		index;
+	short unsigned		index_move;
 	unsigned char		direction;
 	unsigned char		portrait;
-	int					player, recruit;
+	int					player;
 	unsigned			experience;
 	unsigned char		skills[LastSkill - FirstSkill + 1];
 	unsigned char		spells[LastSpell - FirstSpell + 1];
-	unsigned short		params[LastTroopsIndex - FirstArtifactIndex + 1];
+	unsigned short		army[LastTroopsIndex - FirstArtifactIndex + 1];
 } objects[LastHero - FirstHero + 1] = {
 	{{"Lord Killburn", "Лорд Килбурн"}},{{"Sir Gallanth", "Сэр Галлант"}}, {{"Ector", "Эктор"}}, {{"Gvenneth", "Гвиннет"}}, {{"Tyro", "Тиро"}},
 	{{"Ambrose", "Амброуз"}}, {{"Ruby", "Руби"}}, {{"Maximus", "Максимус"}}, {{"Dimitry", "Димитрий"}},
@@ -49,10 +50,9 @@ static bsmeta::field fields[] = {
 	BSREQ(hero, direction, Direction, Number),
 	BSREQ(hero, portrait, Portrait, Number),
 	BSREQ(hero, player, Player, Number),
-	BSREQ(hero, recruit, Recruit, Number),
 	BSREQ(hero, experience, Experience, Number),
 	BSINT(hero, skills, FirstSkill, Number),
 	BSINT(hero, spells, FirstSpell, Number),
-	BSINT(hero, params, FirstArtifactIndex, Number),
+	BSINT(hero, army, FirstArtifactIndex, Number),
 };
 BSMETA(hero, "Heroes", "Герои", FirstHero);

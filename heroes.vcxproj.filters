@@ -28,9 +28,7 @@
     <ClCompile Include="monster.cpp" />
     <ClCompile Include="sign.cpp" />
     <ClCompile Include="spellbook.cpp" />
-    <ClCompile Include="castle.cpp" />
     <ClCompile Include="artifacts.cpp" />
-    <ClCompile Include="build.cpp" />
     <ClCompile Include="combat_effect.cpp" />
     <ClCompile Include="combat_route.cpp" />
     <ClCompile Include="combat_spells.cpp" />
@@ -65,5 +63,8 @@
     <ClCompile Include="game_buildings.cpp" />
     <ClCompile Include="game_file.cpp" />
     <ClCompile Include="game_random.cpp" />
+    <ClCompile Include="castle_build.cpp" />
+    <ClCompile Include="show_castle.cpp" />
+    <ClCompile Include="castle.cpp" />
   </ItemGroup>
 </Project>

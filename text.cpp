@@ -19,8 +19,6 @@ static unsigned char decode_ru[256] =
 	129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144,
 	145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160,
 };
-extern unsigned char        pallette_yellow[256];
-static unsigned char*		text_color;
 
 static int spacewidth(res::tokens icn)
 {
@@ -102,7 +100,7 @@ void draw::text(int x, int y, const char* string, int count)
 		else
 		{
 			ch = decode_ru[ch];
-			image(x, y, icn, ch, 0, text_color);
+			image(x, y, icn, ch);
 			x += res::width(icn, ch);
 		}
 	}

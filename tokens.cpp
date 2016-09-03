@@ -119,3 +119,63 @@ static int object_get(int rec, int id)
 		return 0;
 	}
 }
+
+const char* game::getbuildingname(int type, int building, int level)
+{
+	static const char* buildings[][2] = {
+		{"Castle"},
+		{"Thieves Guild"},
+		{"Tavern"},
+		{"Shipyard"},
+		{"Well"},
+		{"Statue"},
+		{"Left Turret"},
+		{"Right Turret"},
+		{"Moat"},
+		{"Marketplace"},
+		{"Captain quarter"},
+	};
+	static const char* well2[][2] = {
+		{"Garbage Heap", "Куча мусора"},
+		{"Farm", "Ферма"},
+		{"Skull Pile", "Груда черепов"},
+		{"Crystal Garden", "Кристальный сад"},
+		{"Waterfall", "Водопад"},
+		{"Orchard", "Газон"},
+	};
+	static const char* special[][2] = {
+		{"Collesium", "Коллизей"},
+		{"Fortification", "Укрепление"},
+		{"Storm", "Буря"},
+		{"Rainbow", "Радуга"},
+		{"Dungeon", "Подземелье"},
+		{"Library", "Библиотека"},
+	};
+	static const char* mageguild[][2] = {
+		{"Mage Guild 1", "Гильдия магов 1"},
+		{"Mage Guild 2", "Гильдия магов 2"},
+		{"Mage Guild 3", "Гильдия магов 3"},
+		{"Mage Guild 4", "Гильдия магов 4"},
+		{"Mage Guild 5", "Гильдия магов 5"},
+	};
+	static const char* dwellings[][2] =
+	{
+		{"Hut", "Хижина"}, {"Thatched Hut", "Соломенная Хижина"}, {"Excavation", "Захоронения"}, {"Treehouse", "Дома на деревьях"}, {"Cave", "Пещера"}, {"Habitat", "Норы"},
+		{"Stick Hut", "Хижина"}, {"Archery Range", "Полигон"}, {"Graveyard", "Кладбище"}, {"Cottage", "Коттедж"}, {"Crypt", "Крипта"}, {"Pen", "Загон"},
+		{"Den", "Логово"}, {"Blacksmith", "Кузница"}, {"Pyramid", "Пирамида"}, {"Archery Range", "Полигон"}, {"Nest", "Гнездо"}, {"Foundry", "Фабрика"},
+		{"Adobe", "Логово"}, {"Armory", "Оружейная"}, {"Mansion", "Особняк"}, {"Stonehenge", "Камни"}, {"Maze", "Лабиринт"}, {"Cliff Nest", "Гнездо на утесе"},
+		{"Bridge", "Мост"}, {"Jousting Arena", "Турнирная Арена"}, {"Mausoleum", "Мавзолей"}, {"Fenced Meadow", "Загон"}, {"Swamp", "Болото"}, {"Ivory Tower", "Башня магов"},
+		{"Pyramid", "Пирамида"}, {"Cathedral", "Собор"}, {"Laboratory", "Лаборатория"}, {"Red Tower", "Красная Башня"}, {"Green Tower", "Зеленая Башня"}, {"Cloud Castle", "Небесный замок"}
+	};
+	if(building >= CastleInTown && building <= Captain)
+		return buildings[building - CastleInTown][locale];
+	if(building >= Dwelving1 && building <= Dwelving6)
+		return dwellings[type - Barbarian + (building - Dwelving1) * 6][locale];
+	if(building == Well2)
+		return well2[type - Barbarian][locale];
+	if(building == SpecialBuilding)
+		return special[type - Barbarian][locale];
+	if(building == MageGuild)
+		return mageguild[level][locale];
+	return "";
+}

@@ -39,7 +39,7 @@ enum tokens
 	NewGame, LoadGame, Credits, HightScores, QuitGame,
 	StandartGame, CampaignGame, MultiplayerGame,
 	HotSeatGame,
-	AutoCombat, Character, RunAway, Surrender, CastSpell, Recruit, Index, MoveTo, MakeAction,
+	AutoCombat, Character, RunAway, Surrender, CastSpell, Recruit, RecruitLast, Index, MoveTo, MakeAction,
 	Cursor, CursorAdventure, CursorCombat, All, AttackDefence, SpellPowerWisdow, CombatStrenght, Tooltips,
 	Accept, Count, Random, Portrait, Rating, ChangeMode, Dismiss,
 	EndTurn, Damage, Block, Income,
@@ -185,8 +185,8 @@ enum tokens
 	MarketPlace, Captain, Well2, SpecialBuilding,
 	Dwelving1, Dwelving2, Dwelving3, Dwelving4, Dwelving5, Dwelving6,
 	Upgrade2, Upgrade3, Upgrade4, Upgrade5, Upgrade6, Upgrade62,
-	FirstBuilding = CastleInTown, LastBuilding = Upgrade62,
 	MageGuild, Tent,
+	FirstBuilding = CastleInTown, LastBuilding = Tent,
 	DisableCastleUpgrade,
 	Rumor, Riddle,
 	// Map objects (order is impotant)
@@ -552,29 +552,6 @@ namespace res
 	tokens					getshooting(int rec);
 	int						width(tokens res, int frame);
 }
-//struct cost
-//{
-//	int					    gold;
-//	int					    wood;
-//	int					    mercury;
-//	int					    ore;
-//	int					    sulfur;
-//	int					    crystal;
-//	int					    gems;
-//	//
-//	bool				    operator==(const cost& e) const;
-//	bool				    operator<=(const cost& e) const;
-//	void				    operator-=(const cost& e);
-//	//
-//	void				    clear();
-//	bool				    enough(const cost& e) const;
-//	int					    get(int id) const;
-//	int					    mindiv(const cost& e) const;
-//	bool				    set(int id, int value);
-//	char*                   tostring(char* p) const;
-//private:
-//	void				    correct();
-//};
 namespace draw
 {
 	struct state
@@ -610,6 +587,7 @@ namespace draw
 	const int				scanline = 640;
 	//
 	bool					area(int x1, int y1, int x2, int y2);
+	bool					areb(int x1, int y1, int x2, int y2);
 	void					button(int x, int y, res::tokens icn, int id, int normal, int hilite, int pressed, int key = 0, unsigned flags = 0, const char* tips = 0);
 	void					castle(int x, int y, int tile, int race, bool town);
 	void					captain(int x, int y, int race, bool present);
@@ -905,11 +883,6 @@ namespace current
 	extern int				damage;
 	extern int				killed;
 };
-namespace castle
-{
-	void					clear();
-	int						growth(int rec, int dwelling, bool apply);
-};
 const int					cell_wd = 45;
 const int					cell_hd = 52;
 const int					cell_wr = 22;
@@ -997,6 +970,7 @@ namespace game
 	namespace random
 	{
 		int					artifact(int level);
+		int					castle(int type, int player, int index, bool has_castle);
 		int					hero(int type);
 		void				initialize();
 		int					monster(int level);
@@ -1010,11 +984,13 @@ namespace game
 	const int*				getcost(int race, int building);
 	int						getday();
 	int						getframe(int rec);
+	int						getgrowth(int rec, int dwelling);
 	const int*				gethirecost(int rec);
 	int						getincome(int rec);
 	int						getmonth();
 	int						getmorale(int value);
 	int						getmoralechance(int value);
+	const char*				getbuildingname(int type, int building, int level);
 	int						getplayer();
 	int						getspeed(int value);
 	int						getsummary(int rec, int id, int side);

@@ -1,5 +1,9 @@
 #include "main.h"
 
+const int castle_income_well = 2;
+const int castle_income_well2 = 10;
+const int castle_income_statue = 250;
+
 static int day;
 static tokens week_of, month_of;
 static tokens game_difficult = EasyDifficulty;
@@ -43,21 +47,6 @@ static int get_free_hero(int type)
 		return *p;
 	}
 	return 0;
-}
-
-static void update_recruit(int side)
-{
-	int type = bsget(side, Type);
-	int result[LastHero - FirstHero + 2];
-	bsselect(result, Recruit, side);
-	for(int i = zlen(result); i < 2; i++)
-	{
-		int rec = 0;
-		if(i == 0)
-			rec = get_free_hero(type);
-		if(!rec)
-			rec = get_free_hero(0);
-	}
 }
 
 bool game::isboosted(int rec)
@@ -606,7 +595,13 @@ int game::turn()
 
 int game::getincome(int rec)
 {
-	int result = 250;
+	int result = 1000;
+	if(!bsget(rec, CastleInTown))
+		result = result / 2;
+	if(bsget(rec, Statue))
+		result += 250;
+	if(bsget(rec, Type) == Warlock && bsget(rec, SpecialBuilding))
+		result += castle_income_statue * 2;
 	return result;
 }
 
@@ -668,6 +663,16 @@ void game::initialize()
 	month_of = Empthy;
 	// Setup random generator
 	game::random::initialize();
+	// Clear all players
+	for(int rec = FirstPlayer; rec <= LastPlayer; rec++)
+	{
+		bsset(rec, Type, 0);
+		bsset(rec, PlayerType, 0);
+		bsset(rec, Recruit, 0);
+		bsset(rec, RecruitLast, 0);
+		for(int i = FirstResource; i <= LastResource; i++)
+			bsset(rec, i, 0);
+	}
 	// Clear all heroes and create army
 	for(int rec = FirstHero; rec <= LastHero; rec++)
 	{
@@ -760,9 +765,11 @@ void game::initialize()
 
 void game::prepare()
 {
+	int hero;
 	for(int rec = FirstPlayer; rec <= LastPlayer; rec++)
 	{
-		if(!bsget(rec, Type))
+		int type = bsget(rec, Type);
+		if(!type)
 			continue;
 		// Setup starting resource
 		if(bsget(rec, PlayerType) == Human)
@@ -770,7 +777,12 @@ void game::prepare()
 		else
 			game_set_difficult(rec, get_oppose(game_difficult));
 		// Recruit heroes
-		update_recruit(rec);
+		hero = game::random::hero(type);
+		if(!hero)
+			hero = game::random::hero(0);
+		bsset(rec, Recruit, hero);
+		hero = game::random::hero(0);
+		bsset(rec, RecruitLast, hero);
 	}
 }
 
@@ -804,6 +816,25 @@ static void game_endturn()
 	}
 }
 
+int game::getgrowth(int rec, int dwelling)
+{
+	static int increment[] = {8, 4, 3, 2, 1, 0};
+	if(!bsget(rec, dwelling))
+		return 0;
+	int type = bsget(rec, Type);
+	bool well = bsget(rec, Well) != 0;
+	bool well2 = bsget(rec, Well2) != 0;
+	int result = increment[dwelling - Dwelving1];
+	if(well)
+		result += castle_income_well;
+	if(dwelling == Dwelving1 && well2)
+		result += castle_income_well2;
+	// RULE: barbarian growth fast
+	if(type == Barbarian)
+		result += castle_income_well;
+	return result;
+}
+
 static void game_endweek()
 {
 	int m_base = bsget(week_of, Base);
@@ -815,7 +846,7 @@ static void game_endweek()
 		{
 			if(!bsget(rec, i))
 				continue;
-			castle::growth(rec, i, true);
+			//castle::growth(rec, i, true);
 		}
 		// Week monster growth fast
 		if(m_type == bsget(rec, Type) && bsget(rec, m_dwll))

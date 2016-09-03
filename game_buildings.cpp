@@ -6,7 +6,6 @@ struct buildings_stats
 	int			race;
 	int			cost[LastResource - FirstResource + 1];
 };
-
 static buildings_stats data[] =
 {
 	{Empthy, 0, {0, 0, 0, 0, 0, 0, 0}},

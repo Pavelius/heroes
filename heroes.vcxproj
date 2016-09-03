@@ -36,11 +36,12 @@
     <ClCompile Include="artifacts.cpp" />
     <ClCompile Include="base.cpp" />
     <ClCompile Include="base_meta.cpp" />
+    <ClCompile Include="castle.cpp" />
     <ClCompile Include="crt.cpp" />
     <ClCompile Include="draw.cpp" />
-    <ClCompile Include="build.cpp" />
+    <ClCompile Include="castle_build.cpp" />
     <ClCompile Include="game_buildings.cpp" />
-    <ClCompile Include="castle.cpp" />
+    <ClCompile Include="show_castle.cpp" />
     <ClCompile Include="combat_unit.cpp" />
     <ClCompile Include="combat.cpp" />
     <ClCompile Include="draw_screenshot.cpp" />

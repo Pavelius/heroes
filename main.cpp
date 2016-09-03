@@ -390,7 +390,7 @@ static int newgame()
     }
 }
 
-static void test_combat()
+void test_combat()
 {
 	game::initialize();
 	game::prepare();
@@ -408,6 +408,20 @@ static void test_combat()
 	game::addunit(Tsabu, Troll, 1);
 	game::addunit(Tsabu, Gargoyle, 1);
 	combat::start(LordKillburn, Tsabu);
+}
+
+void test_castle()
+{
+	game::initialize();
+	int type = xrand(Barbarian, Wizard);
+	int player = PlayerBlue;
+	bsset(player, Type, type);
+	bsset(player, PlayerType, Human);
+	int castle = game::random::castle(type, player, 400, true);
+	game::addunit(castle, Boar, 4);
+	game::addunit(castle, Halfling, 10);
+	game::prepare();
+	show::castle(castle);
 }
 
 static int mainmenu()
@@ -454,7 +468,8 @@ static int mainmenu()
 			game::play(game);
             break;
         case Credits:
-        	test_combat();
+        	//test_combat();
+			test_castle();
             break;
         case HightScores:
             show::highscore();
@@ -474,7 +489,7 @@ static int mainmenu()
 int main()
 {
 	draw::font = res::FONT;
-	draw::create("Heroes II", 100, false);
+	draw::create("Heroes II", 200, false);
 	return mainmenu();
 }
 
