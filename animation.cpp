@@ -614,6 +614,7 @@ void animation::set(int id, int value, int param)
 		case SpellHypnotize: icn = res::HYPNOTIZ; break;
 		case SpellDragonSlayer: icn = res::DRAGSLAY; break;
 		case SpellBerserker: icn = res::BERZERK; break;
+		case Morale: icn = param ? res::MORALEG : res::MORALEB; break;
 		default: icn = res::MAGIC07; break; // As dispell magic
 		}
 		switch(value)
@@ -622,6 +623,9 @@ void animation::set(int id, int value, int param)
 		case SpellCurse:
 		case SpellBerserker:
 			pos.y = -24;
+			break;
+		case Morale:
+			pos.y += 24;
 			break;
 		}
 		start = 0;

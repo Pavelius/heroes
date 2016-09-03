@@ -112,8 +112,18 @@ static int gnode(int index, int start)
 	return r1;
 }
 
-tokens combat::direction(int from, int to)
+tokens combat::getdirection(int from, int to)
 {
+	//int x1 = from % combat::awd;
+	//int y1 = from / combat::awd;
+	//int x2 = to % combat::awd;
+	//int y2 = to / combat::awd;
+	//if(y2 == y1)
+	//{
+	//	if(x2==x1)
+	//		return HexCenter;
+	//	return (x2 > x1) ? HexRight : HexLeft;
+	//}
 	// TODO: Make most common algorithm. Not only nearest.
 	static tokens dir[] = {HexRight, HexLeft, HexLeftUp, HexLeftDown, HexRightUp, HexRightDown};
 	for(auto d : dir)

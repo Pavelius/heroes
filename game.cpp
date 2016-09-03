@@ -452,3 +452,8 @@ bool game::hasspellbook(int rec)
 	}
 	return false;
 }
+
+int game::getmoralechance(int value)
+{
+	return value * 10;
+}

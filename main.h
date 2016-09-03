@@ -52,9 +52,9 @@ enum tokens
 	Upgrade, Downgrade,
 	OneTime, BuildThisTurn,
 	Difficulty, PlayerCount,
-	ShipMaster, Direction, Player, PlayerType, Effect,
-	AttackRaw, DefenceRaw, AnimationType, Boosted, Penalized, Attacker,
-	DefendThisTurn, CastThisRound, Squad, PositionNotDead, Experience,
+	ShipMaster, Direction, Player, PlayerType,
+	AnimationType,
+	DefendThisTurn, Squad, Experience,
 	MovePoints, MovePointsMax, MovePointsSea, MovePointsLand, Moveable, Quality, LackResource,
 	Dwelve, ArtifactCount, Code,
 	AttackerWin, DefenderWin, AlreadyMoved, AlreadyDefended,
@@ -704,7 +704,7 @@ namespace show
 	{
 		void				attack(int rec, int enemy, int damage);
 		int					dialog(int side); // dialog surrender, cast, flee
-		void				effect(int rec, int type);
+		void				effect(int rec, int type, int param = 0);
 		void				fly(int rec, int target);
 		void				leader(int side, tokens type);
 		void				move(int rec, int target);
@@ -958,6 +958,11 @@ namespace combat
 		extern int			info;
 		extern bool			spells;
 	}
+	namespace enviroment
+	{
+		extern int			morale;
+		extern int			luck;
+	}
 	void					add(int id, int count, int side);
 	void					applyeffect(int rec, int effect, int value);
 	int						attack(int att, int def);
@@ -969,15 +974,14 @@ namespace combat
 	bool					canattack(int rec, int target, tokens direction);
 	bool					cast(int side, int sid, int cid, bool run, bool free, bool interative);
 	void					damage(int rec, int value);
-	tokens					direction(int from, int to);
 	int						getarmycost(int side);
 	int						getcombatant(int index);
+	tokens					getdirection(int from, int to);
 	int						geteffect(int rec, int id);
 	unsigned char			getpassable(int index);
 	int						getindex(int index);
 	bool					isattacker(int rec);
 	bool					isenemy(int rec, int object);
-	bool					ismoveable(int rec);
 	bool					ispassable(int index);
 	point					i2h(int index);
 	void					melee(int att, int def, bool interactive);
@@ -1025,6 +1029,7 @@ namespace game
 	int						getartifact(int rec, int id);
 	const cost*				getcost(int rec);
 	int						getlevel(int rec);
+	int						getmoralechance(int value);
 	int						getframe(int rec);
 	int						getsummary(int rec, int id, int side);
 	int						gettarget(int rec);

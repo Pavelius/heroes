@@ -3,7 +3,7 @@
 struct leader : public animation
 {
 
-	void setaction(tokens type, int param) override
+	void setaction(tokens type, int param = 0) override
 	{
 		set(game::get(rec, Type), type, param);
 	}
@@ -28,24 +28,14 @@ static unsigned char	hexagon_color;
 bool					combat::setting::movement = true;
 bool					combat::setting::cursor = true;
 bool					combat::setting::grid;
-bool					combat::setting::index;
-int						combat::setting::speed;
+bool					combat::setting::index = true;
+int						combat::setting::speed = 1;
 int						combat::setting::info;
 bool					combat::setting::spells;
 bool					combat::setting::distance;
 static int				hilite_index;
 static leader			attacker_leader;
 static leader			defender_leader;
-
-static int i2x(int index)
-{
-	return 20 + 88 - ((index / combat::awd) % 2 ? cell_wd / 2 : 0) + (cell_wd - 1) * (index % combat::awd);
-}
-
-static int i2y(int index)
-{
-	return 20 + 85 + ((cell_hd / 4) * 3 - 1) * (index / combat::awd);
-}
 
 inline int sin_a(int a)
 {
@@ -59,20 +49,9 @@ inline int cos_a(int a)
 
 point combat::i2h(int index)
 {
-	return{(short)i2x(index), (short)i2y(index)};
-}
-
-static int indicator_index(int rec)
-{
-	bool boosted = bsget(rec, Boosted) != 0;
-	bool penalized = bsget(rec, Penalized) != 0;
-	if(boosted && penalized)
-		return 13; // yellow
-	else if(boosted)
-		return 12; // green
-	else if(penalized)
-		return 14; // red
-	return 10;
+	int x = 20 + 88 - ((index / combat::awd) % 2 ? cell_wd / 2 : 0) + (cell_wd - 1) * (index % combat::awd);
+	int y = 20 + 85 + ((cell_hd / 4) * 3 - 1) * (index / combat::awd);
+	return{(short)x, (short)y};
 }
 
 static void action(animation& cursor, tokens id, int param, tokens idc = Empthy)
@@ -171,20 +150,19 @@ static void hittest_grid()
 {
 	for(int i = 0; i < combat::awd*combat::ahd; i++)
 	{
-		int x = i2x(i);
-		int y = i2y(i);
-		rect rc = {x - cell_wd / 2, y - cell_hr, x + cell_wd / 2, y + cell_hr};
+		auto pt = combat::i2h(i);
+		rect rc = {pt.x - cell_wd / 2, pt.y - cell_hr, pt.x + cell_wd / 2, pt.y + cell_hr};
 		point cooru[] =
 		{
-			{(short)(x - cell_wd / 2), (short)(y - cell_hr)},
-			{(short)x, (short)(y - cell_hd / 2)},
-			{(short)(x + cell_wd / 2), (short)(y - cell_hr)},
+			{(short)(pt.x - cell_wd / 2), (short)(pt.y - cell_hr)},
+			{pt.x, (short)(pt.y - cell_hd / 2)},
+			{(short)(pt.x + cell_wd / 2), (short)(pt.y - cell_hr)},
 		};
 		point coord[] =
 		{
-			{(short)(x + cell_wd / 2), (short)(y + cell_hr)},
-			{(short)x, (short)(y + cell_hd / 2)},
-			{(short)(x - cell_wd / 2), (short)(y + cell_hr)},
+			{(short)(pt.x + cell_wd / 2), (short)(pt.y + cell_hr)},
+			{(short)pt.x, (short)(pt.y + cell_hd / 2)},
+			{(short)(pt.x - cell_wd / 2), (short)(pt.y + cell_hr)},
 		};
 		if(hot::mouse.in(rc)
 			|| hot::mouse.in(cooru[0], cooru[1], cooru[2])
@@ -209,15 +187,14 @@ static void paint_grid(int rec)
 			auto m = combat::getpassable(i);
 			if(m)
 			{
-				int x = i2x(i);
-				int y = i2y(i);
+				auto pt = combat::i2h(i);
 				if(m <= radius)
-					draw::hexagonf(x, y, 0);
+					draw::hexagonf(pt.x, pt.y, 0);
 				if(m < BlockSquad && combat::setting::distance)
 				{
 					char temp[32];
 					sznum(temp, m - 1);
-					draw::text(x - draw::textw(temp) / 2, y - 5, temp);
+					draw::text(pt.x - draw::textw(temp) / 2, pt.y - 5, temp);
 				}
 			}
 		}
@@ -227,9 +204,8 @@ static void paint_grid(int rec)
 	{
 		if(hilite_index != -1)
 		{
-			int x = i2x(hilite_index);
-			int y = i2y(hilite_index);
-			draw::hexagonf(x, y, 0);
+			auto pt = combat::i2h(hilite_index);
+			draw::hexagonf(pt.x, pt.y, 0);
 		}
 	}
 	// Show grid
@@ -237,9 +213,8 @@ static void paint_grid(int rec)
 	{
 		for(int i = 0; i < combat::awd*combat::ahd; i++)
 		{
-			int x = i2x(i);
-			int y = i2y(i);
-			draw::hexagon(x, y, hexagon_color);
+			auto pt = combat::i2h(i);
+			draw::hexagon(pt.x, pt.y, hexagon_color);
 		}
 	}
 	// Show index (only debug)
@@ -250,10 +225,9 @@ static void paint_grid(int rec)
 		for(int i = 0; i < combat::awd*combat::ahd; i++)
 		{
 			char temp[8];
-			int x = i2x(i);
-			int y = i2y(i);
+			auto pt = combat::i2h(i);
 			sznum(temp, i);
-			draw::text(x - 4, y - 4, temp);
+			draw::text(pt.x - 4, pt.y - 4, temp);
 		}
 	}
 }
@@ -426,17 +400,15 @@ void show::battle::leader(int side, tokens type)
 	pa->setaction(ActorWait, 0);
 }
 
-void show::battle::effect(int rec, int type)
+void show::battle::effect(int rec, int type, int param)
 {
 	struct animation_effect : public animation
 	{
-
-		animation_effect(int type, point pt)
+		animation_effect(int type, int param, point pt)
 		{
-			set(AnimationType, type);
+			set(AnimationType, type, param);
 			pos = pos + pt;
 		}
-
 		point getzpos() const override
 		{
 			return{pos.x, pos.y + 72};
@@ -452,7 +424,7 @@ void show::battle::effect(int rec, int type)
 	int i1 = bsget(rec, Index);
 	point pt = combat::i2h(i1);
 	pt.y -= res::height(pa->icn, pa->frame) / 2;
-	animation_effect e1(type, pt); zcat(objects, static_cast<drawable*>(&e1));
+	animation_effect e1(type, param, pt); zcat(objects, static_cast<drawable*>(&e1));
 	screen.redraw(objects, combat_timeout, &e1);
 }
 
@@ -561,7 +533,7 @@ void show::battle::attack(int rec, int enemy, int damage)
 		return;
 	int i1 = bsget(rec, Index);
 	int i2 = bsget(enemy, Index);
-	auto d = combat::direction(i1, i2);
+	auto d = combat::getdirection(i1, i2);
 	draw::screenshoot screen;
 	animation::state a1(pa);
 	animation::state a2(pe);
@@ -607,7 +579,7 @@ void show::battle::move(int rec, int target)
 	{
 		int i1 = bsget(rec, Index);
 		int i2 = steps[i];
-		auto d = combat::direction(i1, i2);
+		auto d = combat::getdirection(i1, i2);
 		pa->setaction(Move, d);
 		if(i != count - 1)
 			pa->frame++;
@@ -685,9 +657,8 @@ int show::battle::unit(int rec, int casted)
 					action(cursor, Shoot, hilite_combatant);
 				else if(combat::isenemy(rec, hilite_combatant))
 				{
-					int x = i2x(hilite_index);
-					int y = i2y(hilite_index);
-					tokens d = getdirection(x, y, hot::mouse.x, hot::mouse.y);
+					auto pt = combat::i2h(hilite_index);
+					tokens d = getdirection(pt.x, pt.y, hot::mouse.x, hot::mouse.y);
 					if(combat::canattack(rec, hilite_combatant, d))
 					{
 						hot::param2 = combat::moveto(hilite_index, d);

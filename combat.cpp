@@ -163,6 +163,8 @@ bool combat::canattack(int rec, int target, tokens direction)
 
 bool combat::canmove(int rec)
 {
+	if(!game::get(rec, Count))
+		return false;
 	if(combat::geteffect(rec, SpellBlind))
 		return false;
 	if(combat::geteffect(rec, SpellParalyze))
@@ -376,7 +378,7 @@ int combat::getarmycost(int side)
 		int mt = bsget(i, Type);
 		if(!mt)
 			continue;
-		if(bsget(i, Side)!=side)
+		if(bsget(i, Side) != side)
 			continue;
 		m += game::get(mt, Gold) * game::get(i, Count);
 	}
@@ -415,9 +417,109 @@ void combat::seteffect(int rec, int id, int rounds)
 	bsset(effect, Value, combat::rounds + rounds);
 }
 
-static int make_turn(bool interactive)
+static int make_turn_unit(int rec, bool interactive)
 {
 	int enemy, index;
+	int speed = game::get(rec, Speed);
+	bool wide = game::iswide(rec);
+	combat::wave(bsget(rec, Index),
+		game::isfly(rec),
+		wide ? (combat::isattacker(rec) ? HexRight : HexLeft) : Empthy,
+		speed + 2);
+	int id = 0;
+	// RULE: Berserker implementation
+	if(combat::geteffect(rec, SpellBerserker))
+	{
+		int target = closest_unit(rec);
+		if(target != -1)
+		{
+			combat::attack(rec, target);
+		}
+	}
+	else
+	{
+		while(true)
+		{
+			// If player command this, he must specify action.
+			// Or Computer may select action by itself.
+			id = show::battle::unit(rec, casting[side_index(rec)]);
+			if(id >= FirstSpell && id <= LastSpell)
+			{
+				int side = bsget(rec, Side);
+				int target = game::gettarget(id);
+				if(target)
+				{
+					target = show::battle::target(side, id, target);
+					if(!target)
+						continue;
+				}
+				if(interactive)
+					show::battle::leader(side, CastSpell);
+				combat::cast(side, id, target, true, false, interactive);
+				casting[side_index(rec)]++;
+				continue;
+			}
+			else if(id == Surrender)
+			{
+				int side = bsget(rec, Side);
+				int cost = combat::getarmycost(side);
+				if(interactive)
+				{
+					char temp[260];
+					szprint(temp, szt("%1 leave you away if you pay bribe. Would you pay %2i golds to save your troops and go away?",
+						"%1 оставит тебя в покое если вы заплатите взятку. Вы готовы заплатить %2i золотых, чтобы сохранить вашу армию и уйти прочь?"),
+						bsgets(combat::opposition(side), Name), cost);
+					if(!dlgask(0, temp))
+						continue;
+					// TODO: pay bribe to opposition hero
+				}
+			}
+			else if(id == RunAway)
+			{
+				if(interactive)
+				{
+					if(!dlgask(0,
+						szt("Do you really want to leave your army and flee away?", "Вы действительно хотите покинуть армию и бежать прочь?")))
+						continue;
+				}
+			}
+			break;
+		}
+	}
+	switch(id)
+	{
+	case Cancel:
+	case 0:
+		return Cancel;
+	case Skip:
+		break;
+	case Move:
+		combat::move(rec, hot::param, interactive);
+		break;
+	case Shoot:
+		combat::shoot(rec, hot::param, interactive);
+		break;
+	case Attack:
+		enemy = hot::param;
+		index = hot::param2;
+		combat::move(rec, index, interactive);
+		combat::melee(rec, enemy, interactive);
+		break;
+	case Surrender:
+		return Surrender;
+	case RunAway:
+		return RunAway;
+	}
+	bsset(rec, AlreadyMoved, 1);
+	if(test_victory(attacker))
+		return AttackerWin;
+	if(test_victory(defender))
+		return DefenderWin;
+	return Accept;
+}
+
+static int make_turn(bool interactive)
+{
 	for(int i = 6; i >= 0; i--)
 	{
 		for(unsigned rec = FirstCombatant; rec <= LastCombatant; rec++)
@@ -429,104 +531,38 @@ static int make_turn(bool interactive)
 				continue;
 			if(bsget(rec, AlreadyMoved))
 				continue;
-			if(!game::get(rec, Count))
-				continue;
 			if(!combat::canmove(rec))
 				continue;
-			bool wide = game::iswide(rec);
-			combat::wave(bsget(rec, Index),
-				game::isfly(rec),
-				wide ? (combat::isattacker(rec) ? HexRight : HexLeft) : Empthy,
-				speed + 2);
-			int id = 0;
-			// RULE: spell Berserker implementation
-			if(combat::geteffect(rec, SpellBerserker))
+			int morale = game::get(rec, Morale);
+			if(morale < 0)
 			{
-				int target = closest_unit(rec);
-				if(target != -1)
+				// RULE: Bad Morale compel creature skip action
+				int d = d100();
+				if(d < game::getmoralechance(-morale))
 				{
-					combat::attack(rec, target);
+					if(interactive)
+						show::battle::effect(rec, Morale, 0);
+					bsset(rec, AlreadyMoved, 1);
+					return Accept;
 				}
 			}
-			else
+			int id = make_turn_unit(rec, interactive);
+			if(id == Accept)
 			{
-				// TODO: decision mechanics
-				while(true)
+				morale = game::get(rec, Morale);
+				if(morale > 0)
 				{
-					id = show::battle::unit(rec, casting[side_index(rec)]);
-					if(id >= FirstSpell && id <= LastSpell)
-					{
-						int side = bsget(rec, Side);
-						int target = game::gettarget(id);
-						if(target)
-						{
-							target = show::battle::target(side, id, target);
-							if(!target)
-								continue;
-						}
-						if(interactive)
-							show::battle::leader(side, CastSpell);
-						combat::cast(side, id, target, true, false, interactive);
-						casting[side_index(rec)]++;
-						continue;
-					}
-					else if(id == Surrender)
-					{
-						int side = bsget(rec, Side);
-						int cost = combat::getarmycost(side);
-						if(interactive)
-						{
-							char temp[260];
-							szprint(temp, szt("%1 leave you away if you pay bribe. Would you pay %2i golds to save your troops and go away?",
-								"%1 оставит тебя в покое если вы заплатите взятку. Вы готовы заплатить %2i золотых, чтобы сохранить вашу армию и уйти прочь?"),
-								bsgets(combat::opposition(side), Name), cost);
-							if(!dlgask(0, temp))
-								continue;
-							// TODO: pay bribe to opposition hero
-						}
-					}
-					else if(id == RunAway)
+					// RULE: Morale can boost creature to another action
+					int d = d100();
+					if(d < game::getmoralechance(morale))
 					{
 						if(interactive)
-						{
-							if(!dlgask(0,
-								szt("Do you really want to leave your army and flee away?", "Вы действительно хотите покинуть армию и бежать прочь?")))
-								continue;
-						}
+							show::battle::effect(rec, Morale, 1);
+						id = make_turn_unit(rec, interactive);
 					}
-					break;
 				}
 			}
-			switch(id)
-			{
-			case Cancel:
-			case 0:
-				return Cancel;
-			case Skip:
-				break;
-			case Move:
-				combat::move(rec, hot::param, interactive);
-				break;
-			case Shoot:
-				combat::shoot(rec, hot::param, interactive);
-				break;
-			case Attack:
-				enemy = hot::param;
-				index = hot::param2;
-				combat::move(rec, index, interactive);
-				combat::melee(rec, enemy, interactive);
-				break;
-			case Surrender:
-				return Surrender;
-			case RunAway:
-				return RunAway;
-			}
-			bsset(rec, AlreadyMoved, 1);
-			if(test_victory(attacker))
-				return AttackerWin;
-			if(test_victory(defender))
-				return DefenderWin;
-			return Accept;
+			return id;
 		}
 	}
 	return EndTurn;
