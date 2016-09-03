@@ -136,6 +136,22 @@ bool combat::canshoot(int rec, int target)
 		return false;
 	if(enemypos(combat::moveto(i, HexRightDown), rec))
 		return false;
+	i = combat::getwideindex(rec);
+	if(i!=-1)
+	{
+		if(enemypos(combat::moveto(i, HexLeft), rec))
+			return false;
+		if(enemypos(combat::moveto(i, HexRight), rec))
+			return false;
+		if(enemypos(combat::moveto(i, HexLeftUp), rec))
+			return false;
+		if(enemypos(combat::moveto(i, HexLeftDown), rec))
+			return false;
+		if(enemypos(combat::moveto(i, HexRightUp), rec))
+			return false;
+		if(enemypos(combat::moveto(i, HexRightDown), rec))
+			return false;
+	}
 	return true;
 }
 
@@ -148,17 +164,16 @@ bool combat::candefend(int rec)
 	return true;
 }
 
-bool combat::canattack(int rec, int target, tokens direction)
+bool combat::canattack(int rec, int target, int target_index, tokens from_direction)
 {
 	if(!combat::isenemy(rec, target))
 		return false;
-	int i0 = bsget(rec, Index);
-	int i1 = bsget(target, Index);
-	int i2 = combat::moveto(i1, direction);
-	if(i2 == -1)
+	int i0 = combat::moveto(target_index, from_direction);
+	if(i0 == -1)
 		return false;
-	int speed = game::get(rec, Speed) + 2;
-	return i2 == i0 || (getpassable(i2) != 0 && getpassable(i2) <= speed);
+	if(getcombatant(i0) != rec && !combat::ispassable(i0))
+		return false;
+	return true;
 }
 
 bool combat::canmove(int rec)

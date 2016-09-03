@@ -27,6 +27,15 @@ int combat::getindex(int index)
 	}
 }
 
+int combat::getwideindex(int rec)
+{
+	if(!game::iswide(bsget(rec, Type)))
+		return -1;
+	auto index = bsget(rec, Index);
+	auto wdir = combat::isattacker(rec) ? HexRight : HexLeft;
+	return combat::moveto(index, wdir);
+}
+
 static void update_wide_index(tokens wdir, int speed)
 {
 	if(wdir == Empthy || !speed)
@@ -114,24 +123,21 @@ static int gnode(int index, int start)
 
 tokens combat::getdirection(int from, int to)
 {
-	//int x1 = from % combat::awd;
-	//int y1 = from / combat::awd;
-	//int x2 = to % combat::awd;
-	//int y2 = to / combat::awd;
-	//if(y2 == y1)
-	//{
-	//	if(x2==x1)
-	//		return HexCenter;
-	//	return (x2 > x1) ? HexRight : HexLeft;
-	//}
-	// TODO: Make most common algorithm. Not only nearest.
-	static tokens dir[] = {HexRight, HexLeft, HexLeftUp, HexLeftDown, HexRightUp, HexRightDown};
-	for(auto d : dir)
+	int x1 = from % combat::awd;
+	int y1 = from / combat::awd;
+	int x2 = to % combat::awd;
+	int y2 = to / combat::awd;
+	if(y2 == y1)
 	{
-		if(moveto(from, d) == to)
-			return d;
+		if(x2==x1)
+			return HexCenter;
+		return (x2 > x1) ? HexRight : HexLeft;
 	}
-	return Empthy;
+	point p1 = i2h(from);
+	point p2 = i2h(to);
+	if(y2 < y1)
+		return (p2.x < p1.x) ? HexLeftUp : HexRightUp;
+	return (p2.x < p1.x) ? HexLeftDown : HexRightDown;
 }
 
 int combat::moveto(int index, int direction)
@@ -199,13 +205,9 @@ void combat::wave(int start, bool fly, tokens wdir, int speed)
 		if(index == start)
 			continue;
 		movements[index] = BlockSquad;
-		if(game::iswide(bsget(i, Type)))
-		{
-			auto wdir = combat::isattacker(i) ? HexRight : HexLeft;
-			auto wind = combat::moveto(index, wdir);
-			if(wind !=-1)
-				movements[wind] = (wdir==HexRight) ? BlockSquadWideRight : BlockSquadWideLeft;
-		}
+		int wi = getwideindex(i);
+		if(wi!=-1)
+			movements[wi] = combat::isattacker(i) ? BlockSquadWideRight : BlockSquadWideLeft;
 	}
 	if(fly)
 	{

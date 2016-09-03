@@ -971,7 +971,7 @@ namespace combat
 	bool					candefend(int rec);
 	bool					canmove(int rec);
 	bool					canshoot(int rec, int target);
-	bool					canattack(int rec, int target, tokens direction);
+	bool					canattack(int rec, int target, int target_index, tokens from_direction);
 	bool					cast(int side, int sid, int cid, bool run, bool free, bool interative);
 	void					damage(int rec, int value);
 	int						getarmycost(int side);
@@ -980,6 +980,7 @@ namespace combat
 	int						geteffect(int rec, int id);
 	unsigned char			getpassable(int index);
 	int						getindex(int index);
+	int						getwideindex(int index);
 	bool					isattacker(int rec);
 	bool					isenemy(int rec, int object);
 	bool					ispassable(int index);

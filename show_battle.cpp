@@ -28,7 +28,7 @@ static unsigned char	hexagon_color;
 bool					combat::setting::movement = true;
 bool					combat::setting::cursor = true;
 bool					combat::setting::grid;
-bool					combat::setting::index = true;
+bool					combat::setting::index;
 int						combat::setting::speed = 1;
 int						combat::setting::info;
 bool					combat::setting::spells;
@@ -232,10 +232,9 @@ static void paint_grid(int rec)
 	}
 }
 
-static tokens getdirection(int x1, int y1, int x2, int y2)
+static tokens hex_direction(int x1, int y1, point pt)
 {
 	const int INFL = 12;
-	point pt = {(short)x2, (short)y2};
 	point coord[7] =
 	{
 		{(short)x1, (short)y1},
@@ -448,7 +447,7 @@ void show::battle::shoot(int rec, int enemy, int damage)
 	{
 		pa->setaction(Shoot, 0);
 		screen.redraw(objects, combat_timeout, pa);
-		auto d = getdirection(p1.x, p1.y, p2.x, p2.y);
+		auto d = combat::getdirection(i1, i2);
 		if(d == HexLeft || d == HexLeftDown || d == HexLeftUp)
 			pa->flags = AFMirror;
 		else
@@ -658,8 +657,8 @@ int show::battle::unit(int rec, int casted)
 				else if(combat::isenemy(rec, hilite_combatant))
 				{
 					auto pt = combat::i2h(hilite_index);
-					tokens d = getdirection(pt.x, pt.y, hot::mouse.x, hot::mouse.y);
-					if(combat::canattack(rec, hilite_combatant, d))
+					tokens d = hex_direction(pt.x, pt.y, hot::mouse);
+					if(combat::canattack(rec, hilite_combatant, hilite_index, d))
 					{
 						hot::param2 = combat::moveto(hilite_index, d);
 						action(cursor, Attack, hilite_combatant, d);
