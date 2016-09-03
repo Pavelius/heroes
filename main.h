@@ -900,11 +900,6 @@ namespace map
 		int					action(unsigned char index);
 	}
 };
-namespace random
-{
-	int						monster(int level);
-	int						artifact(int level);
-};
 namespace current
 {
 	extern int				damage;
@@ -999,6 +994,13 @@ private:
 };
 namespace game
 {
+	namespace random
+	{
+		int					artifact(int level);
+		int					hero(int type);
+		void				initialize();
+		int					monster(int level);
+	}
 	bool					additem(int rec, int type);
 	void					addresources(int* result, const int* e1, const int* e2, bool negative = false);
 	void					addunit(int rec, int type, int count);

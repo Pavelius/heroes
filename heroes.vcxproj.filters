@@ -64,5 +64,6 @@
     <ClCompile Include="combat_unit.cpp" />
     <ClCompile Include="game_buildings.cpp" />
     <ClCompile Include="game_file.cpp" />
+    <ClCompile Include="game_random.cpp" />
   </ItemGroup>
 </Project>

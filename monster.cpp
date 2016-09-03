@@ -286,20 +286,3 @@ static int object_get(int rec, int id)
 		return 0;
 	}
 }
-
-int random::monster(int level)
-{
-	int a[LastMonster - FirstMonster + 1];
-	if(level == -1)
-		return xrand(Peasant, WaterElement);
-	int count = 0;
-	for(auto& e : objects)
-	{
-		if(e.level != level)
-			continue;
-		a[count++] = &e - objects + FirstMonster;
-	}
-	if(count)
-		return a[rand() % count];
-	return 0;
-}

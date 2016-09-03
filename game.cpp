@@ -661,41 +661,14 @@ static void game_set_difficult(int rec, tokens value)
 	}
 }
 
-static void create_army(int rec)
+void game::initialize()
 {
-	game::cleararmy(rec);
-	switch(game::get(rec, Type))
-	{
-	case Knight:
-		game::addunit(rec, Archer, xrand(3, 5));
-		game::addunit(rec, Peasant, xrand(30, 50));
-		break;
-	case Barbarian:
-		game::addunit(rec, Orc, xrand(3, 5));
-		game::addunit(rec, Goblin, xrand(10, 20));
-		game::addunit(rec, Wolf, xrand(0, 2));
-		break;
-	case Necromancer:
-		game::addunit(rec, Skeleton, xrand(12, 22));
-		game::addunit(rec, Zombie, xrand(4, 8));
-		break;
-	case Sorcerer:
-		game::addunit(rec, Sprite, xrand(10, 20));
-		game::addunit(rec, Dwarf, xrand(3, 7));
-		break;
-	case Wizard:
-		game::addunit(rec, Halfling, xrand(10, 20));
-		game::addunit(rec, Boar, xrand(2, 4));
-		break;
-	case Warlock:
-		game::addunit(rec, Centaur, xrand(8, 16));
-		game::addunit(rec, Gargoyle, xrand(2, 4));
-		break;
-	}
-}
-
-static void game_initialize_heroes()
-{
+	day = 0;
+	week_of = Empthy;
+	month_of = Empthy;
+	// Setup random generator
+	game::random::initialize();
+	// Clear all heroes and create army
 	for(int rec = FirstHero; rec <= LastHero; rec++)
 	{
 		bsset(rec, Player, 0);
@@ -705,6 +678,7 @@ static void game_initialize_heroes()
 		bsset(rec, SpellPoints, game::get(rec, SpellPointsMax));
 		bsset(rec, MovePoints, game::get(rec, MovePointsMax));
 		bsset(rec, Index, -1);
+		game::cleararmy(rec);
 		for(int i = FirstSkill; i <= LastSkill; i++)
 			bsset(rec, i, 0);
 		for(int i = FirstSpell; i <= LastSpell; i++)
@@ -718,6 +692,9 @@ static void game_initialize_heroes()
 			bsset(rec, Wisdow, 1);
 			bsset(rec, SkillLeadership, 1);
 			bsset(rec, SkillBallistics, 1);
+			//
+			game::addunit(rec, Archer, xrand(3, 5));
+			game::addunit(rec, Peasant, xrand(30, 50));
 			break;
 		case Barbarian:
 			bsset(rec, Attack, 3);
@@ -725,6 +702,10 @@ static void game_initialize_heroes()
 			bsset(rec, SpellPower, 1);
 			bsset(rec, Wisdow, 1);
 			bsset(rec, SkillPathfinding, 2);
+			//
+			game::addunit(rec, Orc, xrand(3, 5));
+			game::addunit(rec, Goblin, xrand(10, 20));
+			game::addunit(rec, Wolf, xrand(0, 2));
 			break;
 		case Warlock:
 			bsset(rec, Attack, 0);
@@ -734,6 +715,9 @@ static void game_initialize_heroes()
 			bsset(rec, SkillScounting, 2);
 			bsset(rec, SkillWisdom, 1);
 			bsset(rec, SpellCurse, 1);
+			//
+			game::addunit(rec, Centaur, xrand(8, 16));
+			game::addunit(rec, Gargoyle, xrand(2, 4));
 			break;
 		case Wizard:
 			bsset(rec, Attack, 0);
@@ -742,6 +726,9 @@ static void game_initialize_heroes()
 			bsset(rec, Wisdow, 3);
 			bsset(rec, SkillWisdom, 2);
 			bsset(rec, SpellStoneSkin, 1);
+			//
+			game::addunit(rec, Halfling, xrand(10, 20));
+			game::addunit(rec, Boar, xrand(2, 4));
 			break;
 		case Sorcerer:
 			bsset(rec, Attack, 0);
@@ -751,6 +738,9 @@ static void game_initialize_heroes()
 			bsset(rec, SkillNavigation, 2);
 			bsset(rec, SkillWisdom, 1);
 			bsset(rec, SpellBless, 1);
+			//
+			game::addunit(rec, Sprite, xrand(10, 20));
+			game::addunit(rec, Dwarf, xrand(3, 7));
 			break;
 		case Necromancer:
 			bsset(rec, Attack, 1);
@@ -760,17 +750,12 @@ static void game_initialize_heroes()
 			bsset(rec, SkillNecromancy, 1);
 			bsset(rec, SkillWisdom, 1);
 			bsset(rec, SpellHaste, 1);
+			//
+			game::addunit(rec, Skeleton, xrand(12, 22));
+			game::addunit(rec, Zombie, xrand(4, 8));
 			break;
 		}
-		create_army(rec);
 	}
-}
-void game::initialize()
-{
-	day = 0;
-	week_of = Empthy;
-	month_of = Empthy;
-	game_initialize_heroes();
 }
 
 void game::prepare()
