@@ -29,15 +29,12 @@
     <ClCompile Include="monster.cpp" />
     <ClCompile Include="sign.cpp" />
     <ClCompile Include="spellbook.cpp" />
-    <ClCompile Include="world.cpp" />
     <ClCompile Include="castle.cpp" />
     <ClCompile Include="artifacts.cpp" />
     <ClCompile Include="build.cpp" />
-    <ClCompile Include="buildings.cpp" />
     <ClCompile Include="combat_effect.cpp" />
     <ClCompile Include="combat_route.cpp" />
     <ClCompile Include="combat_spells.cpp" />
-    <ClCompile Include="cost.cpp" />
     <ClCompile Include="hightscore.cpp" />
     <ClCompile Include="indexes.cpp" />
     <ClCompile Include="map_moveable.cpp" />
@@ -66,5 +63,6 @@
     <ClCompile Include="draw_screenshot.cpp" />
     <ClCompile Include="show_battle_setting.cpp" />
     <ClCompile Include="combat_unit.cpp" />
+    <ClCompile Include="game_buildings.cpp" />
   </ItemGroup>
 </Project>

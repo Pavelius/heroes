@@ -1,5 +1,17 @@
 #include "main.h"
 
+static int day;
+static tokens week_of, month_of;
+static tokens game_difficult = EasyDifficulty;
+static tokens week_monsters[] =
+{
+	Goblin, Orc, Wolf, Ogre, Troll, Cyclop,
+	Peasant, Archer, Cavalry,
+	Centaur, Gargoyle, Griffin,
+	Sprite, Dwarf, Elf,
+	Halfling, Boar, Roc,
+};
+
 int artifacts_bonuses(int rec, int id)
 {
 	short unsigned* p = (short unsigned*)bsptr(rec, FirstArtifactIndex);
@@ -13,6 +25,39 @@ int artifacts_bonuses(int rec, int id)
 		result += game::getartifact(p[i], id);
 	}
 	return result;
+}
+
+static int get_free_hero(int type)
+{
+	int temp[LastHero - FirstHero + 2];
+	bsselect(temp, FirstHero, LastHero);
+	zshuffle(temp, zlen(temp));
+	for(int* p = temp; *p; p++)
+	{
+		if(bsget(*p, Recruit))
+			continue;
+		if(bsget(*p, Player))
+			continue;
+		if(type && game::get(*p, Type) != type)
+			continue;
+		return *p;
+	}
+	return 0;
+}
+
+static void update_recruit(int side)
+{
+	int type = bsget(side, Type);
+	int result[LastHero - FirstHero + 2];
+	bsselect(result, Recruit, side);
+	for(int i = zlen(result); i < 2; i++)
+	{
+		int rec = 0;
+		if(i == 0)
+			rec = get_free_hero(type);
+		if(!rec)
+			rec = get_free_hero(0);
+	}
 }
 
 bool game::isboosted(int rec)
@@ -521,3 +566,222 @@ int game::getspeed(int value)
 		value = (SpeedUltraFast - SpeedCrawling);
 	return value;
 }
+
+int game::getday()
+{
+	return (day % 7) + 1;
+}
+
+int game::getweek()
+{
+	return ((day / 7) % 4) + 1;
+}
+
+int game::getmonth()
+{
+	return (day / (7 * 4) + 1);
+}
+
+int game::turn()
+{
+	for(int rec = FirstPlayer; rec <= LastPlayer; rec++)
+	{
+		if(!bsget(rec, Type))
+			continue;
+		switch(bsget(rec, PlayerType))
+		{
+		case Human:
+			switch(show::game())
+			{
+			case 0:
+				return 0;
+			}
+			break;
+		case Computer:
+			break;
+		}
+	}
+	return EndTurn;
+}
+
+int game::getincome(int rec)
+{
+	int result = 250;
+	return result;
+}
+
+static tokens get_oppose(tokens value)
+{
+	switch(value)
+	{
+	case EasyDifficulty:
+		return ImpossibleDifficulty;
+	case NormalDifficulty:
+		return VeryHardDifficulty;
+	case VeryHardDifficulty:
+		return NormalDifficulty;
+	case ImpossibleDifficulty:
+		return EasyDifficulty;
+	default:
+		return HardDifficulty;
+	}
+}
+
+static void game_set_difficult(int rec, tokens value)
+{
+	switch(value)
+	{
+	case EasyDifficulty:
+		bsset(rec, Ore, 20);
+		bsset(rec, Wood, 20);
+		bsset(rec, Crystal, 10);
+		bsset(rec, Sulfur, 10);
+		bsset(rec, Gems, 10);
+		bsset(rec, Mercury, 10);
+		bsset(rec, Gold, 20000);
+		break;
+	case NormalDifficulty:
+		bsset(rec, Ore, 12);
+		bsset(rec, Wood, 12);
+		bsset(rec, Crystal, 6);
+		bsset(rec, Sulfur, 6);
+		bsset(rec, Gems, 6);
+		bsset(rec, Mercury, 6);
+		bsset(rec, Gold, 10000);
+		break;
+	case HardDifficulty:
+		bsset(rec, Ore, 5);
+		bsset(rec, Wood, 5);
+		bsset(rec, Crystal, 0);
+		bsset(rec, Sulfur, 0);
+		bsset(rec, Gems, 0);
+		bsset(rec, Mercury, 0);
+		bsset(rec, Gold, 2500);
+		break;
+	}
+}
+
+static void game_initialize()
+{
+	day = 0;
+	week_of = month_of = Empthy;
+}
+
+static void game_prepare()
+{
+	for(int rec = FirstPlayer; rec <= LastPlayer; rec++)
+	{
+		if(!bsget(rec, Type))
+			continue;
+		// Setup starting resource
+		if(bsget(rec, PlayerType) == Human)
+			game_set_difficult(rec, game_difficult);
+		else
+			game_set_difficult(rec, get_oppose(game_difficult));
+		// Recruit heroes
+		update_recruit(rec);
+	}
+}
+
+static void game_endturn()
+{
+	// All heroes refresh their values
+	for(int rec = FirstHero; rec <= LastHero; rec++)
+	{
+		if(!bsget(rec, Player))
+			continue;
+		// Spell points
+		int sp = bsget(rec, SpellPoints);
+		int spm = game::get(rec, SpellPointsMax);
+		sp = imin(sp + 1 + bsget(rec, SkillMysticism), spm);
+		bsset(rec, SpellPoints, sp);
+		// Move points
+		bsset(rec, MovePoints, game::get(rec, MovePointsMax));
+	}
+	// All castles give income and refresh state
+	for(int rec = FirstCastle; rec <= LastCastle; rec++)
+	{
+		// Update build flags
+		bsset(rec, BuildThisTurn, 0);
+		// Get income for all player exept neutral
+		int p = bsget(rec, Player);
+		if(p)
+		{
+			int m = game::getincome(rec);
+			bsadd(p, Gold, m);
+		}
+	}
+}
+
+static void game_endweek()
+{
+	int m_base = bsget(week_of, Base);
+	int m_type = bsget(m_base, Type);
+	int m_dwll = bsget(m_base, Dwelve);
+	for(int rec = FirstCastle; rec <= (int)LastCastle; rec++)
+	{
+		for(int i = (int)Dwelving1; i <= (int)Dwelving6; i++)
+		{
+			if(!bsget(rec, i))
+				continue;
+			castle::growth(rec, i, true);
+		}
+		// Week monster growth fast
+		if(m_type == bsget(rec, Type) && bsget(rec, m_dwll))
+			bsadd(rec, FirstRecruit + m_dwll - Dwelving1, 5);
+	}
+}
+
+int game::play(gamefile& game)
+{
+	game.validate();
+	game_initialize();
+	map::load(game);
+	game_prepare();
+	game_endweek();
+	while(true)
+	{
+		int result = turn();
+		if(!result)
+			return 0;
+		game_endturn();
+		day++;
+		if((day % 7) == 0)
+		{
+			week_of = week_monsters[rand() % (sizeof(week_monsters) / sizeof(week_monsters[0]))];
+			game_endweek();
+		}
+	}
+}
+
+int game::getplayer()
+{
+	return PlayerBlue;
+}
+
+void game::addresources(int* result, const int* e1, const int* e2, bool negative)
+{
+	if(negative)
+	{
+		for(int i = 0; i < (LastResource - FirstResource + 1); i++)
+			result[i] = e1[i] - e2[i];
+	}
+	else
+	{
+		for(int i = 0; i < (LastResource - FirstResource + 1); i++)
+			result[i] = e1[i] + e2[i];
+	}
+}
+
+const int* game::gethirecost(int rec)
+{
+	static int cost[LastResource - FirstResource + 1] = {2500};
+	return cost;
+}
+
+static command game_commands[] = {
+	{"initialize", game_initialize},
+	{"prepare", game_prepare},
+	{0}
+};
+static command::plugin commands_plugin("game", game_commands);

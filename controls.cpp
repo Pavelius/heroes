@@ -210,8 +210,11 @@ static int paint_icons(int x, int y, int width, picture* icons, int count, bool 
 	return y - y1;
 }
 
-void draw::resource(int x, int y, cost& e)
+void draw::resource(int x, int y, const void* cost_ptr)
 {
+	int* cost = (int*)cost_ptr;
+	if(!cost)
+		return;
 	struct element
 	{
 		int     id;
@@ -228,7 +231,7 @@ void draw::resource(int x, int y, cost& e)
 	rectf(x, y, x + 81, y + 191, 0x20);
 	x += 20;
 	for(auto& a : elements)
-		clipart(x + a.pos.x, y + a.pos.y, a.id, e.get(a.id), 0);
+		clipart(x + a.pos.x, y + a.pos.y, a.id, cost[a.id-FirstResource], 0);
 }
 
 int draw::textf(int x, int y, int width, const char* p, bool calculate)

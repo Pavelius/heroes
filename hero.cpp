@@ -95,7 +95,8 @@ static void game_initialize()
 	for(int rec = FirstHero; rec <= LastHero; rec++)
 	{
 		bsset(rec, Index, -1);
-		bsset(rec, Player, PlayerNeutral); // neutral player
+		bsset(rec, Player, 0);
+		bsset(rec, Recruit, 0);
 		bsset(rec, Portrait, rec - FirstHero);
 		bsset(rec, Direction, map::Up);
 		memset(objects[rec - FirstHero].skills, 0, sizeof(objects[rec - FirstHero].skills));
@@ -165,13 +166,3 @@ static command game_commands[] = {
 	{0}
 };
 static command::plugin commands_plugin("game", game_commands);
-
-const cost* game::getcost(int rec)
-{
-	if(heros.has(rec))
-	{
-		static cost e = {2500};
-		return &e;
-	}
-	return 0;
-}

@@ -393,6 +393,7 @@ static int newgame()
 static void test_combat()
 {
 	command::execute("game", "initialize");
+	command::execute("game", "prepare");
 	bsset(LordKillburn, Player, PlayerBlue);
 	bsset(LordKillburn, SpellBless, 1);
 	bsset(LordKillburn, SpellCurse, 1);
@@ -450,7 +451,7 @@ static int mainmenu()
                     if(tune_scenario(game))
                     {
                         game.validate();
-						world::game(game);
+						game::play(game);
                     }
                 }
                 break;
@@ -462,7 +463,7 @@ static int mainmenu()
             game.players(1);
             if(!tune_scenario(game))
 				break;
-            world::game(game);
+			game::play(game);
             break;
         case Credits:
         	test_combat();

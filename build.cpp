@@ -5,16 +5,16 @@ static bool meet_requipment(int rec, int building)
 	int race = bsget(rec, Type);
 	for(int i = ThievesGuild; i<=(int)Dwelving6; i++)
 	{
-		if(buildings::requipment(race, building, i))
+		if(game::isrequipment(race, building, i, 0))
 		{
 			if(!bsget(rec, i))
 				return false;
 		}
 	}
 	int level = 0;
-	if(buildings::requipment(race, building, MageGuild, 1))
+	if(game::isrequipment(race, building, MageGuild, 1))
 		level = 1;
-	else if(buildings::requipment(race, building, MageGuild, 2))
+	else if(game::isrequipment(race, building, MageGuild, 2))
 		level = 2;
 	if(bsget(rec, MageGuild)<level)
 		return false;
@@ -28,8 +28,8 @@ static void building(int x, int y, int building, int rec)
     res::tokens ic1 = res::buildings(race);
 	int id1 = indexes::buildings(building, 0);
 	draw::image(x+1, y+1, ic1, id1);
-	cost& c1 = buildings::gcost(race, building, 0);
-	cost& c2 = player::gcost(player);
+	auto c1 = game::getcost(race, building);
+	auto c2 = (int*)bsptr(player, FirstResource);
 	bool hilite = hot::mouse.x>=x && hot::mouse.y>=y && hot::mouse.x<=x+132 && hot::mouse.y<=y+64;
 	const char* name = bsgets(rec, building);
     if(hilite && hot::key==MouseRight && hot::pressed)
@@ -72,7 +72,7 @@ static void building(int x, int y, int building, int rec)
 			int count = 0;
 			for(int i = Wood; i<=(int)Gold; i++)
 			{
-				int d = c1.get(i) - c2.get(i);
+				int d = c1[i-FirstResource] - c2[i - FirstResource];
 				if(d<=0)
 					continue;
 				if(count++)
@@ -87,7 +87,7 @@ static void building(int x, int y, int building, int rec)
 	draw::text(x+(132-draw::textw(name))/2, y+61, name);
 }
 
-static bool build_structure(int mid, int building, cost& e, bool tips = false)
+static bool build_structure(int mid, int building, const int* e, bool tips = false)
 {
 	if(!tips && bsget(mid, building))
 		return false;
@@ -96,14 +96,14 @@ static bool build_structure(int mid, int building, cost& e, bool tips = false)
     const char* p = bsgets(mid, Information+building-CastleInTown);
     if(p)
         zcat(temp, p);
-    e.tostring(zend(temp));
+    //e.tostring(zend(temp));
     if(!tips)
         return dlgask(0, temp);
     show::tips(temp);
     return false;
 }
 
-static bool hire_hero(int rec, int player, const cost* e)
+static bool hire_hero(int rec, int player, const int* e)
 {
     char temp[260];
     zcpy(temp, bsgets(rec, Code));
@@ -114,7 +114,7 @@ static bool hire_hero(int rec, int player, const cost* e)
     if(bsget(rec, ArtifactCount))
         szprint(zend(temp), szt(" with %1i artifacts", " с %1i артифактами"), bsget(rec, ArtifactCount));
     zcat(temp, szt("can work for you. Did you want to hire?","может работать на вас. Хотите его нанять?"));
-    e->tostring(zend(temp));
+    //e->tostring(zend(temp));
     return dlgask(0, temp);
 }
 
@@ -212,7 +212,7 @@ void show::build(int mid)
 		// hide captain options
 		draw::castle(460, 5, Grass, race, false);
 		draw::text(536, 2, bsgets(mid, Name), 0);
-		draw::resource(552, 262, player::gcost(player));
+		draw::resource(552, 262, bsptr(player, FirstResource));
 		//
 		building(5, 2, Dwelving1, mid);
 		building(149, 2, Dwelving2, mid);
@@ -251,19 +251,19 @@ void show::build(int mid)
         case Tooltips:
             if(hot::param)
             {
-				cost& e2 = buildings::gcost(race, hot::param, 0);
+				auto e2 = game::getcost(race, hot::param);
 				build_structure(mid, hot::param, e2, true);
             }
             break;
 		default:
 			if(id==Captain || (id>=(int)FirstBuilding && id<=(int)LastBuilding))
 			{
-				cost& e2 = buildings::gcost(race, id, 0);
+				auto e2 = game::getcost(race, id);
 				if(build_structure(mid, id, e2))
                 {
 					int p = bsget(mid, Player);
-					cost& e1 = player::gcost(p);
-					e1 -= e2;
+					auto e1 = (int*)bsptr(p, FirstResource);
+					game::addresources(e1, e1, e2);
                     bsset(mid, BuildThisTurn, 1);
                     bsset(mid, id, 1);
 					return;
@@ -271,7 +271,7 @@ void show::build(int mid)
 			}
 			else if(id>=(int)FirstHero && id<=(int)LastHero)
 			{
-				if(hire_hero(id, bsget(mid,Player), game::getcost(id)))
+				if(hire_hero(id, bsget(mid,Player), game::gethirecost(id)))
 					return;
 			}
 			break;

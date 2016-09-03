@@ -30,13 +30,11 @@ enum tokens
 	// Resources
 	Gold, Wood, Mercury, Ore, Sulfur, Crystal, Gems,
 	FirstResource = Gold, LastResource = Gems,
-	// Players
-	PlayerNeutral, PlayerBlue, PlayerGreen, PlayerRed, PlayerYellow, PlayerOrange, PlayerPurple,
-	FirstPlayer = PlayerNeutral, LastPlayer = PlayerPurple,
 	// Skills level
 	SkillLevelBasic, SkillLevelAvanced, SkillLevelExpert,
-	// Calendar
-	Day, Month, Week,
+	// Players
+	PlayerBlue, PlayerGreen, PlayerRed, PlayerYellow, PlayerOrange, PlayerPurple,
+	FirstPlayer = PlayerBlue, LastPlayer = PlayerPurple,
 	// Main menu
 	NewGame, LoadGame, Credits, HightScores, QuitGame,
 	StandartGame, CampaignGame, MultiplayerGame,
@@ -554,29 +552,29 @@ namespace res
 	tokens					getshooting(int rec);
 	int						width(tokens res, int frame);
 }
-struct cost
-{
-	int					    gold;
-	int					    wood;
-	int					    mercury;
-	int					    ore;
-	int					    sulfur;
-	int					    crystal;
-	int					    gems;
-	//
-	bool				    operator==(const cost& e) const;
-	bool				    operator<=(const cost& e) const;
-	void				    operator-=(const cost& e);
-	//
-	void				    clear();
-	bool				    enough(const cost& e) const;
-	int					    get(int id) const;
-	int					    mindiv(const cost& e) const;
-	bool				    set(int id, int value);
-	char*                   tostring(char* p) const;
-private:
-	void				    correct();
-};
+//struct cost
+//{
+//	int					    gold;
+//	int					    wood;
+//	int					    mercury;
+//	int					    ore;
+//	int					    sulfur;
+//	int					    crystal;
+//	int					    gems;
+//	//
+//	bool				    operator==(const cost& e) const;
+//	bool				    operator<=(const cost& e) const;
+//	void				    operator-=(const cost& e);
+//	//
+//	void				    clear();
+//	bool				    enough(const cost& e) const;
+//	int					    get(int id) const;
+//	int					    mindiv(const cost& e) const;
+//	bool				    set(int id, int value);
+//	char*                   tostring(char* p) const;
+//private:
+//	void				    correct();
+//};
 namespace draw
 {
 	struct state
@@ -640,7 +638,7 @@ namespace draw
 	unsigned char*			ptr(int x, int y);
 	void					rectb(int x1, int y1, int x2, int y2, unsigned char color);
 	void					rectf(int x1, int y1, int x2, int y2, unsigned char color);
-	void					resource(int x, int y, cost& e);
+	void					resource(int x, int y, const void* cost_ptr);
 	void					resource(int x, int y, int ty, int id, int value);
 	void					route(int x, int y, int* rec, int w, int h, int distance);
 	void					shadow(int x1, int y1, int x2, int y2, int intense);
@@ -902,14 +900,6 @@ namespace map
 		int					action(unsigned char index);
 	}
 };
-namespace world
-{
-	void					clear(); // clear general object
-	int						game(gamefile& game);
-	int						get(int id);
-	bool					set(int id, int value);
-	int						turn();
-};
 namespace random
 {
 	int						monster(int level);
@@ -925,20 +915,6 @@ namespace castle
 	void					clear();
 	int						growth(int rec, int dwelling, bool apply);
 };
-namespace buildings
-{
-	cost&					gcost(int race, int building, int level = 0);
-	bool					requipment(int race, int building, int req, int level = 0);
-	int						unit(int race, int building);
-}
-namespace player
-{
-	void					add(int rec, int id, int value);
-	void					clear();
-	int						get(int rec, int id);
-	cost&					gcost(int rec);
-	void					set(int rec, int id, int value);
-}
 const int					cell_wd = 45;
 const int					cell_hd = 52;
 const int					cell_wr = 22;
@@ -1023,18 +999,26 @@ private:
 };
 namespace game
 {
-	void					addunit(int rec, int type, int count);
 	bool					additem(int rec, int type);
+	void					addresources(int* result, const int* e1, const int* e2, bool negative = false);
+	void					addunit(int rec, int type, int count);
 	void					cleararmy(int rec);
 	int						get(int rec, int id);
 	int						getartifact(int rec, int id);
+	const int*				getcost(int race, int building);
+	int						getday();
 	int						getframe(int rec);
-	const cost*				getcost(int rec);
+	const int*				gethirecost(int rec);
+	int						getincome(int rec);
+	int						getmonth();
 	int						getmorale(int value);
 	int						getmoralechance(int value);
+	int						getplayer();
 	int						getspeed(int value);
 	int						getsummary(int rec, int id, int side);
 	int						gettarget(int rec);
+	int						getunit(int race, int building);
+	int						getweek();
 	bool					hasspellbook(int rec);
 	bool					isboosted(int rec);
 	bool					iscombat(int rec);
@@ -1042,7 +1026,10 @@ namespace game
 	bool					isfriendly(int rec);
 	bool					ishostile(int rec);
 	bool					ispenalized(int rec);
+	bool					isrequipment(int race, int building, int req, int level);
 	bool					isstealth(int rec);
 	bool					iswide(int rec);
 	bool					ismeleearcher(int rec);
+	int						play(gamefile& game);
+	int						turn();
 }

@@ -59,7 +59,6 @@ static struct token
 	{{"Magic"}}, {{"Magic (max)"}},
 	{{"Hits"}}, {{"Hits"}}, {{"Shoots"}},
 	{{"Gold"}}, {{"Wood"}}, {{"Mercury"}}, {{"Ore"}}, {{"Sulfur"}}, {{"Crystal"}}, {{"Gems"}},
-	{{"Neutral"}}, {{"Blue"}}, {{"Green"}}, {{"Red"}}, {{"Yellow"}}, {{"Orange"}}, {{"Purple"}},
 	//
 	{{"Basic"}}, {{"Advanced"}}, {{"Expert"}},
 };

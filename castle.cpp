@@ -222,7 +222,7 @@ static const char* object_gets(int rec, int id)
 			case Dwelving6:
 				return szprint(temp, szt("%1 allow recruit %2.", "%1 позволяет нанимать %2."),
 					bsgets(rec, id - Information + CastleInTown),
-					bsgets(buildings::unit(objects[rec - FirstCastle].type, id - Information + CastleInTown), NameMulti));
+					bsgets(game::getunit(objects[rec - FirstCastle].type, id - Information + CastleInTown), NameMulti));
 			}
 		}
 		return "";
@@ -907,7 +907,7 @@ static void panorama(int x, int y, int mid)
 		{
 			if(building >= (int)Dwelving1 && building <= (int)Upgrade62)
 				draw::status(szt("Recruit %1", "Нанять %1"),
-				(int)bsgets(buildings::unit(race, building), NameMulti));
+				(int)bsgets(game::getunit(race, building), NameMulti));
 			else
 				draw::status(bsgets(mid, building));
 			if(hot::key == MouseLeft && hot::pressed)
@@ -960,7 +960,7 @@ void show::castle(int rec)
 		panorama(0, 0, rec);
 		draw::troops(112, 262, rec, army_index);
 		paint_panel(0, 256, rec, 0);
-		draw::resource(552, 262, player::gcost(player));
+		draw::resource(552, 262, bsptr(player, FirstResource));
 		draw::button(553, 428, res::SWAPBTN, Cancel, 0, 0, 1, KeyEscape, 0, szt("Leave town", ""));
 		name();
 		draw::cursor(res::ADVMCO, 0);
@@ -975,7 +975,7 @@ void show::castle(int rec)
 		case Dwelving3:
 		case Dwelving4:
 		case Dwelving5:
-			id = buildings::unit(bsget(rec, Type), id);
+			id = game::getunit(bsget(rec, Type), id);
 			count = 0;
 			if(!id)
 				break;

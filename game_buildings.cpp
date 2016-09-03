@@ -4,7 +4,7 @@ struct buildings_stats
 {
 	int			id;
 	int			race;
-	struct cost	cost;
+	int			cost[LastResource - FirstResource + 1];
 };
 
 static buildings_stats data[] =
@@ -37,7 +37,6 @@ static buildings_stats data[] =
 	{SpecialBuilding, Warlock, {3000, 5, 0, 10, 0, 0, 0}},
 	{SpecialBuilding, Wizard, {1500, 5, 5, 5, 5, 5, 5}},
 	{SpecialBuilding, Necromancer, {1000, 0, 10, 0, 10, 0, 0}},
-	//{BUILD_SHRINE, Necromancer, {4000, 10, 0, 0, 0, 10, 0}},
 	//
 	{Dwelving1, Knight, {200, 0, 0, 0, 0, 0, 0}},
 	{Dwelving2, Knight, {1000, 0, 0, 0, 0, 0, 0}},
@@ -103,18 +102,20 @@ static buildings_stats data[] =
 	{Dwelving6, Necromancer, {10000, 10, 5, 10, 5, 5, 5}},
 };
 
-cost& buildings::gcost(int race, int building, int level)
+const int* game::getcost(int race, int building)
 {
 	for(auto& e : data)
 	{
-		if((e.race && e.race!=race) || e.id!=building)
+		if(e.race != race)
+			continue;
+		if(e.id != building)
 			continue;
 		return e.cost;
 	}
 	return data[0].cost;
 }
 
-bool buildings::requipment(int race, int building, int req, int level)
+bool game::isrequipment(int race, int building, int req, int level)
 {
 	switch(race)
 	{
@@ -122,20 +123,20 @@ bool buildings::requipment(int race, int building, int req, int level)
 		switch(building)
 		{
 		case Dwelving2:
-			return req==Dwelving1;
+			return req == Dwelving1;
 		case Dwelving3:
-			return req==Dwelving1
-				|| req==Well;
+			return req == Dwelving1
+				|| req == Well;
 		case Dwelving4:
-			return req==Dwelving1
-				|| req==Dwelving2
-				|| req==Tavern;
+			return req == Dwelving1
+				|| req == Dwelving2
+				|| req == Tavern;
 		case Dwelving5:
-			return req==Dwelving3
-				|| req==Dwelving4;
+			return req == Dwelving3
+				|| req == Dwelving4;
 		case Dwelving6:
-			return req==Dwelving3
-				|| req==Dwelving2;
+			return req == Dwelving3
+				|| req == Dwelving2;
 		}
 	case Barbarian:
 		switch(building)
@@ -143,91 +144,91 @@ bool buildings::requipment(int race, int building, int req, int level)
 		case Dwelving2:
 		case Dwelving3:
 		case Dwelving4:
-			return req==Dwelving1;
+			return req == Dwelving1;
 		case Dwelving5:
-			return req==Dwelving4;
+			return req == Dwelving4;
 		case Dwelving6:
-			return req==Dwelving5;
+			return req == Dwelving5;
 		}
 		break;
 	case Sorcerer:
 		switch(building)
 		{
 		case Dwelving2:
-			return req==Dwelving1
-				|| req==Tavern;
+			return req == Dwelving1
+				|| req == Tavern;
 		case Upgrade2:
-			return req==Well;
+			return req == Well;
 		case Dwelving3:
-			return req==Dwelving1;
+			return req == Dwelving1;
 		case Upgrade3:
-			return req==Dwelving4;
+			return req == Dwelving4;
 		case Dwelving4:
-			return req==Dwelving3
-				|| req==MageGuild;
+			return req == Dwelving3
+				|| req == MageGuild;
 		case Dwelving5:
-			return req==Dwelving4;
+			return req == Dwelving4;
 		case Dwelving6:
-			return req==Dwelving5;
+			return req == Dwelving5;
 		}
 	case Necromancer:
 		switch(building)
 		{
 		case Dwelving2:
-			return req==Dwelving1;
+			return req == Dwelving1;
 		case Dwelving3:
-			return req==Dwelving1;
+			return req == Dwelving1;
 		case Dwelving4:
-			return req==Dwelving3
-				|| req==ThievesGuild;
+			return req == Dwelving3
+				|| req == ThievesGuild;
 		case Dwelving5:
-			return req==Dwelving2
-				|| req==MageGuild;
+			return req == Dwelving2
+				|| req == MageGuild;
 		case Upgrade5:
-			return req==MageGuild && level==2;
+			return req == MageGuild && level == 2;
 		case Dwelving6:
-			return req==Dwelving5;
+			return req == Dwelving5;
 		}
 		break;
 	case Warlock:
 		switch(building)
 		{
 		case Dwelving2:
-			return req==Dwelving1;
+			return req == Dwelving1;
 		case Dwelving3:
-			return req==Dwelving1;
+			return req == Dwelving1;
 		case Dwelving4:
-			return req==Dwelving2;
+			return req == Dwelving2;
 		case Dwelving5:
-			return req==Dwelving3;
+			return req == Dwelving3;
 		case Dwelving6:
-			return req==Dwelving4
-				|| req==Dwelving5;
+			return req == Dwelving4
+				|| req == Dwelving5;
 		}
 	case Wizard:
 		switch(building)
 		{
 		case Dwelving2:
-			return req==Dwelving1;
+			return req == Dwelving1;
 		case Upgrade3:
-			return req==Well;
+			return req == Well;
 		case Dwelving4:
-			return req==Dwelving2;
+			return req == Dwelving2;
 		case Dwelving5:
-			return req==Dwelving3
-				|| req==MageGuild;
+			return req == Dwelving3
+				|| req == MageGuild;
 		case Upgrade5:
-			return req==Well2;
+			return req == Well2;
 		case Dwelving6:
-			return req==Dwelving4
-				|| req==Dwelving5;
+			return req == Dwelving4
+				|| req == Dwelving5;
 		}
 		break;
 	}
 	return false;
 }
 
-int buildings::unit(int race, int building)
+int game::getunit(int race, int building)
 {
 	switch(race)
 	{

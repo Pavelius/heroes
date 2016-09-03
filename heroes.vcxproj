@@ -39,7 +39,7 @@
     <ClCompile Include="crt.cpp" />
     <ClCompile Include="draw.cpp" />
     <ClCompile Include="build.cpp" />
-    <ClCompile Include="buildings.cpp" />
+    <ClCompile Include="game_buildings.cpp" />
     <ClCompile Include="castle.cpp" />
     <ClCompile Include="combat_unit.cpp" />
     <ClCompile Include="combat.cpp" />
@@ -49,7 +49,6 @@
     <ClCompile Include="combat_route.cpp" />
     <ClCompile Include="show_battle_setting.cpp" />
     <ClCompile Include="combat_spells.cpp" />
-    <ClCompile Include="cost.cpp" />
     <ClCompile Include="drawable.cpp" />
     <ClCompile Include="event.cpp" />
     <ClCompile Include="adventure.cpp" />
@@ -83,7 +82,6 @@
     <ClCompile Include="show_unit.cpp" />
     <ClCompile Include="win.cpp" />
     <ClCompile Include="win_io.cpp" />
-    <ClCompile Include="world.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{728AB934-3073-4ED0-967F-4BE9701BEEDC}</ProjectGuid>

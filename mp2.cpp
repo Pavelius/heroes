@@ -227,7 +227,7 @@ static tokens index2player(int index)
     case 5:
         return PlayerPurple;
     default:
-        return PlayerNeutral;
+        return Empthy;
     }
 }
 
@@ -461,10 +461,11 @@ static void load_object(mp2::castle* p, int rec)
     // race
     if(index2race(p->race)==Random)
     {
-        if(bsget(rec, Player)==PlayerNeutral)
+		int player = bsget(rec, Player);
+        if(!player)
             bsset(rec, Type, xrand(Barbarian, Wizard));
         else
-            bsset(rec, Type, player::get(bsget(rec, Player), Type));
+            bsset(rec, Type, bsget(player, Type));
     }
     // name
     if(p->has_name)
@@ -650,8 +651,8 @@ void map::load(gamefile& game)
     // apply players
     for(int i = 0; i<6; i++)
     {
-        player::set(PlayerBlue+i, Type, game.races[i]);
-        player::set(PlayerBlue+i, PlayerType, game.types[i]);
+        bsset(PlayerBlue+i, Type, game.races[i]);
+		bsset(PlayerBlue+i, PlayerType, game.types[i]);
     }
     // width and heigh
     st.seek(420, SeekSet);
@@ -779,7 +780,7 @@ void map::load(gamefile& game)
                     int pla = mini2player(tiles[findobject].indexName1);
                     tokens type = mini2type(tiles[findobject].indexName1);
                     if(type==Random)
-                    	type = tokens(player::get(pla, Type));
+                    	type = tokens(bsget(pla, Type));
                     if(pblock[17] && pblock[18]<=(Bax-FirstHero))
                     {
                         rec = pblock[18] + FirstHero;
@@ -977,7 +978,7 @@ void map::load(gamefile& game)
         {
             tokens hrc;
             // Get first castle and create hero
-            tokens type = tokens(player::get(i, Type));
+            tokens type = tokens(bsget(i, Type));
             int rec = bsfind(FirstCastle, Player, i);
             if(rec!=-1)
             {
@@ -993,7 +994,6 @@ void map::load(gamefile& game)
             bsset(hrc, Recruit, i);
         }
     }
-    world::set(Difficulty, game.difficult);
     delete tiles;
     delete addons;
 }
