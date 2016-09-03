@@ -50,7 +50,7 @@ static void building(int x, int y, int building, int rec)
 		draw::image(x + 115, y + 40, res::TOWNWIND, 12);
 		draw::image(x, y + 58, res::CASLXTRA, 2);
 	}
-	else if(c1 <= c2)
+	else if(game::ismatch(c2, c1))
 	{
 		draw::image(x, y + 58, res::CASLXTRA, 1);
 		if(hilite)
@@ -70,14 +70,14 @@ static void building(int x, int y, int building, int rec)
 			char temp[260];
 			szprint(temp, "%1 ", szt("Lack", "Не хватает"));
 			auto p = zend(temp);
-			for(int i = Wood; i <= (int)Gold; i++)
+			for(int i = FirstResource; i <= LastResource; i++)
 			{
 				int d = c1[i - FirstResource] - c2[i - FirstResource];
 				if(d <= 0)
 					continue;
 				if(p[0])
 					zcat(p, ", ");
-				szprint(zend(p), "%1i %2", d, bsget(i, Name));
+				szprint(zend(p), "%1i %2", d, bsgets(i, Name));
 			}
 			draw::status(temp);
 		}
@@ -91,11 +91,9 @@ static bool build_structure(int mid, int building, const int* e, bool tips = fal
 {
 	if(!tips && bsget(mid, building))
 		return false;
-	char temp[260];
+	char temp[512];
 	szprint(temp, "%%b%1i(%2i)", building - FirstBuilding, mid);
-	const char* p = bsgets(mid, Information + building - CastleInTown);
-	if(p)
-		zcat(temp, p);
+	zcat(temp, game::getbuildinginfo(bsget(mid, Type), building, 1));
 	//e.tostring(zend(temp));
 	if(!tips)
 		return dlgask(0, temp);
@@ -250,7 +248,7 @@ void show::build(int mid)
 		case 0:
 		case Cancel:
 			return;
-		case Tooltips:
+		case Information:
 			if(hot::param)
 			{
 				auto e2 = game::getcost(race, hot::param);
@@ -265,7 +263,7 @@ void show::build(int mid)
 				{
 					int p = bsget(mid, Player);
 					auto e1 = (int*)bsptr(p, FirstResource);
-					game::addresources(e1, e1, e2);
+					game::addresources(e1, e1, e2, true);
 					bsset(mid, BuildThisTurn, 1);
 					bsset(mid, id, 1);
 					return;

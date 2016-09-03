@@ -885,13 +885,19 @@ void game::addresources(int* result, const int* e1, const int* e2, bool negative
 {
 	if(negative)
 	{
-		for(int i = 0; i < (LastResource - FirstResource + 1); i++)
+		for(int i = 0; i <= (LastResource - FirstResource); i++)
 			result[i] = e1[i] - e2[i];
 	}
 	else
 	{
-		for(int i = 0; i < (LastResource - FirstResource + 1); i++)
+		for(int i = 0; i <= (LastResource - FirstResource); i++)
 			result[i] = e1[i] + e2[i];
+	}
+	// Normalize resource
+	for(int i = 0; i <= (LastResource - FirstResource); i++)
+	{
+		if(result[i] < 0)
+			result[i] = 0;
 	}
 }
 
@@ -899,4 +905,14 @@ const int* game::gethirecost(int rec)
 {
 	static int cost[LastResource - FirstResource + 1] = {2500};
 	return cost;
+}
+
+bool game::ismatch(const int* c1, const int* c2)
+{
+	for(int i = 0; i <= (LastResource-FirstResource); i++)
+	{
+		if(c1[i] < c2[i])
+			return false;
+	}
+	return true;
 }

@@ -40,7 +40,7 @@ enum tokens
 	StandartGame, CampaignGame, MultiplayerGame,
 	HotSeatGame,
 	AutoCombat, Character, RunAway, Surrender, CastSpell, Recruit, RecruitLast, Index, MoveTo, MakeAction,
-	Cursor, CursorAdventure, CursorCombat, All, AttackDefence, SpellPowerWisdow, CombatStrenght, Tooltips,
+	Cursor, CursorAdventure, CursorCombat, All, AttackDefence, SpellPowerWisdow, Information,
 	Accept, Count, Random, Portrait, Rating, ChangeMode, Dismiss,
 	EndTurn, Damage, Block, Income,
 	NameMulti, Level, Target, Side, Base, Expire,
@@ -228,7 +228,6 @@ enum tokens
 	FirstCastle, LastCastle = FirstCastle + 128,
 	FirstEvent, LastEvent = FirstEvent + 128,
 	FirstSign, LastSign = FirstSign + 128,
-	Information, CanBuild = Information + LastBuilding - FirstBuilding + 2,
 	FirstArtifactIndex, LastArtifactIndex = FirstArtifactIndex + 13,
 	FirstTroopsIndex, LastTroopsIndex = FirstTroopsIndex + 5 * 2 - 1,
 	FirstRecruit, LastRecruit = FirstRecruit + 6,
@@ -991,6 +990,7 @@ namespace game
 	int						getmorale(int value);
 	int						getmoralechance(int value);
 	const char*				getbuildingname(int type, int building, int level);
+	const char*				getbuildinginfo(int type, int building, int level);
 	int						getplayer();
 	int						getspeed(int value);
 	int						getsummary(int rec, int id, int side);
@@ -1004,6 +1004,7 @@ namespace game
 	bool					isfly(int rec);
 	bool					isfriendly(int rec);
 	bool					ishostile(int rec);
+	bool					ismatch(const int* c1, const int* c2);
 	bool					ispenalized(int rec);
 	bool					isrequipment(int race, int building, int req, int level);
 	bool					isstealth(int rec);

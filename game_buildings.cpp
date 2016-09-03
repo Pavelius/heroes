@@ -105,9 +105,9 @@ const int* game::getcost(int race, int building)
 {
 	for(auto& e : data)
 	{
-		if(e.race != race)
-			continue;
 		if(e.id != building)
+			continue;
+		if(e.race && e.race != race)
 			continue;
 		return e.cost;
 	}

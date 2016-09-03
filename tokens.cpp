@@ -1,6 +1,6 @@
 #include "main.h"
 
-static struct token
+static struct token_string
 {
 	const char*	name[2];
 } objects[] = {
@@ -63,9 +63,9 @@ static struct token
 	{{"Basic"}}, {{"Advanced"}}, {{"Expert"}},
 };
 static bsmeta::field fields[] = {
-	BSREQ(token, name, Name, Text),
+	BSREQ(token_string, name, Name, Text),
 };
-BSMETA(token, "Tokens", "Токены", 0);
+BSMETA(token_string, "Tokens", "Токены", 0);
 
 static int object_get(int rec, int id)
 {
@@ -177,5 +177,35 @@ const char* game::getbuildingname(int type, int building, int level)
 		return special[type - Barbarian][locale];
 	if(building == MageGuild)
 		return mageguild[level][locale];
+	return "";
+}
+
+const char* game::getbuildinginfo(int type, int building, int level)
+{
+	static char temp[260];
+	const char* buildings[][2] = {
+		{"The Castle improves town defense and increases income to 1000 gold per day.", ""},
+		{"The Thieves' Guild provides information on enemy players. Thieves' Guilds can also provide scouting information on enemy towns.", ""},
+		{"The Tavern increases morale for troops defending the castle.", ""},
+		{"The Shipyard allows ships to be built.", ""},
+		{"The Well increases the growth rate of all dwellings by 2 creatures per week.", ""},
+		{"The Statue increases your town's income by 250 per day.", ""},
+		{"The Left Turret provides extra firepower during castle combat.", ""},
+		{"The Right Turret provides extra firepower during castle combat."},
+		{"The Moat slows attacking units. Any unit entering the moat must end its turn there and becomes more vulnerable to attack."},
+		{"The Marketplace can be used to convert one type of resource into another. The more marketplaces you control, the better the exchange rate."},
+		{"The Captain's Quarters provides a captain to assist in the castle's defense when no hero is present."},
+	};
+	const char* mageguild[2] = {"The Mage Guild allows heroes to learn spells and replenish their spell points.", ""};
+	const char* dwelwings[2] = {"Allow to recruit %1.", "Позволяет нанимать %1."};
+	if(building >= CastleInTown && building <= Captain)
+		return buildings[building - CastleInTown][locale];
+	if(building == MageGuild)
+		return mageguild[locale];
+	if(building >= Dwelving1 && building <= Dwelving6)
+	{
+		szprint(temp, dwelwings[locale], bsgets(game::getunit(type, building), NameMulti));
+		return temp;
+	}
 	return "";
 }

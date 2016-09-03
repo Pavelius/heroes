@@ -6,14 +6,13 @@ const int CastleIncomeDungeon = 500;
 const int CastleIncomeStatue = 250;
 static struct castle
 {
-	tokens			player;
-	tokens			type;
-	int				index;
-	char			name[14];
-	unsigned		flags;
-	unsigned char	dwellings[LastBuilding - FirstBuilding + 1];
-	short unsigned	recruiters[RecruitLast - Recruit + 1];
-	short unsigned	army[LastTroopsIndex - FirstTroopsIndex + 1];
+	tokens				player;
+	tokens				type;
+	int					index;
+	char				name[14];
+	unsigned char		dwellings[LastBuilding - FirstBuilding + 1];
+	unsigned char		spells[LastSpell - FirstSpell + 1];
+	unsigned short		army[LastTroopsIndex - FirstArtifactIndex + 1];
 } objects[LastCastle - FirstCastle + 1];
 static bsmeta::field fields[] = {
 	BSREQ(castle, player, Player, Number),
@@ -21,6 +20,7 @@ static bsmeta::field fields[] = {
 	BSREQ(castle, index, Index, Number),
 	BSINT(castle, dwellings, FirstBuilding, Number),
 	BSINT(castle, army, FirstTroopsIndex, Number),
+	BSINT(castle, spells, FirstSpell, Number),
 	BSREQ(castle, name, Name, Text),
 	{0}
 };
@@ -31,32 +31,9 @@ BSMETA(castle, "Castles", "Замки", FirstCastle);
 //	static char temp[256];
 //	switch(id - Information + CastleInTown)
 //	{
-//	case CastleInTown:
-//		return szprint(temp, szt("The Castle improves town defense and increases income to %1i gold per day.", ""), 1000);
-//	case Statue:
-//		return szprint(temp, szt("The Statue increases your town's income by %1i per day.", ""), CastleIncomeStatue);
-//	case MageGuild:
-//		return szt("The Mage Guild allows heroes to learn spells and replenish their spell points.", "");
-//	case ThievesGuild:
-//		return szt("The Thieves' Guild provides information on enemy players. Thieves' Guilds can also provide scouting information on enemy towns.", "");
-//	case Tavern:
-//		return szt("The Tavern increases morale for troops defending the castle.", "");
-//	case Shipyard:
-//		return szt("The Shipyard allows ships to be built.", "");
-//	case Well:
-//		return szprint(temp, szt("The Well increases the growth rate of all dwellings by %1i creatures per week.", ""), CastleIncomeWell);
-//	case LeftTurret:
-//		return szt("The Left Turret provides extra firepower during castle combat.", "");
-//	case RightTurret:
-//		return szt("The Right Turret provides extra firepower during castle combat.", "");
-//	case MarketPlace:
-//		return szt("The Marketplace can be used to convert one type of resource into another. The more marketplaces you control, the better the exchange rate.", "");
-//	case Moat:
-//		return szt("The Moat slows attacking units. Any unit entering the moat must end its turn there and becomes more vulnerable to attack.", "");
-//	case Tent:
 //		return szt("The Tent provides workers to build a castle, provided the materials and the gold are available.", "");
 //	case Captain:
-//		return szt("The Captain's Quarters provides a captain to assist in the castle's defense when no hero is present.", "");
+//		return szt(, "");
 //	case Well2:
 //		switch(objects[rec - FirstCastle].type)
 //		{

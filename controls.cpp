@@ -74,7 +74,8 @@ int draw::clipart(int x, int y, int id, int param, int param2)
 	}
 	else if(id >= FirstResource && id <= LastResource)
 	{
-		int id1 = id - FirstResource;
+		static unsigned char frames[] = {6, 0, 1, 2, 3, 4, 5};
+		int id1 = frames[id - FirstResource];
 		int w = res::width(res::RESOURCE, id1);
 		image(x - w / 2, y + 30 - res::height(res::RESOURCE, id1), res::RESOURCE, id1, AFNoOffset);
 		draw::state push;
@@ -117,7 +118,7 @@ int draw::clipart(int x, int y, int id, int param, int param2)
 		if(draw::area(x - w / 2, y, x + w / 2, y + h))
 		{
 			if(hot::key == MouseRight && hot::pressed)
-				draw::execute(Tooltips, id);
+				draw::execute(Information, id);
 		}
 		return h;
 	}
@@ -375,7 +376,6 @@ void show::tips(const char* text)
 		surface.restore();
 		int y1 = draw::dialog(th);
 		y1 += draw::textf(x, y1, tw, text, false) + padding; // message text
-		draw::cursor(res::ADVMCO, 0);
 		switch(draw::input())
 		{
 		case 0:
