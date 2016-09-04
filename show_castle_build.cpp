@@ -33,7 +33,7 @@ static void building(int x, int y, int building, int rec)
 	const char* name = game::getbuildingname(race, building, level);
 	draw::image(x + 1, y + 1, res::buildings(race), indexes::buildings(building, 0));
 	if(hilite && hot::key == MouseRight && hot::pressed)
-		draw::execute(Information, building);
+		draw::execute(Information, building, race);
 	if(level >= 1)
 	{
 		draw::image(x + 115, y + 40, res::TOWNWIND, 11);
@@ -87,20 +87,6 @@ static void building(int x, int y, int building, int rec)
 	draw::text(x + (132 - draw::textw(name)) / 2, y + 61, name);
 }
 
-static bool build_structure(int mid, int building, const int* e, bool tips = false)
-{
-	if(!tips && bsget(mid, building))
-		return false;
-	char temp[512];
-	szprint(temp, "%%b%1i(%2i)", building - FirstBuilding, mid);
-	zcat(temp, game::getbuildinginfo(bsget(mid, Type), building, 1));
-	//e.tostring(zend(temp));
-	if(!tips)
-		return dlgask(0, temp);
-	show::tips(temp);
-	return false;
-}
-
 static bool hire_hero(int rec, int player, const int* e)
 {
 	char temp[260];
@@ -136,18 +122,12 @@ static tokens race2captain(tokens race)
 {
 	switch(race)
 	{
-	case Barbarian:
-		return BarbarianCaptain;
-	case Warlock:
-		return WarlockCaptain;
-	case Wizard:
-		return WizardCaptain;
-	case Sorcerer:
-		return SorcererCaptain;
-	case Necromancer:
-		return NecromancerCaptain;
-	default:
-		return KnightCaptain;
+	case Barbarian: return BarbarianCaptain;
+	case Warlock: return WarlockCaptain;
+	case Wizard: return WizardCaptain;
+	case Sorcerer: return SorcererCaptain;
+	case Necromancer: return NecromancerCaptain;
+	default: return KnightCaptain;
 	}
 }
 
@@ -164,13 +144,13 @@ static void captain(int x, int y, tokens race, bool present)
 		draw::font = res::SMALFONT;
 		int x1 = x + 85;
 		int y1 = y + 16;
-		for(int i = Attack; i <= (int)Wisdow; i++)
+		for(int i = Attack; i <= Wisdow; i++)
 		{
 			char temp[32];
 			zcpy(temp, bsgets(i, Name));
 			zcat(temp, ":");
 			draw::text(x1 + 80 - draw::textw(temp), y1, temp);
-			sznum(temp, bsget(race2captain(race), i));
+			sznum(temp, game::get(race2captain(race), i));
 			draw::text(x1 + 84, y1, temp);
 			y1 += draw::texth() + 2;
 		}
@@ -201,10 +181,11 @@ static void heroport(int x, int y, int rec)
 
 void show::build(int mid)
 {
-	int player = bsget(mid, Player);
 	tokens race = tokens(bsget(mid, Type));
+	int player = bsget(mid, Player);
 	int h1 = bsget(player, Recruit);
 	int h2 = bsget(player, RecruitLast);
+	char temp[260];
 	while(true)
 	{
 		draw::status(21, draw::height - 16, 21 + res::width(res::SMALLBAR, 0), draw::height - 1);
@@ -249,17 +230,23 @@ void show::build(int mid)
 		case Cancel:
 			return;
 		case Information:
-			if(hot::param)
+			if(hot::param >= FirstBuilding && hot::param <= LastBuilding)
 			{
 				auto e2 = game::getcost(race, hot::param);
-				build_structure(mid, hot::param, e2, true);
+				game::getbuilding(temp, race, hot::param);
+				game::getcosttext(zend(temp), e2);
+				show::tips(temp);
 			}
 			break;
 		default:
-			if(id == Captain || (id >= (int)FirstBuilding && id <= (int)LastBuilding))
+			if(id == Captain || (id >= FirstBuilding && id <= LastBuilding))
 			{
 				auto e2 = game::getcost(race, id);
-				if(build_structure(mid, id, e2))
+				game::getbuilding(temp, race, id);
+				zcat(temp, " ");
+				zcat(temp, szt("Do you want to build?", "Хотите построить?"));
+				game::getcosttext(zend(temp), e2);
+				if(dlgask(0, temp))
 				{
 					int p = bsget(mid, Player);
 					auto e1 = (int*)bsptr(p, FirstResource);
@@ -269,11 +256,13 @@ void show::build(int mid)
 					return;
 				}
 			}
-			else if(id >= (int)FirstHero && id <= (int)LastHero)
+			else if(id >= FirstHero && id <= LastHero)
 			{
 				if(hire_hero(id, bsget(mid, Player), game::gethirecost(id)))
 					return;
 			}
+			else
+				draw::definput(id);
 			break;
 		}
 	}

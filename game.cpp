@@ -265,8 +265,6 @@ int game::get(int rec, int id)
 	int m, k;
 	switch(id)
 	{
-	case Attack:
-	case Defence:
 	case Speed:
 	case DamageMin:
 	case DamageMax:
@@ -275,10 +273,67 @@ int game::get(int rec, int id)
 		else if(rec >= FirstCombatant && rec <= LastCombatant)
 			return getsummary(rec, id, bsget(rec, Side));
 		return bsget(rec, id);
+	case Attack:
+		if(rec >= FirstHero && rec <= LastHero)
+			return bsget(rec, id) + artifacts_bonuses(rec, id);
+		else if(rec >= BarbarianCaptain && rec <= WizardCaptain)
+		{
+			switch(rec)
+			{
+			case BarbarianCaptain: return 3;
+			case KnightCaptain: return 2;
+			case NecromancerCaptain: return 1;
+			default: return 0;
+			}
+		}
+		else if(rec >= FirstCombatant && rec <= LastCombatant)
+			return getsummary(rec, id, bsget(rec, Side));
+		return bsget(rec, id);
+	case Defence:
+		if(rec >= FirstHero && rec <= LastHero)
+			return bsget(rec, id) + artifacts_bonuses(rec, id);
+		else if(rec >= BarbarianCaptain && rec <= WizardCaptain)
+		{
+			switch(rec)
+			{
+			case KnightCaptain: return 2;
+			case BarbarianCaptain:
+			case WizardCaptain: return 1;
+			default: return 0;
+			}
+		}
+		else if(rec >= FirstCombatant && rec <= LastCombatant)
+			return getsummary(rec, id, bsget(rec, Side));
+		return bsget(rec, id);
 	case Wisdow:
+		if(rec >= FirstHero && rec <= LastHero)
+			return bsget(rec, id) + artifacts_bonuses(rec, id);
+		else if(rec >= BarbarianCaptain && rec <= WizardCaptain)
+		{
+			switch(rec)
+			{
+			case SorcererCaptain: return 4;
+			case WizardCaptain:
+			case WarlockCaptain:
+			case NecromancerCaptain: return 3;
+			default: return 1;
+			}
+		}
+		return bsget(rec, id);
 	case SpellPower:
 		if(rec >= FirstHero && rec <= LastHero)
 			return bsget(rec, id) + artifacts_bonuses(rec, id);
+		else if(rec >= BarbarianCaptain && rec <= WizardCaptain)
+		{
+			switch(rec)
+			{
+			case WarlockCaptain: return 4;
+			case SorcererCaptain:
+			case WizardCaptain:
+			case NecromancerCaptain: return 3;
+			default: return 1;
+			}
+		}
 		return bsget(rec, id);
 	case Morale:
 		if(rec >= FirstHero && rec <= LastHero)
@@ -551,7 +606,7 @@ int game::getspeed(int value)
 {
 	if(value < 0)
 		value = 0;
-	else if(value > (SpeedUltraFast-SpeedCrawling))
+	else if(value > (SpeedUltraFast - SpeedCrawling))
 		value = (SpeedUltraFast - SpeedCrawling);
 	return value;
 }
@@ -907,9 +962,30 @@ const int* game::gethirecost(int rec)
 	return cost;
 }
 
+char* game::getcosttext(char* result, const int* cost)
+{
+	char* p = result;
+	p[0] = 0;
+	for(int id = FirstResource; id <= LastResource; id++)
+	{
+		int value = cost[id - FirstResource];
+		if(!value)
+			continue;
+		if(p == result)
+			zcpy(p, "\n$(");
+		else
+			zcpy(p, ",");
+		szprint(zend(p), "%1i/%2i", id, value);
+		p = zend(p);
+	}
+	if(p != result)
+		zcat(p, ")");
+	return result;
+}
+
 bool game::ismatch(const int* c1, const int* c2)
 {
-	for(int i = 0; i <= (LastResource-FirstResource); i++)
+	for(int i = 0; i <= (LastResource - FirstResource); i++)
 	{
 		if(c1[i] < c2[i])
 			return false;

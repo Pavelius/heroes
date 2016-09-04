@@ -617,7 +617,7 @@ static void panorama(int x, int y, int mid)
 			if(hot::key == MouseLeft && hot::pressed)
 				draw::execute(building);
 			else if(hot::key == MouseRight && hot::pressed)
-				draw::execute(Information, building);
+				draw::execute(Information, building, race);
 		}
 		index = indexes::animate(icn, index, draw::counter, false);
 		if(index)
@@ -690,11 +690,8 @@ void show::castle(int rec)
 		case CastleInTown:
 			show::build(rec);
 			break;
-		case Information:
-			show::tips(game::getbuildinginfo(bsget(rec, Type), hot::param, 0));
-			break;
 		default:
-			draw::troopsinput(id);
+			draw::definput(id);
 			break;
 		}
 	}

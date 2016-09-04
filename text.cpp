@@ -20,6 +20,41 @@ static unsigned char decode_ru[256] =
 	145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160,
 };
 
+struct picture
+{
+	int id;
+	int	count;
+
+	int width() const
+	{
+		if(id >= (int)FirstHero && id <= (int)LastHero)
+			return 101;
+		else if(id >= (int)FirstResource && id <= (int)LastResource)
+			return 60;
+		else if(id >= (int)FirstBuilding && id <= (int)LastBuilding)
+			return 137;
+		else if(id >= (int)FirstMonster && id <= (int)LastMonster)
+			return 80;
+		else if(id >= (int)FirstSkill && id <= (int)LastSkill)
+			return 80;
+		return 0;
+	}
+
+	int height() const
+	{
+		if(id >= (int)FirstHero && id <= (int)LastHero)
+			return 93;
+		else if(id >= (int)FirstResource && id <= (int)LastResource)
+			return 50;
+		else if(id >= (int)FirstBuilding && id <= (int)LastBuilding)
+			return 72;
+		else if(id >= (int)FirstMonster && id <= (int)LastMonster)
+			return 93;
+		return 0;
+	}
+
+};
+
 static int spacewidth(res::tokens icn)
 {
 	return res::width(icn, 'i' - 0x20);
@@ -32,37 +67,34 @@ int draw::texth()
 	return res::height(font, 'I' - 0x20) + 2;
 }
 
-int draw::textbc(const char* string, int size, int width)
+int draw::textbc(const char* string, int width)
 {
-	int i = 0;
-	int i1 = 0;
+	int p = -1;
+	int w = 0;
+	const char* s1 = string;
 	res::tokens icn = font;
-	while(string[i])
+	while(true)
 	{
-		unsigned char ch = (unsigned char)string[i];
-		if(ch<=0x20)
+		unsigned char s = *((unsigned char*)s1++);
+		if(s == 0x20 || s == 9)
+			p = s1 - string;
+		else if(s == 0)
 		{
-			width -= spacewidth(icn);
-			if(ch==0x20)
-			{
-				if(!i || string[i-1]!=0x20)
-					i1 = i;
-			}
-		}
-		else
-		{
-			ch = decode_ru[ch];
-			width -= res::width(icn, ch);
-		}
-		if(width<=0)
-		{
-			if(i1)
-				return i1;
+			p = s1 - string - 1;
 			break;
 		}
-		i++;
+		else if(s == 10 || s == 13)
+		{
+			p = s1 - string;
+			break;
+		}
+		w += res::width(icn, decode_ru[s]);
+		if(w > width)
+			break;
 	}
-	return i;
+	if(p == -1)
+		p = s1 - string;
+	return p;
 }
 
 int draw::textw(const char* string, int count)
@@ -111,7 +143,7 @@ int draw::textm(int x, int y, int width, justify jf, const char* string)
 	int y1 = y;
 	while(string[0])
 	{
-		int c = textbc(string, -1, width);
+		int c = textbc(string, width);
 		if(!c)
 			break;
 		text(x, y1, width, jf, string, c);
@@ -126,7 +158,7 @@ int draw::texth(const char* string, int width)
 	int result = 0;
 	while(string[0])
 	{
-		int c = textbc(string, -1, width);
+		int c = textbc(string, width);
 		if(!c)
 			break;
 		result += texth();
@@ -152,6 +184,80 @@ void draw::text(int x, int y, int width, draw::justify jf, const char* string, i
     case Center:
         return text(x+(width-textw(string,count))/2, y, string, count);
     }
+}
+
+static int paint_icons(int x, int y, int width, picture* icons, int count)
+{
+	const int pad = 4;
+	if(!count)
+		return 0;
+	int y1 = y;
+	while(count > 0)
+	{
+		int c = (count < 3) ? count : 3;
+		int h = icons->height();
+		int w1 = icons->width();
+		int w = w1*c + (c - 1)*pad;
+		int x1 = x + (width - w) / 2;
+		for(int i = 0; i < c; i++)
+		{
+			int h1 = draw::clipart(x1+w1/2, y, icons[i].id, icons[i].count);
+			if(h < h1)
+				h = h1;
+			x1 += w1 + pad;
+		}
+		y += h;
+		icons += c;
+		count -= c;
+	}
+	return y - y1;
+}
+
+int draw::textf(int x, int y, int width, const char* p)
+{
+	picture params[16];
+	int y4 = y;
+	p = zskipspcr(p);
+	while(*p)
+	{
+		if(p[0] == '$' && p[1] == '(')
+		{
+			p += 2;
+			int count = 0;
+			while(*p)
+			{
+				params[count].id = sz2num(p, &p);
+				params[count].count = 0;
+				if(*p == '/')
+					params[count].count = sz2num(zskipsp(p + 1), &p);
+				count++;
+				if(*p == ')')
+				{
+					p = zskipspcr(p + 1);
+					break;
+				}
+				if(*p == ',')
+					p++;
+			}
+			if(count)
+				y += paint_icons(x, y, width, params, count) + 16;
+		}
+		else
+		{
+			int c = draw::textbc(p, width);
+			draw::text(x, y, width, draw::Center, p, c);
+			y += draw::texth();
+			p = zskipspcr(p + c);
+		}
+	}
+	return y - y4;
+}
+
+int draw::textf(int width, const char* string)
+{
+	draw::state push;
+	draw::clipping.clear();
+	return textf(0, 0, width, string);
 }
 
 void draw::edit(int x, int y, char* value, int maximum)

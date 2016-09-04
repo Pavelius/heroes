@@ -90,7 +90,7 @@ void show::hero(tokens rec)
 		case 0:
 			return;
 		default:
-			draw::troopsinput(id);
+			draw::definput(id);
 			break;
 		}
 	}

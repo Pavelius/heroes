@@ -823,10 +823,11 @@ void draw::status(const char* format, ...)
 	szprintv(status_text, format, xva_start(format));
 }
 
-void draw::execute(int id, int param)
+void draw::execute(int id, int param, int param2)
 {
 	hot::command = id;
 	hot::param = param;
+	hot::param2 = param2;
 	hot::key = 0;
 	hot::pressed = false;
 }

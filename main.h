@@ -586,7 +586,6 @@ namespace draw
 	const int				scanline = 640;
 	//
 	bool					area(int x1, int y1, int x2, int y2);
-	bool					areb(int x1, int y1, int x2, int y2);
 	void					button(int x, int y, res::tokens icn, int id, int normal, int hilite, int pressed, int key = 0, unsigned flags = 0, const char* tips = 0);
 	void					castle(int x, int y, int tile, int race, bool town);
 	void					captain(int x, int y, int race, bool present);
@@ -597,9 +596,10 @@ namespace draw
 	void					cursor(res::tokens res, int id, int ox = 0, int oy = 0);
 	int						dialog(int height);
 	void					debug();
+	void					definput(int id);
 	void					edit(int x, int y, char* value, int maximum = 260);
 	void					edit(int x, int y, int& value, int maximum, int minimum = 0);
-	void					execute(int id, int param = 0);
+	void					execute(int id, int param = 0, int param2 = 0);
 	extern res::tokens		font;
 	void					building(int x, int y, int building, int race);
 	void					hexagon(int x, int y, unsigned char color);
@@ -623,8 +623,9 @@ namespace draw
 	void					status(int x1, int y1, int x2, int y2);
 	void					text(int x, int y, const char* string, int count = -1);
 	void					text(int x, int y, int width, justify jf, const char* string, int count = -1);
-	int						textbc(const char* string, int count, int width);
-	int						textf(int x, int y, int width, const char* text, bool calculate);
+	int						textbc(const char* string, int width);
+	int						textf(int width, const char* text);
+	int						textf(int x, int y, int width, const char* text);
 	int						texth();
 	int						texth(const char* string, int width);
 	int						textm(int x, int y, int width, justify jf, const char* string);
@@ -633,7 +634,6 @@ namespace draw
 	int						textw(const char* string, int count = -1);
 	void					tiles(int x, int y, res::tokens icn, int* rec, int w, int h);
 	void					troops(int x, int y, int rec, int index);
-	void					troopsinput(int id);
 };
 struct animation : public drawable
 {
@@ -981,6 +981,7 @@ namespace game
 	int						get(int rec, int id);
 	int						getartifact(int rec, int id);
 	const int*				getcost(int race, int building);
+	char*					getcosttext(char* result, const int* cost);
 	int						getday();
 	int						getframe(int rec);
 	int						getgrowth(int rec, int dwelling);
@@ -989,6 +990,7 @@ namespace game
 	int						getmonth();
 	int						getmorale(int value);
 	int						getmoralechance(int value);
+	char*					getbuilding(char* result, tokens type, int building);
 	const char*				getbuildingname(int type, int building, int level);
 	const char*				getbuildinginfo(int type, int building, int level);
 	int						getplayer();
