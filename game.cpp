@@ -5,6 +5,7 @@ const int castle_income_well2 = 10;
 const int castle_income_statue = 250;
 
 static int day;
+static int growth_per_week[] = {8, 4, 3, 2, 1, 1};
 static tokens week_of, month_of;
 static tokens game_difficult = EasyDifficulty;
 static tokens week_monsters[] =
@@ -124,7 +125,7 @@ void game::cleararmy(int rec)
 		bsset(rec, i, 0);
 }
 
-void game::addunit(int rec, int type, int count)
+bool game::addunit(int rec, int type, int count)
 {
 	if(type >= FirstMonster && type <= LastMonster)
 	{
@@ -138,7 +139,7 @@ void game::addunit(int rec, int type, int count)
 				bsset(rec, i + 1, count);
 				if(!count)
 					bsset(rec, i, 0);
-				return;
+				return true;
 			}
 		}
 		// Add new one
@@ -148,10 +149,11 @@ void game::addunit(int rec, int type, int count)
 			{
 				bsset(rec, i, type);
 				bsset(rec, i + 1, count);
-				return;
+				return true;
 			}
 		}
 	}
+	return false;
 }
 
 bool game::additem(int rec, int type)
@@ -818,6 +820,39 @@ void game::initialize()
 	}
 }
 
+static void game_endweek()
+{
+	int m_base = bsget(week_of, Base);
+	int m_type = bsget(m_base, Type);
+	int m_dwll = bsget(m_base, Dwelve);
+	for(int rec = FirstCastle; rec <= (int)LastCastle; rec++)
+	{
+		for(int i = Dwelving1; i <= Dwelving6; i++)
+		{
+			if(!bsget(rec, i))
+				continue;
+			bsadd(rec, i - Dwelving1 + FirstCreatureCount, game::getgrowth(rec, i));
+		}
+		// Week monster growth fast
+		if(m_type == bsget(rec, Type) && bsget(rec, m_dwll))
+			bsadd(rec, FirstRecruit + m_dwll - Dwelving1, 5);
+	}
+}
+
+void game::build(int rec, int id)
+{
+	auto race = (tokens)bsget(rec, Type);
+	auto cost = getcost(race, id);
+	auto player = bsget(rec, Player);
+	auto resources = bsptr(player, FirstResource);
+	addresources(resources, resources, cost, true);
+	int previous_level = bsget(rec, id);
+	bsset(rec, id, previous_level + 1);
+	if(previous_level == 0)
+		bsadd(rec, id - Dwelving1 + FirstCreatureCount, growth_per_week[id - Dwelving1]);
+	bsadd(rec, AlreadyMoved, 1);
+}
+
 void game::prepare()
 {
 	int hero;
@@ -839,6 +874,7 @@ void game::prepare()
 		hero = game::random::hero(0);
 		bsset(rec, RecruitLast, hero);
 	}
+	game_endweek();
 }
 
 static void game_endturn()
@@ -873,13 +909,12 @@ static void game_endturn()
 
 int game::getgrowth(int rec, int dwelling)
 {
-	static int increment[] = {8, 4, 3, 2, 1, 0};
 	if(!bsget(rec, dwelling))
 		return 0;
 	int type = bsget(rec, Type);
 	bool well = bsget(rec, Well) != 0;
 	bool well2 = bsget(rec, Well2) != 0;
-	int result = increment[dwelling - Dwelving1];
+	int result = growth_per_week[dwelling - Dwelving1];
 	if(well)
 		result += castle_income_well;
 	if(dwelling == Dwelving1 && well2)
@@ -890,32 +925,12 @@ int game::getgrowth(int rec, int dwelling)
 	return result;
 }
 
-static void game_endweek()
-{
-	int m_base = bsget(week_of, Base);
-	int m_type = bsget(m_base, Type);
-	int m_dwll = bsget(m_base, Dwelve);
-	for(int rec = FirstCastle; rec <= (int)LastCastle; rec++)
-	{
-		for(int i = (int)Dwelving1; i <= (int)Dwelving6; i++)
-		{
-			if(!bsget(rec, i))
-				continue;
-			//castle::growth(rec, i, true);
-		}
-		// Week monster growth fast
-		if(m_type == bsget(rec, Type) && bsget(rec, m_dwll))
-			bsadd(rec, FirstRecruit + m_dwll - Dwelving1, 5);
-	}
-}
-
 int game::play(gamefile& game)
 {
 	game.validate();
 	game::initialize();
 	map::load(game);
 	game::prepare();
-	game_endweek();
 	while(true)
 	{
 		int result = turn();
@@ -936,8 +951,11 @@ int game::getplayer()
 	return PlayerBlue;
 }
 
-void game::addresources(int* result, const int* e1, const int* e2, bool negative)
+void game::addresources(void* result_void, const void* v1, const void* v2, bool negative)
 {
+	auto result = (int*)result_void;
+	auto e1 = (int*)v1;
+	auto e2 = (int*)v2;
 	if(negative)
 	{
 		for(int i = 0; i <= (LastResource - FirstResource); i++)
@@ -961,6 +979,22 @@ void game::mulresource(int* result, const void* source_void, int value)
 	int* source = (int*)source_void;
 	for(int i = 0; i <= (LastResource - FirstResource); i++)
 		result[i] = source[i] * value;
+}
+
+int game::divresource(const void* source_void, const void* divider_void)
+{
+	auto source = (int*)source_void;
+	auto divider = (int*)divider_void;
+	int result = 0x7FFFFFFF;
+	for(int i = 0; i <= (LastResource - FirstResource); i++)
+	{
+		if(!divider[i])
+			continue;
+		auto v = source[i] / divider[i];
+		if(result > v)
+			result = v;
+	}
+	return result;
 }
 
 const int* game::gethirecost(int rec)

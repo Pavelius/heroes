@@ -166,7 +166,7 @@ void show::unit(int rec, int side)
 	}
 }
 
-bool show::recruit(int rec, int& count, int maximum)
+bool show::recruit(int rec, int& count, int maximum, void* available_resources)
 {
 	char temp[260];
 	draw::screenshoot surface;
@@ -177,6 +177,10 @@ bool show::recruit(int rec, int& count, int maximum)
 	int y = (draw::height - h1) / 2 - 16;
 	int mt = rec;
 	int total[LastResource - FirstResource + 1];
+	auto monster_cost = bsptr(mt, FirstResource);
+	auto maximum_available = game::divresource(available_resources, monster_cost);
+	if(maximum_available > maximum)
+		maximum_available = maximum;
 	while(true)
 	{
 		surface.restore();
@@ -196,7 +200,7 @@ bool show::recruit(int rec, int& count, int maximum)
 			draw::text(x1 + 32, y1 + 164, 90, draw::Left, szt("Number to buy:", "Нанять количество:"));
 		}
 		// count
-		draw::edit(x1 + 168, y1 + 163, count, maximum);
+		draw::edit(x1 + 168, y1 + 163, count, maximum_available);
 		res::tokens icn = res::tokens(res::MONH0000 + mt - FirstMonster);
 		draw::image(x1 + 80 - res::width(icn, 0) / 2,
 			y1 + 100 - res::height(icn, 0) / 2,
@@ -207,10 +211,9 @@ bool show::recruit(int rec, int& count, int maximum)
 				draw::execute(Information);
 		}
 		// Price
-		auto cost = bsptr(mt, FirstResource);
-		draw::textf(x1 + 142, y1 + 72, 130, game::getcosttext(temp, cost));
+		draw::textf(x1 + 142, y1 + 72, 130, game::getcosttext(temp, monster_cost));
 		// total
-		game::mulresource(total, cost, count);
+		game::mulresource(total, monster_cost, count);
 		draw::textf(x1 + 33, y1 + 190, 250, game::getcosttext(temp, total));
 		//
 		draw::button(x1 + 34, y1 + 249, res::RECRUIT, Accept, 8, 8, 9, KeyEnter);
@@ -228,7 +231,7 @@ bool show::recruit(int rec, int& count, int maximum)
 		case Accept:
 			return true;
 		case Maximus:
-			count = maximum;
+			count = maximum_available;
 			break;
 		case KeyUp:
 			count++;

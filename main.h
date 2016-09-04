@@ -693,7 +693,7 @@ namespace show
 	int					    game();
 	void				    hero(tokens rec);
 	void				    highscore();
-	bool                    recruit(int rec, int& count, int maximum);
+	bool                    recruit(int rec, int& count, int maximum, void* available_resources);
 	void					settings();
 	int						spellbook(int mid, tokens mode = CombatSpells);
 	void                    tips(const char* text);
@@ -973,9 +973,11 @@ namespace game
 		int					monster(int level);
 	}
 	bool					additem(int rec, int type);
-	void					addresources(int* result, const int* e1, const int* e2, bool negative = false);
-	void					addunit(int rec, int type, int count);
+	void					addresources(void* result, const void* v1, const void* v2, bool negative = false);
+	bool					addunit(int rec, int type, int count);
+	void					build(int rec, int id);
 	void					cleararmy(int rec);
+	int						divresource(const void* source_void, const void* divider_void);
 	int						get(int rec, int id);
 	int						getartifact(int rec, int id);
 	const int*				getcost(int race, int building);

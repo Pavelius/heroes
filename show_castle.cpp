@@ -652,7 +652,7 @@ static void name()
 
 void show::castle(int rec)
 {
-	int count, max_count;
+	int unit;
 	int army_index = -1;
 	int player = bsget(rec, Player);
 	while(true)
@@ -680,13 +680,24 @@ void show::castle(int rec)
 		case Dwelving4:
 		case Dwelving5:
 		case Dwelving6:
-			id = game::getunit(bsget(rec, Type), id);
-			if(!id)
-				break;
-			count = 0;
-			max_count = bsget(rec, FirstCreatureCount + (id - Dwelving1)) + 4;
-			if(show::recruit(id, count, max_count))
+			unit = game::getunit(bsget(rec, Type), id);
+			if(unit)
 			{
+				auto count = 0;
+				auto max_count = bsget(rec, FirstCreatureCount + (id - Dwelving1));
+				auto available_resources = bsptr(player, FirstResource);
+				auto monster_resources = bsptr(unit, FirstResource);
+				if(show::recruit(unit, count, max_count, available_resources))
+				{
+					if(!game::addunit(rec, unit, count))
+						dlgerr(0, szt("Your garrison is out of space.", "В вашем гарнизоне не хватает места."));
+					else
+					{
+						int total[LastResource - FirstResource + 1];
+						game::mulresource(total, monster_resources, count);
+						game::addresources(available_resources, available_resources, total, true);
+					}
+				}
 			}
 			break;
 		case CastleInTown:

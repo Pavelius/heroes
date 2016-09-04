@@ -275,11 +275,7 @@ void show::build(int mid)
 				game::getcosttext(zend(temp), e2);
 				if(dlgask(0, temp))
 				{
-					int p = bsget(mid, Player);
-					auto e1 = (int*)bsptr(p, FirstResource);
-					game::addresources(e1, e1, e2, true);
-					bsadd(mid, AlreadyMoved, 1);
-					bsset(mid, id, 1);
+					game::build(mid, id);
 					return;
 				}
 			}
