@@ -3,21 +3,15 @@
 static bool meet_requipment(int rec, int building)
 {
 	int race = bsget(rec, Type);
+	int level = bsget(rec, building);
 	for(int i = ThievesGuild; i <= (int)Dwelving6; i++)
 	{
-		if(game::isrequipment(race, building, i, 0))
+		if(game::isrequipment(race, building, level, i, bsget(rec, i)))
 		{
 			if(!bsget(rec, i))
 				return false;
 		}
 	}
-	int level = 0;
-	if(game::isrequipment(race, building, MageGuild, 1))
-		level = 1;
-	else if(game::isrequipment(race, building, MageGuild, 2))
-		level = 2;
-	if(bsget(rec, MageGuild) < level)
-		return false;
 	return true;
 }
 
@@ -249,7 +243,7 @@ void show::build(int mid)
 				char* p = zend(temp);
 				for(int i = ThievesGuild; i <= (int)Dwelving6; i++)
 				{
-					if(!game::isrequipment(race, hot::param, i, 0))
+					if(!game::isrequipment(race, hot::param, bsget(mid, hot::param), i, bsget(mid, i)))
 						continue;
 					if(bsget(mid, i))
 						continue;

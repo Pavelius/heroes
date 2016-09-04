@@ -180,7 +180,7 @@ static const rect& getrect(int race, int building)
 	return data[building - CastleInTown][race - Barbarian];
 }
 
-static res::tokens getrs(int race, int building)
+static res::tokens getrs(int race, int building, int level)
 {
 	if(race == Barbarian)
 	{
@@ -219,19 +219,19 @@ static res::tokens getrs(int race, int building)
 		case Dwelving1:
 			return res::TWNBDW_0;
 		case Dwelving2:
+			if(level == 2)
+				return res::TWNBUP_1;
 			return res::TWNBDW_1;
-		case Upgrade2:
-			return res::TWNBUP_1;
 		case Dwelving3:
 			return res::TWNBDW_2;
 		case Dwelving4:
+			if(level == 2)
+				return res::TWNBUP_3;
 			return res::TWNBDW_3;
-		case Upgrade4:
-			return res::TWNBUP_3;
 		case Dwelving5:
+			if(level == 2)
+				return res::TWNBUP_4;
 			return res::TWNBDW_4;
-		case Upgrade5:
-			return res::TWNBUP_4;
 		case Dwelving6:
 			return res::TWNBDW_5;
 		default:
@@ -270,25 +270,25 @@ static res::tokens getrs(int race, int building)
 		case Dwelving1:
 			return res::TWNKDW_0;
 		case Dwelving2:
+			if(level==2)
+				return res::TWNKUP_1;
 			return res::TWNKDW_1;
-		case Upgrade2:
-			return res::TWNKUP_1;
 		case Dwelving3:
+			if(level == 2)
+				return res::TWNKUP_2;
 			return res::TWNKDW_2;
-		case Upgrade3:
-			return res::TWNKUP_2;
 		case Dwelving4:
+			if(level == 2)
+				return res::TWNKUP_3;
 			return res::TWNKDW_3;
-		case Upgrade4:
-			return res::TWNKUP_3;
 		case Dwelving5:
+			if(level == 2)
+				return res::TWNKUP_4;
 			return res::TWNKDW_4;
-		case Upgrade5:
-			return res::TWNKUP_4;
 		case Dwelving6:
+			if(level == 2)
+				return res::TWNKUP_5;
 			return res::TWNKDW_5;
-		case Upgrade6:
-			return res::TWNKUP_5;
 		default:
 			break;
 		}
@@ -329,21 +329,21 @@ static res::tokens getrs(int race, int building)
 		case Dwelving1:
 			return res::TWNNDW_0;
 		case Dwelving2:
+			if(level==2)
+				return res::TWNNUP_1;
 			return res::TWNNDW_1;
-		case Upgrade2:
-			return res::TWNNUP_1;
 		case Dwelving3:
+			if(level == 2)
+				return res::TWNNUP_2;
 			return res::TWNNDW_2;
-		case Upgrade3:
-			return res::TWNNUP_2;
 		case Dwelving4:
+			if(level == 2)
+				return res::TWNNUP_3;
 			return res::TWNNDW_3;
-		case Upgrade4:
-			return res::TWNNUP_3;
 		case Dwelving5:
+			if(level == 2)
+				return res::TWNNUP_4;
 			return res::TWNNDW_4;
-		case Upgrade5:
-			return res::TWNNUP_4;
 		case Dwelving6:
 			return res::TWNNDW_5;
 		default:
@@ -387,17 +387,17 @@ static res::tokens getrs(int race, int building)
 		case Dwelving1:
 			return res::TWNSDW_0;
 		case Dwelving2:
+			if(level==2)
+				return res::TWNSUP_1;
 			return res::TWNSDW_1;
-		case Upgrade2:
-			return res::TWNSUP_1;
 		case Dwelving3:
+			if(level == 2)
+				return res::TWNSUP_2;
 			return res::TWNSDW_2;
-		case Upgrade3:
-			return res::TWNSUP_2;
 		case Dwelving4:
+			if(level == 2)
+				return res::TWNSUP_3;
 			return res::TWNSDW_3;
-		case Upgrade4:
-			return res::TWNSUP_3;
 		case Dwelving5:
 			return res::TWNSDW_4;
 		case Dwelving6:
@@ -428,12 +428,17 @@ static res::tokens getrs(int race, int building)
 		case Dwelving1: return res::TWNWDW_0;
 		case Dwelving2: return res::TWNWDW_1;
 		case Dwelving3: return res::TWNWDW_2;
-		case Dwelving4: return res::TWNWDW_3;
-		case Upgrade4: return res::TWNWUP_3;
+		case Dwelving4:
+			if(level == 2)
+				return res::TWNWUP_3;
+			return res::TWNWDW_3;
 		case Dwelving5: return res::TWNWDW_4;
-		case Dwelving6: return res::TWNWDW_5;
-		case Upgrade6: return res::TWNWUP_5;
-		case Upgrade62: return res::TWNWUP5B;
+		case Dwelving6:
+			if(level == 3)
+				return res::TWNWUP5B;
+			if(level == 2)
+				return res::TWNWUP_5;
+			return res::TWNWDW_5;
 		}
 	}
 	else if(race == Wizard)
@@ -457,13 +462,19 @@ static res::tokens getrs(int race, int building)
 		case MageGuild: return res::TWNZMAGE;
 		case Dwelving1: return res::TWNZDW_0;
 		case Dwelving2: return res::TWNZDW_1;
-		case Dwelving3: return res::TWNZDW_2;
-		case Upgrade3: return res::TWNZUP_2;
+		case Dwelving3:
+			if(level == 2)
+				return res::TWNZUP_2;
+			return res::TWNZDW_2;
 		case Dwelving4: return res::TWNZDW_3;
-		case Dwelving5: return res::TWNZDW_4;
-		case Upgrade5: return res::TWNZUP_4;
-		case Dwelving6: return res::TWNZDW_5;
-		case Upgrade6: return res::TWNZUP_5;
+		case Dwelving5:
+			if(level == 2)
+				return res::TWNZUP_4;
+			return res::TWNZDW_4;
+		case Dwelving6:
+			if(level == 2)
+				return res::TWNZUP_5;
+			return res::TWNZDW_5;
 		}
 	}
 	return res::Empthy;
@@ -477,43 +488,43 @@ static int* priority(int race)
 			// Barbarian
 			SpecialBuilding, Well2, Dwelving6, MageGuild, Captain, CastleInTown, LeftTurret, RightTurret, Moat,
 			Dwelving3, ThievesGuild, Tavern, Dwelving1, MarketPlace,
-			Dwelving2, Upgrade2, Dwelving4, Upgrade4,
-			Dwelving5, Upgrade5,
+			Dwelving2, Dwelving4,
+			Dwelving5,
 			Well, Statue, Shipyard, 0
 		},
 		{
 			// Knight
 			CastleInTown, SpecialBuilding, Well2, Captain, LeftTurret, RightTurret, Moat,
-			MarketPlace, Dwelving2, Upgrade2, ThievesGuild, Tavern, MageGuild,
-			Dwelving5, Upgrade5, Dwelving6, Upgrade6,
-			Dwelving1, Dwelving3, Upgrade3, Dwelving4, Upgrade4,
+			MarketPlace, Dwelving2, ThievesGuild, Tavern, MageGuild,
+			Dwelving5, Dwelving6,
+			Dwelving1, Dwelving3, Dwelving4,
 			Well, Statue, Shipyard, 0
 		},
 		{
 			// Necromancer
 			SpecialBuilding, Tavern, CastleInTown, Captain, LeftTurret, RightTurret, Dwelving6, Moat,
-			Dwelving1, ThievesGuild, Dwelving3, Upgrade3, Dwelving5, Upgrade5, Dwelving2, Upgrade2,
-			Dwelving4, Upgrade4, MageGuild, Shipyard, Well2, MarketPlace,
+			Dwelving1, ThievesGuild, Dwelving3, Dwelving5, Dwelving2,
+			Dwelving4, MageGuild, Shipyard, Well2, MarketPlace,
 			Statue, Well, 0
 		},
 		{
 			// Sorcerer
 			SpecialBuilding, Dwelving6, MageGuild, Captain, CastleInTown, LeftTurret, RightTurret, Moat,
-			Dwelving3, Upgrade3, Shipyard, MarketPlace, Dwelving2, Upgrade2,
-			ThievesGuild, Dwelving1, Tavern, Statue, Well2, Upgrade4, Dwelving4, Well, Dwelving5, 0
+			Dwelving3, Shipyard, MarketPlace, Dwelving2,
+			ThievesGuild, Dwelving1, Tavern, Statue, Well2, Dwelving4, Well, Dwelving5, 0
 		},
 		{
 			// Warlock
-			Dwelving5, Upgrade5, Dwelving3, CastleInTown, LeftTurret, RightTurret, Captain, Moat,
+			Dwelving5, Dwelving3, CastleInTown, LeftTurret, RightTurret, Captain, Moat,
 			Shipyard, MageGuild, Tavern, ThievesGuild, MarketPlace, Statue,
 			Dwelving1, Well2, SpecialBuilding,
-			Dwelving4, Upgrade4, Dwelving2, Dwelving6, Upgrade6, Upgrade62, Well, 0
+			Dwelving4, Dwelving2, Dwelving6, Well, 0
 		},
 		{
 			// Wizard
-			Dwelving6, Upgrade6, Tent, CastleInTown, LeftTurret, RightTurret, Moat, Captain,
+			Dwelving6, Tent, CastleInTown, LeftTurret, RightTurret, Moat, Captain,
 			Dwelving2, ThievesGuild, Tavern, Shipyard, Well, SpecialBuilding,
-			Dwelving3, Upgrade3, Dwelving5, Upgrade5, MageGuild, Statue,
+			Dwelving3, Dwelving5, MageGuild, Statue,
 			Dwelving1, Dwelving4, MarketPlace, Well2, 0
 		},
 	};
@@ -584,7 +595,7 @@ static void panorama(int x, int y, int mid)
 		int level = bsget(mid, building);
 		if(!level)
 			continue;
-		res::tokens icn = getrs(race, building);
+		res::tokens icn = getrs(race, building, level);
 		if(icn == res::Empthy)
 			continue;
 		int index = 0;
@@ -609,9 +620,9 @@ static void panorama(int x, int y, int mid)
 		draw::image(x, y, icn, index, 0);
 		if(hot::mouse.in(getrect(race, (building == Tent) ? CastleInTown : building)))
 		{
-			if(building >= Dwelving1 && building <= Upgrade62)
+			if(building >= Dwelving1 && building <= Dwelving6)
 				draw::status(szt("Recruit %1", "Нанять %1"),
-					bsgets(game::getunit(race, building), NameMulti));
+					bsgets(game::getunit(race, building, bsget(mid, building)), NameMulti));
 			else
 				draw::status(game::getbuildingname(race, building, level));
 			if(hot::key == MouseLeft && hot::pressed)
@@ -680,7 +691,7 @@ void show::castle(int rec)
 		case Dwelving4:
 		case Dwelving5:
 		case Dwelving6:
-			unit = game::getunit(bsget(rec, Type), id);
+			unit = game::getunit(bsget(rec, Type), id, bsget(rec, id));
 			if(unit)
 			{
 				auto count = 0;

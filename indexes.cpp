@@ -1,21 +1,32 @@
 #include "main.h"
 
-int indexes::buildings(int building, int level = 0)
+int indexes::buildings(int building, int level)
 {
 	switch(building)
 	{
 	case Dwelving1:	return 19;
-	case Dwelving2: return 20;
-	case Dwelving3: return 21;
-	case Dwelving4: return 22;
-	case Dwelving5: return 23;
-	case Dwelving6: return 24;
-	case Upgrade2: return 25;
-	case Upgrade3: return 26;
-	case Upgrade4: return 27;
-	case Upgrade5: return 28;
-	case Upgrade6: return 29;
-	case Upgrade62: return 30;
+	case Dwelving2:
+		if(level==2)
+			return 25;
+		return 20;
+	case Dwelving3:
+		if(level == 2)
+			return 26;
+		return 21;
+	case Dwelving4:
+		if(level == 2)
+			return 27;
+		return 22;
+	case Dwelving5:
+		if(level == 2)
+			return 28;
+		return 23;
+	case Dwelving6:
+		if(level == 3)
+			return 30;
+		if(level == 2)
+			return 29;
+		return 24;
 	case MageGuild: return 0;
 	case ThievesGuild:return 1;
 	case Tavern: return 2;

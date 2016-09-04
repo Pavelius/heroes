@@ -824,7 +824,7 @@ static void game_endweek()
 {
 	int m_base = bsget(week_of, Base);
 	int m_type = bsget(m_base, Type);
-	int m_dwll = bsget(m_base, Dwelve);
+	//int m_dwll = bsget(m_base, Dwelve);
 	for(int rec = FirstCastle; rec <= (int)LastCastle; rec++)
 	{
 		for(int i = Dwelving1; i <= Dwelving6; i++)
@@ -834,8 +834,8 @@ static void game_endweek()
 			bsadd(rec, i - Dwelving1 + FirstCreatureCount, game::getgrowth(rec, i));
 		}
 		// Week monster growth fast
-		if(m_type == bsget(rec, Type) && bsget(rec, m_dwll))
-			bsadd(rec, FirstRecruit + m_dwll - Dwelving1, 5);
+		//if(m_type == bsget(rec, Type) && bsget(rec, m_dwll))
+		//	bsadd(rec, FirstRecruit + m_dwll - Dwelving1, 5);
 	}
 }
 

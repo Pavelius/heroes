@@ -437,11 +437,11 @@ static void load_object(mp2::castle* p, int rec)
 		if(0x0040 & dwell) bsset(rec, Dwelving4, 1);
 		if(0x0080 & dwell) bsset(rec, Dwelving5, 1);
 		if(0x0100 & dwell) bsset(rec, Dwelving6, 1);
-		if(0x0200 & dwell) bsset(rec, Upgrade2, 1);
-		if(0x0400 & dwell) bsset(rec, Upgrade3, 1);
-		if(0x0800 & dwell) bsset(rec, Upgrade4, 1);
-		if(0x1000 & dwell) bsset(rec, Upgrade5, 1);
-		if(0x2000 & dwell) bsset(rec, Upgrade6, 1);
+		if(0x0200 & dwell) bsset(rec, Dwelving2, 2);
+		if(0x0400 & dwell) bsset(rec, Dwelving3, 2);
+		if(0x0800 & dwell) bsset(rec, Dwelving4, 2);
+		if(0x1000 & dwell) bsset(rec, Dwelving5, 2);
+		if(0x2000 & dwell) bsset(rec, Dwelving6, 2);
 		// magic tower
 		bsset(rec, MageGuild, p->magic_tower);
 	}

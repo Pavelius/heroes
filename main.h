@@ -54,7 +54,7 @@ enum tokens
 	AnimationType,
 	DefendThisTurn, Squad, Experience,
 	MovePoints, MovePointsMax, MovePointsSea, MovePointsLand, Moveable, Quality, LackResource,
-	Dwelve, ArtifactCount, Code,
+	ArtifactCount, Code,
 	AttackerWin, DefenderWin, AlreadyMoved, AlreadyDefended,
 	// Map size
 	SmallSize, MediumSize, LargeSize, XLargeSize,
@@ -184,7 +184,6 @@ enum tokens
 	LeftTurret, RightTurret, Moat,
 	MarketPlace, Captain, Well2, SpecialBuilding,
 	Dwelving1, Dwelving2, Dwelving3, Dwelving4, Dwelving5, Dwelving6,
-	Upgrade2, Upgrade3, Upgrade4, Upgrade5, Upgrade6, Upgrade62,
 	MageGuild, Tent,
 	FirstBuilding = CastleInTown, LastBuilding = Tent,
 	DisableCastleUpgrade,
@@ -997,7 +996,7 @@ namespace game
 	int						getspeed(int value);
 	int						getsummary(int rec, int id, int side);
 	int						gettarget(int rec);
-	int						getunit(int race, int building);
+	int						getunit(int race, int building, int level);
 	int						getweek();
 	bool					hasspellbook(int rec);
 	void					initialize();
@@ -1008,7 +1007,7 @@ namespace game
 	bool					ishostile(int rec);
 	bool					ismatch(const int* c1, const int* c2);
 	bool					ispenalized(int rec);
-	bool					isrequipment(int race, int building, int req, int level);
+	bool					isrequipment(int race, int building, int level, int req, int req_level);
 	bool					isstealth(int rec);
 	bool					iswide(int rec);
 	bool					ismeleearcher(int rec);
