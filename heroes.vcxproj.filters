@@ -31,7 +31,6 @@
     <ClCompile Include="combat_effect.cpp" />
     <ClCompile Include="combat_route.cpp" />
     <ClCompile Include="combat_spells.cpp" />
-    <ClCompile Include="hightscore.cpp" />
     <ClCompile Include="indexes.cpp" />
     <ClCompile Include="map_moveable.cpp" />
     <ClCompile Include="map_objects.cpp" />
@@ -66,5 +65,6 @@
     <ClCompile Include="castle.cpp" />
     <ClCompile Include="show_castle_build.cpp" />
     <ClCompile Include="show_spellbook.cpp" />
+    <ClCompile Include="show_hightscore.cpp" />
   </ItemGroup>
 </Project>

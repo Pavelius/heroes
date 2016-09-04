@@ -57,7 +57,7 @@
     <ClCompile Include="game.cpp" />
     <ClCompile Include="game_file.cpp" />
     <ClCompile Include="hero.cpp" />
-    <ClCompile Include="hightscore.cpp" />
+    <ClCompile Include="show_hightscore.cpp" />
     <ClCompile Include="indexes.cpp" />
     <ClCompile Include="io.cpp" />
     <ClCompile Include="list.cpp" />
