@@ -10,6 +10,7 @@ static struct castle
 	tokens				type;
 	int					index;
 	char				name[14];
+	unsigned char		moved;
 	unsigned char		dwellings[LastBuilding - FirstBuilding + 1];
 	unsigned char		spells[LastSpell - FirstSpell + 1];
 	unsigned short		army[LastTroopsIndex - FirstArtifactIndex + 1];
@@ -21,6 +22,7 @@ static bsmeta::field fields[] = {
 	BSINT(castle, dwellings, FirstBuilding, Number),
 	BSINT(castle, army, FirstTroopsIndex, Number),
 	BSINT(castle, spells, FirstSpell, Number),
+	BSREQ(castle, moved, AlreadyMoved, Number),
 	BSREQ(castle, name, Name, Text),
 	{0}
 };

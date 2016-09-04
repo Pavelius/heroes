@@ -860,7 +860,7 @@ static void game_endturn()
 	for(int rec = FirstCastle; rec <= LastCastle; rec++)
 	{
 		// Update build flags
-		bsset(rec, BuildThisTurn, 0);
+		bsset(rec, AlreadyMoved, 0);
 		// Get income for all player exept neutral
 		int p = bsget(rec, Player);
 		if(p)

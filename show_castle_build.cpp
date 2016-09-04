@@ -21,38 +21,42 @@ static bool meet_requipment(int rec, int building)
 	return true;
 }
 
-static void building(int x, int y, int building, int rec)
+static void house(int x, int y, int w, int h, int building, int rec, bool blank)
 {
 	auto race = bsget(rec, Type);
 	auto player = bsget(rec, Player);
 	auto level = bsget(rec, building);
 	auto c1 = game::getcost(race, building);
 	auto c2 = (int*)bsptr(player, FirstResource);
-	auto ab = bsget(rec, BuildThisTurn);
+	auto ab = bsget(rec, AlreadyMoved);
 	bool hilite = draw::area(x, y, x + 132, y + 64);
 	const char* name = game::getbuildingname(race, building, level);
-	draw::image(x + 1, y + 1, res::buildings(race), indexes::buildings(building, 0));
+	if(blank)
+		draw::image(x + 1, y + 1, res::buildings(race), indexes::buildings(building, 0));
 	if(hilite && hot::key == MouseRight && hot::pressed)
 		draw::execute(Information, building, race);
 	if(level >= 1)
 	{
-		draw::image(x + 115, y + 40, res::TOWNWIND, 11);
+		draw::image(x + w, y + h, res::TOWNWIND, 11);
 		if(hilite)
 			draw::status(szt("%1 is already build", "%1 уже построено"), name);
 	}
 	else if(ab)
 	{
-		draw::image(x + 115, y + 40, res::TOWNWIND, 12);
-		draw::image(x, y + 58, res::CASLXTRA, 2);
+		draw::image(x + w, y + h, res::TOWNWIND, 12);
+		if(blank)
+			draw::image(x, y + h + 18, res::CASLXTRA, 2);
 	}
 	else if(!meet_requipment(rec, building))
 	{
-		draw::image(x + 115, y + 40, res::TOWNWIND, 12);
-		draw::image(x, y + 58, res::CASLXTRA, 2);
+		draw::image(x + w, y + h, res::TOWNWIND, 12);
+		if(blank)
+			draw::image(x, y + h + 18, res::CASLXTRA, 2);
 	}
 	else if(game::ismatch(c2, c1))
 	{
-		draw::image(x, y + 58, res::CASLXTRA, 1);
+		if(blank)
+			draw::image(x, y + h + 18, res::CASLXTRA, 1);
 		if(hilite)
 		{
 			draw::status(szt("Build %1", "Построить %1"), name);
@@ -63,8 +67,9 @@ static void building(int x, int y, int building, int rec)
 	else
 	{
 		// lack resurces
-		draw::image(x + 115, y + 40, res::TOWNWIND, 13);
-		draw::image(x, y + 58, res::CASLXTRA, 2);
+		draw::image(x + w, y + h, res::TOWNWIND, 13);
+		if(blank)
+			draw::image(x, y + h + 18, res::CASLXTRA, 2);
 		if(hilite)
 		{
 			char temp[260];
@@ -82,9 +87,17 @@ static void building(int x, int y, int building, int rec)
 			draw::status(temp);
 		}
 	}
-	draw::state push;
-	draw::font = res::SMALFONT;
-	draw::text(x + (132 - draw::textw(name)) / 2, y + 61, name);
+	if(blank)
+	{
+		draw::state push;
+		draw::font = res::SMALFONT;
+		draw::text(x + (132 - draw::textw(name)) / 2, y + h + 21, name);
+	}
+}
+
+static void building(int x, int y, int building, int rec)
+{
+	house(x, y, 115, 40, building, rec, true);
 }
 
 static bool hire_hero(int rec, int player, const int* e)
@@ -131,8 +144,11 @@ static tokens race2captain(tokens race)
 	}
 }
 
-static void captain(int x, int y, tokens race, bool present)
+static void captain(int x, int y, int rec)
 {
+	auto race = (tokens)bsget(rec, Type);
+	auto present = bsget(rec, Captain) != 0;
+	auto already_moved = bsget(rec, AlreadyMoved)!=0;
 	res::tokens icn = captainicn(race);
 	int sx = res::width(icn, 0);
 	int sy = res::height(icn, 0);
@@ -156,13 +172,8 @@ static void captain(int x, int y, tokens race, bool present)
 		}
 	}
 	draw::image(x, y, icn, present ? 1 : 0);
-	if(hot::mouse.x >= x && hot::mouse.y >= y && hot::mouse.x < x + sx && hot::mouse.y < y + sy)
-	{
-		if(!present)
-			draw::status(szt("Build captain quarter", "Построить коморку капитана"));
-		if(hot::key == MouseLeft && hot::pressed)
-			draw::execute(Captain);
-	}
+	if(!present)
+		house(x, y, 62, 58, Captain, rec, false);
 }
 
 static void heroport(int x, int y, int rec)
@@ -188,6 +199,7 @@ void show::build(int mid)
 	char temp[260];
 	while(true)
 	{
+		bool already_moved = bsget(mid, AlreadyMoved) != 0;
 		draw::status(21, draw::height - 16, 21 + res::width(res::SMALLBAR, 0), draw::height - 1);
 		draw::image(0, 0, res::CASLWIND, 0);
 		// hide captain options
@@ -214,7 +226,7 @@ void show::build(int mid)
 		building(5, 387, LeftTurret, mid);
 		building(149, 387, RightTurret, mid);
 		building(293, 387, Moat, mid);
-		captain(444, 165, race, bsget(mid, Captain) != 0);
+		captain(444, 165, mid);
 		//
 		heroport(443 + 50, 260, h1);
 		heroport(443 + 50, 362, h2);
@@ -234,6 +246,21 @@ void show::build(int mid)
 			{
 				auto e2 = game::getcost(race, hot::param);
 				game::getbuilding(temp, race, hot::param);
+				char* p = zend(temp);
+				for(int i = ThievesGuild; i <= (int)Dwelving6; i++)
+				{
+					if(!game::isrequipment(race, hot::param, i, 0))
+						continue;
+					if(bsget(mid, i))
+						continue;
+					if(!p[0])
+						szprint(p, "\n%1: ", szt("Need", "Требует"));
+					else
+						zcat(p, ", ");
+					zcat(p, game::getbuildingname(race, i, 0));
+				}
+				if(p[0])
+					zcat(p, ".");
 				game::getcosttext(zend(temp), e2);
 				show::tips(temp);
 			}
@@ -251,7 +278,7 @@ void show::build(int mid)
 					int p = bsget(mid, Player);
 					auto e1 = (int*)bsptr(p, FirstResource);
 					game::addresources(e1, e1, e2, true);
-					bsset(mid, BuildThisTurn, 1);
+					bsadd(mid, AlreadyMoved, 1);
 					bsset(mid, id, 1);
 					return;
 				}

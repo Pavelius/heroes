@@ -218,6 +218,7 @@ int draw::textf(int x, int y, int width, const char* p)
 	picture params[16];
 	int y4 = y;
 	p = zskipspcr(p);
+	auto start = p;
 	while(*p)
 	{
 		if(p[0] == '$' && p[1] == '(')
@@ -247,7 +248,10 @@ int draw::textf(int x, int y, int width, const char* p)
 			int c = draw::textbc(p, width);
 			draw::text(x, y, width, draw::Center, p, c);
 			y += draw::texth();
-			p = zskipspcr(p + c);
+			p += c;
+			if(p>start && p[-1] == '\n')
+				y += 6;
+			p = zskipspcr(p);
 		}
 	}
 	return y - y4;

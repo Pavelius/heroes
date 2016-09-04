@@ -48,7 +48,7 @@ enum tokens
 	Move, Fly, MagicImmunity, ElementsImmunity, Undead, Dragon, AllAttackAnswer, TwiceAttack,
 	TargetUnit, TargetIndex,
 	Upgrade, Downgrade,
-	OneTime, BuildThisTurn,
+	OneTime,
 	Difficulty, PlayerCount,
 	ShipMaster, Direction, Player, PlayerType,
 	AnimationType,

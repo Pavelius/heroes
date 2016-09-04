@@ -69,7 +69,7 @@ static struct castles_list : public list
 				break;
 			}
 			draw::image(x - 1, y, icn, index_sprite);
-			if(bsget(rec, BuildThisTurn))
+			if(bsget(rec, AlreadyMoved))
 				draw::image(x - 1, y + 1, icn, 24);
 		}
 		else
