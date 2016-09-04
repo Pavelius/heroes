@@ -652,7 +652,7 @@ static void name()
 
 void show::castle(int rec)
 {
-	int count;
+	int count, max_count;
 	int army_index = -1;
 	int player = bsget(rec, Player);
 	while(true)
@@ -679,11 +679,13 @@ void show::castle(int rec)
 		case Dwelving3:
 		case Dwelving4:
 		case Dwelving5:
+		case Dwelving6:
 			id = game::getunit(bsget(rec, Type), id);
-			count = 0;
 			if(!id)
 				break;
-			if(show::recruit(id, count, 10))
+			count = 0;
+			max_count = bsget(rec, FirstCreatureCount + (id - Dwelving1)) + 4;
+			if(show::recruit(id, count, max_count))
 			{
 			}
 			break;

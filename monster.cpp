@@ -107,7 +107,7 @@ static bsmeta::field fields[] = {
 	BSREQ(monster, shoots, Shoots, Number),
 	BSREQ(monster, speed, Speed, Number),
 	BSREQ(monster, level, Level, Number),
-	BSINT(monster, cost, Gold, Number),
+	BSINT(monster, cost, FirstResource, Number),
 };
 BSMETA(monster, "Monsters", "Монстры", FirstMonster);
 

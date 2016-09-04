@@ -508,8 +508,7 @@ void printc(const char* format, ...)
 
 char* szprint(char* result, const char* src, ...)
 {
-	result = szprintv(result, src, xva_start(src));
-	return result;
+	return szprintv(result, src, xva_start(src));
 }
 
 const char* szline(const char* p, int number)

@@ -55,8 +55,8 @@ int draw::clipart(int x, int y, int id, int param, int param2)
 	{
 		h = 72;
 		w = 137;
-		image(x - w/2, y, res::BLDGXTRA, 0);
-		image(x - w/2 + 1, y + 1, res::buildings(param), indexes::buildings(id, 0));
+		image(x - w / 2, y, res::BLDGXTRA, 0);
+		image(x - w / 2 + 1, y + 1, res::buildings(param), indexes::buildings(id, 0));
 		const char* name = game::getbuildingname(param, id, 0);
 		if(name)
 		{
@@ -166,7 +166,7 @@ void draw::resource(int x, int y, const void* cost_ptr)
 	rectf(x, y, x + 81, y + 191, 0x20);
 	x += 20;
 	for(auto& a : elements)
-		clipart(x + a.pos.x, y + a.pos.y, a.id, cost[a.id-FirstResource], 0);
+		clipart(x + a.pos.x, y + a.pos.y, a.id, cost[a.id - FirstResource], 0);
 }
 
 bool dlgask(const char* title, const char* text)
@@ -273,12 +273,21 @@ void draw::tiles(int x, int y, res::tokens icn, int* rec, int w, int h)
 	}
 }
 
-void draw::debug()
+void draw::debug(int ox, int oy)
 {
+	static point pos;
 	char temp[64];
 	draw::state push;
 	draw::font = res::SMALFONT;
-	szprint(temp, "Mouse %1i, %2i", hot::mouse.x, hot::mouse.y);
+	if(hot::key == MouseLeft && hot::pressed)
+		pos = hot::mouse;
+	if(hot::pressed)
+	{
+		szprint(temp, "Rect pos(%1i, %2i), size (%3i, %4i)", pos.x - ox, pos.y - oy, hot::mouse.x - pos.x, hot::mouse.y - pos.y);
+		draw::rectb(pos.x, pos.y, hot::mouse.x, hot::mouse.y, 10);
+	}
+	else
+		szprint(temp, "Mouse %1i, %2i", hot::mouse.x - ox, hot::mouse.y - oy);
 	text(10, 10, temp);
 }
 

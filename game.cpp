@@ -956,15 +956,23 @@ void game::addresources(int* result, const int* e1, const int* e2, bool negative
 	}
 }
 
+void game::mulresource(int* result, const void* source_void, int value)
+{
+	int* source = (int*)source_void;
+	for(int i = 0; i <= (LastResource - FirstResource); i++)
+		result[i] = source[i] * value;
+}
+
 const int* game::gethirecost(int rec)
 {
 	static int cost[LastResource - FirstResource + 1] = {2500};
 	return cost;
 }
 
-char* game::getcosttext(char* result, const int* cost)
+char* game::getcosttext(char* result, const void* cost_void)
 {
 	char* p = result;
+	auto cost = (int*)cost_void;
 	p[0] = 0;
 	for(int id = FirstResource; id <= LastResource; id++)
 	{

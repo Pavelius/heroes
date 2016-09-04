@@ -225,6 +225,7 @@ enum tokens
 	FirstObject = WaterChest, LastObject = WaterAltar,
 	LastAction = LastObject,
 	// Custom tokens
+	FirstCreatureCount, LastCreatureCount = FirstCreatureCount + 6,
 	FirstCastle, LastCastle = FirstCastle + 128,
 	FirstEvent, LastEvent = FirstEvent + 128,
 	FirstSign, LastSign = FirstSign + 128,
@@ -588,20 +589,18 @@ namespace draw
 	bool					area(int x1, int y1, int x2, int y2);
 	void					button(int x, int y, res::tokens icn, int id, int normal, int hilite, int pressed, int key = 0, unsigned flags = 0, const char* tips = 0);
 	void					castle(int x, int y, int tile, int race, bool town);
-	void					captain(int x, int y, int race, bool present);
 	int						clipart(int x, int y, int id, int param, int param2 = 0);
 	extern rect				clipping;
 	extern unsigned			counter; // increse every 100 milliseconds
 	bool					create(const char* title, unsigned milliseconds, bool fullscreen);
 	void					cursor(res::tokens res, int id, int ox = 0, int oy = 0);
 	int						dialog(int height);
-	void					debug();
+	void					debug(int ox = 0, int oy = 0);
 	void					definput(int id);
 	void					edit(int x, int y, char* value, int maximum = 260);
 	void					edit(int x, int y, int& value, int maximum, int minimum = 0);
 	void					execute(int id, int param = 0, int param2 = 0);
 	extern res::tokens		font;
-	void					building(int x, int y, int building, int race);
 	void					hexagon(int x, int y, unsigned char color);
 	void					hexagonf(int x, int y, unsigned char alpha);
 	void					image(int x, int y, res::tokens res, unsigned id, unsigned flags = 0, unsigned char* change = 0);
@@ -616,7 +615,6 @@ namespace draw
 	void					rectb(int x1, int y1, int x2, int y2, unsigned char color);
 	void					rectf(int x1, int y1, int x2, int y2, unsigned char color);
 	void					resource(int x, int y, const void* cost_ptr);
-	void					resource(int x, int y, int ty, int id, int value);
 	void					route(int x, int y, int* rec, int w, int h, int distance);
 	void					shadow(int x1, int y1, int x2, int y2, int intense);
 	void					status(const char* format, ...);
@@ -981,7 +979,7 @@ namespace game
 	int						get(int rec, int id);
 	int						getartifact(int rec, int id);
 	const int*				getcost(int race, int building);
-	char*					getcosttext(char* result, const int* cost);
+	char*					getcosttext(char* result, const void* cost);
 	int						getday();
 	int						getframe(int rec);
 	int						getgrowth(int rec, int dwelling);
@@ -1012,6 +1010,7 @@ namespace game
 	bool					isstealth(int rec);
 	bool					iswide(int rec);
 	bool					ismeleearcher(int rec);
+	void					mulresource(int* result, const void* source, int value);
 	int						play(gamefile& game);
 	void					prepare();
 	int						turn();

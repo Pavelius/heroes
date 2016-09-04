@@ -168,6 +168,7 @@ void show::unit(int rec, int side)
 
 bool show::recruit(int rec, int& count, int maximum)
 {
+	char temp[260];
 	draw::screenshoot surface;
 	res::tokens back = res::RECRBKG;
 	int w1 = res::width(back, 0);
@@ -175,6 +176,7 @@ bool show::recruit(int rec, int& count, int maximum)
 	int x = (draw::width - w1) / 2 - 8;
 	int y = (draw::height - h1) / 2 - 16;
 	int mt = rec;
+	int total[LastResource - FirstResource + 1];
 	while(true)
 	{
 		surface.restore();
@@ -183,8 +185,16 @@ bool show::recruit(int rec, int& count, int maximum)
 		int x1 = x + 16;
 		int y1 = y;
 		// name
-		const char* name = bsgets(rec, Name);
-		draw::text(x1 + 180 - draw::textw(name), y1 + 30, name);
+		draw::text(x1 + 23, y1 + 30, 273, draw::Center, bsgets(rec, Name));
+		if(true)
+		{
+			draw::state push;
+			draw::font = res::SMALFONT;
+			// available
+			draw::text(x1 + 32, y1 + 144, 90, draw::Center, szprint(temp, "%1: %2i", szt("Available", "Достпуно"), maximum));
+			// recruit
+			draw::text(x1 + 32, y1 + 164, 90, draw::Left, szt("Number to buy:", "Нанять количество:"));
+		}
 		// count
 		draw::edit(x1 + 168, y1 + 163, count, maximum);
 		res::tokens icn = res::tokens(res::MONH0000 + mt - FirstMonster);
@@ -196,6 +206,13 @@ bool show::recruit(int rec, int& count, int maximum)
 			if(hot::key == MouseRight && hot::pressed)
 				draw::execute(Information);
 		}
+		// Price
+		auto cost = bsptr(mt, FirstResource);
+		draw::textf(x1 + 142, y1 + 72, 130, game::getcosttext(temp, cost));
+		// total
+		game::mulresource(total, cost, count);
+		draw::textf(x1 + 33, y1 + 190, 250, game::getcosttext(temp, total));
+		//
 		draw::button(x1 + 34, y1 + 249, res::RECRUIT, Accept, 8, 8, 9, KeyEnter);
 		draw::button(x1 + 187, y1 + 249, res::RECRUIT, Cancel, 6, 6, 7, KeyEscape);
 		draw::button(x1 + 230, y1 + 155, res::RECRUIT, Maximus, 4, 4, 5, Alpha + 'M');
