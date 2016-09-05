@@ -20,7 +20,7 @@ static buildings_stats data[] =
 	{RightTurret, 0, 1, {1500, 0, 0, 5, 0, 0, 0}},
 	{MarketPlace, 0, 1, {500, 5, 0, 0, 0, 0, 0}},
 	{Moat, 0, 1, {750, 0, 0, 0, 0, 0, 0}},
-	{CastleInTown, 0, 1, {5000, 20, 0, 20, 0, 0, 0}},
+	{Castle, 0, 1, {5000, 20, 0, 20, 0, 0, 0}},
 	{Captain, 0, 1, {500, 0, 0, 0, 0, 0, 0}},
 	{MageGuild, 0, 1, {2000, 5, 0, 5, 0, 0, 0}},
 	//
@@ -377,8 +377,8 @@ const char* game::getbuildingname(int race, int building, int level)
 		{"Red Tower", "Красная башня"},
 		{"Black Tower", "Черная башня"},
 	};
-	if(building >= CastleInTown && building <= Captain)
-		return buildings[building - CastleInTown][locale];
+	if(building >= Castle && building <= Captain)
+		return buildings[building - Castle][locale];
 	if(building >= Dwelving1 && building <= Dwelving6)
 	{
 		if(level<=1)
@@ -415,8 +415,8 @@ const char* game::getbuildinginfo(int type, int building, int level)
 	};
 	const char* mageguild[2] = {"The Mage Guild allows heroes to learn spells and replenish their spell points.", ""};
 	const char* dwelwings[2] = {"Allow to recruit %1.", "Позволяет нанимать %1."};
-	if(building >= CastleInTown && building <= Captain)
-		return buildings[building - CastleInTown][locale];
+	if(building >= Castle && building <= Captain)
+		return buildings[building - Castle][locale];
 	if(building == MageGuild)
 		return mageguild[locale];
 	if(building >= Dwelving1 && building <= Dwelving6)

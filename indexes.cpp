@@ -33,7 +33,7 @@ int indexes::buildings(int building, int level)
 	case Tavern: return 2;
 	case Shipyard: return 3;
 	case Well: return 4;
-	case CastleInTown: return 6;
+	case Castle: return 6;
 	case Statue: return 7;
 	case LeftTurret: return 8;
 	case RightTurret: return 9;

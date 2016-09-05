@@ -458,7 +458,7 @@ int bsfind(int rec, int id, int value)
 	switch(f->size)
 	{
 	case sizeof(int) :
-		while(p1 < p2)
+		while(p1 <= p2)
 		{
 			if((*(int*)p1) == value)
 				return e1.metadata->from + ((p1 - b1) / size);
@@ -466,7 +466,7 @@ int bsfind(int rec, int id, int value)
 		}
 					 break;
 	case sizeof(char) :
-		while(p1 < p2)
+		while(p1 <= p2)
 		{
 			if((*p1) == value)
 				return e1.metadata->from + ((p1 - b1) / size);
@@ -474,7 +474,7 @@ int bsfind(int rec, int id, int value)
 		}
 					  break;
 	case sizeof(short) :
-		while(p1 < p2)
+		while(p1 <= p2)
 		{
 			if((*(short*)p1) == value)
 				return e1.metadata->from + ((p1 - b1) / size);

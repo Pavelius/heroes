@@ -71,10 +71,12 @@ int draw::clipart(int x, int y, int id, int param, int param2, bool border)
 			draw::font = res::SMALFONT;
 			text(x + w / 2 - 4 - draw::textw(temp), y + h - draw::texth(), temp);
 		}
+		if(border)
+			rectb(x - w / 2, y, x + w / 2 + 2, y + h, 0x0C);
 		if(draw::area(x - w / 2, y, x + w / 2, y + h))
 		{
 			if(hot::key == MouseRight && hot::pressed)
-				draw::execute(Information, id);
+				execute(Information, id);
 		}
 	}
 	else if(id >= FirstSkill && id <= LastSkill)
@@ -178,13 +180,17 @@ bool dlgask(const char* title, const char* text)
 		draw::button(x + 16, y1, ic1, 1, 5, 5, 6, KeyEnter);
 		draw::button(x + tw - 16 - res::width(ic1, 7), y1, ic1, 2, 7, 7, 8, KeyEscape);
 		draw::cursor(res::ADVMCO, 0);
-		switch(draw::input())
+		int id = draw::input();
+		switch(id)
 		{
 		case 0:
 		case 2:
 			return false;
 		case 1:
 			return true;
+		default:
+			draw::definput(id);
+			break;
 		}
 	}
 }
@@ -282,6 +288,7 @@ void draw::debug(int ox, int oy)
 	text(10, 10, temp);
 }
 
+static int hot_troops_index;
 static int hot_troops_owner;
 
 void draw::definput(int id)
@@ -292,40 +299,57 @@ void draw::definput(int id)
 		if(hot::param >= FirstBuilding && hot::param <= LastBuilding)
 			show::tips(game::getbuildinginfo(hot::param2, hot::param, hot::level));
 		if(hot::param >= FirstMonster && hot::param <= LastMonster)
-			show::unit(hot::param, hot::param2);
+			show::unit(hot::param, hot::param2, 0, 0);
 	}
 	else if(id >= FirstTroopsIndex && id <= LastTroopsIndex)
 	{
-		if(!current::focus)
+		if(hot::param2)
 		{
-			current::focus = id;
-			current::param = hot::param;
+			int count = bsget(hot::param, id + 1);
+			show::unit(bsget(hot::param, id), hot::param, count, id);
+			hot_troops_index = 0;
 		}
-		else if(current::focus == id && current::param == hot::param)
+		else if(!hot_troops_index)
 		{
-			show::unit(bsget(hot::param, id), hot::param);
-			current::focus = 0;
+			if(bsget(hot::param, id))
+			{
+				hot_troops_index = id;
+				hot_troops_owner = hot::param;
+			}
 		}
+		else if(hot_troops_index == id && hot_troops_owner == hot::param)
+			hot_troops_index = 0;
 		else
 		{
 			int dest = id;
 			int dest_rec = hot::param;
-			int source = current::focus;
-			int source_rec = current::param;
+			int source = hot_troops_index;
+			int source_rec = hot_troops_owner;
 			int v11 = bsget(dest_rec, dest);
 			int v12 = bsget(dest_rec, dest + 1);
 			int v21 = bsget(source_rec, source);
 			int v22 = bsget(source_rec, source + 1);
-			bsset(source_rec, source, v11);
-			bsset(source_rec, source + 1, v12);
-			bsset(dest_rec, dest, v21);
-			bsset(dest_rec, dest + 1, v22);
-			current::focus = 0;
+			if(v11 == v21)
+			{
+				// Add total if same type
+				bsset(source_rec, source, 0);
+				bsset(source_rec, source + 1, 0);
+				bsset(dest_rec, dest, v21);
+				bsset(dest_rec, dest + 1, v12 + v22);
+			}
+			else
+			{
+				bsset(source_rec, source, v11);
+				bsset(source_rec, source + 1, v12);
+				bsset(dest_rec, dest, v21);
+				bsset(dest_rec, dest + 1, v22);
+			}
+			hot_troops_index = 0;
 		}
 	}
 }
 
-void draw::troops(int x, int y, int rec, int index)
+void draw::troops(int x, int y, int rec)
 {
 	int w = res::width(res::STRIP, 2);
 	int h = res::width(res::STRIP, 2);
@@ -337,15 +361,16 @@ void draw::troops(int x, int y, int rec, int index)
 			image(x, y, res::STRIP, 2);
 		else
 			clipart(x + 40, y, unit, count);
-		if(i == index && hot_troops_owner == rec)
+		if(i == hot_troops_index && hot_troops_owner == rec)
 			image(x, y, res::STRIP, 1);
 		if(area(x, y, x + w, y + h))
 		{
-			if((hot::key == MouseLeft && hot::pressed) || (hot::key == MouseLeftDBL))
-			{
-				hot_troops_owner = rec;
+			if(hot::key == MouseRight && hot::pressed)
+				execute(Information, bsget(rec, i), rec);
+			else if(hot::key == MouseLeft && hot::pressed)
 				execute(i, rec);
-			}
+			else if(hot::key == MouseLeftDBL)
+				execute(i, rec, i);
 			if(unit)
 				status("%1i %2", count, bsgets(unit, NameMulti));
 		}

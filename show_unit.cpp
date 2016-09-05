@@ -13,7 +13,7 @@ static int field(int x, int y, int id, int rec, int side, const char* name)
 	int mt = rec;
 	if(mt >= FirstCombatant)
 		mt = bsget(mt, Type);
-	if(id == HitPoints || id==HitPointsMax || id==Shoots)
+	if(id == HitPoints || id == HitPointsMax || id == Shoots)
 	{
 		int dm1 = game::get(rec, id);
 		szprint(temp, "%1i", dm1);
@@ -112,10 +112,11 @@ static void effects(int x, int y, int rec)
 	}
 }
 
-void show::unit(int rec, int side)
+void show::unit(int rec, int side, int count, int index)
 {
 	if(!rec)
 		return;
+	char temp[260];
 	draw::screenshoot surface;
 	res::tokens back = draw::isevil(res::VIEWARME, res::VIEWARMY);
 	int w1 = res::width(back, 0);
@@ -125,7 +126,7 @@ void show::unit(int rec, int side)
 	int mt = rec;
 	if(mt >= FirstCombatant && mt <= LastCombatant)
 		mt = bsget(mt, Type);
-	animation mon(tokens(mt), Move);
+	animation mon(tokens(mt), ActorWarn);
 	while(true)
 	{
 		surface.restore();
@@ -140,15 +141,20 @@ void show::unit(int rec, int side)
 		draw::text(x1 + 140 - draw::textw(p) / 2, y1 + 40, p);
 		// avatar
 		res::tokens icn = res::tokens(res::MONH0000 + mt - FirstMonster);
-		draw::image(x1 + 150 - res::width(icn, 0) / 2,
-			y1 + 140 - res::height(icn, 0) / 2,
-			icn, 0, AFNoOffset);
-		// count
-		if(bsget(rec, Count))
+		mon.painting({(short)(x1 + 146 - (game::iswide(mt) ? cell_wd / 2 : 0)), (short)(y1 + 170)});
+		if(count)
 		{
 			char temp[32];
-			sznum(temp, bsget(rec, Count));
+			sznum(temp, count);
 			draw::text(x1 + 140 - draw::textw(temp) / 2, y1 + 227, temp);
+		}
+		if(index)
+		{
+			if(game::canupgrade(mt, side))
+				draw::button(x + 435, y + 192, back, Upgrade, 5, 5, 6);
+			draw::button(x + 310, y + 221, back, Dismiss, 1, 1, 2);
+			draw::button(x + 435, y + 221, back, Cancel, 3, 3, 4);
+			draw::cursor(res::ADVMCO, 0);
 		}
 		int id = draw::input();
 		switch(id)
@@ -160,8 +166,29 @@ void show::unit(int rec, int side)
 			return;
 		case MouseLeft:
 		case MouseRight:
-			hot::clear();
-			return;
+			if(!index)
+			{
+				hot::clear();
+				return;
+			}
+			break;
+		case InputTimer:
+			if(index)
+				mon.update();
+			break;
+		case Upgrade:
+			if(game::upgrade(side, index, true))
+				return;
+			break;
+		case Dismiss:
+			szprint(temp, szt("You really want to dismiss %1i %2?", "Вы действительно хотите распустить %1i %2?"), count, bsgets(mt, NameMulti));
+			if(dlgask(0, temp))
+			{
+				bsset(side, index, 0);
+				bsset(side, index + 1, 0);
+				return;
+			}
+			break;
 		}
 	}
 }
@@ -195,7 +222,7 @@ bool show::recruit(int rec, int& count, int maximum, void* available_resources)
 			draw::state push;
 			draw::font = res::SMALFONT;
 			// available
-			draw::text(x1 + 32, y1 + 144, 90, draw::Center, szprint(temp, "%1: %2i", szt("Available", "Достпуно"), maximum));
+			draw::text(x1 + 32, y1 + 148, 90, draw::Center, szprint(temp, "%1: %2i", szt("Available", "Достпуно"), maximum));
 			// recruit
 			draw::text(x1 + 32, y1 + 164, 90, draw::Left, szt("Number to buy:", "Нанять количество:"));
 		}
@@ -240,7 +267,7 @@ bool show::recruit(int rec, int& count, int maximum, void* available_resources)
 			count--;
 			break;
 		case Information:
-			show::unit(rec);
+			show::unit(rec, 0, count, 0);
 			break;
 		}
 	}

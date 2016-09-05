@@ -94,6 +94,8 @@ int game::random::castle(int type, int player, int index, bool has_castle)
 	bsset(rec, Index, index);
 	bsset(rec, Dwelving1, 1);
 	if(has_castle)
-		bsset(rec, CastleInTown, 1);
+		bsset(rec, Castle, 2);
+	else
+		bsset(rec, Castle, 1);
 	return rec;
 }

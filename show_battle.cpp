@@ -694,7 +694,7 @@ int show::battle::unit(int rec, int casted)
 			show::battle::settings();
 			break;
 		case Information:
-			show::unit(hot::param, bsget(hot::param, Side));
+			show::unit(hot::param, bsget(hot::param, Side), game::get(hot::param, Count), 0);
 			break;
 		case Spells:
 			if(casted)

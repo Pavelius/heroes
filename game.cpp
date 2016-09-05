@@ -653,7 +653,7 @@ int game::turn()
 int game::getincome(int rec)
 {
 	int result = 1000;
-	if(!bsget(rec, CastleInTown))
+	if(bsget(rec, Castle)<2)
 		result = result / 2;
 	if(bsget(rec, Statue))
 		result += 250;
@@ -848,7 +848,7 @@ void game::build(int rec, int id)
 	auto resources = bsptr(player, FirstResource);
 	addresources(resources, resources, cost, true);
 	bsset(rec, id, next_level);
-	if(next_level == 1 && id>=Dwelving1 && id<=Dwelving6)
+	if(next_level == 1 && id >= Dwelving1 && id <= Dwelving6)
 		bsadd(rec, id - Dwelving1 + FirstCreatureCount, growth_per_week[id - Dwelving1]);
 	//bsadd(rec, AlreadyMoved, 1);
 }
@@ -1056,4 +1056,209 @@ void game::hire(int hero, int player, int index)
 	}
 	bsset(hero, Player, player);
 	bsset(hero, Index, index);
+}
+
+int game::getupgrade(int rec)
+{
+	switch(rec)
+	{
+	case Archer: return Ranger;
+	case Pikeman: return VeteranPikeman;
+	case Swordsman: return MasterSwordsman;
+	case Cavalry: return Champion;
+	case Paladin: return Crusader;
+	case Orc: return OrcChief;
+	case Ogre: return OgreLord;
+	case Troll: return WarTroll;
+	case Dwarf: return BattleDwarf;
+	case Elf: return GrandElf;
+	case Druid: return GreaterDruid;
+	case Minotaur: return MinotaurKing;
+	case GreenDragon: return RedDragon;
+	case RedDragon: return BlackDragon;
+	case IronGolem: return SteelGolem;
+	case Mage: return ArchMage;
+	case Giant: return Titan;
+	case Zombie: return MutantZombie;
+	case Mummy: return RoyalMummy;
+	case Vampire: return VampireLord;
+	case Lich: return PowerLich;
+	default: return rec;
+	}
+}
+
+int game::getdowngrade(int rec)
+{
+	switch(rec)
+	{
+	case Ranger: return Archer;
+	case VeteranPikeman: return Pikeman;
+	case MasterSwordsman: return Swordsman;
+	case Champion: return Cavalry;
+	case Crusader: return Paladin;
+	case OrcChief: return Orc;
+	case OgreLord: return Ogre;
+	case WarTroll: return Troll;
+	case BattleDwarf: return Dwarf;
+	case GrandElf: return Elf;
+	case GreaterDruid: return Druid;
+	case MinotaurKing: return Minotaur;
+	case RedDragon: return GreenDragon;
+	case BlackDragon: return RedDragon;
+	case SteelGolem: return IronGolem;
+	case ArchMage: return Mage;
+	case Titan: return Giant;
+	case MutantZombie: return Zombie;
+	case RoyalMummy: return Mummy;
+	case VampireLord: return Vampire;
+	case PowerLich: return Lich;
+	default: return rec;
+	}
+}
+
+int game::getdwelving(int rec)
+{
+	switch(rec)
+	{
+	case Goblin:
+	case Centaur:
+	case Halfling:
+	case Sprite:
+	case Skeleton:
+	case Peasant:
+		return Dwelving1;
+	case Orc:
+	case Gargoyle:
+	case Boar:
+	case Dwarf:
+	case Zombie:
+	case Archer:
+		return Dwelving2;
+	case Wolf:
+	case Griffin:
+	case IronGolem:
+	case Elf:
+	case Mummy:
+	case Pikeman:
+		return Dwelving3;
+	case Ogre:
+	case Minotaur:
+	case Roc:
+	case Druid:
+	case Vampire:
+	case Swordsman:
+		return Dwelving4;
+	case Troll:
+	case Hydra:
+	case Mage:
+	case Unicorn:
+	case Lich:
+	case Cavalry:
+		return Dwelving5;
+	case Cyclop:
+	case GreenDragon:
+	case Giant:
+	case Phoenix:
+	case BoneDragon:
+	case Paladin:
+		return Dwelving6;
+	case OrcChief:
+	case BattleDwarf:
+	case Ranger:
+	case MutantZombie:
+		return Dwelving2;
+	case SteelGolem:
+	case GrandElf:
+	case RoyalMummy:
+	case VeteranPikeman:
+		return Dwelving3;
+	case OgreLord:
+	case MinotaurKing:
+	case GreaterDruid:
+	case VampireLord:
+	case MasterSwordsman:
+		return Dwelving4;
+	case WarTroll:
+	case ArchMage:
+	case PowerLich:
+	case Champion:
+		return Dwelving5;
+	case BlackDragon:
+	case RedDragon:
+	case Titan:
+	case Crusader:
+		return Dwelving6;
+	default:
+		return Empthy;
+	}
+}
+
+int game::getcastle(int index)
+{
+	return bsfind(FirstCastle, Index, index);
+}
+
+bool game::canupgrade(int monster, int side)
+{
+	if(game::getupgrade(monster) == monster)
+		return false;
+	int castle;
+	if(side >= FirstCastle && side <= LastCastle)
+		castle = side;
+	else
+		castle = game::getcastle(bsget(side, Index));
+	if(!castle)
+		return false;
+	int type = game::get(monster, Type);
+	if(bsget(castle, Type) != type)
+		return false;
+	int dwelve = game::getdwelving(monster);
+	if(bsget(castle, dwelve) < 2)
+		return false;
+	return true;
+}
+
+bool game::upgrade(int side, int index, bool interactive)
+{
+	char temp[260];
+	auto monster = bsget(side, index);
+	auto monster_new = game::getupgrade(monster);
+	auto player = bsget(side, Player);
+	auto count = bsget(side, index + 1);
+	if(monster == monster_new)
+		return true;
+	auto pl = bsptr(player, FirstResource);
+	auto c1 = bsptr(monster, FirstResource);
+	auto c2 = bsptr(monster_new, FirstResource);
+	int t1[LastResource - FirstResource + 1];
+	int t2[LastResource - FirstResource + 1];
+	mulresource(t1, c1, count);
+	mulresource(t2, c2, count);
+	addresources(t2, t2, t1, true);
+	if(interactive)
+	{
+		szprint(temp, szt("Upgrade", "Улучшить"));
+		szprint(zend(temp), "\n$(%1i, %2i)\n", monster, monster_new);
+		game::getcosttext(zend(temp), t2);
+	}
+	if(ismatch(pl, t2))
+	{
+		if(interactive)
+		{
+			if(!dlgask(0, temp))
+				return false;
+		}
+		addresources(pl, pl, t2, true);
+		bsset(side, index, monster_new);
+	}
+	else
+	{
+		if(interactive)
+		{
+			szprint(zend(temp), szt("You don't have resources.", "У вас не хватает ресурсов."));
+			dlgmsg(0, temp);
+		}
+		return false;
+	}
+	return true;
 }

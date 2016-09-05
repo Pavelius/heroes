@@ -8,7 +8,7 @@ static struct castle
 {
 	tokens				player;
 	tokens				type;
-	int					index;
+	short unsigned		index;
 	char				name[14];
 	unsigned char		moved;
 	short unsigned		creatures[LastCreatureCount - FirstCreatureCount +1];

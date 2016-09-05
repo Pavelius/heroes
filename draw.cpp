@@ -48,8 +48,6 @@ point                   hot::mouse;
 int                     hot::key;
 int                     hot::command;
 bool                    hot::pressed;
-int						draw::current::focus;
-int						draw::current::param;
 
 int draw::isqrt(int num)
 {

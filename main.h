@@ -180,12 +180,12 @@ enum tokens
 	MonsterRnd,
 	FirstMonster = Peasant, LastMonster = MonsterRnd,
 	// Buildings
-	CastleInTown, ThievesGuild, Tavern, Shipyard, Well, Statue,
+	Castle, ThievesGuild, Tavern, Shipyard, Well, Statue,
 	LeftTurret, RightTurret, Moat,
 	MarketPlace, Captain, Well2, SpecialBuilding,
 	Dwelving1, Dwelving2, Dwelving3, Dwelving4, Dwelving5, Dwelving6,
 	MageGuild, Tent,
-	FirstBuilding = CastleInTown, LastBuilding = Tent,
+	FirstBuilding = Castle, LastBuilding = Tent,
 	DisableCastleUpgrade,
 	Rumor, Riddle,
 	// Map objects (order is impotant)
@@ -576,11 +576,6 @@ namespace draw
 	{
 		Left, Center, Right,
 	};
-	namespace current
-	{
-		extern int			focus;
-		extern int			param;
-	}
 	const int				width = 640;
 	const int				height = 480;
 	const int				scanline = 640;
@@ -630,7 +625,7 @@ namespace draw
 	int						textw(char ch);
 	int						textw(const char* string, int count = -1);
 	void					tiles(int x, int y, res::tokens icn, int* rec, int w, int h);
-	void					troops(int x, int y, int rec, int index);
+	void					troops(int x, int y, int rec);
 };
 struct animation : public drawable
 {
@@ -696,7 +691,7 @@ namespace show
 	void					settings();
 	int						spellbook(int mid, tokens mode = CombatSpells);
 	void                    tips(const char* text);
-	void                    unit(int rec, int parent = 0);
+	void                    unit(int rec, int parent, int count, int index);
 }
 namespace indexes
 {
@@ -976,12 +971,15 @@ namespace game
 	void					addresources(void* result, const void* v1, const void* v2, bool negative = false);
 	bool					addunit(int rec, int type, int count);
 	void					build(int rec, int id);
+	bool					canupgrade(int monster, int side);
 	void					cleararmy(int rec);
 	int						divresource(const void* source_void, const void* divider_void);
 	int						get(int rec, int id);
 	int						getartifact(int rec, int id);
 	char*					getcosttext(char* result, const void* cost);
 	int						getday();
+	int						getdowngrade(int rec);
+	int						getdwelving(int rec);
 	int						getframe(int rec);
 	int						getgrowth(int rec, int dwelling);
 	const int*				gethirecost(int rec);
@@ -989,6 +987,7 @@ namespace game
 	int						getmonth();
 	int						getmorale(int value);
 	int						getmoralechance(int value);
+	int						getcastle(int index);
 	char*					getbuilding(char* result, tokens race, int building, int level);
 	const void*				getbuildingcost(int race, int building, int level);
 	int						getbuildingmaxlevel(int race, int building);
@@ -999,6 +998,7 @@ namespace game
 	int						getsummary(int rec, int id, int side);
 	int						gettarget(int rec);
 	int						getunit(int race, int building, int level);
+	int						getupgrade(int rec);
 	int						getweek();
 	bool					hasspellbook(int rec);
 	void					hire(int hero, int player, int index);
@@ -1019,4 +1019,5 @@ namespace game
 	int						play(gamefile& game);
 	void					prepare();
 	int						turn();
+	bool					upgrade(int side, int index, bool interactive);
 }

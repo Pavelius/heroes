@@ -3,7 +3,7 @@
 const rect& getrect(int race, int building)
 {
 	// Barbarian, Knight, Necromancer, Sorcerer, Warlock, Wizard,
-	static rect data[Tent - CastleInTown][6] =
+	static rect data[Tent - Castle][6] =
 	{
 		{
 			// Castle
@@ -177,7 +177,7 @@ const rect& getrect(int race, int building)
 			{196, 7, 196 + 129, 7 + 38},
 		},
 	};
-	return data[building - CastleInTown][race - Barbarian];
+	return data[building - Castle][race - Barbarian];
 }
 
 static res::tokens getrs(int race, int building, int level)
@@ -186,10 +186,12 @@ static res::tokens getrs(int race, int building, int level)
 	{
 		switch(building)
 		{
-		case CastleInTown:
-			return res::TWNBCSTL;
-		case Tent:
-			return res::TWNBTENT;
+		case Castle:
+			if(level==2)
+				return res::TWNBCSTL;
+			else if(level==1)
+				return res::TWNBTENT;
+			return res::Empthy;
 		case SpecialBuilding:
 			return res::TWNBSPEC;
 		case Captain:
@@ -242,7 +244,12 @@ static res::tokens getrs(int race, int building, int level)
 	{
 		switch(building)
 		{
-		case CastleInTown: return res::TWNKCSTL;
+		case Castle:
+			if(level == 2)
+				return res::TWNKCSTL;
+			else if(level == 1)
+				return res::TWNKTENT;
+			return res::Empthy;
 		case Tent: return res::TWNKTENT;
 		case SpecialBuilding: return res::TWNKSPEC;
 		case Captain: return res::TWNKCAPT;
@@ -297,10 +304,12 @@ static res::tokens getrs(int race, int building, int level)
 	{
 		switch(building)
 		{
-		case CastleInTown:
-			return res::TWNNCSTL;
-		case Tent:
-			return res::TWNNTENT;
+		case Castle:
+			if(level == 2)
+				return res::TWNNCSTL;
+			else if(level == 1)
+				return res::TWNNTENT;
+			return res::Empthy;
 		case SpecialBuilding:
 			return res::TWNNSPEC;
 		case Captain:
@@ -354,10 +363,12 @@ static res::tokens getrs(int race, int building, int level)
 	{
 		switch(building)
 		{
-		case CastleInTown:
-			return res::TWNSCSTL;
-		case Tent:
-			return res::TWNSTENT;
+		case Castle:
+			if(level == 2)
+				return res::TWNSCSTL;
+			else if(level == 1)
+				return res::TWNSTENT;
+			return res::Empthy;
 		case SpecialBuilding:
 			return res::TWNSSPEC;
 		case Captain:
@@ -410,8 +421,12 @@ static res::tokens getrs(int race, int building, int level)
 	{
 		switch(building)
 		{
-		case CastleInTown: return res::TWNWCSTL;
-		case Tent: return res::TWNWTENT;
+		case Castle:
+			if(level == 2)
+				return res::TWNWCSTL;
+			else if(level == 1)
+				return res::TWNWTENT;
+			return res::Empthy;
 		case SpecialBuilding: return res::TWNWSPEC;
 		case Captain: return res::TWNWCAPT;
 		case Well2: return res::TWNWWEL2;
@@ -445,8 +460,12 @@ static res::tokens getrs(int race, int building, int level)
 	{
 		switch(building)
 		{
-		case CastleInTown: return res::TWNZCSTL;
-		case Tent: return res::TWNZTENT;
+		case Castle:
+			if(level == 2)
+				return res::TWNZCSTL;
+			else if(level == 1)
+				return res::TWNZTENT;
+			return res::Empthy;
 		case SpecialBuilding: return res::TWNZSPEC;
 		case Captain: return res::TWNZCAPT;
 		case Well2: return res::TWNZWEL2;
@@ -486,7 +505,7 @@ static int* priority(int race)
 	{
 		{
 			// Barbarian
-			SpecialBuilding, Well2, Dwelving6, MageGuild, Captain, CastleInTown, LeftTurret, RightTurret, Moat,
+			SpecialBuilding, Well2, Dwelving6, MageGuild, Captain, Castle, LeftTurret, RightTurret, Moat,
 			Dwelving3, ThievesGuild, Tavern, Dwelving1, MarketPlace,
 			Dwelving2, Dwelving4,
 			Dwelving5,
@@ -494,7 +513,7 @@ static int* priority(int race)
 		},
 		{
 			// Knight
-			CastleInTown, SpecialBuilding, Well2, Captain, LeftTurret, RightTurret, Moat,
+			Castle, SpecialBuilding, Well2, Captain, LeftTurret, RightTurret, Moat,
 			MarketPlace, Dwelving2, ThievesGuild, Tavern, MageGuild,
 			Dwelving5, Dwelving6,
 			Dwelving1, Dwelving3, Dwelving4,
@@ -502,27 +521,27 @@ static int* priority(int race)
 		},
 		{
 			// Necromancer
-			SpecialBuilding, Tavern, CastleInTown, Captain, LeftTurret, RightTurret, Dwelving6, Moat,
+			SpecialBuilding, Tavern, Castle, Captain, LeftTurret, RightTurret, Dwelving6, Moat,
 			Dwelving1, ThievesGuild, Dwelving3, Dwelving5, Dwelving2,
 			Dwelving4, MageGuild, Shipyard, Well2, MarketPlace,
 			Statue, Well, 0
 		},
 		{
 			// Sorcerer
-			SpecialBuilding, Dwelving6, MageGuild, Captain, CastleInTown, LeftTurret, RightTurret, Moat,
+			SpecialBuilding, Dwelving6, MageGuild, Captain, Castle, LeftTurret, RightTurret, Moat,
 			Dwelving3, Shipyard, MarketPlace, Dwelving2,
 			ThievesGuild, Dwelving1, Tavern, Statue, Well2, Dwelving4, Well, Dwelving5, 0
 		},
 		{
 			// Warlock
-			Dwelving5, Dwelving3, CastleInTown, LeftTurret, RightTurret, Captain, Moat,
+			Dwelving5, Dwelving3, Castle, LeftTurret, RightTurret, Captain, Moat,
 			Shipyard, MageGuild, Tavern, ThievesGuild, MarketPlace, Statue,
 			Dwelving1, Well2, SpecialBuilding,
 			Dwelving4, Dwelving2, Dwelving6, Well, 0
 		},
 		{
 			// Wizard
-			Dwelving6, Tent, CastleInTown, LeftTurret, RightTurret, Moat, Captain,
+			Dwelving6, Tent, Castle, LeftTurret, RightTurret, Moat, Captain,
 			Dwelving2, ThievesGuild, Tavern, Shipyard, Well, SpecialBuilding,
 			Dwelving3, Dwelving5, MageGuild, Statue,
 			Dwelving1, Dwelving4, MarketPlace, Well2, 0
@@ -618,7 +637,7 @@ static void panorama(int x, int y, int mid)
 			}
 		}
 		draw::image(x, y, icn, index, 0);
-		if(hot::mouse.in(getrect(race, (building == Tent) ? CastleInTown : building)))
+		if(hot::mouse.in(getrect(race, building)))
 		{
 			if(building >= Dwelving1 && building <= Dwelving6)
 				draw::status(szt("Recruit %1", "Нанять %1"),
@@ -646,11 +665,11 @@ static void paint_panel(int x, int y, int mid, int hero)
 		draw::image(x + 5, y + 6, (res::tokens)(res::PORT0090 + bsget(mid, Type) - Knight), 0);
 	else
 		draw::image(x + 5, y + 6, res::CREST, 3);
-	draw::troops(x + 112, y + 6, mid, draw::current::focus);
+	draw::troops(x + 112, y + 6, mid);
 	if(hero)
 	{
 		draw::clipart(x + 5 + 50, y + 105, hero, LargeSize);
-		draw::troops(x + 112, y + 105, hero, draw::current::focus);
+		draw::troops(x + 112, y + 105, hero);
 	}
 	else
 	{
@@ -718,7 +737,7 @@ void show::castle(int rec)
 				}
 			}
 			break;
-		case CastleInTown:
+		case Castle:
 			show::build(rec);
 			break;
 		default:

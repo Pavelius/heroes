@@ -45,7 +45,7 @@ static struct castles_list : public list
 		{
 			int rec = data[index];
 			int index_sprite = 1;
-			bool iscastle = bsget(rec, CastleInTown) != 0;
+			bool iscastle = bsget(rec, Castle) != 0;
 			res::tokens icn = draw::isevil(res::LOCATORE, res::LOCATORS);
 			switch(bsget(rec, Type))
 			{

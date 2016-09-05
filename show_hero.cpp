@@ -3,7 +3,6 @@
 void show::hero(tokens rec)
 {
 	char temp[260];
-	draw::current::focus = 0;
 	while(true)
 	{
 		draw::status(22, draw::height - 16, 22 + res::width(res::HSBTNS, 8), draw::height - 1);
@@ -79,7 +78,7 @@ void show::hero(tokens rec)
 			}
 		}
 		draw::image(49, 130, res::CREST, bsget(rec, Player) - FirstPlayer);
-		draw::troops(156, 130, rec, draw::current::focus);
+		draw::troops(156, 130, rec);
 		draw::button(5, 318, res::HSBTNS, Dismiss, 0, 0, 1, Alpha + 'A', 0, szt("Dismiss hero", "Уволить героя"));
 		draw::button(603, 318, res::HSBTNS, Cancel, 2, 2, 3, KeyEscape, 0, szt("Close hero window", "Закрыть окно"));
 		draw::cursor(res::ADVMCO, 0);

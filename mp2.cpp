@@ -465,7 +465,7 @@ static void load_object(mp2::castle* p, int rec)
 	// name
 	if(p->has_name)
 		bsset(rec, Name, p->name);
-	bsset(rec, CastleInTown, p->castle_in_town);
+	bsset(rec, Castle, p->castle_in_town + 1);
 	// allow upgrade to castle (0 - true, 1 - false)
 	bsset(rec, DisableCastleUpgrade, p->disable_castle_upgrade);
 }
