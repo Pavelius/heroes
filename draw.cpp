@@ -42,6 +42,7 @@ bool					sys_create(const char* title, int milliseconds, bool fullscreen, unsign
 int						sys_input(bool wait); // Wait for system input
 void*					sys_get_pallette(); // Get system pallette
 int                     hot::param;
+int                     hot::level;
 int                     hot::param2;
 point                   hot::mouse;
 int                     hot::key;

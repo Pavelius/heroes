@@ -628,7 +628,10 @@ static void panorama(int x, int y, int mid)
 			if(hot::key == MouseLeft && hot::pressed)
 				draw::execute(building);
 			else if(hot::key == MouseRight && hot::pressed)
+			{
+				hot::level = bsget(mid, building);
 				draw::execute(Information, building, race);
+			}
 		}
 		index = indexes::animate(icn, index, draw::counter, false);
 		if(index)

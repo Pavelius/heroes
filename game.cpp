@@ -4,11 +4,11 @@ const int castle_income_well = 2;
 const int castle_income_well2 = 10;
 const int castle_income_statue = 250;
 
-static int day;
-static int growth_per_week[] = {8, 4, 3, 2, 1, 1};
-static tokens week_of, month_of;
-static tokens game_difficult = EasyDifficulty;
-static tokens week_monsters[] =
+static int		day;
+static int		growth_per_week[] = {8, 4, 3, 2, 1, 1};
+static tokens	week_of, month_of;
+static tokens	game_difficult = EasyDifficulty;
+static tokens	week_monsters[] =
 {
 	Goblin, Orc, Wolf, Ogre, Troll, Cyclop,
 	Peasant, Archer, Cavalry,
@@ -842,13 +842,13 @@ static void game_endweek()
 void game::build(int rec, int id)
 {
 	auto race = (tokens)bsget(rec, Type);
-	auto cost = getcost(race, id);
 	auto player = bsget(rec, Player);
+	auto next_level = bsget(rec, id) + 1;
+	auto cost = getbuildingcost(race, id, next_level);
 	auto resources = bsptr(player, FirstResource);
 	addresources(resources, resources, cost, true);
-	int previous_level = bsget(rec, id);
-	bsset(rec, id, previous_level + 1);
-	if(previous_level == 0)
+	bsset(rec, id, next_level);
+	if(next_level == 1 && id>=Dwelving1 && id<=Dwelving6)
 		bsadd(rec, id - Dwelving1 + FirstCreatureCount, growth_per_week[id - Dwelving1]);
 	//bsadd(rec, AlreadyMoved, 1);
 }
@@ -1025,8 +1025,10 @@ char* game::getcosttext(char* result, const void* cost_void)
 	return result;
 }
 
-bool game::ismatch(const int* c1, const int* c2)
+bool game::ismatch(const void* c1_void, const void* c2_void)
 {
+	auto c1 = (int*)c1_void;
+	auto c2 = (int*)c2_void;
 	for(int i = 0; i <= (LastResource - FirstResource); i++)
 	{
 		if(c1[i] < c2[i])

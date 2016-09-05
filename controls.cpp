@@ -297,7 +297,7 @@ void draw::definput(int id)
 	if(id == Information)
 	{
 		if(hot::param >= FirstBuilding && hot::param <= LastBuilding)
-			show::tips(game::getbuildinginfo(hot::param2, hot::param, 0));
+			show::tips(game::getbuildinginfo(hot::param2, hot::param, hot::level));
 		if(hot::param >= FirstMonster && hot::param <= LastMonster)
 			show::unit(hot::param, hot::param2);
 	}

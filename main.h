@@ -708,6 +708,7 @@ namespace hot
 	extern int				index;
 	extern int				command;
 	extern int				param2;
+	extern int				level;
 };
 struct order
 {
@@ -979,7 +980,6 @@ namespace game
 	int						divresource(const void* source_void, const void* divider_void);
 	int						get(int rec, int id);
 	int						getartifact(int rec, int id);
-	const int*				getcost(int race, int building);
 	char*					getcosttext(char* result, const void* cost);
 	int						getday();
 	int						getframe(int rec);
@@ -989,9 +989,11 @@ namespace game
 	int						getmonth();
 	int						getmorale(int value);
 	int						getmoralechance(int value);
-	char*					getbuilding(char* result, tokens type, int building);
-	const char*				getbuildingname(int type, int building, int level);
-	const char*				getbuildinginfo(int type, int building, int level);
+	char*					getbuilding(char* result, tokens race, int building, int level);
+	const void*				getbuildingcost(int race, int building, int level);
+	int						getbuildingmaxlevel(int race, int building);
+	const char*				getbuildingname(int race, int building, int level);
+	const char*				getbuildinginfo(int race, int building, int level);
 	int						getplayer();
 	int						getspeed(int value);
 	int						getsummary(int rec, int id, int side);
@@ -1005,7 +1007,7 @@ namespace game
 	bool					isfly(int rec);
 	bool					isfriendly(int rec);
 	bool					ishostile(int rec);
-	bool					ismatch(const int* c1, const int* c2);
+	bool					ismatch(const void* c1, const void* c2);
 	bool					ispenalized(int rec);
 	bool					isrequipment(int race, int building, int level, int req, int req_level);
 	bool					isstealth(int rec);

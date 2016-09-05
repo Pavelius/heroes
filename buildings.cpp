@@ -102,7 +102,9 @@ static buildings_stats data[] =
 	{Dwelving6, Necromancer, 1, {10000, 10, 5, 10, 5, 5, 5}},
 };
 
-const int* game::getcost(int race, int building)
+static int nocost[LastResource - FirstResource + 1];
+
+const void* game::getbuildingcost(int race, int building, int level)
 {
 	for(auto& e : data)
 	{
@@ -110,9 +112,11 @@ const int* game::getcost(int race, int building)
 			continue;
 		if(e.race && e.race != race)
 			continue;
+		if(e.level != level)
+			continue;
 		return e.cost;
 	}
-	return data[0].cost;
+	return nocost;
 }
 
 bool game::isrequipment(int race, int building, int level, int req, int req_level)
@@ -307,8 +311,9 @@ int game::getunit(int race, int building, int level)
 	return 0;
 }
 
-const char* game::getbuildingname(int type, int building, int level)
+const char* game::getbuildingname(int race, int building, int level)
 {
+	static char temp[64];
 	static const char* buildings[][2] = {
 		{"Castle"},
 		{"Thieves Guild"},
@@ -354,14 +359,25 @@ const char* game::getbuildingname(int type, int building, int level)
 		{"Bridge", "Мост"}, {"Jousting Arena", "Турнирная Арена"}, {"Mausoleum", "Мавзолей"}, {"Fenced Meadow", "Загон"}, {"Swamp", "Болото"}, {"Ivory Tower", "Башня магов"},
 		{"Pyramid", "Пирамида"}, {"Cathedral", "Собор"}, {"Laboratory", "Лаборатория"}, {"Red Tower", "Красная Башня"}, {"Green Tower", "Зеленая Башня"}, {"Cloud Castle", "Небесный замок"}
 	};
+	static const char* warlock_dwelling6[][2] = {
+		{"Red Tower", "Красная башня"},
+		{"Black Tower", "Черная башня"},
+	};
 	if(building >= CastleInTown && building <= Captain)
 		return buildings[building - CastleInTown][locale];
 	if(building >= Dwelving1 && building <= Dwelving6)
-		return dwellings[type - Barbarian + (building - Dwelving1) * 6][locale];
+	{
+		if(level<=1)
+			return dwellings[race - Barbarian + (building - Dwelving1) * 6][locale];
+		if(level>=2 && race==Warlock && building==Dwelving6)
+			return warlock_dwelling6[level-2][locale];
+		szprint(temp, "%1.%2", szt("Upg", "Ул"), dwellings[race - Barbarian + (building - Dwelving1) * 6][locale]);
+		return temp;
+	}
 	if(building == Well2)
-		return well2[type - Barbarian][locale];
+		return well2[race - Barbarian][locale];
 	if(building == SpecialBuilding)
-		return special[type - Barbarian][locale];
+		return special[race - Barbarian][locale];
 	if(building == MageGuild)
 		return mageguild[level][locale];
 	return "";
@@ -397,10 +413,76 @@ const char* game::getbuildinginfo(int type, int building, int level)
 	return "";
 }
 
-char* game::getbuilding(char* result, tokens race, int building)
+char* game::getbuilding(char* result, tokens race, int building, int level)
 {
-	auto cost = game::getcost(race, building);
 	szprint(result, "\n$(%1i/%2i)", building, race);
-	zcat(result, game::getbuildinginfo(race, building, 1));
+	zcat(result, game::getbuildinginfo(race, building, level));
 	return result;
+}
+
+int game::getbuildingmaxlevel(int race, int building)
+{
+	switch(building)
+	{
+	case Dwelving2:
+		switch(race)
+		{
+		case Knight:
+		case Barbarian:
+		case Sorcerer:
+		case Necromancer:
+			return 2;
+		default:
+			return 1;
+		}
+	case Dwelving3:
+		switch(race)
+		{
+		case Knight:
+		case Sorcerer:
+		case Necromancer:
+		case Wizard:
+			return 2;
+		default:
+			return 1;
+		}
+	case Dwelving4:
+		switch(race)
+		{
+		case Barbarian:
+		case Knight:
+		case Necromancer:
+		case Sorcerer:
+		case Warlock:
+			return 2;
+		default:
+			return 1;
+		}
+	case Dwelving5:
+		switch(race)
+		{
+		case Barbarian:
+		case Knight:
+		case Necromancer:
+		case Wizard:
+			return 2;
+		default:
+			return 1;
+		}
+	case Dwelving6:
+		switch(race)
+		{
+		case Knight:
+		case Wizard:
+			return 2;
+		case Warlock:
+			return 3;
+		default:
+			return 1;
+		}
+	case MageGuild:
+		return 5;
+	default:
+		return 1;
+	}
 }

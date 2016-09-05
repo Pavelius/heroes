@@ -15,21 +15,26 @@ static bool meet_requipment(int rec, int building)
 	return true;
 }
 
-static void house(int x, int y, int w, int h, int building, int rec, bool blank)
+static void building_control(int x, int y, int w, int h, int building, int rec, bool blank)
 {
 	auto race = bsget(rec, Type);
 	auto player = bsget(rec, Player);
-	auto level = bsget(rec, building);
-	auto c1 = game::getcost(race, building);
 	auto c2 = (int*)bsptr(player, FirstResource);
 	auto ab = bsget(rec, AlreadyMoved);
 	bool hilite = draw::area(x, y, x + 132, y + 64);
-	const char* name = game::getbuildingname(race, building, level);
 	if(blank)
 		draw::image(x + 1, y + 1, res::buildings(race), indexes::buildings(building, 0));
+	auto max_level = game::getbuildingmaxlevel(race, building);
+	auto level = bsget(rec, building);
+	auto next_level = imin(level+1, max_level);
+	auto c1 = game::getbuildingcost(race, building, next_level);
+	const char* name = game::getbuildingname(race, building, next_level);
 	if(hilite && hot::key == MouseRight && hot::pressed)
+	{
+		hot::level = next_level;
 		draw::execute(Information, building, race);
-	if(level >= 1)
+	}
+	if(level >= max_level)
 	{
 		draw::image(x + w, y + h, res::TOWNWIND, 11);
 		if(hilite)
@@ -69,9 +74,11 @@ static void house(int x, int y, int w, int h, int building, int rec, bool blank)
 			char temp[260];
 			szprint(temp, "%1 ", szt("Lack", "Не хватает"));
 			auto p = zend(temp);
+			auto c1i = (int*)c1;
+			auto c2i = (int*)c2;
 			for(int i = FirstResource; i <= LastResource; i++)
 			{
-				int d = c1[i - FirstResource] - c2[i - FirstResource];
+				int d = c1i[i - FirstResource] - c2i[i - FirstResource];
 				if(d <= 0)
 					continue;
 				if(p[0])
@@ -91,7 +98,7 @@ static void house(int x, int y, int w, int h, int building, int rec, bool blank)
 
 static void building(int x, int y, int building, int rec)
 {
-	house(x, y, 115, 40, building, rec, true);
+	building_control(x, y, 115, 40, building, rec, true);
 }
 
 static bool hire_hero(int rec, int player, const int* e)
@@ -142,12 +149,16 @@ static void captain(int x, int y, int rec)
 {
 	auto race = (tokens)bsget(rec, Type);
 	auto present = bsget(rec, Captain) != 0;
-	auto already_moved = bsget(rec, AlreadyMoved)!=0;
+	auto already_moved = bsget(rec, AlreadyMoved) != 0;
 	res::tokens icn = captainicn(race);
 	int sx = res::width(icn, 0);
 	int sy = res::height(icn, 0);
 	if(!present)
+	{
 		draw::image(x + 85, y - 4, res::CAPTCOVR, 0);
+		draw::image(x, y, icn, 0);
+		building_control(x, y, 62, 58, Captain, rec, false);
+	}
 	else
 	{
 		draw::state push;
@@ -164,10 +175,8 @@ static void captain(int x, int y, int rec)
 			draw::text(x1 + 84, y1, temp);
 			y1 += draw::texth() + 2;
 		}
+		draw::image(x, y, icn, 1);
 	}
-	draw::image(x, y, icn, present ? 1 : 0);
-	if(!present)
-		house(x, y, 62, 58, Captain, rec, false);
 }
 
 static void heroport(int x, int y, int rec)
@@ -238,8 +247,8 @@ void show::build(int mid)
 		case Information:
 			if(hot::param >= FirstBuilding && hot::param <= LastBuilding)
 			{
-				auto e2 = game::getcost(race, hot::param);
-				game::getbuilding(temp, race, hot::param);
+				auto e2 = game::getbuildingcost(race, hot::param, hot::level);
+				game::getbuilding(temp, race, hot::param, hot::level);
 				char* p = zend(temp);
 				for(int i = ThievesGuild; i <= (int)Dwelving6; i++)
 				{
@@ -262,8 +271,9 @@ void show::build(int mid)
 		default:
 			if(id == Captain || (id >= FirstBuilding && id <= LastBuilding))
 			{
-				auto e2 = game::getcost(race, id);
-				game::getbuilding(temp, race, id);
+				auto level = bsget(mid, id);
+				auto e2 = game::getbuildingcost(race, id, level);
+				game::getbuilding(temp, race, id, level);
 				zcat(temp, " ");
 				zcat(temp, szt("Do you want to build?", "Хотите построить?"));
 				game::getcosttext(zend(temp), e2);
