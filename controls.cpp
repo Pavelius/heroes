@@ -52,15 +52,7 @@ int draw::clipart(int x, int y, int id, int param, int param2, bool border)
 	{
 		h = 58;
 		w = 137;
-		//image(x - w / 2, y, res::BLDGXTRA, 0);
 		image(x - w / 2 + 1, y + 1, res::buildings(param), indexes::buildings(id, 0));
-		//const char* name = game::getbuildingname(param, id, 0);
-		//if(name)
-		//{
-		//	draw::state push;
-		//	draw::font = res::SMALFONT;
-		//	text(x - textw(name) / 2, y + h - texth() - 1, name);
-		//}
 		if(border)
 			rectb(x - w / 2, y, x + w / 2, y + h, 0x0C);
 	}
