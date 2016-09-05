@@ -27,7 +27,8 @@ int indexes::buildings(int building, int level)
 		if(level == 2)
 			return 29;
 		return 24;
-	case MageGuild: return 0;
+	case MageGuild:
+		return 0;
 	case ThievesGuild:return 1;
 	case Tavern: return 2;
 	case Shipyard: return 3;

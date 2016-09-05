@@ -119,6 +119,20 @@ const void* game::getbuildingcost(int race, int building, int level)
 	return nocost;
 }
 
+bool game::passrequipment(int rec, int building, int level)
+{
+	int race = bsget(rec, Type);
+	for(int i = ThievesGuild; i <= MageGuild; i++)
+	{
+		if(game::isrequipment(race, building, level, i, bsget(rec, i)))
+		{
+			if(!bsget(rec, i))
+				return false;
+		}
+	}
+	return true;
+}
+
 bool game::isrequipment(int race, int building, int level, int req, int req_level)
 {
 	switch(race)
@@ -371,15 +385,15 @@ const char* game::getbuildingname(int race, int building, int level)
 			return dwellings[race - Barbarian + (building - Dwelving1) * 6][locale];
 		if(level>=2 && race==Warlock && building==Dwelving6)
 			return warlock_dwelling6[level-2][locale];
-		szprint(temp, "%1.%2", szt("Upg", "Óë"), dwellings[race - Barbarian + (building - Dwelving1) * 6][locale]);
+		szprint(temp, "%1. %2", szt("Upg", "Óë"), dwellings[race - Barbarian + (building - Dwelving1) * 6][locale]);
 		return temp;
 	}
 	if(building == Well2)
 		return well2[race - Barbarian][locale];
 	if(building == SpecialBuilding)
 		return special[race - Barbarian][locale];
-	if(building == MageGuild)
-		return mageguild[level][locale];
+	if(building == MageGuild && level>=1 && level<=5)
+		return mageguild[level-1][locale];
 	return "";
 }
 

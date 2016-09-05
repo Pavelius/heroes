@@ -1,20 +1,5 @@
 #include "main.h"
 
-static bool meet_requipment(int rec, int building)
-{
-	int race = bsget(rec, Type);
-	int level = bsget(rec, building);
-	for(int i = ThievesGuild; i <= (int)Dwelving6; i++)
-	{
-		if(game::isrequipment(race, building, level, i, bsget(rec, i)))
-		{
-			if(!bsget(rec, i))
-				return false;
-		}
-	}
-	return true;
-}
-
 static void building_control(int x, int y, int w, int h, int building, int rec, bool blank)
 {
 	auto race = bsget(rec, Type);
@@ -22,13 +7,13 @@ static void building_control(int x, int y, int w, int h, int building, int rec, 
 	auto c2 = (int*)bsptr(player, FirstResource);
 	auto ab = bsget(rec, AlreadyMoved);
 	bool hilite = draw::area(x, y, x + 132, y + 64);
-	if(blank)
-		draw::image(x + 1, y + 1, res::buildings(race), indexes::buildings(building, 0));
 	auto max_level = game::getbuildingmaxlevel(race, building);
 	auto level = bsget(rec, building);
 	auto next_level = imin(level+1, max_level);
 	auto c1 = game::getbuildingcost(race, building, next_level);
 	const char* name = game::getbuildingname(race, building, next_level);
+	if(blank)
+		draw::image(x + 1, y + 1, res::buildings(race), indexes::buildings(building, next_level));
 	if(hilite && hot::key == MouseRight && hot::pressed)
 	{
 		hot::level = next_level;
@@ -46,7 +31,7 @@ static void building_control(int x, int y, int w, int h, int building, int rec, 
 		if(blank)
 			draw::image(x, y + h + 18, res::CASLXTRA, 2);
 	}
-	else if(!meet_requipment(rec, building))
+	else if(!game::passrequipment(rec, building, next_level))
 	{
 		draw::image(x + w, y + h, res::TOWNWIND, 12);
 		if(blank)
@@ -250,7 +235,7 @@ void show::build(int mid)
 				auto e2 = game::getbuildingcost(race, hot::param, hot::level);
 				game::getbuilding(temp, race, hot::param, hot::level);
 				char* p = zend(temp);
-				for(int i = ThievesGuild; i <= (int)Dwelving6; i++)
+				for(int i = ThievesGuild; i <= MageGuild; i++)
 				{
 					if(!game::isrequipment(race, hot::param, bsget(mid, hot::param), i, bsget(mid, i)))
 						continue;

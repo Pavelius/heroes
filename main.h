@@ -1014,6 +1014,7 @@ namespace game
 	bool					iswide(int rec);
 	bool					ismeleearcher(int rec);
 	void					mulresource(int* result, const void* source, int value);
+	bool					passrequipment(int rec, int building, int level);
 	int						play(gamefile& game);
 	void					prepare();
 	int						turn();
