@@ -82,11 +82,12 @@ int draw::clipart(int x, int y, int id, int param, int param2, bool border)
 		}
 		if(border)
 			rectb(x - w / 2, y, x + w / 2 + 2, y + h, 0x0C);
-		if(draw::area(x - w / 2, y, x + w / 2, y + h))
-		{
-			if(hot::key == MouseRight && hot::pressed)
-				execute(Information, id);
-		}
+		// Don't uncomment this code! If do - your tooltips in castle not counted hero side.
+		//if(draw::area(x - w / 2, y, x + w / 2, y + h))
+		//{
+		//	if(hot::key == MouseRight && hot::pressed)
+		//		execute(Information, id);
+		//}
 	}
 	else if(id >= FirstSkill && id <= LastSkill)
 	{

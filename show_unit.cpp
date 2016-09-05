@@ -32,7 +32,7 @@ static int field(int x, int y, int id, int rec, int side, const char* name)
 		int dm1 = bsget(mt, id);
 		int dm2 = game::getsummary(rec, id, side);
 		if(dm1 != dm2)
-			szprint(temp, "%1i (%2i)", dm2, dm1);
+			szprint(temp, "%1i (%2i)", dm1, dm2);
 		else
 			szprint(temp, "%1i", dm1);
 	}
@@ -123,6 +123,15 @@ void show::unit(int rec, int side, int count, int index)
 	int h1 = res::height(back, 0);
 	int x = (draw::width - w1) / 2 - 16;
 	int y = (draw::height - h1) / 2;
+	int side_info = side;
+	if(side >= FirstCastle && side <= LastCastle)
+	{
+		if(bsget(side, Captain))
+			side_info = bsget(side_info, Type) - Barbarian + BarbarianCaptain;
+		int hero = bsfind(FirstHero, Index, bsget(side, Index));
+		if(hero)
+			side_info = hero;
+	}
 	int mt = rec;
 	if(mt >= FirstCombatant && mt <= LastCombatant)
 		mt = bsget(mt, Type);
@@ -134,7 +143,7 @@ void show::unit(int rec, int side, int count, int index)
 		draw::image(x, y, back, 0);
 		int x1 = x + 24;
 		int y1 = y;
-		status(x1 + 386, y1 + 40, rec, side);
+		status(x1 + 386, y1 + 40, rec, side_info);
 		effects(x1 + 140, y1 + 188, rec);
 		// name
 		const char* p = bsgets(rec, Name);
