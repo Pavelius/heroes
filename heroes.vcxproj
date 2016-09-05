@@ -40,7 +40,7 @@
     <ClCompile Include="crt.cpp" />
     <ClCompile Include="draw.cpp" />
     <ClCompile Include="show_castle_build.cpp" />
-    <ClCompile Include="game_buildings.cpp" />
+    <ClCompile Include="buildings.cpp" />
     <ClCompile Include="show_castle.cpp" />
     <ClCompile Include="combat_unit.cpp" />
     <ClCompile Include="combat.cpp" />

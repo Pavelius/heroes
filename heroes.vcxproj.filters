@@ -58,7 +58,6 @@
     <ClCompile Include="draw_screenshot.cpp" />
     <ClCompile Include="show_battle_setting.cpp" />
     <ClCompile Include="combat_unit.cpp" />
-    <ClCompile Include="game_buildings.cpp" />
     <ClCompile Include="game_file.cpp" />
     <ClCompile Include="game_random.cpp" />
     <ClCompile Include="show_castle.cpp" />
@@ -66,5 +65,6 @@
     <ClCompile Include="show_castle_build.cpp" />
     <ClCompile Include="show_spellbook.cpp" />
     <ClCompile Include="show_hightscore.cpp" />
+    <ClCompile Include="buildings.cpp" />
   </ItemGroup>
 </Project>
