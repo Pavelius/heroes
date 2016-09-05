@@ -639,19 +639,22 @@ static void panorama(int x, int y, int mid)
 	}
 }
 
-static void paint_panel(int x, int y, int mid, int hid)
+static void paint_panel(int x, int y, int mid, int hero)
 {
-	int hero2 = hid;
 	draw::image(x, y, res::STRIP, 0);
-	draw::image(x + 5, y + 6, res::CREST, 3);
-	if(hero2)
-		draw::clipart(x + 5, y + 105, bsget(hero2, Portrait), LargeSize);
+	if(bsget(mid, Captain))
+		draw::image(x + 5, y + 6, (res::tokens)(res::PORT0090 + bsget(mid, Type) - Knight), 0);
+	else
+		draw::image(x + 5, y + 6, res::CREST, 3);
+	draw::troops(x + 112, y + 6, mid, draw::current::focus);
+	if(hero)
+	{
+		draw::clipart(x + 5 + 50, y + 105, hero, LargeSize);
+		draw::troops(x + 112, y + 105, hero, draw::current::focus);
+	}
 	else
 	{
-		if(bsget(mid, Captain))
-			draw::image(x + 5, y + 105, (res::tokens)(res::PORT0090 + bsget(mid, Type) - Knight), 0);
-		else
-			draw::image(x + 5, y + 105, res::STRIP, 3);
+		draw::image(x + 5, y + 105, res::STRIP, 3);
 		draw::image(x + 112, y + 105, res::STRIP, 11);
 	}
 }
@@ -671,13 +674,14 @@ void show::castle(int rec)
 	int player = bsget(rec, Player);
 	while(true)
 	{
+		auto index = bsget(rec, Index);
+		auto hero = bsfind(FirstHero, Index, index);
 		draw::status(21, draw::height - 16, 21 + res::width(res::SMALLBAR, 0), draw::height - 1);
 		draw::button(0, draw::height - 19, res::SMALLBAR, KeyLeft, 1, 1, 2, 0, 0, szt("Previous town", ""));
 		draw::image(21, draw::height - 19, res::SMALLBAR, 0);
 		draw::button(draw::width - 21, draw::height - 19, res::SMALLBAR, KeyRight, 3, 3, 4, 0, 0, szt("Next town", ""));
 		panorama(0, 0, rec);
-		draw::troops(112, 262, rec, draw::current::focus);
-		paint_panel(0, 256, rec, 0);
+		paint_panel(0, 256, rec, hero);
 		draw::resource(552, 262, bsptr(player, FirstResource));
 		draw::button(553, 428, res::SWAPBTN, Cancel, 0, 0, 1, KeyEscape, 0, szt("Leave town", ""));
 		name();

@@ -1001,6 +1001,7 @@ namespace game
 	int						getunit(int race, int building, int level);
 	int						getweek();
 	bool					hasspellbook(int rec);
+	void					hire(int hero, int player, int index);
 	void					initialize();
 	bool					isboosted(int rec);
 	bool					iscombat(int rec);

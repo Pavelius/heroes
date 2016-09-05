@@ -270,8 +270,12 @@ void show::build(int mid)
 			}
 			else if(id >= FirstHero && id <= LastHero)
 			{
-				if(hire_hero(id, bsget(mid, Player), game::gethirecost(id)))
+				int player = bsget(mid, Player);
+				if(hire_hero(id, player, game::gethirecost(id)))
+				{
+					game::hire(id, player, bsget(mid, Index));
 					return;
+				}
 			}
 			else
 				draw::definput(id);

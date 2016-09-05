@@ -291,6 +291,8 @@ void draw::debug(int ox, int oy)
 	text(10, 10, temp);
 }
 
+static int hot_troops_owner;
+
 void draw::definput(int id)
 {
 	static int source_rec;
@@ -344,12 +346,15 @@ void draw::troops(int x, int y, int rec, int index)
 			image(x, y, res::STRIP, 2);
 		else
 			clipart(x + 40, y, unit, count);
-		if(i == index)
+		if(i == index && hot_troops_owner==rec)
 			image(x, y, res::STRIP, 1);
 		if(area(x, y, x + w, y + h))
 		{
 			if((hot::key == MouseLeft && hot::pressed) || (hot::key == MouseLeftDBL))
+			{
+				hot_troops_owner = rec;
 				execute(i, rec);
+			}
 			if(unit)
 				status("%1i %2", count, bsgets(unit, NameMulti));
 		}

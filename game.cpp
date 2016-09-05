@@ -1036,3 +1036,24 @@ bool game::ismatch(const void* c1_void, const void* c2_void)
 	}
 	return true;
 }
+
+void game::hire(int hero, int player, int index)
+{
+	int type = bsget(player, Type);
+	if(bsget(player, Recruit) == hero)
+	{
+		bsset(player, Recruit, 0);
+		auto new_hero = game::random::hero(type);
+		if(!new_hero)
+			new_hero = game::random::hero(0);
+		bsset(player, Recruit, new_hero);
+	}
+	if(bsget(player, RecruitLast) == hero)
+	{
+		bsset(player, RecruitLast, 0);
+		auto new_hero = game::random::hero(0);
+		bsset(player, RecruitLast, 0);
+	}
+	bsset(hero, Player, player);
+	bsset(hero, Index, index);
+}

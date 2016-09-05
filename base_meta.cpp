@@ -373,7 +373,7 @@ int bsget(int rec, int id)
 	switch(id)
 	{
 	case First: return e.metadata->from;
-	case Last: return e.metadata->from + e.metadata->count;
+	case Last: return e.metadata->from + e.metadata->count - 1;
 	case LastPossible: return e.metadata->to;
 	default: return e.get(id);
 	}
