@@ -86,23 +86,6 @@ static void building(int x, int y, int building, int rec)
 	building_control(x, y, 115, 40, building, rec, true);
 }
 
-static bool hire_hero(int rec, int player, const int* e)
-{
-	char temp[260];
-	zcpy(temp, bsgets(rec, Code));
-	szprint(zend(temp), szt("%1 %3i-level %2 ", "%1 %3i-уровня %2 "),
-		bsgets(rec, Name),
-		bsgets(game::get(rec, Type), Name),
-		bsget(rec, Level));
-	if(bsget(rec, ArtifactCount))
-		szprint(zend(temp), szt(" with %1i artifacts", " с %1i артифактами"), bsget(rec, ArtifactCount));
-	szprint(zend(temp),
-		szt("can work for you. Did you want to hire?", "может работать на вас. Хотите нанять?"),
-		e[Gold - FirstResource]);
-	//e->tostring(zend(temp));
-	return dlgask(0, temp);
-}
-
 static res::tokens captainicn(int race)
 {
 	switch(race)
@@ -270,8 +253,20 @@ void show::build(int mid)
 			}
 			else if(id >= FirstHero && id <= LastHero)
 			{
+				char temp[260];
 				int player = bsget(mid, Player);
-				if(hire_hero(id, player, game::gethirecost(id)))
+				auto cost = game::gethirecost(id);
+				szprint(temp, "$(%1i)\n", id);
+				szprint(zend(temp), szt("%1 %3i-level %2 ", "%1 %3i-уровня %2 "),
+					bsgets(id, Name),
+					bsgets(game::get(id, Type), Name),
+					bsget(id, Level));
+				if(bsget(id, ArtifactCount))
+					szprint(zend(temp), szt(" with %1i artifacts", " с %1i артифактами"), bsget(id, ArtifactCount));
+				szprint(zend(temp),
+					szt("can work for you. Did you want to hire?", "может работать на вас. Хотите нанять?"));
+				game::getcosttext(zend(temp), cost);
+				if(dlgask(0, temp))
 				{
 					game::hire(id, player, bsget(mid, Index));
 					return;

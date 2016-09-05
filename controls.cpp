@@ -23,7 +23,7 @@ static int index_by_type(int id)
 	}
 }
 
-int draw::clipart(int x, int y, int id, int param, int param2)
+int draw::clipart(int x, int y, int id, int param, int param2, bool border)
 {
 	int w = 0;
 	int h = 0;
@@ -32,12 +32,9 @@ int draw::clipart(int x, int y, int id, int param, int param2)
 	{
 		w = 101;
 		h = 93;
-		switch(param)
-		{
-		case LargeSize:
-			image(x - w / 2, y, res::tokens(res::PORT0000 + id - FirstHero), 0, 0);
-			break;
-		}
+		image(x - w / 2, y, res::tokens(res::PORT0000 + id - FirstHero), 0, 0);
+		if(border)
+			rectb(x - w / 2, y, x + w / 2, y + h, 0x0C);
 	}
 	else if(id >= FirstResource && id <= LastResource)
 	{
@@ -53,17 +50,19 @@ int draw::clipart(int x, int y, int id, int param, int param2)
 	}
 	else if(id >= FirstBuilding && id <= LastBuilding)
 	{
-		h = 72;
+		h = 58;
 		w = 137;
-		image(x - w / 2, y, res::BLDGXTRA, 0);
+		//image(x - w / 2, y, res::BLDGXTRA, 0);
 		image(x - w / 2 + 1, y + 1, res::buildings(param), indexes::buildings(id, 0));
-		const char* name = game::getbuildingname(param, id, 0);
-		if(name)
-		{
-			draw::state push;
-			draw::font = res::SMALFONT;
-			text(x - textw(name) / 2, y + h - texth() - 1, name);
-		}
+		//const char* name = game::getbuildingname(param, id, 0);
+		//if(name)
+		//{
+		//	draw::state push;
+		//	draw::font = res::SMALFONT;
+		//	text(x - textw(name) / 2, y + h - texth() - 1, name);
+		//}
+		if(border)
+			rectb(x - w / 2, y, x + w / 2, y + h, 0x0C);
 	}
 	else if(id >= FirstMonster && id <= LastMonster)
 	{
@@ -91,10 +90,10 @@ int draw::clipart(int x, int y, int id, int param, int param2)
 		w = 80;
 		h = res::height(res::SECSKILL, 0);
 		const char* p = bsgets(id, Name);
-		draw::image(x - 40, y, res::SECSKILL, id - FirstSkill + 1, 0);
-		draw::text(x - 43 + (w - draw::textw(p)) / 2, y + 3, p);
+		draw::image(x - w / 2, y, res::SECSKILL, id - FirstSkill + 1, 0);
+		draw::text(x - w / 2 - 3 + (w - draw::textw(p)) / 2, y + 3, p);
 		p = bsgets(param, Name);
-		draw::text(x - 43 + (w - draw::textw(p)) / 2, y + 3 + 52, p);
+		draw::text(x - w / 2 - 3 + (w - draw::textw(p)) / 2, y + 3 + 52, p);
 	}
 	else if(id >= FirstArtifact && id <= LastArtifact)
 	{
@@ -346,7 +345,7 @@ void draw::troops(int x, int y, int rec, int index)
 			image(x, y, res::STRIP, 2);
 		else
 			clipart(x + 40, y, unit, count);
-		if(i == index && hot_troops_owner==rec)
+		if(i == index && hot_troops_owner == rec)
 			image(x, y, res::STRIP, 1);
 		if(area(x, y, x + w, y + h))
 		{

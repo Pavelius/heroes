@@ -588,7 +588,7 @@ namespace draw
 	bool					area(int x1, int y1, int x2, int y2);
 	void					button(int x, int y, res::tokens icn, int id, int normal, int hilite, int pressed, int key = 0, unsigned flags = 0, const char* tips = 0);
 	void					castle(int x, int y, int tile, int race, bool town);
-	int						clipart(int x, int y, int id, int param, int param2 = 0);
+	int						clipart(int x, int y, int id, int param, int param2 = 0, bool border = false);
 	extern rect				clipping;
 	extern unsigned			counter; // increse every 100 milliseconds
 	bool					create(const char* title, unsigned milliseconds, bool fullscreen);

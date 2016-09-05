@@ -47,7 +47,7 @@ struct picture
 		else if(id >= (int)FirstResource && id <= (int)LastResource)
 			return 50;
 		else if(id >= (int)FirstBuilding && id <= (int)LastBuilding)
-			return 72;
+			return 58;
 		else if(id >= (int)FirstMonster && id <= (int)LastMonster)
 			return 93;
 		return 0;
@@ -201,7 +201,7 @@ static int paint_icons(int x, int y, int width, picture* icons, int count)
 		int x1 = x + (width - w) / 2;
 		for(int i = 0; i < c; i++)
 		{
-			int h1 = draw::clipart(x1+w1/2, y, icons[i].id, icons[i].count);
+			int h1 = draw::clipart(x1+w1/2, y, icons[i].id, icons[i].count, 0, true);
 			if(h < h1)
 				h = h1;
 			x1 += w1 + pad;
