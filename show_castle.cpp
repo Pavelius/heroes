@@ -661,10 +661,7 @@ static void panorama(int x, int y, int mid)
 static void paint_panel(int x, int y, int mid, int hero)
 {
 	draw::image(x, y, res::STRIP, 0);
-	if(bsget(mid, Captain))
-		draw::image(x + 5, y + 6, (res::tokens)(res::PORT0090 + bsget(mid, Type) - Knight), 0);
-	else
-		draw::image(x + 5, y + 6, res::CREST, 3);
+	draw::image(x + 5, y + 6, res::CREST, 3);
 	draw::troops(x + 112, y + 6, mid);
 	if(hero)
 	{
@@ -673,7 +670,10 @@ static void paint_panel(int x, int y, int mid, int hero)
 	}
 	else
 	{
-		draw::image(x + 5, y + 105, res::STRIP, 3);
+		if(bsget(mid, Captain))
+			draw::clipart(x + 5 + 50, y + 105, bsget(mid, Type) - Barbarian + BarbarianCaptain, LargeSize);
+		else
+			draw::image(x + 5, y + 105, res::STRIP, 3);
 		draw::image(x + 112, y + 105, res::STRIP, 11);
 	}
 }

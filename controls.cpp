@@ -36,6 +36,15 @@ int draw::clipart(int x, int y, int id, int param, int param2, bool border)
 		if(border)
 			rectb(x - w / 2, y, x + w / 2, y + h, 0x0C);
 	}
+	if(id >= FirstCaptain && id <= LastCaptain)
+	{
+		static int indicies[] = {1,0,5,2,3,4};
+		w = 101;
+		h = 93;
+		image(x - w / 2, y, res::tokens(res::PORT0090 + indicies[id - FirstCaptain]), 0, 0);
+		if(border)
+			rectb(x - w / 2, y, x + w / 2, y + h, 0x0C);
+	}
 	else if(id >= FirstResource && id <= LastResource)
 	{
 		static unsigned char frames[] = {6, 0, 1, 2, 3, 4, 5};
