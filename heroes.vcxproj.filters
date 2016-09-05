@@ -66,5 +66,7 @@
     <ClCompile Include="show_spellbook.cpp" />
     <ClCompile Include="show_hightscore.cpp" />
     <ClCompile Include="buildings.cpp" />
+    <ClCompile Include="show_thieves.cpp" />
+    <ClCompile Include="game_statistic.cpp" />
   </ItemGroup>
 </Project>

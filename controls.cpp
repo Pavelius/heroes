@@ -30,9 +30,18 @@ int draw::clipart(int x, int y, int id, int param, int param2, bool border)
 	char temp[32];
 	if(id >= FirstHero && id <= LastHero)
 	{
-		w = 101;
-		h = 93;
-		image(x - w / 2, y, res::tokens(res::PORT0000 + id - FirstHero), 0, 0);
+		if(param==1)
+		{
+			w = 43;
+			h = 27;
+			image(x - res::width(res::MINIPORT, 0) / 2, y + res::oy(res::MINIPORT, 0) , res::MINIPORT, id - FirstHero, AFNoOffset);
+		}
+		else
+		{
+			w = 101;
+			h = 93;
+			image(x - w / 2, y, res::tokens(res::PORT0000 + id - FirstHero), 0, 0);
+		}
 		if(border)
 			rectb(x - w / 2, y, x + w / 2, y + h, 0x0C);
 	}

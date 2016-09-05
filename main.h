@@ -691,6 +691,7 @@ namespace show
 	void					settings();
 	int						spellbook(int mid, tokens mode = CombatSpells);
 	void                    tips(const char* text);
+	int						thieves(int player);
 	void                    unit(int rec, int parent, int count, int index);
 }
 namespace indexes
@@ -934,12 +935,6 @@ namespace combat
 	void					start(int attacker, int defender);
 	void					wave(int start, bool fly, tokens wdir, int speed);
 }
-namespace sheme
-{
-	extern unsigned char	red_path[256];
-	extern unsigned char	gray_font[256];
-	void					initialize();
-}
 struct list
 {
 	int						origin;
@@ -967,6 +962,9 @@ namespace game
 		void				initialize();
 		int					monster(int level);
 	}
+	namespace statistic
+	{
+	}
 	bool					additem(int rec, int type);
 	void					addresources(void* result, const void* v1, const void* v2, bool negative = false);
 	bool					addunit(int rec, int type, int count);
@@ -976,6 +974,15 @@ namespace game
 	int						divresource(const void* source_void, const void* divider_void);
 	int						get(int rec, int id);
 	int						getartifact(int rec, int id);
+	int						getbesthero(int rec);
+	int						getbestmonster(int rec);
+	char*					getbuilding(char* result, tokens race, int building, int level);
+	const void*				getbuildingcost(int race, int building, int level);
+	int						getbuildingmaxlevel(int race, int building);
+	const char*				getbuildingname(int race, int building, int level);
+	const char*				getbuildinginfo(int race, int building, int level);
+	int						getcastle(int index);
+	int						getcastles(int player, int level);
 	char*					getcosttext(char* result, const void* cost);
 	int						getday();
 	int						getdowngrade(int rec);
@@ -987,14 +994,9 @@ namespace game
 	int						getmonth();
 	int						getmorale(int value);
 	int						getmoralechance(int value);
-	int						getcastle(int index);
-	char*					getbuilding(char* result, tokens race, int building, int level);
-	const void*				getbuildingcost(int race, int building, int level);
-	int						getbuildingmaxlevel(int race, int building);
-	const char*				getbuildingname(int race, int building, int level);
-	const char*				getbuildinginfo(int race, int building, int level);
 	int						getplayer();
 	int						getspeed(int value);
+	int						getstrenght(int rec);
 	int						getsummary(int rec, int id, int side);
 	int						gettarget(int rec);
 	int						getunit(int race, int building, int level);

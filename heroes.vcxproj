@@ -39,6 +39,7 @@
     <ClCompile Include="castle.cpp" />
     <ClCompile Include="crt.cpp" />
     <ClCompile Include="draw.cpp" />
+    <ClCompile Include="game_statistic.cpp" />
     <ClCompile Include="show_castle_build.cpp" />
     <ClCompile Include="buildings.cpp" />
     <ClCompile Include="show_castle.cpp" />
@@ -76,6 +77,7 @@
     <ClCompile Include="resource.cpp" />
     <ClCompile Include="show_battle.cpp" />
     <ClCompile Include="show_hero.cpp" />
+    <ClCompile Include="show_thieves.cpp" />
     <ClCompile Include="tokens.cpp" />
     <ClCompile Include="sign.cpp" />
     <ClCompile Include="show_spellbook.cpp" />

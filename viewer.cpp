@@ -65,7 +65,8 @@ static void palview()
 		}
 		if(index!=-1)
 		{
-			draw::fontsm push;
+			draw::state push;
+			draw::font = res::SMALFONT;
 			char temp[32];
 			sznum(temp, index, 2, 0, 16);
 			draw::text(320, 10, temp);
@@ -115,7 +116,8 @@ static int search_image()
 
         void row(int x, int y, int index) const
         {
-            draw::fontsm push;
+            draw::state push;
+			draw::font = res::SMALFONT;
             char temp[48];
             int id = data[index];
             zcpy(temp, rsname(id));
@@ -165,7 +167,7 @@ static int view()
 	int max_resource = res_read(resdata);
 	int current_resource = 0;//find_index(resdata, max_resource, res::P_FLAG32);
 	int current_frame = 0;
-	bool center_image = false;
+	int mode = 0;
 	bool border_image = false;
 	while(true)
 	{
@@ -178,7 +180,12 @@ static int view()
 		draw::rectf(0, 0, draw::width - 1, draw::height - 1, 0x12);
 		int x = draw::width/2;
 		int y = draw::height/2;
-		draw::image(x, y, icn, current_frame, center_image ? AFNoOffset : 0);
+		if(mode == 0)
+		{
+			x = 0;
+			y = 0;
+		}
+		draw::image(x, y, icn, current_frame, (mode<=1) ? AFNoOffset : 0);
 		if(border_image)
 		{
 			draw::line(x-32, y, x+32, y, 0xBD);
@@ -224,7 +231,7 @@ static int view()
             draw::execute(Paladin);
             break;
 		case Alpha + 'C':
-			center_image = !center_image;
+			mode = (mode + 1) % 3;
 			break;
 		case Alpha + 'B':
 			border_image = !border_image;

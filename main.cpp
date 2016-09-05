@@ -412,16 +412,32 @@ void test_combat()
 
 void test_castle()
 {
+	int hero;
 	game::initialize();
 	int type = xrand(Barbarian, Wizard);
+	//
 	int player = PlayerBlue;
 	bsset(player, Type, type);
 	bsset(player, PlayerType, Human);
+	hero = game::random::hero(0);
+	bsset(hero, Player, player);
+	player = PlayerRed;
+	bsset(player, Type, type);
+	bsset(player, PlayerType, Human);
+	hero = game::random::hero(0);
+	bsset(hero, Player, player);
+	player = PlayerYellow;
+	bsset(player, Type, type);
+	bsset(player, PlayerType, Human);
+	hero = game::random::hero(0);
+	bsset(hero, Player, player);
+	//
 	int castle = game::random::castle(type, player, 400, true);
 	game::addunit(castle, Boar, 4);
 	game::addunit(castle, Halfling, 10);
 	game::prepare();
-	show::castle(castle);
+	show::thieves(player);
+	//show::castle(castle);
 }
 
 static int mainmenu()
