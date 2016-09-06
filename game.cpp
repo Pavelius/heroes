@@ -121,8 +121,11 @@ int game::getartifact(int rec, int id)
 
 void game::cleararmy(int rec)
 {
-	for(int i = FirstTroopsIndex; i <= LastTroopsIndex; i++)
+	for(int i = FirstTroopsIndex; i <= LastTroopsIndex; i += 2)
+	{
 		bsset(rec, i, 0);
+		bsset(rec, i+1, 0);
+	}
 }
 
 bool game::addunit(int rec, int type, int count)
@@ -474,23 +477,26 @@ int game::get(int rec, int id)
 		default:
 			return 0;
 		}
-	case TwiceAttack:
-		if(rec >= FirstCombatant && rec <= LastCombatant)
-			rec = bsget(rec, Type);
-		switch(rec)
-		{
-		case Ranger:
-		case Crusader:
-		case Paladin:
-		case Wolf:
-		case Elf:
-		case GrandElf:
-			return 1;
-		default:
-			return 0;
-		}
 	default:
 		return bsget(rec, id);
+	}
+}
+
+bool game::istwiceattack(int rec)
+{
+	if(rec >= FirstCombatant && rec <= LastCombatant)
+		rec = bsget(rec, Type);
+	switch(rec)
+	{
+	case Ranger:
+	case Crusader:
+	case Paladin:
+	case Wolf:
+	case Elf:
+	case GrandElf:
+		return true;
+	default:
+		return false;
 	}
 }
 
@@ -553,6 +559,11 @@ bool game::iswide(int rec)
 	default:
 		return false;
 	}
+}
+
+bool game::isarcher(int rec)
+{
+	return bsget(rec, Shoots)!=0;
 }
 
 bool game::isfly(int rec)
@@ -817,6 +828,28 @@ void game::initialize()
 			game::addunit(rec, Zombie, xrand(4, 8));
 			break;
 		}
+	}
+	// Calculate monater ratin
+	for(int i = FirstMonster; i <= LastMonster; i++)
+	{
+		auto res = ((double)bsget(i, DamageMin) + (double)bsget(i, DamageMax)) / 2.0;
+		auto hal = res * 0.5;
+		// increase strength
+		if(game::isfly(i))
+			res += hal;
+		else if(game::isarcher(i))
+			res += hal;
+		if(game::istwiceattack(i))
+			res += hal;
+		if(game::isstealth(i))
+			res += hal;
+		// slowly: decrease strength
+		if((!game::isfly(i) && !game::isarcher(i))
+			&& (bsget(i, Speed) + SpeedCrawling) < SpeedAverage)
+			res -= hal;
+		if(res == Ghost)
+			res += hal*4;
+		bsset(i, Rating, (int)res);
 	}
 }
 

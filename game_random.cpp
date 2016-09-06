@@ -71,9 +71,11 @@ int game::random::hero(int type)
 {
 	int source[LastHero - FirstHero + 2];
 	int* p = source;
-	for(int i = FirstHero; i <= LastHero; i++)
+	for(int i = FirstHero; i <= Celia; i++)
 	{
 		if(type && game::get(i, Type) != type)
+			continue;
+		if(bsget(i, Player))
 			continue;
 		if(is_recruit(i))
 			continue;

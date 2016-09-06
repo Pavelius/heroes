@@ -15,6 +15,7 @@ static struct monster
 	const char*		name[2];
 	const char*		multiname[2];
 	int				cost[LastResource-FirstResource+1];
+	int				rating;
 } objects[LastMonster - FirstMonster + 1] =
 {
 	{1, 0, 1, 1, 1, 1, 1, 1, 12, 0, {"Peasant", "Крестьянин"}, {"Peasants", "Крестьян"}, {20, 0, 0, 0, 0, 0, 0}},
@@ -108,6 +109,7 @@ static bsmeta::field fields[] = {
 	BSREQ(monster, speed, Speed, Number),
 	BSREQ(monster, level, Level, Number),
 	BSINT(monster, cost, FirstResource, Number),
+	BSREQ(monster, rating, Rating, Number),
 };
 BSMETA(monster, "Monsters", "Монстры", FirstMonster);
 

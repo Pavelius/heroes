@@ -421,14 +421,18 @@ void test_castle()
 	bsset(player, PlayerType, Human);
 	hero = game::random::hero(0);
 	bsset(hero, Player, player);
+	//
 	player = PlayerRed;
 	bsset(player, Type, type);
 	bsset(player, PlayerType, Human);
 	hero = game::random::hero(0);
 	bsset(hero, Player, player);
+	//
 	player = PlayerYellow;
 	bsset(player, Type, type);
 	bsset(player, PlayerType, Human);
+	hero = game::random::hero(0);
+	bsset(hero, Player, player);
 	hero = game::random::hero(0);
 	bsset(hero, Player, player);
 	//

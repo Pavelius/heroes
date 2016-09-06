@@ -1005,6 +1005,7 @@ namespace game
 	bool					hasspellbook(int rec);
 	void					hire(int hero, int player, int index);
 	void					initialize();
+	bool					isarcher(int rec);
 	bool					isboosted(int rec);
 	bool					iscombat(int rec);
 	bool					isfly(int rec);
@@ -1014,6 +1015,7 @@ namespace game
 	bool					ispenalized(int rec);
 	bool					isrequipment(int race, int building, int level, int req, int req_level);
 	bool					isstealth(int rec);
+	bool					istwiceattack(int rec);
 	bool					iswide(int rec);
 	bool					ismeleearcher(int rec);
 	void					mulresource(int* result, const void* source, int value);
