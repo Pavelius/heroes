@@ -103,20 +103,12 @@ static int handle(HWND hwnd, MSG& msg)
 		hot::mouse.y = HIWORD(msg.lParam);
 		return MouseMove;
 	case WM_LBUTTONDOWN:
-		if(msg.hwnd!=hwnd)
-			break;
 		hot::pressed = true;
 		return MouseLeft;
 	case WM_LBUTTONDBLCLK:
-		if(msg.hwnd!=hwnd)
-			break;
 		hot::pressed = true;
 		return MouseLeftDBL;
 	case WM_LBUTTONUP:
-		if(msg.hwnd!=hwnd)
-			break;
-		if(!hot::pressed)
-			break;
 		hot::pressed = false;
 		return MouseLeft;
 	case WM_RBUTTONDOWN:

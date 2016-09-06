@@ -45,7 +45,7 @@ void show::marketplace(int player)
 {
 	draw::screenshoot surface;
 	const int width = 230;
-	const int height = 260;
+	const int height = 280;
 	auto market_count = game::getbuildings(player, MarketPlace);
 	if(!market_count)
 		return;
@@ -55,33 +55,35 @@ void show::marketplace(int player)
 	auto rest = Gold;
 	auto ratf = 1;
 	auto ratt = 1;
+	auto count = 1;
 	auto resources = bsptr(player, FirstResource);
 	char temp[260];
 	while(true)
 	{
 		surface.restore();
-		int y1 = draw::dialog(260);
-		int y = y1;
-		draw::text(x, y - 20, width, draw::Center, game::getbuildingname(Knight, MarketPlace, 1));
+		int y = draw::dialog(height);
+		//draw::text(x, y - 20, width, draw::Center, game::getbuildingname(Knight, MarketPlace, 1));
 		int rate = game::gettrade(resf, rest, market_count);
 		if(rest == Gold)
 		{
 			szprint(temp, szt(
-				"On my market for 1 %1 you get %3i %2.",
-				"Ќа моем рынке за 1 ед. %1 можно получить %3i ед. %2."),
+				"On my market for one %1 you can get %3i %2.",
+				"Ќа моем рынке за один ресурс %1 можно получить %3i ресурса %2."),
 				bsgets(resf, Name), bsgets(rest, Name), rate);
 		}
 		else
 		{
 			szprint(temp, szt(
-				"On my market for %3i %1 you get 1 %2.",
-				"Ќа моем рынке за %3i ед. %1 можно получить 1 ед. %2."),
+				"On my market for %3i units of %1 you can get one %2.",
+				"Ќа моем рынке за %3i ресурсов %1 можно получить один ресурс %2."),
 				bsgets(resf, Name), bsgets(rest, Name), rate);
 		}
 		draw::textf(x, y, width, temp);
-		paint_resources(x, y + 120, icn, resources, resf, Empthy, 0);
-		paint_resources(x+120, y + 120, icn, resources, rest, resf, market_count);
-		draw::button(x + (width - res::width(icn, 17)) / 2, y1 + height - res::height(icn, 17), icn, Cancel, 17, 17, 18, KeyEscape);
+		draw::splitter(x-4, y + 86, MarketPlace, icn, 0, 10, count);
+		draw::button(x + (width - res::width(icn, 15))/ 2, y + 110, icn, MarketPlace, 15, 15, 16, KeyEnter);
+		paint_resources(x, y + 140, icn, resources, resf, Empthy, 0);
+		paint_resources(x+120, y + 140, icn, resources, rest, resf, market_count);
+		draw::button(x + (width - res::width(icn, 17))/2, y + height - res::height(icn, 17), icn, Cancel, 17, 17, 18, KeyEscape);
 		draw::cursor(res::ADVMCO, 0);
 		int id = draw::input();
 		switch(id)
@@ -94,6 +96,12 @@ void show::marketplace(int player)
 			break;
 		case TargetIndex:
 			rest = (tokens)hot::param;
+			break;
+		case MarketPlace:
+			if(hot::param == KeyLeft)
+				count--;
+			else if(hot::param == KeyRight)
+				count++;
 			break;
 		default:
 			draw::definput(id);

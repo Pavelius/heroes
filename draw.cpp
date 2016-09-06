@@ -536,6 +536,10 @@ void draw::image(int x, int y, res::tokens res, unsigned frame, unsigned flags, 
 			x += r.x;
 		y += r.y;
 	}
+	if(flags&AFCenter)
+		x -= r.width / 2;
+	if(flags&AFCenterV)
+		y -= r.height / 2;
 	if(r.type == 0x20)
 	{
 		if(flags&AFMirror)
@@ -874,7 +878,7 @@ void draw::cursor(res::tokens icn, int id, int ox, int oy)
 		image(hot::mouse.x + ox, hot::mouse.y + oy, icn, id, 0);
 }
 
-void draw::button(int x, int y, res::tokens res, int id, int normal, int hilite, int pressed, int key, unsigned flags, const char* tips)
+void draw::button(int x, int y, res::tokens res, int id, int normal, int hilite, int pressed, int key, unsigned flags, const char* tips, int param)
 {
 	if((flags&Disabled) == 0)
 	{
@@ -893,17 +897,17 @@ void draw::button(int x, int y, res::tokens res, int id, int normal, int hilite,
 					szprint(tooltips_text, tips);
 			}
 			if(hot::key == MouseLeft && !hot::pressed)
-				execute(id);
+				execute(id, param);
 		}
 		if(flags&Checked)
 			i = pressed;
-		image(x, y, res, i, false);
+		image(x, y, res, i, flags);
 		if(key && hot::key == key)
-			execute(id);
+			execute(id, param);
 	}
 	else
 	{
-		image(x, y, res, pressed, false);
+		image(x, y, res, pressed, flags);
 		shadow(x, y, x + res::width(res, pressed) - 1, y + res::height(res, pressed) - 1, 2);
 	}
 }

@@ -58,6 +58,71 @@ static int index_by_type(int id)
 	}
 }
 
+void draw::splitter(int x, int y, int id, res::tokens icn, int from, int to, int& cur)
+{
+	static int drag_id;
+	int body = 1, left = 3, right = 5, bar = 2;
+	int right_offset = 0, left_offset = 6, bar_offset = 4, pressed = 1;
+	if(cur < from)
+		cur = from;
+	if(cur > to)
+		cur = to;
+	if(from == to)
+		return;
+	int bar_width = res::width(icn, bar);
+	int body_width = res::width(icn, body);
+	int mx1 = body_width - left_offset - res::width(icn, left) - res::width(icn, right) - bar_width - bar_offset * 2;
+	if(mx1 < 0)
+		return;
+	int mx = to - from;
+	if(mx <= 0)
+		return;
+	int p0 = res::width(icn, left) + left_offset + bar_offset;
+	int px = x + p0 + cur * mx1 / mx;
+	int h1 = res::height(icn, body);
+	image(x, y, icn, body);
+	image(px, y + bar_offset, icn, bar);
+	if(drag_id)
+	{
+		if(hot::key == MouseLeft)
+		{
+			if(!hot::pressed)
+				drag_id = 0;
+		}
+		else if(drag_id == id && hot::key == MouseMove)
+		{
+			if(hot::mouse.x < px)
+				draw::execute(id, KeyLeft);
+			else if(hot::mouse.x > px + (mx1 + mx - 1) / mx)
+				draw::execute(id, KeyRight);
+		}
+	}
+	else
+	{
+		if(hot::key == MouseLeft && hot::pressed)
+		{
+			if(area(x + p0, y, px, y + height))
+				execute(id, KeyLeft);
+			else if(area(px + bar_width, y, x + p0 + mx1 + bar_width, y + height))
+				execute(id, KeyRight);
+			else if(area(px, y, px + bar_width, y + height))
+				drag_id = id;
+		}
+		else if(hot::key == MouseWheelUp || hot::key == MouseWheelDown)
+		{
+			if(area(x, y, x + body_width, y + height))
+			{
+				if(hot::key==MouseWheelUp)
+					execute(id, KeyLeft);
+				else
+					execute(id, KeyRight);
+			}
+		}
+	}
+	button(x + left_offset, y + 1, icn, id, left, left, left + pressed, 0, 0, 0, KeyLeft);
+	button(x + res::width(icn, body) - res::width(icn, right) - 1, y + 1, icn, id, right, right, right + pressed, 0, 0, 0, KeyRight);
+}
+
 int draw::clipart(int x, int y, int id, int param, int param2, bool border)
 {
 	int w = 0;
@@ -65,11 +130,11 @@ int draw::clipart(int x, int y, int id, int param, int param2, bool border)
 	char temp[32];
 	if(id >= FirstHero && id <= LastHero)
 	{
-		if(param==1)
+		if(param == 1)
 		{
 			w = 43;
 			h = 27;
-			image(x - res::width(res::MINIPORT, 0) / 2, y + res::oy(res::MINIPORT, 0) , res::MINIPORT, id - FirstHero, AFNoOffset);
+			image(x - res::width(res::MINIPORT, 0) / 2, y + res::oy(res::MINIPORT, 0), res::MINIPORT, id - FirstHero, AFNoOffset);
 		}
 		else
 		{
@@ -82,7 +147,7 @@ int draw::clipart(int x, int y, int id, int param, int param2, bool border)
 	}
 	if(id >= FirstCaptain && id <= LastCaptain)
 	{
-		static int indicies[] = {1,0,5,2,3,4};
+		static int indicies[] = {1, 0, 5, 2, 3, 4};
 		w = 101;
 		h = 93;
 		image(x - w / 2, y, res::tokens(res::PORT0090 + indicies[id - FirstCaptain]), 0, 0);
@@ -217,7 +282,7 @@ int draw::textf(int x, int y, int width, const char* p)
 			draw::text(x, y, width, draw::Center, p, c);
 			y += draw::texth();
 			p += c;
-			if(p>start && p[-1] == '\n')
+			if(p > start && p[-1] == '\n')
 				y += 6;
 			p = zskipspcr(p);
 		}

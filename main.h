@@ -244,6 +244,8 @@ enum image_flags
 {
 	AFMirror = 1,
 	AFNoOffset = 2,
+	AFCenter = 4,
+	AFCenterV = 8,
 };
 namespace res
 {
@@ -581,7 +583,7 @@ namespace draw
 	const int				scanline = 640;
 	//
 	bool					area(int x1, int y1, int x2, int y2);
-	void					button(int x, int y, res::tokens icn, int id, int normal, int hilite, int pressed, int key = 0, unsigned flags = 0, const char* tips = 0);
+	void					button(int x, int y, res::tokens icn, int id, int normal, int hilite, int pressed, int key = 0, unsigned flags = 0, const char* tips = 0, int param = 0);
 	void					castle(int x, int y, int tile, int race, bool town);
 	int						clipart(int x, int y, int id, int param, int param2 = 0, bool border = false);
 	extern rect				clipping;
@@ -611,6 +613,7 @@ namespace draw
 	void					resource(int x, int y, const void* cost_ptr);
 	void					route(int x, int y, int* rec, int w, int h, int distance);
 	void					shadow(int x1, int y1, int x2, int y2, int intense);
+	void					splitter(int x, int y, int id, res::tokens icn, int from, int to, int& current);
 	void					status(const char* format, ...);
 	void					status(int x1, int y1, int x2, int y2);
 	void					text(int x, int y, const char* string, int count = -1);
