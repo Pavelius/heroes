@@ -38,9 +38,6 @@ extern unsigned char    pallette[256][4];
 extern unsigned char    pallette2[256];
 extern unsigned char    pallette3[256];
 extern unsigned char    pallette4[256];
-bool					sys_create(const char* title, int milliseconds, bool fullscreen, unsigned char* bits, int width, int height); // Create system window
-int						sys_input(bool wait); // Wait for system input
-void*					sys_get_pallette(); // Get system pallette
 int                     hot::param;
 int                     hot::level;
 int                     hot::param2;
@@ -48,6 +45,11 @@ point                   hot::mouse;
 int                     hot::key;
 int                     hot::command;
 bool                    hot::pressed;
+
+// System driver
+bool					sys_create(const char* title, int milliseconds, bool fullscreen, unsigned char* bits, int width, int height); // Create system window
+int						sys_input(bool wait); // Wait for system input
+void*					sys_get_pallette(); // Get system pallette
 
 int draw::isqrt(int num)
 {
@@ -691,12 +693,24 @@ void draw::line(int x1, int y1, int x2, int y2, unsigned char m)
 {
 	if(y1 == y2)
 	{
-		if(y1 < clipping.y1)
+		if(y1 >= clipping.y2 || y1 < clipping.y1)
 			return;
-		line_v1(ptr(imin(x1, x2), y1), ptr(imax(x1, x2), y1), m, 1);
+		auto n1 = imin(x1, x2);
+		auto n2 = imax(x1, x2);
+		if(n1 < clipping.x1)
+			n1 = clipping.x1;
+		if(n2 >= clipping.x2)
+			n2 = clipping.x2 - 1;
+		if(n1>n2)
+			return;
+		line_v1(ptr(n1, y1), ptr(n2, y1), m, 1);
 	}
 	else if(x1 == x2)
+	{
+		if(x1 >= clipping.x2 || x1 < clipping.x1)
+			return;
 		line_v1(ptr(x1, imin(y1, y2)), ptr(x1, imax(y1, y2)), m, width);
+	}
 	else
 	{
 		const int deltaX = iabs(x2 - x1);
@@ -1003,4 +1017,8 @@ bool draw::create(const char* title, unsigned milliseconds, bool fullscreen)
 	memcpy(sys_get_pallette(), pallette, 256 * 4);
 	colorize();
 	return sys_create(title, milliseconds, fullscreen, bits, width, height);
+}
+
+void dlgerr(const char* title, const char* format, ...)
+{
 }

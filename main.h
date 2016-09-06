@@ -651,7 +651,6 @@ struct animation : public drawable
 	static animation*		find(drawable** objects, int rec);
 	static int				fly(point* result, point from, point to, int step);
 	int						getid() const override { return rec; }
-	point					gethead() const;
 	rect				    getrect() const override;
 	point					getzpos() const override;
 	virtual unsigned		getrate() const { return 1000 / 8; }
@@ -683,13 +682,12 @@ namespace show
 	void				    build(int rec);
 	void				    castle(int rec);
 	void					fadeback(int count);
-	animation*				find(drawable** objects, int rec);
 	int					    game();
 	void				    hero(tokens rec);
 	void				    highscore();
 	bool                    recruit(int rec, int& count, int maximum, void* available_resources);
-	void					settings();
 	int						spellbook(int mid, tokens mode = CombatSpells);
+	void					tavern();
 	void                    tips(const char* text);
 	int						thieves(int player);
 	void                    unit(int rec, int parent, int count, int index);
@@ -712,7 +710,6 @@ struct order
 	int						pos;
 	int						param;
 	int						target;
-	void					clear();
 };
 namespace animate
 {
@@ -961,9 +958,6 @@ namespace game
 		int					hero(int type);
 		void				initialize();
 		int					monster(int level);
-	}
-	namespace statistic
-	{
 	}
 	bool					additem(int rec, int type);
 	void					addresources(void* result, const void* v1, const void* v2, bool negative = false);

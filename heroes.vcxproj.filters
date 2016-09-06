@@ -68,5 +68,6 @@
     <ClCompile Include="buildings.cpp" />
     <ClCompile Include="show_thieves.cpp" />
     <ClCompile Include="game_statistic.cpp" />
+    <ClCompile Include="show_tavern.cpp" />
   </ItemGroup>
 </Project>

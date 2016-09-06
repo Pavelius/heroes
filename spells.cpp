@@ -269,7 +269,3 @@ bool game::iscombat(int rec)
 //            return 0;
 //        }
 //        break;
-//    case RequiredTarget:
-//        break;
-//    }
-//}

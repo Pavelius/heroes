@@ -2,6 +2,41 @@
 
 const int padding = 16;
 
+struct picture
+{
+	int id;
+	int	count;
+
+	int width() const
+	{
+		if(id >= (int)FirstHero && id <= (int)LastHero)
+			return 101;
+		else if(id >= (int)FirstResource && id <= (int)LastResource)
+			return 60;
+		else if(id >= (int)FirstBuilding && id <= (int)LastBuilding)
+			return 137;
+		else if(id >= (int)FirstMonster && id <= (int)LastMonster)
+			return 80;
+		else if(id >= (int)FirstSkill && id <= (int)LastSkill)
+			return 80;
+		return 0;
+	}
+
+	int height() const
+	{
+		if(id >= (int)FirstHero && id <= (int)LastHero)
+			return 93;
+		else if(id >= (int)FirstResource && id <= (int)LastResource)
+			return 50;
+		else if(id >= (int)FirstBuilding && id <= (int)LastBuilding)
+			return 58;
+		else if(id >= (int)FirstMonster && id <= (int)LastMonster)
+			return 93;
+		return 0;
+	}
+
+};
+
 static int index_by_type(int id)
 {
 	switch(id)
@@ -117,6 +152,84 @@ int draw::clipart(int x, int y, int id, int param, int param2, bool border)
 	return h;
 }
 
+static int paint_icons(int x, int y, int width, picture* icons, int count)
+{
+	const int pad = 4;
+	if(!count)
+		return 0;
+	int y1 = y;
+	while(count > 0)
+	{
+		int c = (count < 3) ? count : 3;
+		int h = icons->height();
+		int w1 = icons->width();
+		int w = w1*c + (c - 1)*pad;
+		int x1 = x + (width - w) / 2;
+		for(int i = 0; i < c; i++)
+		{
+			int h1 = draw::clipart(x1 + w1 / 2, y, icons[i].id, icons[i].count, 0, true);
+			if(h < h1)
+				h = h1;
+			x1 += w1 + pad;
+		}
+		y += h;
+		icons += c;
+		count -= c;
+	}
+	return y - y1;
+}
+
+int draw::textf(int x, int y, int width, const char* p)
+{
+	picture params[16];
+	int y4 = y;
+	p = zskipspcr(p);
+	auto start = p;
+	while(*p)
+	{
+		if(p[0] == '$' && p[1] == '(')
+		{
+			p += 2;
+			int count = 0;
+			while(*p)
+			{
+				params[count].id = sz2num(p, &p);
+				params[count].count = 0;
+				if(*p == '/')
+					params[count].count = sz2num(zskipsp(p + 1), &p);
+				count++;
+				if(*p == ')')
+				{
+					p = zskipspcr(p + 1);
+					break;
+				}
+				if(*p == ',')
+					p++;
+			}
+			if(count)
+				y += paint_icons(x, y, width, params, count) + 16;
+		}
+		else
+		{
+			int c = draw::textbc(p, width);
+			draw::text(x, y, width, draw::Center, p, c);
+			y += draw::texth();
+			p += c;
+			if(p>start && p[-1] == '\n')
+				y += 6;
+			p = zskipspcr(p);
+		}
+	}
+	return y - y4;
+}
+
+int draw::textf(int width, const char* string)
+{
+	draw::state push;
+	draw::clipping.clear();
+	return textf(0, 0, width, string);
+}
+
 int draw::dialog(int height)
 {
 	const int p1 = 30;
@@ -212,13 +325,6 @@ bool dlgask(const char* title, const char* text)
 			break;
 		}
 	}
-}
-
-void dlgerr(const char* title, const char* format, ...)
-{
-	char temp[4096];
-	szprintv(temp, format, xva_start(format));
-	dlgmsg(title, temp);
 }
 
 void dlgmsg(const char* title, const char* text)
@@ -404,5 +510,45 @@ void show::fadeback(int count)
 		draw::shadow(0, 0, draw::width - 1, draw::height - 1, 0);
 		draw::input(false);
 		sleep(50);
+	}
+}
+
+void draw::screenshoot::redraw(drawable** objects, unsigned timeout)
+{
+	restore();
+	dworder(objects, zlen(objects));
+	dwpaint(objects, {0, 0, draw::width, draw::height}, {0, 0});
+	draw::input(false);
+	sleep(timeout);
+}
+
+void draw::screenshoot::redraw(drawable** objects, unsigned timeout, drawable* e1, int stop)
+{
+	auto a1 = static_cast<animation*>(e1);
+	if(!a1->count)
+		return;
+	while(true)
+	{
+		redraw(objects, timeout);
+		if(a1->incframe())
+			break;
+		if(stop && a1->frame >= stop)
+			break;
+	}
+}
+
+void draw::screenshoot::redraw(drawable** objects, unsigned timeout, drawable* e1, drawable* e2)
+{
+	auto a1 = static_cast<animation*>(e1);
+	auto a2 = static_cast<animation*>(e2);
+	bool a1_run = true;
+	bool a2_run = true;
+	while(a1_run || a2_run)
+	{
+		redraw(objects, timeout);
+		if(a1->incframe())
+			a1_run = false;
+		if(a2->incframe())
+			a2_run = false;
 	}
 }

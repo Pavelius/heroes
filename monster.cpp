@@ -113,6 +113,117 @@ static bsmeta::field fields[] = {
 };
 BSMETA(monster, "Monsters", "Монстры", FirstMonster);
 
+bool game::istwiceattack(int rec)
+{
+	if(rec >= FirstCombatant && rec <= LastCombatant)
+		rec = bsget(rec, Type);
+	switch(rec)
+	{
+	case Ranger:
+	case Crusader:
+	case Paladin:
+	case Wolf:
+	case Elf:
+	case GrandElf:
+		return true;
+	default:
+		return false;
+	}
+}
+
+bool game::isstealth(int rec)
+{
+	if(rec >= FirstCombatant && rec <= LastCombatant)
+		rec = bsget(rec, Type);
+	switch(rec)
+	{
+	case Sprite:
+	case Hydra:
+	case Vampire:
+	case VampireLord:
+	case Rogue:
+		return true;
+	default:
+		return false;
+	}
+}
+
+bool game::ismeleearcher(int rec)
+{
+	if(rec >= FirstCombatant && rec <= LastCombatant)
+		rec = bsget(rec, Type);
+	switch(rec)
+	{
+	case Mage:
+	case ArchMage:
+	case Lich:
+	case PowerLich:
+		return true;
+	default:
+		return false;
+	}
+}
+
+bool game::iswide(int rec)
+{
+	if(rec >= FirstCombatant && rec <= LastCombatant)
+		rec = bsget(rec, Type);
+	switch(rec)
+	{
+	case Cavalry:
+	case Champion:
+	case Wolf:
+	case Unicorn:
+	case Phoenix:
+	case Centaur:
+	case Griffin:
+	case Hydra:
+	case GreenDragon:
+	case RedDragon:
+	case BlackDragon:
+	case Boar:
+	case Roc:
+	case BoneDragon:
+	case Nomand:
+	case Medusa:
+		return true;
+	default:
+		return false;
+	}
+}
+
+bool game::isarcher(int rec)
+{
+	if(rec >= FirstCombatant && rec <= LastCombatant)
+		rec = bsget(rec, Type);
+	return bsget(rec, Shoots) != 0;
+}
+
+bool game::isfly(int rec)
+{
+	if(rec >= FirstCombatant && rec <= LastCombatant)
+		rec = bsget(rec, Type);
+	switch(rec)
+	{
+	case Sprite:
+	case Phoenix:
+	case Gargoyle:
+	case Griffin:
+	case GreenDragon:
+	case RedDragon:
+	case BlackDragon:
+	case Roc:
+	case Vampire:
+	case VampireLord:
+	case BoneDragon:
+	case Ghost:
+	case Genie:
+		return true;
+	default:
+		return false;
+	}
+}
+
 //	case Undead:
 //		switch(rec)
 //		{

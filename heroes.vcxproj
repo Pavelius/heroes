@@ -77,6 +77,7 @@
     <ClCompile Include="resource.cpp" />
     <ClCompile Include="show_battle.cpp" />
     <ClCompile Include="show_hero.cpp" />
+    <ClCompile Include="show_tavern.cpp" />
     <ClCompile Include="show_thieves.cpp" />
     <ClCompile Include="tokens.cpp" />
     <ClCompile Include="sign.cpp" />
