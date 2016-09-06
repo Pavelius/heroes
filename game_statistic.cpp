@@ -97,3 +97,15 @@ int game::getstrenght(int rec)
 	}
 	return 0;
 }
+
+int game::getbuildings(int player, int building)
+{
+	int result = 0;
+	for(int i = FirstCastle; i <= LastCastle; i++)
+	{
+		if(bsget(i, Player) != player)
+			continue;
+		result += bsget(i, building);
+	}
+	return result;
+}

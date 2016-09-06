@@ -124,7 +124,7 @@ void game::cleararmy(int rec)
 	for(int i = FirstTroopsIndex; i <= LastTroopsIndex; i += 2)
 	{
 		bsset(rec, i, 0);
-		bsset(rec, i+1, 0);
+		bsset(rec, i + 1, 0);
 	}
 }
 
@@ -467,16 +467,16 @@ int game::get(int rec, int id)
 			return SandsWarriors;
 		}
 		return bsget(rec, id);
-	case AllAttackAnswer:
-		if(rec >= FirstCombatant && rec <= LastCombatant)
-			rec = bsget(rec, Type);
-		switch(rec)
-		{
-		case Griffin:
-			return 1;
-		default:
-			return 0;
-		}
+		//case AllAttackAnswer:
+		//	if(rec >= FirstCombatant && rec <= LastCombatant)
+		//		rec = bsget(rec, Type);
+		//	switch(rec)
+		//	{
+		//	case Griffin:
+		//		return 1;
+		//	default:
+		//		return 0;
+		//	}
 	default:
 		return bsget(rec, id);
 	}
@@ -555,7 +555,7 @@ int game::turn()
 int game::getincome(int rec)
 {
 	int result = 1000;
-	if(bsget(rec, Castle)<2)
+	if(bsget(rec, Castle) < 2)
 		result = result / 2;
 	if(bsget(rec, Statue))
 		result += 250;
@@ -739,7 +739,7 @@ void game::initialize()
 			&& (bsget(i, Speed) + SpeedCrawling) < SpeedAverage)
 			res -= hal;
 		if(res == Ghost)
-			res += hal*4;
+			res += hal * 4;
 		bsset(i, Rating, (int)res);
 	}
 }
@@ -844,7 +844,7 @@ int game::getgrowth(int rec, int dwelling)
 	if(dwelling == Dwelving1 && well2)
 		result += castle_income_well2;
 	// RULE: barbarian and knight growth fast
-	if(type == Barbarian || type==Knight)
+	if(type == Barbarian || type == Knight)
 		result += castle_income_well;
 	return result;
 }
@@ -1185,4 +1185,78 @@ bool game::upgrade(int side, int index, bool interactive)
 		return false;
 	}
 	return true;
+}
+
+int game::gettrade(tokens resf, tokens rest, int markets)
+{
+	const int max_count = 9;
+	static int sale_uncostly[max_count+1] = {0, 25, 37, 50, 62, 74, 87, 100, 112, 124};
+	static int sale_costly[max_count + 1] = {0, 50, 74, 100, 124, 149, 175, 200, 224, 249};
+	static int costly_costly[max_count+1] = {0, 10, 7, 5, 4, 4, 3, 3, 3, 2};
+	static int uncostly_costly[max_count + 1] = {0, 20, 14, 10, 8, 7, 6, 5, 5, 4};
+	static int costly_uncostly[max_count + 1] = {0, 5, 4, 3, 2, 2, 2, 2, 2, 1};
+	static int buy_costly[max_count + 1] = {0, 5000, 3334, 2500, 2000, 1667, 1429, 1250, 1112, 1000};
+	static int buy_uncostly[max_count + 1] = {0, 2500, 1667, 1250, 1000, 834, 715, 625, 556, 500};
+	if(!markets)
+		return 0;
+	if(resf == rest)
+		return 0;
+	if(markets > max_count)
+		markets = max_count;
+	switch(resf)
+	{
+	case Wood:
+	case Ore:
+		switch(rest)
+		{
+		case Gold:
+			return sale_uncostly[markets];
+		case Mercury:
+		case Sulfur:
+		case Crystal:
+		case Gems:
+			return uncostly_costly[markets];
+		case Wood:
+		case Ore:
+			return costly_costly[markets];
+		default:
+			return 0;
+		}
+		break;
+	case Mercury:
+	case Sulfur:
+	case Crystal:
+	case Gems:
+		switch(rest)
+		{
+		case Gold:
+			return sale_costly[markets];
+		case Mercury:
+		case Sulfur:
+		case Crystal:
+		case Gems:
+			return costly_costly[markets];
+		case Wood:
+		case Ore:
+			return costly_uncostly[markets];
+		default:
+			return 0;
+		}
+	case Gold:
+		switch(rest)
+		{
+		case Mercury:
+		case Sulfur:
+		case Crystal:
+		case Gems:
+			return buy_costly[markets];
+		case Wood:
+		case Ore:
+			return buy_uncostly[markets];
+		default:
+			return 0;
+		}
+	default:
+		return 0;
+	}
 }

@@ -45,8 +45,8 @@ enum tokens
 	EndTurn, Damage, Block, Income,
 	NameMulti, Level, Target, Side, Base, Expire,
 	SingleVersion, RequiredTarget, MassEffect, DamageMin, DamageMax, FrameStatus,
-	Move, Fly, MagicImmunity, ElementsImmunity, Undead, Dragon, AllAttackAnswer, TwiceAttack,
-	TargetUnit, TargetIndex,
+	Move, Fly, MagicImmunity, ElementsImmunity, Undead, Dragon,
+	SourceIndex, TargetUnit, TargetIndex,
 	Upgrade, Downgrade,
 	OneTime,
 	Difficulty, PlayerCount,
@@ -685,6 +685,7 @@ namespace show
 	int					    game();
 	void				    hero(tokens rec);
 	void				    highscore();
+	void					marketplace(int player);
 	bool                    recruit(int rec, int& count, int maximum, void* available_resources);
 	int						spellbook(int mid, tokens mode = CombatSpells);
 	void					tavern();
@@ -975,6 +976,7 @@ namespace game
 	int						getbuildingmaxlevel(int race, int building);
 	const char*				getbuildingname(int race, int building, int level);
 	const char*				getbuildinginfo(int race, int building, int level);
+	int						getbuildings(int player, int building);
 	int						getcastle(int index);
 	int						getcastles(int player, int level);
 	char*					getcosttext(char* result, const void* cost);
@@ -993,6 +995,7 @@ namespace game
 	int						getstrenght(int rec);
 	int						getsummary(int rec, int id, int side);
 	int						gettarget(int rec);
+	int						gettrade(tokens resf, tokens rest, int markets = 0);
 	int						getunit(int race, int building, int level);
 	int						getupgrade(int rec);
 	int						getweek();

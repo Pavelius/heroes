@@ -438,7 +438,7 @@ void test_castle()
 	//
 	int castle = game::random::castle(type, player, 400, true);
 	game::addunit(castle, Boar, 4);
-	game::addunit(castle, Halfling, 10);
+	bsset(castle, MarketPlace, 1);
 	game::prepare();
 	//show::thieves(player);
 	show::castle(castle);

@@ -69,7 +69,7 @@ void combat::melee(int att, int def, bool interactive)
 		return;
 	if(bsget(def, AlreadyDefended) == 0
 		&& !game::isstealth(att)
-		&& (game::get(def, AllAttackAnswer) || !bsget(def, DefendThisTurn)))
+		&& (/*game::get(def, AllAttackAnswer) || */!bsget(def, DefendThisTurn)))
 	{
 		bsadd(def, AlreadyDefended, 1);
 		result = attack(def, att);
@@ -85,7 +85,7 @@ void combat::melee(int att, int def, bool interactive)
 		if(!game::get(att, Count))
 			return;
 	}
-	if(bsget(att, TwiceAttack) && !bsget(att, Shoots))
+	if(/*bsget(att, TwiceAttack) && */!bsget(att, Shoots))
 	{
 		result = attack(att, def);
 		if(interactive)

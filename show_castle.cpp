@@ -740,6 +740,9 @@ void show::castle(int rec)
 		case Castle:
 			show::build(rec);
 			break;
+		case MarketPlace:
+			show::marketplace(player);
+			break;
 		default:
 			draw::definput(id);
 			break;
