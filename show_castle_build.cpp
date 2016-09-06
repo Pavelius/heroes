@@ -186,7 +186,10 @@ void show::build(int mid)
 		building(293, 77, Dwelving6, mid);
 		//
 		building(5, 157, MageGuild, mid);
-		building(149, 157, Tavern, mid);
+		if(race==Necromancer)
+			draw::image(145, 157, res::STONBACK, 0);
+		else
+			building(149, 157, Tavern, mid);
 		building(293, 157, ThievesGuild, mid);
 		building(5, 232, Shipyard, mid);
 		building(149, 232, Statue, mid);

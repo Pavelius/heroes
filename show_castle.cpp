@@ -671,7 +671,7 @@ static void paint_panel(int x, int y, int mid, int hero)
 	else
 	{
 		if(bsget(mid, Captain))
-			draw::clipart(x + 5 + 50, y + 105, bsget(mid, Type) - Barbarian + BarbarianCaptain, LargeSize);
+			draw::clipart(x + 5 + 50, y + 105, bsget(mid, Type) - Barbarian + BarbarianCaptain, bsget(mid, Player));
 		else
 			draw::image(x + 5, y + 105, res::STRIP, 3);
 		draw::image(x + 112, y + 105, res::STRIP, 11);

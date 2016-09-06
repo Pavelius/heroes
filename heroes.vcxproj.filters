@@ -48,7 +48,6 @@
     <ClCompile Include="base_meta.cpp" />
     <ClCompile Include="io.cpp" />
     <ClCompile Include="win_io.cpp" />
-    <ClCompile Include="controls.cpp" />
     <ClCompile Include="point.cpp" />
     <ClCompile Include="show_hero.cpp" />
     <ClCompile Include="show_unit.cpp" />
@@ -69,5 +68,6 @@
     <ClCompile Include="show_thieves.cpp" />
     <ClCompile Include="game_statistic.cpp" />
     <ClCompile Include="show_tavern.cpp" />
+    <ClCompile Include="draw_controls.cpp" />
   </ItemGroup>
 </Project>

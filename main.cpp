@@ -440,8 +440,8 @@ void test_castle()
 	game::addunit(castle, Boar, 4);
 	game::addunit(castle, Halfling, 10);
 	game::prepare();
-	show::thieves(player);
-	//show::castle(castle);
+	//show::thieves(player);
+	show::castle(castle);
 }
 
 static int mainmenu()
