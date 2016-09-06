@@ -884,7 +884,7 @@ void draw::button(int x, int y, res::tokens res, int id, int normal, int hilite,
 	{
 		int i = normal;
 		rect rc = res::box(x, y, res, i);
-		if(hot::mouse.x >= rc.x1 && hot::mouse.x < rc.x2 && hot::mouse.y >= rc.y1 && hot::mouse.y < rc.y2)
+		if(area(rc.x1, rc.y1, rc.x2, rc.y2))
 		{
 			i = hilite;
 			if(hot::pressed)
@@ -1008,7 +1008,9 @@ int draw::input(bool wait_input)
 		return hot::key;
 	}
 	int id = sys_input(wait_input);
-	if(id == InputTimer)
+	if(id == 0)
+		id = Cancel;
+	else if(id == InputTimer)
 	{
 		colorize();
 		counter++;

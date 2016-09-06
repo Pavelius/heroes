@@ -708,9 +708,6 @@ void show::castle(int rec)
 		int id = draw::input();
 		switch(id)
 		{
-		case Cancel:
-		case 0:
-			return;
 		case Dwelving1:
 		case Dwelving2:
 		case Dwelving3:
@@ -743,6 +740,8 @@ void show::castle(int rec)
 		case MarketPlace:
 			show::marketplace(player);
 			break;
+		case Cancel:
+			return;
 		default:
 			draw::definput(id);
 			break;

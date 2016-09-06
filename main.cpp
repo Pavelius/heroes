@@ -459,7 +459,7 @@ static int mainmenu()
                      szt("Load early saved game.", "Загрузить ранее сохраненную игру."));
         draw::button(0, 0, res::BTNSHNGL, HightScores, 9, 10, 11);
         draw::button(0, 0, res::BTNSHNGL, Credits, 13, 14, 15);
-        draw::button(0, 0, res::BTNSHNGL, QuitGame, 17, 18, 19);
+        draw::button(0, 0, res::BTNSHNGL, Cancel, 17, 18, 19);
 		latern.painting({0, 0});
 		draw::cursor(res::ADVMCO, 0);
         int id = draw::input();
@@ -494,13 +494,11 @@ static int mainmenu()
         case HightScores:
             show::highscore();
             break;
-		case QuitGame:
+		case Cancel:
 			return Cancel;
 		case InputTimer:
 			latern.update();
 			break;
-        case 0:
-            return 0;
         }
     }
     return 0;

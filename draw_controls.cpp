@@ -71,6 +71,7 @@ void draw::splitter(int x, int y, int id, res::tokens icn, int from, int to, int
 		return;
 	int bar_width = res::width(icn, bar);
 	int body_width = res::width(icn, body);
+	int height = res::height(icn, body);
 	int mx1 = body_width - left_offset - res::width(icn, left) - res::width(icn, right) - bar_width - bar_offset * 2;
 	if(mx1 < 0)
 		return;

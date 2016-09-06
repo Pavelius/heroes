@@ -1260,3 +1260,30 @@ int game::gettrade(tokens resf, tokens rest, int markets)
 		return 0;
 	}
 }
+
+bool game::trade(int player, tokens from, tokens to, int count, int discount)
+{
+	int rate = gettrade(from, to, getbuildings(player, MarketPlace) + discount);
+	auto resources = (int*)bsptr(player, FirstResource);
+	if(!resources || !rate)
+		return false;
+	int resource_sub[LastResource - FirstResource + 1] = {0};
+	int resource_add[LastResource - FirstResource + 1] = {0};
+	if(to == Gold)
+	{
+		if(count > resources[from - FirstResource])
+			count = resources[from - FirstResource];
+		resource_sub[from - FirstResource] = count;
+		resource_add[to - FirstResource] = count*rate;
+	}
+	else
+	{
+		if(count > resources[from - FirstResource]/rate)
+			count = resources[from - FirstResource]/rate;
+		resource_sub[from - FirstResource] = count*rate;
+		resource_add[to - FirstResource] = count;
+	}
+	addresources(resources, resources, resource_sub, true);
+	addresources(resources, resources, resource_add);
+	return true;
+}

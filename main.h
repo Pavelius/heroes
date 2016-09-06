@@ -36,7 +36,7 @@ enum tokens
 	PlayerBlue, PlayerGreen, PlayerRed, PlayerYellow, PlayerOrange, PlayerPurple,
 	FirstPlayer = PlayerBlue, LastPlayer = PlayerPurple,
 	// Main menu
-	NewGame, LoadGame, Credits, HightScores, QuitGame,
+	NewGame, LoadGame, Credits, HightScores,
 	StandartGame, CampaignGame, MultiplayerGame,
 	HotSeatGame,
 	AutoCombat, Character, RunAway, Surrender, CastSpell, Recruit, RecruitLast, Index, MoveTo, MakeAction,
@@ -1022,6 +1022,7 @@ namespace game
 	bool					passrequipment(int rec, int building, int level);
 	int						play(gamefile& game);
 	void					prepare();
+	bool					trade(int player, tokens from, tokens to, int count, int discount = 0);
 	int						turn();
 	bool					upgrade(int side, int index, bool interactive);
 }
