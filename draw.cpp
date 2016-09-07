@@ -1037,6 +1037,7 @@ int draw::input(bool wait_input)
 
 bool draw::create(const char* title, unsigned milliseconds, bool fullscreen)
 {
+	auto p = res::get(res::PalKB);
 	memcpy(sys_get_pallette(), pallette, 256 * 4);
 	colorize();
 	return sys_create(title, milliseconds, fullscreen, bits, width, height);

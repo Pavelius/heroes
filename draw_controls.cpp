@@ -1,7 +1,6 @@
 #include "main.h"
 
 const int				padding = 16;
-extern unsigned char	pallette[256][4];
 
 struct picture
 {
@@ -577,30 +576,6 @@ void show::fadeback(int count)
 	for(int i = 0; i < count; i++)
 	{
 		draw::shadow(0, 0, draw::width - 1, draw::height - 1, 0);
-		draw::input(false);
-		sleep(50);
-	}
-}
-
-void draw::screenshoot::blend(screenshoot& source)
-{
-	auto bits = ptr(0, 0);
-	auto rgb_lookup = (unsigned char*)res::get(res::BinRGBLOOKP);
-	if(!rgb_lookup || !bits)
-		return;
-	for(int j = 0; j<16; j++)
-	{
-		unsigned char a = j*16;
-		for(int i = 0; i < 640 * 480; i++)
-		{
-			unsigned char res[4];
-			unsigned char* c1 = pallette[source.bits[i]];
-			unsigned char* c2 = pallette[this->bits[i]];
-			res[2] = (((int)c1[0] * a + c2[0] * (255 - a))) >> (8 + 3);
-			res[1] = (((int)c1[1] * a + c2[1] * (255 - a))) >> (8 + 3);
-			res[0] = (((int)c1[2] * a + c2[2] * (255 - a))) >> (8 + 3);
-			bits[i] = rgb_lookup[(res[0] << 10) + (res[1] << 5) + res[2]];
-		}
 		draw::input(false);
 		sleep(50);
 	}
