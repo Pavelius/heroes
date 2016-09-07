@@ -1037,8 +1037,17 @@ int draw::input(bool wait_input)
 
 bool draw::create(const char* title, unsigned milliseconds, bool fullscreen)
 {
-	auto p = res::get(res::PalKB);
-	memcpy(sys_get_pallette(), pallette, 256 * 4);
+	// Set pallette
+	auto pal3 = (unsigned char*)res::get(res::PalKB);
+	auto pal4 = (unsigned char*)sys_get_pallette();
+	for(int i = 0; i < 256; i++)
+	{
+		int i3 = i * 3;
+		int i4 = i * 4;
+		pal4[i4 + 2] = pal3[i3 + 0]<<2;
+		pal4[i4 + 1] = pal3[i3 + 1] << 2;
+		pal4[i4 + 0] = pal3[i3 + 2] << 2;
+	}
 	colorize();
 	return sys_create(title, milliseconds, fullscreen, bits, width, height);
 }
