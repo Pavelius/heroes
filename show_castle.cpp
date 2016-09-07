@@ -686,6 +686,19 @@ static void name()
 	draw::text(231 + 179 / 2, 248 + 2, "Вертиго", 0);
 }
 
+static void paint_castle(int rec, int hero, int player)
+{
+	draw::status(21, draw::height - 16, 21 + res::width(res::SMALLBAR, 0), draw::height - 1);
+	draw::button(0, draw::height - 19, res::SMALLBAR, KeyLeft, 1, 1, 2, 0, 0, szt("Previous town", ""));
+	draw::image(21, draw::height - 19, res::SMALLBAR, 0);
+	draw::button(draw::width - 21, draw::height - 19, res::SMALLBAR, KeyRight, 3, 3, 4, 0, 0, szt("Next town", ""));
+	panorama(0, 0, rec);
+	paint_panel(0, 256, rec, hero);
+	draw::resource(552, 262, bsptr(player, FirstResource));
+	draw::button(553, 428, res::SWAPBTN, Cancel, 0, 0, 1, KeyEscape, 0, szt("Leave town", ""));
+	name();
+}
+
 void show::castle(int rec)
 {
 	int unit;
@@ -695,15 +708,7 @@ void show::castle(int rec)
 	{
 		auto index = bsget(rec, Index);
 		auto hero = bsfind(FirstHero, Index, index);
-		draw::status(21, draw::height - 16, 21 + res::width(res::SMALLBAR, 0), draw::height - 1);
-		draw::button(0, draw::height - 19, res::SMALLBAR, KeyLeft, 1, 1, 2, 0, 0, szt("Previous town", ""));
-		draw::image(21, draw::height - 19, res::SMALLBAR, 0);
-		draw::button(draw::width - 21, draw::height - 19, res::SMALLBAR, KeyRight, 3, 3, 4, 0, 0, szt("Next town", ""));
-		panorama(0, 0, rec);
-		paint_panel(0, 256, rec, hero);
-		draw::resource(552, 262, bsptr(player, FirstResource));
-		draw::button(553, 428, res::SWAPBTN, Cancel, 0, 0, 1, KeyEscape, 0, szt("Leave town", ""));
-		name();
+		paint_castle(rec, hero, player);
 		draw::cursor(res::ADVMCO, 0);
 		int id = draw::input();
 		switch(id)
@@ -730,12 +735,34 @@ void show::castle(int rec)
 						int total[LastResource - FirstResource + 1];
 						game::mulresource(total, monster_resources, count);
 						game::addresources(available_resources, available_resources, total, true);
+						bsadd(rec, FirstCreatureCount + (id - Dwelving1), -count);
 					}
 				}
 			}
 			break;
 		case Castle:
-			show::build(rec);
+			id = show::build(rec);
+			if(id >= FirstBuilding && id <= LastBuilding)
+			{
+				paint_castle(rec, hero, player);
+				draw::screenshoot source;
+				game::build(rec, id);
+				paint_castle(rec, hero, player);
+				draw::screenshoot dest;
+				source.blend(dest);
+			}
+			else if(id >= FirstHero && id <= LastHero)
+			{
+				paint_castle(rec, hero, player);
+				draw::screenshoot source;
+				auto index = bsget(rec, Index);
+				if(game::hire(id, player, index))
+				{
+					paint_castle(rec, bsfind(FirstHero, Index, index), player);
+					draw::screenshoot dest;
+					source.blend(dest);
+				}
+			}
 			break;
 		case MarketPlace:
 			show::marketplace(player);

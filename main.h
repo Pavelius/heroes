@@ -62,8 +62,9 @@ enum tokens
 	Human, Computer, ComputerOnly, MultiPlayers,
 	// Grid directions
 	HexRight, HexRightDown, HexLeftDown, HexLeft, HexLeftUp, HexRightUp, HexCenter,
-	// Terrain
-	Desert, Snow, Swamp, Wastelands, Beach, Lava, Dirt, Grass, Water,
+	// Terrain (порядок важен!!!)
+	Water, Grass, Snow, Swamp, Lava, Desert, Dirt, Wastelands, Beach,
+	FirstTerrain = Water, LastTerrain = Beach,
 	// spells mode
 	CombatSpells, AdventureSpells, Spells,
 	// Spells
@@ -567,6 +568,7 @@ namespace draw
 	{
 		screenshoot();
 		~screenshoot();
+		void				blend(screenshoot& source);
 		void				restore();
 		void				redraw(drawable** objects, unsigned timeout);
 		void				redraw(drawable** objects, unsigned timeout, drawable* e1, int stop = 0);
@@ -682,7 +684,7 @@ namespace show
 		int					target(int side, int spell, int target);
 		int					unit(int rec, int casted);
 	}
-	void				    build(int rec);
+	int						build(int rec);
 	void				    castle(int rec);
 	void					fadeback(int count);
 	int					    game();
@@ -807,7 +809,7 @@ namespace map
 		extern unsigned short   tiles[144 * 144];
 		extern unsigned char    objects[144 * 144][8][3];
 		extern unsigned char    flags[144 * 144];
-		extern unsigned     route[144 * 144];
+		extern unsigned			route[144 * 144];
 	}
 	namespace route
 	{
@@ -1003,7 +1005,7 @@ namespace game
 	int						getupgrade(int rec);
 	int						getweek();
 	bool					hasspellbook(int rec);
-	void					hire(int hero, int player, int index);
+	bool					hire(int hero, int player, int index);
 	void					initialize();
 	bool					isarcher(int rec);
 	bool					isboosted(int rec);

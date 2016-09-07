@@ -161,7 +161,7 @@ static void heroport(int x, int y, int rec)
 	}
 }
 
-void show::build(int mid)
+int show::build(int mid)
 {
 	tokens race = tokens(bsget(mid, Type));
 	int player = bsget(mid, Player);
@@ -212,9 +212,8 @@ void show::build(int mid)
 		int id = draw::input();
 		switch(id)
 		{
-		case 0:
 		case Cancel:
-			return;
+			return Cancel;
 		case Information:
 			if(hot::param >= FirstBuilding && hot::param <= LastBuilding)
 			{
@@ -248,10 +247,7 @@ void show::build(int mid)
 				zcat(temp, szt("Do you want to build?", "Хотите построить?"));
 				game::getcosttext(zend(temp), e2);
 				if(dlgask(0, temp))
-				{
-					game::build(mid, id);
-					return;
-				}
+					return id;
 			}
 			else if(id >= FirstHero && id <= LastHero)
 			{
@@ -269,10 +265,7 @@ void show::build(int mid)
 					szt("can work for you. Did you want to hire?", "может работать на вас. Хотите нанять?"));
 				game::getcosttext(zend(temp), cost);
 				if(dlgask(0, temp))
-				{
-					game::hire(id, player, bsget(mid, Index));
-					return;
-				}
+					return id;
 			}
 			else
 				draw::definput(id);

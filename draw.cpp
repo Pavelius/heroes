@@ -713,7 +713,15 @@ void draw::line(int x1, int y1, int x2, int y2, unsigned char m)
 	{
 		if(x1 >= clipping.x2 || x1 < clipping.x1)
 			return;
-		line_v1(ptr(x1, imin(y1, y2)), ptr(x1, imax(y1, y2)), m, width);
+		auto n1 = imin(y1, y2);
+		auto n2 = imax(y1, y2);
+		if(n1 < clipping.y1)
+			n1 = clipping.y1;
+		if(n2 >= clipping.y2)
+			n2 = clipping.y2 - 1;
+		if(n1>n2)
+			return;
+		line_v1(ptr(x1, n1), ptr(x1, n2), m, width);
 	}
 	else
 	{
@@ -880,6 +888,7 @@ void draw::cursor(res::tokens icn, int id, int ox, int oy)
 
 void draw::button(int x, int y, res::tokens res, int id, int normal, int hilite, int pressed, int key, unsigned flags, const char* tips, int param)
 {
+	static int id_pressed;
 	if((flags&Disabled) == 0)
 	{
 		int i = normal;
@@ -896,8 +905,16 @@ void draw::button(int x, int y, res::tokens res, int id, int normal, int hilite,
 				else if(hot::key == MouseRight && hot::pressed)
 					szprint(tooltips_text, tips);
 			}
-			if(hot::key == MouseLeft && !hot::pressed)
-				execute(id, param);
+			if(hot::key == MouseLeft)
+			{
+				if(!hot::pressed)
+				{
+					if(id_pressed==id)
+						execute(id, param);
+				}
+				else
+					id_pressed = id;
+			}
 		}
 		if(flags&Checked)
 			i = pressed;

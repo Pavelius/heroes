@@ -444,6 +444,14 @@ void test_castle()
 	show::castle(castle);
 }
 
+void test_blend()
+{
+	draw::screenshoot source;
+	draw::image(0, 0, res::CONGRATS, 0);
+	draw::screenshoot dest;
+	source.blend(dest);
+}
+
 static int mainmenu()
 {
 	animation latern(res::SHNGANIM, 1, 39);
@@ -489,6 +497,7 @@ static int mainmenu()
             break;
         case Credits:
         	//test_combat();
+			//test_blend();
 			test_castle();
             break;
         case HightScores:

@@ -961,9 +961,19 @@ bool game::ismatch(const void* c1_void, const void* c2_void)
 	return true;
 }
 
-void game::hire(int hero, int player, int index)
+bool game::hire(int hero, int player, int index)
 {
+	if(bsfind(FirstHero, Index, index))
+		return false;
 	int type = bsget(player, Type);
+	if(!hero)
+	{
+		hero = game::random::hero(type);
+		if(!hero)
+			hero = game::random::hero(0);
+		if(!hero)
+			return false;
+	}
 	if(bsget(player, Recruit) == hero)
 	{
 		bsset(player, Recruit, 0);
@@ -980,6 +990,7 @@ void game::hire(int hero, int player, int index)
 	}
 	bsset(hero, Player, player);
 	bsset(hero, Index, index);
+	return true;
 }
 
 int game::getupgrade(int rec)
