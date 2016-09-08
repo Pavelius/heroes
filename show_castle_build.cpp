@@ -147,26 +147,36 @@ static void captain(int x, int y, int rec)
 	}
 }
 
-static void heroport(int x, int y, int rec)
+static void heroport(int x, int y, int index, int rec)
 {
 	if(rec == -1)
 		return;
 	draw::clipart(x, y, rec, LargeSize);
 	rect rc = {x - 50, y, x + 50, y + res::width(res::PORT0000, 0)};
-	if(hot::mouse.in(rc))
+	if(bsfind(FirstHero, Index, index))
 	{
-		draw::status(szt("Hire %1", "Нанять %1"), (int)bsget(rec, Name));
-		if(hot::key == MouseLeft && hot::pressed)
-			draw::execute(rec);
+		draw::image(rc.x2 - 16, rc.y2 - 24, res::TOWNWIND, 12);
+		if(hot::mouse.in(rc))
+			draw::status(szt("Cannot hire another hero in town", "Нельзя нанять героя, когда друго герой в городе"));
+	}
+	else
+	{
+		if(hot::mouse.in(rc))
+		{
+			draw::status(szt("Hire %1", "Нанять %1"), (int)bsget(rec, Name));
+			if(hot::key == MouseLeft && hot::pressed)
+				draw::execute(rec);
+		}
 	}
 }
 
 int show::build(int mid)
 {
-	tokens race = tokens(bsget(mid, Type));
-	int player = bsget(mid, Player);
-	int h1 = bsget(player, Recruit);
-	int h2 = bsget(player, RecruitLast);
+	auto race = tokens(bsget(mid, Type));
+	auto player = bsget(mid, Player);
+	auto index = bsget(mid, Index);
+	auto h1 = bsget(player, Recruit);
+	auto h2 = bsget(player, RecruitLast);
 	char temp[260];
 	while(true)
 	{
@@ -202,8 +212,8 @@ int show::build(int mid)
 		building(293, 387, Moat, mid);
 		captain(444, 165, mid);
 		//
-		heroport(443 + 50, 260, h1);
-		heroport(443 + 50, 362, h2);
+		heroport(443 + 50, 260, index, h1);
+		heroport(443 + 50, 362, index, h2);
 		//
 		draw::button(553, 428, res::SWAPBTN, Cancel, 0, 0, 1, KeyEscape, 0, szt("Back to castle view", "Назад к обзору замка"));
 		draw::image(0, 461, res::CASLBAR, 0);
