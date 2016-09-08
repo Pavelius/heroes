@@ -91,7 +91,7 @@ void combat::board(int attacker, int defender)
 	if(defender >= (int)FirstMoveable && defender <= (int)LastMoveable)
 	{
 		int pos = bsget(defender, Index);
-		area = map::gtile(pos);
+		area = map::gettile(pos);
 	}
 	switch(area)
 	{
@@ -267,7 +267,7 @@ static void select_animation(drawable** objects)
 {
 	combat_timeout = combat_timeout_values[combat::setting::speed];
 	objects[0] = 0;
-	dwselect(zend(objects), DFCombat);
+	dwselect(zend(objects), {0, 0, 640, 480}, {0, 0}, DFCombat);
 	zcat(objects, static_cast<drawable*>(&attacker_leader));
 	zcat(objects, static_cast<drawable*>(&defender_leader));
 }

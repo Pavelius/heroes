@@ -181,7 +181,7 @@ void combat::setindex(int rec, int index)
 
 static struct creature_drawable_plugin : public drawable::plugin
 {
-	void selecting(drawable** result, unsigned flags) override
+	void selecting(drawable** result, rect screen, unsigned flags) override
 	{
 		if((flags & DFCombat) == 0)
 			return;

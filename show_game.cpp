@@ -1,47 +1,36 @@
 #include "main.h"
 
-static int		selected_object;
-static int		information_mode;
-static int      cashe_index;
+static int selected_object;
+static int information_mode;
+static int cashe_index;
 
-static void handle_input(int x, int y, tokens object)
+static void handle_input(int x, int y, int object)
 {
-	if(object && tokens(selected_object) == object)
+	if(object && selected_object==object)
 		draw::rectb(x, y, x + 54, y + 31, 0x56);
 	if(draw::area(x, y, x + 54, y + 31))
 	{
-		//hot::object = object;
 		if(hot::key == MouseLeft && hot::pressed)
-			draw::execute(InputChoose);
+			draw::execute(InputChoose, object);
 		else if(hot::key == MouseLeftDBL)
-			draw::execute(Change);
+			draw::execute(Change, object);
 	}
 }
 
-static struct castles_list : public list
+struct castlelist : public list
 {
 
-	bool	need_update;
-	int		data[LastCastle - FirstCastle + 1];
+	int	data[LastCastle - FirstCastle + 1];
 
-	void prerender()
+	void setup(int player)
 	{
-		if(!need_update)
-			return;
-		maximum = 0;
-		origin = 0;
-		memset(data, 0, sizeof(data));
-		tokens player = (tokens)game::getplayer();
-		if(player==Empthy)
-			return;
 		bsselect(data, FirstCastle, -1, Player, player);
 		maximum = zlen(data);
-		need_update = false;
 	}
 
 	void row(int x, int y, int index) const
 	{
-		if(data[index])
+		if(index<maximum && data[index])
 		{
 			int rec = data[index];
 			int index_sprite = 1;
@@ -71,59 +60,40 @@ static struct castles_list : public list
 			draw::image(x - 1, y, icn, index_sprite);
 			if(bsget(rec, AlreadyMoved))
 				draw::image(x - 1, y + 1, icn, 24);
+			handle_input(x, y, rec);
 		}
 		else
 			draw::image(x - 1, y, draw::isevil(res::LOCATORE, res::LOCATORS), 1 + index);
-		handle_input(x, y, tokens(data[index]));
 	}
 
-} castles;
+};
 
-static struct heroes_list : public list
+struct herolist : public list
 {
 
-	bool	need_update;
-	int		data[LastHero - FirstHero + 1];
+	int	data[LastHero - FirstHero + 1];
 
-	void prerender()
+	void setup(int player)
 	{
-		if(!need_update)
-			return;
-		maximum = 0;
-		origin = 0;
-		memset(data, 0, sizeof(data));
-		tokens player = (tokens)game::getplayer();
-		if(player == Empthy)
-			return;
 		bsselect(data, FirstHero, -1, Player, player);
 		maximum = zlen(data);
-		need_update = false;
 	}
 
 	void row(int x, int y, int index) const
 	{
-		if(data[index])
+		if(index<maximum && data[index])
 		{
 			draw::image(x + 4, y + 5, res::PORTXTRA, 0);
 			draw::image(x - 1, y, res::MINIPORT, bsget(data[index], Portrait));
 			draw::image(x + 4, y + 5, res::MOBILITY, imin(bsget(data[index], MovePoints) / 100, 25));
 			draw::image(x + 43, y + 5, res::MANA, imin(bsget(data[index], SpellPoints) / 5, 25));
-			if(selected_object == data[index])
-				draw::rectb(x, y, x + 54, y + 31, 0x56);
-			if(draw::area(x, y, x + 54, y + 31))
-			{
-				//hot::object = tokens(data[index]);
-				if(hot::key == MouseLeft && hot::pressed)
-					draw::execute(InputChoose);
-				else if(hot::key == MouseLeftDBL)
-					draw::execute(Change);
-			}
+			handle_input(x, y, data[index]);
 		}
 		else
 			draw::image(x - 1, y, draw::isevil(res::LOCATORE, res::LOCATORS), 1 + index);
 	}
 
-} heroes;
+};
 
 static void minimap(int x, int y, int mode)
 {
@@ -134,17 +104,17 @@ static void minimap(int x, int y, int mode)
 	}
 }
 
-static void information_resource(int x, int y, int id)
+static void information_resource(int x, int y, int id, int player)
 {
 	char temp[16];
-	auto cost = (int*)bsptr(game::getplayer(), FirstResource);
+	auto cost = (int*)bsptr(player, FirstResource);
 	if(!cost)
 		return;
 	sznum(temp, cost[id-FirstResource]);
 	draw::text(x - draw::textw(temp) / 2, y, temp);
 }
 
-static void information(int x, int y)
+static void paint_information(int x, int y, int player)
 {
 	char temp[256];
 	if(!information_mode)
@@ -177,13 +147,13 @@ static void information(int x, int y)
 				draw::image(x, y, res::RESSMALL, 0);
 				draw::text(x + 26, y + 31, "1"); // castle
 				draw::text(x + 78, y + 31, "0"); // town
-				information_resource(x + 122, y + 31, Gold);
-				information_resource(x + 14, y + 61, Wood);
-				information_resource(x + 35, y + 61, Mercury);
-				information_resource(x + 59, y + 61, Ore);
-				information_resource(x + 82, y + 61, Sulfur);
-				information_resource(x + 106, y + 61, Crystal);
-				information_resource(x + 128, y + 61, Gems);
+				information_resource(x + 122, y + 31, Gold, player);
+				information_resource(x + 14, y + 61, Wood, player);
+				information_resource(x + 35, y + 61, Mercury, player);
+				information_resource(x + 59, y + 61, Ore, player);
+				information_resource(x + 82, y + 61, Sulfur, player);
+				information_resource(x + 106, y + 61, Crystal, player);
+				information_resource(x + 128, y + 61, Gems, player);
 			}
 			break;
 		case Hero:
@@ -209,41 +179,15 @@ static void information(int x, int y)
 	}
 }
 
-static void hero_load(int* rec, int index, int w, int h)
-{
-	int x1 = map::i2x(index);
-	int y1 = map::i2y(index);
-	int x2 = x1 + w;
-	int y2 = y1 + h;
-	for(int e = FirstHero; e <= (int)LastHero; e++)
-	{
-		int pos = bsget(e, Index);
-		if(pos == -1)
-			continue;
-		int x = map::i2x(pos);
-		int y = map::i2y(pos);
-		if(x >= x1 && x <= x2 && y >= y1 && y <= y2)
-		{
-			int j = (y - y1)*w + (x - x1);
-			rec[j] = e;
-		}
-	}
-}
-
-static void cursor_adventure(int x, int y, int index, int* objects)
+static void paint_cursor(rect screen, point camera)
 {
 	if(hot::command)
 		return;
 	animation m(res::ADVMCO, 0, 0);
-	if(draw::area(x, y, x + 32 * map::viewx, y + 32 * map::viewx))
+	if(draw::area(screen.x1, screen.y1, screen.x2, screen.y2))
 	{
-		int i1 = index + ((hot::mouse.y - y) / 32)*(map::width) + ((hot::mouse.x - x) / 32);
-		int i2 = ((hot::mouse.y - y) / 32)*(map::viewx + 1) + ((hot::mouse.x - x) / 32);
-		int id = objects[i2];
+		int i1 = map::m2i((camera.x + hot::mouse.x - screen.x1) / 32, (camera.y + hot::mouse.y - screen.y1) / 32);
 		int mc = map::movecost(i1);
-		//        int xp = x+((hot::mouse.x-x)/32)*32;
-		//        int yp = y+((hot::mouse.y-y)/32)*32;
-		//        draw::rectb(xp, yp, xp+32, yp+32, 0xC4);
 		switch(mc)
 		{
 		case map::Blocked:
@@ -282,30 +226,95 @@ static void cursor_adventure(int x, int y, int index, int* objects)
 			}
 			break;
 		}
-		if(id >= (int)FirstHero && id <= (int)LastHero)
-		{
-			if(bsget(id, Player) == game::getplayer())
-				m.set(CursorAdventure, Hero, 0);
-		}
 	}
 	m.painting(hot::mouse);
 }
 
-int show::game()
+static void paint_map(rect screen, point camera)
 {
-	int objects[(map::viewx + 1)*map::viewy];
-	int route[(map::viewx + 1)*map::viewy];
+	for(int y = screen.y1; y < screen.y2; y += 32)
+	{
+		for(int x = screen.x1; x < screen.x2; x += 32)
+		{
+			int index = map::m2i((x+camera.x) / 32, (y + camera.y) / 32);
+			draw::imager(x, y, res::TisGROUND32, map::show::tiles[index], map::show::flags[index] % 4);
+			//for(auto e : map::show::objects[i])
+			//{
+			//	if(!e[0])
+			//		break;
+			//	int index = e[1];
+			//	res::tokens res = res::map(e[0]);
+			//	if(res::ishight(res, index))
+			//		continue;
+			//	image(x1, y1, res, index);
+			//	index = indexes::animate(res, index, draw::counter + index*index, false);
+			//	if(index)
+			//		image(x1, y1, res, index);
+			//}
+		}
+	}
+	// Object is last layer in render
+	//i = map::view();
+	//for(int y1 = y; y1 < y2; y1 += dy)
+	//{
+	//	for(int x1 = x; x1 < x2; x1 += dx)
+	//	{
+	//		int ticket = i*i;
+	//		int ix = map::i2x(i) - ix1;
+	//		int iy = map::i2y(i) - iy1;
+	//		int j = iy*viewx1 + ix;
+	//		int id = objects[j];
+	//		if(id)
+	//		{
+	//			//draw::rectb(x1,y1,x1+32,y1+32, 0xC4);
+	//			if(id >= (int)FirstResource && id <= (int)LastResource)
+	//			{
+	//				draw::image(x1 - 32, y1, res::OBJNRSRC, (id - FirstResource) * 2);
+	//				draw::image(x1, y1, res::OBJNRSRC, (id - FirstResource) * 2 + 1);
+	//			}
+	//			else if(id >= (int)FirstMonster && id <= (int)LastMonster)
+	//				animate::monster(x1 + 16, y1 + 30, id, ticket);
+	//			else if(id >= (int)FirstArtifact && id <= (int)LastArtifact)
+	//				animate::artifact(x1, y1, id, ticket);
+	//			else if(id == TreasureChest)
+	//			{
+	//				draw::image(x1 - 32, y1, res::OBJNRSRC, 18);
+	//				draw::image(x1, y1, res::OBJNRSRC, 19);
+	//			}
+	//			else if(id >= (int)FirstHero && id <= (int)LastHero)
+	//			{
+	//				animate::heroshad(x1, y1 + 26, id, 0);
+	//				animate::hero(x1, y1 + 26, id, 0);
+	//				animate::heroflag(x1, y1 + 26, id, 0);
+	//			}
+	//		}
+}
+
+static void paint_objects(rect screen, point camera)
+{
+
+}
+
+int show::game(int player)
+{
 	int selected_wave = -1;
-	heroes.need_update = true;
-	castles.need_update = true;
 	if(!information_mode)
 		information_mode = Information;
-	selected_object = bsfind(FirstHero, Player, game::getplayer());
-	if(selected_object == -1)
-		selected_object = bsfind(FirstCastle, Player, game::getplayer());
+	herolist heroes;
+	castlelist castles;
+	heroes.setup(player);
+	castles.setup(player);
+	if(!heroes.maximum && !castles.maximum)
+		return 0;
+	selected_object = 0;
+	if(heroes.maximum)
+		selected_object = heroes.data[0];
+	else if(castles.maximum)
+		selected_object = castles.data[0];
 	int index = bsget(selected_object, Index);
 	if(index > 0)
 		map::jumpto(index);
+	rect rcmap = {16, 16, 16 + 32 * 14, 16 + 32 * 14};
 	while(true)
 	{
 		if(bsget(selected_object, First) == FirstHero && selected_wave != selected_object)
@@ -319,26 +328,16 @@ int show::game()
 			selected_wave = selected_object;
 			cashe_index = -1;
 		}
-		if(cashe_index != map::view())
-		{
-			cashe_index = map::view();
-			memset(objects, 0, sizeof(objects));
-			memset(route, -1, sizeof(route));
-			map::moveable::load(objects, cashe_index, map::viewx + 1, map::viewy);
-			hero_load(objects, cashe_index, map::viewx + 1, map::viewy);
-			map::route::load(route, cashe_index, map::viewx + 1, map::viewy);
-		}
 		hot::index = -1;
-		//hot::object = Empthy;
-		draw::map(16, 16, objects, route);
 		draw::image(0, 0, draw::isevil(res::ADVBORDE, res::ADVBORD), 0, 0);
 		minimap(480, 16, 0);
 		heroes.draw(481, 176, 32, 32, 4);
 		castles.draw(553, 176, 32, 32, 4);
-		information(480, 320);
+		paint_information(480, 320, player);
 		if(hot::key == KeyEnter)
 			draw::execute(Change);
-		cursor_adventure(16, 16, cashe_index, objects);
+		paint_map(rcmap, map::camera);
+		paint_cursor(rcmap, map::camera);
 		int id = draw::input();
 		switch(id)
 		{
@@ -358,23 +357,18 @@ int show::game()
 			selected_wave = -1;
 			break;
 		case InputChoose:
-			//selected_object = tokens(hot::object);
-			//index = bsget(selected_object, Index);
-			//if(index>0)
-			//    map::jumpto(index);
+			selected_object = hot::param;
+			index = bsget(selected_object, Index);
+			if(index>0)
+			    map::jumpto(index);
 			break;
 		case Change:
-			switch(bsget(selected_object, First))
-			{
-			case FirstHero:
-				show::hero(tokens(selected_object));
-				break;
-			case FirstCastle:
+			if(selected_object>=FirstHero && selected_object<=LastHero)
+				show::hero((tokens)selected_object);
+			else if(selected_object >= FirstCastle && selected_object <= LastCastle)
 				show::castle(selected_object);
-				break;
-			default:
-				break;
-			}
+			heroes.setup(player);
+			castles.setup(player);
 			break;
 		case ChangeMode:
 			switch(information_mode)

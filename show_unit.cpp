@@ -93,7 +93,7 @@ static void effects(int x, int y, int rec)
 	{
 		if(!bsget(rec, sid))
 			continue;
-		int f = bsget(sid, FrameStatus);
+		int f = bsget(sid, Frame);
 		dx += res::width(res::SPELLINF, f);
 	}
 	x = x - dx / 2;
@@ -103,7 +103,7 @@ static void effects(int x, int y, int rec)
 		if(!value)
 			continue;
 		sznum(temp, value);
-		int f = bsget(sid, FrameStatus);
+		int f = bsget(sid, Frame);
 		draw::image(x, y, res::SPELLINF, f, AFNoOffset);
 		draw::text(x + (res::width(res::SPELLINF, f) - draw::textw(temp)) / 2,
 			y + res::height(res::SPELLINF, f) + 2,

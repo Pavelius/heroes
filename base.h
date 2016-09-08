@@ -138,7 +138,7 @@ struct bsval
 void					bsadd(int rec, int id, int value);
 void					bsadd(int rec, int id, int value, int minimum);
 void					bsadd(int rec, int id, int value, int minimum, int maximum);
-int						bscreate(int rec);
+int						bscreate(int rec, bool test_zero=true);
 int						bscompareas(const void* p1, const void* p2);
 int						bscompareds(const void* p1, const void* p2);
 int						bscomparenm(const void* p1, const void* p2);

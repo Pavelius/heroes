@@ -130,7 +130,7 @@ bool map::swamp::ispassable(unsigned char index)
 
 bool map::tree::isshadow(unsigned char index)
 {
-	const unsigned char shadows[] = {0, 3, 7, 10, 13, 17, 20, 23, 26, 29, 32, 34};
+	static const unsigned char shadows[] = {0, 3, 7, 10, 13, 17, 20, 23, 26, 29, 32, 34};
 	for(auto a : shadows)
 		if(a==index)
 			return true;
@@ -265,14 +265,14 @@ int map::action(int index)
 {
 	if(index==-1)
 		return 0;
-	for(auto& e : map::show::objects[index])
-	{
-		if(!e[0])
-			break;
-		int r = action2(e[0], e[1]);
-		if(r)
-			return r;
-	}
+	//for(auto& e : map::show::objects[index])
+	//{
+	//	if(!e[0])
+	//		break;
+	//	int r = action2(e[0], e[1]);
+	//	if(r)
+	//		return r;
+	//}
 	return 0;
 }
 
@@ -322,12 +322,12 @@ bool map::ispassable(int index)
 {
 	if(index==-1)
 		return false;
-	for(auto& e : map::show::objects[index])
-	{
-		if(!e[0])
-			break;
-		if(!ispassable2(e[0], e[1]))
-			return false;
-	}
+	//for(auto& e : map::show::objects[index])
+	//{
+	//	if(!e[0])
+	//		break;
+	//	if(!ispassable2(e[0], e[1]))
+	//		return false;
+	//}
 	return true;
 }

@@ -21,7 +21,7 @@ struct drawable
 		plugin*			next;
 		static plugin*	first;
 		plugin();
-		virtual void	selecting(drawable** result, unsigned flags) {}
+		virtual void	selecting(drawable** result, rect screen, unsigned flags) {}
 		virtual void	updating() {}
 	};
 	virtual int			getcursor() const { return 0; } // Get cursor index when over this drawable
@@ -40,5 +40,5 @@ int						dwclipping(drawable** da, rect screen, point camera); // In place clipp
 drawable*				dwfind(drawable** da, rect screen, point camera, point hitpoint); // Make hittest by previously Z-Ordered or clipped arrays of drawables.
 drawable**				dworder(drawable** da, int count); // Prepare right z-order of each drawable for painting.
 void					dwpaint(drawable** da, rect screen, point camera); // Calling painting() for each drawable in list.
-drawable**				dwselect(drawable** da, unsigned flags = 0);
+drawable**				dwselect(drawable** da, rect screen, point camera, unsigned flags = 0);
 void					dwupdate();

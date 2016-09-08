@@ -428,7 +428,7 @@ void bsreset(int rec)
 	m.metadata->clear();
 }
 
-int bscreate(int rec)
+int bscreate(int rec, bool test_zero)
 {
 	bsmeta::ref e = bsmeta::getref(rec);
 	if(!e.metadata)
@@ -436,10 +436,13 @@ int bscreate(int rec)
 	if(e.metadata->from + e.metadata->count > e.metadata->to)
 		return 0;
 	int size = e.metadata->size;
-	for(int i = 0; i < e.metadata->count; i++)
+	if(test_zero)
 	{
-		if(memcmp((char*)e.metadata->data + size*i, e.metadata->clone, size) == 0)
-			return e.metadata->from + i;
+		for(int i = 0; i < e.metadata->count; i++)
+		{
+			if(memcmp((char*)e.metadata->data + size*i, e.metadata->clone, size) == 0)
+				return e.metadata->from + i;
+		}
 	}
 	return e.metadata->from + e.metadata->count++;
 }

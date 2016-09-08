@@ -44,7 +44,7 @@ enum tokens
 	Accept, Count, Random, Portrait, Rating, ChangeMode, Dismiss,
 	EndTurn, Damage, Block, Income,
 	NameMulti, Level, Target, Side, Base, Expire,
-	SingleVersion, RequiredTarget, MassEffect, DamageMin, DamageMax, FrameStatus,
+	SingleVersion, RequiredTarget, MassEffect, DamageMin, DamageMax, Frame,
 	Move, Fly, MagicImmunity, ElementsImmunity, Undead, Dragon,
 	SourceIndex, TargetUnit, TargetIndex,
 	Upgrade, Downgrade,
@@ -234,7 +234,8 @@ enum tokens
 	FirstRecruit, LastRecruit = FirstRecruit + 6,
 	FirstCombatant, LastCombatant = FirstCombatant + 5 + 5 + 10,
 	FirstEffect, LastEffect = FirstEffect + 32,
-	FirstMoveable, LastMoveable = FirstMoveable + 128 * 256
+	FirstMoveable, LastMoveable = FirstMoveable + 128 * 256,
+	FirstMapObject, LastMapObject = FirstMapObject + 128 * 256
 };
 enum blocks
 {
@@ -611,7 +612,7 @@ namespace draw
 	int						input(bool wait_message = true);
 	res::tokens				isevil(res::tokens evil, res::tokens good);
 	int						isqrt(int num);
-	void					map(int x, int y, int* objects, int* route);
+	void					map(int x, int y, int* route);
 	void					line(int x1, int y1, int x2, int y2, unsigned char color);
 	void					pixel(int x, int y, unsigned char color);
 	unsigned char*			ptr(int x, int y);
@@ -692,7 +693,7 @@ namespace show
 	int						build(int rec);
 	void				    castle(int rec);
 	void					fadeback(int count);
-	int					    game();
+	int					    game(int player);
 	void				    hero(tokens rec);
 	void				    highscore();
 	void					marketplace(int player);
@@ -754,8 +755,6 @@ struct gamefile
 };
 namespace map
 {
-	const int				viewx = 14;
-	const int				viewy = 14;
 	enum directions
 	{
 		Center = 0,
@@ -775,27 +774,26 @@ namespace map
 	extern unsigned char	width;
 	extern unsigned char	height;
 	int						action(int index);
-	void					init();
-	inline int				i2x(int i) { return i%width; }
-	inline int				i2y(int i) { return i / width; }
+	extern point			camera;
+	inline int				i2x(int i) { return i % 144; }
+	inline int				i2y(int i) { return i / 144; }
 	bool					is(int index, bool(*callback)(unsigned char object, unsigned char index, unsigned char param), unsigned char param);
 	bool					isaction(int object);
 	bool					isroad(unsigned char object, unsigned char index, unsigned char direct);
 	bool					ispassable(int index);
-	tokens					gtile(int index);
+	tokens					gettile(int index);
 	void					jumpto(int index);
 	void					load(gamefile& e);
 	unsigned				movecost(int index);
 	unsigned				movecost(int index, unsigned char direct, unsigned pathfinding = 0);
 	int						moveto(int index, directions direction);
-	inline int				m2i(int x, int y) { return width*y + x; }
+	inline int				m2i(int x, int y) { return 144 * y + x; }
 	directions				orient(int from, int to);
 	bool					preload(const char* filename);
 	void					postload();
 	bool					overlay(int index, bool(*callback)(int object, int index, int param), int param);
 	int						revers(int direction);
 	void					slide(directions type);
-	int						view();
 	namespace moveable
 	{
 		void				block(unsigned* route);
@@ -812,9 +810,8 @@ namespace map
 			unsigned char   level;
 		};
 		extern unsigned short   tiles[144 * 144];
-		extern unsigned char    objects[144 * 144][8][3];
 		extern unsigned char    flags[144 * 144];
-		extern unsigned			route[144 * 144];
+		extern unsigned		route[144 * 144];
 	}
 	namespace route
 	{
@@ -1000,7 +997,6 @@ namespace game
 	int						getmonth();
 	int						getmorale(int value);
 	int						getmoralechance(int value);
-	int						getplayer();
 	int						getspeed(int value);
 	int						getstrenght(int rec);
 	int						getsummary(int rec, int id, int side);

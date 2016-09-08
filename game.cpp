@@ -539,7 +539,7 @@ int game::turn()
 		switch(bsget(rec, PlayerType))
 		{
 		case Human:
-			switch(show::game())
+			switch(show::game(rec))
 			{
 			case 0:
 				return 0;
@@ -868,11 +868,6 @@ int game::play(gamefile& game)
 			game_endweek();
 		}
 	}
-}
-
-int game::getplayer()
-{
-	return PlayerBlue;
 }
 
 void game::addresources(void* result_void, const void* v1, const void* v2, bool negative)

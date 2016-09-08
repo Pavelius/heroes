@@ -28,13 +28,15 @@ drawable** dworder(drawable** da, int count)
 	return da;
 }
 
-drawable** dwselect(drawable** da, unsigned flags)
+drawable** dwselect(drawable** da, rect screen, point camera, unsigned flags)
 {
 	auto pe = da;
 	pe[0] = 0;
+	screen.x1 += camera.x; screen.x1 += camera.x;
+	screen.y1 += camera.y; screen.y2 += camera.y;
 	for(auto p = drawable::plugin::first; p; p = p->next)
 	{
-		p->selecting(pe, flags);
+		p->selecting(pe, screen, flags);
 		pe = zend(pe);
 	}
 	return da;

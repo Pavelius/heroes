@@ -38,7 +38,6 @@
     <ClCompile Include="map_show.cpp" />
     <ClCompile Include="spells.cpp" />
     <ClCompile Include="tokens.cpp" />
-    <ClCompile Include="adventure.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="draw.cpp" />
     <ClCompile Include="base.cpp" />
@@ -69,5 +68,7 @@
     <ClCompile Include="show_tavern.cpp" />
     <ClCompile Include="draw_controls.cpp" />
     <ClCompile Include="show_marketplace.cpp" />
+    <ClCompile Include="map_statics.cpp" />
+    <ClCompile Include="show_game.cpp" />
   </ItemGroup>
 </Project>

@@ -1,19 +1,12 @@
 #include "main.h"
 
+const int		viewsize = 14;
 unsigned char	map::width;
 unsigned char	map::height;
 unsigned short	map::show::tiles[144*144];
-unsigned char	map::show::objects[144*144][8][3];
 unsigned char	map::show::flags[144*144];
 unsigned		map::show::route[144*144];
-static int		map_view;
-
-void map::init()
-{
-	width = 0;
-	height = 0;
-	map_view = 0;
-}
+point			map::camera;
 
 int	map::moveto(int index, map::directions direction)
 {
@@ -51,38 +44,34 @@ int	map::moveto(int index, map::directions direction)
 	return m2i(x,y);
 }
 
-static void correct(int x, int y)
+static void setcamera(int x, int y)
 {
 	if(x<0)
 		x = 0;
 	if(y<0)
 		y = 0;
-	if(x>map::width-map::viewx)
-		x = map::width-map::viewx;
-	if(y>map::height-map::viewy)
-		y = map::height-map::viewy;
-	map_view = y*map::width + x;
+	if(x>map::width-viewsize)
+		x = map::width - viewsize;
+	if(y>map::height-viewsize)
+		y = map::height-viewsize;
+	map::camera.x = x * 32;
+	map::camera.y = y * 32;
 }
 
 void map::jumpto(int index)
 {
-	correct((index%width) - viewx/2, (index/height) - viewy/2);
+	setcamera(i2x(index) - viewsize /2, i2y(index) - viewsize /2);
 }
 
 void map::slide(map::directions type)
 {
-	int i = moveto(map_view, type);
+	int i = moveto(m2i(camera.x/32, camera.y/32), type);
 	if(i==-1)
 		return;
-	correct(i%width, i/width);
+	setcamera(i2x(i), i2y(i));
 }
 
-int map::view()
-{
-	return map_view;
-}
-
-tokens map::gtile(int index)
+tokens map::gettile(int index)
 {
 	index = map::show::tiles[index];
 	if(30 > index) // 30 indexes
@@ -106,10 +95,10 @@ tokens map::gtile(int index)
 
 bool map::is(int index, bool(*callback)(unsigned char object, unsigned char index, unsigned char param), unsigned char param)
 {
-	for(auto e : map::show::objects[index])
-	{
-		if(callback(e[0], e[1], param))
-			return true;
-	}
+	//for(auto e : map::show::objects[index])
+	//{
+	//	if(callback(e[0], e[1], param))
+	//		return true;
+	//}
 	return false;
 }

@@ -189,6 +189,11 @@ enum conditions
 	Loss = 0x2000, LoseTown = 0x2001, LoseHero = 0x2002, OutTime = 0x2003
 };
 
+inline int mp2i(int i)
+{
+	return map::m2i(i%map::width, i / map::width);
+}
+
 static tokens index2race(int index)
 {
 	switch(index)
@@ -363,40 +368,6 @@ static void update_castle(int index, int race, mp2::tile* tiles, mp2::addon* add
 	}
 }
 
-static tokens get_free_hero(tokens type)
-{
-	int count;
-	int data[LastHero - FirstHero + 1];
-	int* p = data;
-	for(int rec = FirstHero; rec <= (int)Celia; rec++)
-	{
-		if(tokens(bsget(rec, Type)) != type)
-			continue;
-		if(bsget(rec, Recruit))
-			continue;
-		if(bsget(rec, Index) != -1)
-			continue;
-		*p++ = rec;
-	}
-	*p++ = 0;
-	count = zlen(data);
-	if(count)
-		return tokens(data[rand() % count]);
-	for(int rec = FirstHero; rec <= (int)Celia; rec++)
-	{
-		if(bsget(rec, Recruit) != Empthy)
-			continue;
-		if(bsget(rec, Index) != -1)
-			continue;
-		*p++ = rec;
-	}
-	*p++ = 0;
-	count = zlen(data);
-	if(count)
-		return tokens(data[rand() % count]);
-	return Empthy;
-}
-
 static void load_object(mp2::army* p, int rec)
 {
 	for(int i = 0; i < 5; i++)
@@ -553,9 +524,10 @@ bool gamefile::load(const char* url)
 	return true;
 }
 
-static void add_object(int pos, unsigned char object, unsigned char index, int quantity)
+static void add_object(int pos, unsigned char object, unsigned char index, unsigned char quantity)
 {
-	switch(res::map(object))
+	auto r = res::map(object);
+	switch(r)
 	{
 	case res::OBJNARTI: // turn off atrifacts
 	case res::MONS32: // turn off monsters
@@ -573,16 +545,23 @@ static void add_object(int pos, unsigned char object, unsigned char index, int q
 		break;
 	}
 	// autodetect level
-	unsigned level = 0;
-	while(map::show::objects[pos][level][0])
-	{
-		level++;
-		if(level >= sizeof(map::show::objects[pos]) / sizeof(map::show::objects[pos][0]))
-			return;
-	}
+	//unsigned level = 0;
+	//while(map::show::objects[pos][level][0])
+	//{
+	//	level++;
+	//	if(level >= sizeof(map::show::objects[pos]) / sizeof(map::show::objects[pos][0]))
+	//		return;
+	//}
 	//map::show::objects[pos][level][0] = object;
 	//map::show::objects[pos][level][1] = index;
 	//map::show::objects[pos][level][2] = quantity % 4;
+	auto rec = bscreate(FirstMapObject, false);
+	if(!rec)
+		return;
+	bsset(rec, Type, r);
+	bsset(rec, Frame, index);
+	bsset(rec, Index, pos);
+	bsset(rec, Count, quantity);
 }
 
 static void add_moveable(short unsigned index, int id, int quality)
@@ -645,54 +624,9 @@ void map::load(gamefile& game)
 	// normalize addon
 	for(int i = 0; i < addon_count; i++)
 		addons[i].objectNameN1 = addons[i].objectNameN1 * 2;
-	// clear map
-	memset(map::show::objects, 0, sizeof(map::show::objects));
-	// load castle coordinates
-	for(int ii = 0; ii < 72; ii++)
-	{
-		int rec;
-		unsigned char cx = st.get();
-		unsigned char cy = st.get();
-		unsigned char id = st.get();
-		int index;
-		// empty block
-		if(0xFF == cx && 0xFF == cy)
-			continue;
-		switch(id)
-		{
-		case 0x00: // tower: knight
-		case 0x80: // castle: knight
-		case 0x01: // tower: barbarian
-		case 0x81: // castle: barbarian
-		case 0x02: // tower: sorceress
-		case 0x82: // castle: sorceress
-		case 0x03: // tower: warlock
-		case 0x83: // castle: warlock
-		case 0x04: // tower: wizard
-		case 0x84: // castle: wizard
-		case 0x05: // tower: necromancer
-		case 0x85: // castle: necromancer
-		case 0x06: // tower: random
-		case 0x86: // castle: random
-			rec = bscreate(FirstCastle);
-			index = map::m2i(cx, cy);
-			bsset(rec, Index, index);
-			break;
-		default:
-			break;
-		}
-	}
-	// cood resource kingdoms
-	// 144 x 3 byte (cx, cy, id)
-	for(int ii = 0; ii < 144; ++ii)
-	{
-		unsigned char cx = st.get();
-		unsigned char cy = st.get();
-		unsigned char id = st.get();
-		// empty block
-		if(0xFF == cx && 0xFF == cy)
-			continue;
-	}
+	// skip coordinates
+	st.seek(72 * 3 + 144 * 3, SeekCur);
+	// other information
 	int obelisc_count = st.get();
 	// count final mp2 blocks
 	int countblock = 0;
@@ -742,31 +676,30 @@ void map::load(gamefile& game)
 				// add castle
 				if(sizeblock == sizeof(mp2::castle))
 				{
-					int rec = bsfind(FirstCastle, Index, findobject);
+					int rec = bscreate(FirstCastle);
 					load_object((mp2::castle*)pblock, rec);
 					if(tile.generalObject == mp2obj(RndTown) || tile.generalObject == mp2obj(RndCastle))
-						update_castle(findobject, bsget(rec, Type), tiles, addons);
+						update_castle(mp2i(findobject), bsget(rec, Type), tiles, addons);
 				}
 				break;
 			case mp2obj(Hero):
 				// add heroes
 				if(sizeblock == sizeof(mp2::hero))
 				{
-					int rec = 0;
 					int pla = mini2player(tiles[findobject].indexName1);
 					tokens type = mini2type(tiles[findobject].indexName1);
 					if(type == Random)
 						type = tokens(bsget(pla, Type));
 					if(pblock[17] && pblock[18] <= (Bax - FirstHero))
 					{
-						rec = pblock[18] + FirstHero;
+						int rec = pblock[18] + FirstHero;
 						load_object((mp2::hero*)pblock, rec);
+						bsset(rec, Player, pla);
+						bsset(rec, Index, mp2i(findobject));
+						bsset(rec, Direction, map::Right);
 					}
-					if(!rec)
-						rec = get_free_hero(type);
-					bsset(rec, Player, pla);
-					bsset(rec, Index, findobject);
-					bsset(rec, Direction, map::Right);
+					else
+						game::hire(game::random::hero(type), pla, mp2i(findobject));
 				}
 				break;
 			case mp2obj(Sign):
@@ -775,7 +708,7 @@ void map::load(gamefile& game)
 				if(sizeblock > sizeof(mp2::info) - 1 && pblock[0] == 0x01)
 				{
 					int rec = bscreate(FirstSign);
-					bsset(rec, Index, findobject);
+					bsset(rec, Index, mp2i(findobject));
 					bsset(rec, Name, (char*)&pblock[9]);
 				}
 				break;
@@ -785,7 +718,7 @@ void map::load(gamefile& game)
 				{
 					mp2::eventcoord& e = (mp2::eventcoord&)pblock;
 					int rec = bscreate(FirstEvent);
-					bsset(rec, Index, findobject);
+					bsset(rec, Index, mp2i(findobject));
 					bsset(rec, Name, e.text);
 					bsset(rec, OneTime, e.cancel);
 					bsset(rec, Computer, e.computer);
@@ -812,7 +745,7 @@ void map::load(gamefile& game)
 				{
 					mp2::riddle& e = (mp2::riddle&)pblock;
 					int rec = bscreate(FirstEvent);
-					bsset(rec, Index, findobject);
+					bsset(rec, Index, mp2i(findobject));
 					bsset(rec, Name, e.text);
 					bsset(rec, Gold, e.golds);
 					bsset(rec, Mercury, e.mercury);
@@ -900,8 +833,9 @@ void map::load(gamefile& game)
 	// after load tiles
 	for(int i = 0; i < tiles_count; i++)
 	{
-		show::tiles[i] = tiles[i].tileIndex;
-		show::flags[i] = tiles[i].shape % 4;
+		int i1 = map::m2i((i%map::width), (i/map::width));
+		show::tiles[i1] = tiles[i].tileIndex;
+		show::flags[i1] = tiles[i].shape % 4;
 		for(int level = 3; level >= 0; level--)
 		{
 			// level 1.0

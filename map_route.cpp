@@ -83,9 +83,9 @@ unsigned map::movecost(int index, unsigned char direct, unsigned pathfinding)
 	// Water   1.00   1.00   1.00   1.00
 	// Road    0.75   0.75   0.75   0.75
 	if(map::is(index, isroad, direct))
-		return 58;
+		return 75;
 	unsigned result = 100;
-	switch(gtile(index))
+	switch(gettile(index))
 	{
 	case Desert:
 		switch(pathfinding)
@@ -401,7 +401,7 @@ void map::route::wave(int start, int skill, int ship_master)
 		map::moveable::block(map::show::route);
 		for(int i = 0; i<count; i++)
 		{
-			if(!map::ispassable(i) || map::gtile(i)==Water)
+			if(!map::ispassable(i) || map::gettile(i)==Water)
 				map::show::route[i] = map::Blocked;
 		}
 	}
