@@ -580,12 +580,12 @@ static void add_object(int pos, unsigned char object, unsigned char index, int q
 		if(level >= sizeof(map::show::objects[pos]) / sizeof(map::show::objects[pos][0]))
 			return;
 	}
-	map::show::objects[pos][level][0] = object;
-	map::show::objects[pos][level][1] = index;
-	map::show::objects[pos][level][2] = quantity % 4;
+	//map::show::objects[pos][level][0] = object;
+	//map::show::objects[pos][level][1] = index;
+	//map::show::objects[pos][level][2] = quantity % 4;
 }
 
-static void add_moveable(int index, int id, int quality)
+static void add_moveable(short unsigned index, int id, int quality)
 {
 	int rec = bscreate(FirstMoveable);
 	bsset(rec, Type, id);
@@ -635,7 +635,7 @@ void map::load(gamefile& game)
 	st.read(&map::width, 4);
 	st.read(&map::height, 4);
 	// tiles loading
-	int tiles_count = map::height * map::width;
+	short unsigned tiles_count = map::height * map::width;
 	mp2::tile* tiles = new mp2::tile[tiles_count];
 	st.read(tiles, tiles_count * sizeof(mp2::tile));
 	// addons loading
@@ -853,15 +853,12 @@ void map::load(gamefile& game)
 			// error
 		}
 	}
-	// Prepare normal monster/artifact/resource
-	// Before random, because random analyze exist items
-	for(int i = 0; i < tiles_count; i++)
+	// Prepare monster/artifact/resource
+	for(short unsigned i = 0; i < tiles_count; i++)
 	{
-		switch(tiles[i].generalObject)
+		int m = tiles[i].generalObject;
+		switch(m)
 		{
-		case mp2obj(Artifact):
-			add_moveable(i, FirstArtifact + (tiles[i].indexName1 - 1) / 2, 0);
-			break;
 		case mp2obj(RndMonster):
 			add_moveable(i, game::random::monster(0), 0);
 			break;
@@ -870,6 +867,20 @@ void map::load(gamefile& game)
 		case mp2obj(RndMonster3):
 		case mp2obj(RndMonster4):
 			add_moveable(i, game::random::monster(tiles[i].generalObject - mp2obj(RndMonster1) + 1), 0);
+			break;
+		case mp2obj(Artifact):
+			add_moveable(i, FirstArtifact + (tiles[i].indexName1 - 1) / 2, 0);
+			break;
+		case mp2obj(RndArtifact):
+			add_moveable(i, game::random::artifact(0), 0);
+			break;
+		case mp2obj(RndArtifact1):
+		case mp2obj(RndArtifact2):
+		case mp2obj(RndArtifact3):
+			add_moveable(i, game::random::artifact(m - mp2obj(RndArtifact1) + 1), 0);
+			break;
+		case mp2obj(RndUltimateArtifact):
+			add_moveable(i, game::random::artifact(4), 0);
 			break;
 		case mp2obj(Monster):
 			add_moveable(i, FirstMonster + tiles[i].indexName1, 0);
@@ -883,27 +894,6 @@ void map::load(gamefile& game)
 		case mp2obj(TreasureChest):
 			if(res::map(tiles[i].objectName1) == res::OBJNRSRC)
 				add_moveable(i, TreasureChest, 0);
-			break;
-		}
-	}
-	// Transform random artifact values
-	for(int i = 0; i < tiles_count; i++)
-	{
-		int m = tiles[i].generalObject;
-		switch(m)
-		{
-		case mp2obj(RndArtifact1):
-		case mp2obj(RndArtifact2):
-		case mp2obj(RndArtifact3):
-			add_moveable(i, game::random::artifact(m - mp2obj(RndArtifact1) + 1), 0);
-			break;
-		case mp2obj(RndArtifact):
-			add_moveable(i, game::random::artifact(0), 0);
-			break;
-		case mp2obj(RndUltimateArtifact):
-			add_moveable(i, game::random::artifact(4), 0);
-			break;
-		default:
 			break;
 		}
 	}
@@ -950,24 +940,13 @@ void map::load(gamefile& game)
 	// Heroes must be valid race
 	if(game.start_hero)
 	{
-		for(int i = (int)FirstPlayer; i <= (int)LastPlayer; i++)
+		for(int player = FirstPlayer; player <= LastPlayer; player++)
 		{
-			tokens hrc;
-			// Get first castle and create hero
-			tokens type = tokens(bsget(i, Type));
-			int rec = bsfind(FirstCastle, Player, i);
-			if(rec != -1)
-			{
-				hrc = get_free_hero(type);
-				bsset(hrc, Player, i);
-				bsset(hrc, Index, bsget(rec, Index));
-				bsset(hrc, Direction, Right);
-			}
-			// Two hero recruit in castle
-			hrc = get_free_hero(type);
-			bsset(hrc, Recruit, i);
-			hrc = get_free_hero(oppose_type(type));
-			bsset(hrc, Recruit, i);
+			if(!bsget(player, Type))
+				continue;
+			auto castle = bsfind(FirstCastle, Player, player);
+			if(castle)
+				game::hire(0, player, bsget(castle, Index));
 		}
 	}
 	delete tiles;
