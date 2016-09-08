@@ -44,7 +44,6 @@
     <ClCompile Include="base.cpp" />
     <ClCompile Include="crt.cpp" />
     <ClCompile Include="drawable.cpp" />
-    <ClCompile Include="array.cpp" />
     <ClCompile Include="base_meta.cpp" />
     <ClCompile Include="io.cpp" />
     <ClCompile Include="win_io.cpp" />

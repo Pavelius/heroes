@@ -244,6 +244,7 @@ int show::build(int mid)
 				auto level = bsget(mid, id) + 1;
 				auto e2 = game::getbuildingcost(race, id, level);
 				game::getbuilding(temp, race, id, level);
+				zcat(temp, " ");
 				zcat(temp, szt("Do you want to build?", "Хотите построить?"));
 				game::getcosttext(zend(temp), e2);
 				if(dlgask(0, temp))

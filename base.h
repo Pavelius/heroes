@@ -12,8 +12,6 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
-#include "array.h"
-
 #pragma once
 
 #define FO(c,f) (const int)&((c*)0)->f
@@ -76,10 +74,8 @@ struct bstoken // Default tokens structure
 	int					image;
 	const char*			name[2];
 	const char*			tag;
-	//
-	static void			initialize();
 };
-struct bsmeta : public array
+struct bsmeta
 {
 	struct field
 	{
@@ -114,6 +110,9 @@ struct bsmeta : public array
 	private:
 		char source[256 * 8];
 	};
+	void*				data;
+	int					size;
+	int					count;
 	const char*			identifier;
 	const char*			name[2];
 	field*				fields;
@@ -125,6 +124,7 @@ struct bsmeta : public array
 	bsmeta(const char* identifier, const char* name_en, const char* name_ru, int from, int to, field* fields, void* objects, int object_size, int objects_size, void* clone);
 	//
 	field*				find(int id);
+	void				clear();
 	inline ref			get(int index) { return{this, (char*)data + index*size}; }
 	static bsmeta*		getbase(const char* name);
 	static ref			getref(int rec);

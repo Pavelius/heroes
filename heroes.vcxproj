@@ -32,7 +32,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="animation.cpp" />
-    <ClCompile Include="array.cpp" />
     <ClCompile Include="artifacts.cpp" />
     <ClCompile Include="base.cpp" />
     <ClCompile Include="base_meta.cpp" />

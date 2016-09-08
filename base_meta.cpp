@@ -277,17 +277,14 @@ bsmeta::object::object()
 
 bsmeta::bsmeta(const char* identifier, const char* name_en, const char* name_ru,
 	int from, int to, bsmeta::field* fields, void* objects, int object_size, int objects_size, void* clone)
-	: identifier(identifier), from(from), to(to), fields(fields), clone(clone), next(0)
+	: data(objects), size(object_size), count(objects_size/object_size),
+	identifier(identifier), from(from), to(to), fields(fields), clone(clone), next(0)
 {
 	seqlink(this);
 	name[0] = name_en;
 	name[1] = name_ru;
-	array::setup(object_size);
-	array::data = objects;
-	array::count_max = objects_size / object_size;
-	array::count = array::count_max;
-	if(array::count_max > 1 && clone && memcmp(objects, clone, object_size) == 0)
-		array::count = 0;
+	if(clone && memcmp(objects, clone, object_size) == 0)
+		count = 0;
 }
 
 bsmeta::ref bsmeta::getref(int rec)
@@ -320,6 +317,11 @@ bsmeta* bsmeta::getbase(const char* name)
 			return p;
 	}
 	return 0;
+}
+
+void bsmeta::clear()
+{
+	count = 0;
 }
 
 int bstag(const char* string)
@@ -431,7 +433,7 @@ int bscreate(int rec)
 	bsmeta::ref e = bsmeta::getref(rec);
 	if(!e.metadata)
 		return 0;
-	if(e.metadata->count >= e.metadata->count_max)
+	if(e.metadata->from + e.metadata->count > e.metadata->to)
 		return 0;
 	int size = e.metadata->size;
 	for(int i = 0; i < e.metadata->count; i++)
