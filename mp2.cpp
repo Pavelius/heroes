@@ -688,7 +688,7 @@ void map::load(gamefile& game)
 	{
 		unsigned char cx = st.get();
 		unsigned char cy = st.get();
-		st.get();
+		unsigned char id = st.get();
 		// empty block
 		if(0xFF == cx && 0xFF == cy)
 			continue;
@@ -710,7 +710,7 @@ void map::load(gamefile& game)
 		unsigned char pblock[512];
 		int findobject = -1;
 		// read block
-		unsigned sizeblock = st.getLE16();
+		unsigned sizeblock = st.get16();
 		if(sizeblock > sizeof(pblock))
 		{
 			st.seek(sizeblock, SeekCur);

@@ -1,14 +1,22 @@
 #include "main.h"
 
-struct moveable_t
+struct map_moveable
 {
-    int			        id;
-    int			        index;
+	short unsigned      type;
+	short unsigned      index;
     unsigned char       extension;
     unsigned char       variant;
     short unsigned      count;
 };
-static moveable_t		objects[LastMoveable-FirstMoveable+1];
+static map_moveable		objects[LastMoveable-FirstMoveable+1];
+static bsmeta::field fields[] = {
+	BSREQ(map_moveable, type, Type, Number),
+	BSREQ(map_moveable, index, Index, Number),
+	BSREQ(map_moveable, variant, Value, Number),
+	BSREQ(map_moveable, count, Count, Number),
+	{0}
+};
+BSMETA(map_moveable, "Moveables", "Передвижимое", FirstMoveable);
 
 void map::moveable::load(int* rec, int index, int w, int h)
 {
@@ -18,9 +26,9 @@ void map::moveable::load(int* rec, int index, int w, int h)
     int y2 = y1 + h;
     for(auto& e : objects)
     {
-        if(!e.id)
+        if(!e.type)
             break;
-        if(e.index==-1)
+        if(e.index==0xFFFF)
             continue;
         if(e.index<index)
             continue;
@@ -29,7 +37,7 @@ void map::moveable::load(int* rec, int index, int w, int h)
         if(x>=x1 && x<=x2 && y>=y1 && y<=y2)
         {
             int j = (y-y1)*w + (x-x1);
-            rec[j] = e.id;
+            rec[j] = e.type;
         }
     }
 }
@@ -38,51 +46,18 @@ void map::moveable::block(unsigned* route)
 {
     for(auto& e : objects)
     {
-        if(!e.id)
+        if(!e.type)
             break;
-        if(e.index==-1)
+        if(e.index==0xFFFF)
             continue;
-        if(e.id>=(int)FirstMonster && e.id<=(int)LastMonster)
+        if(e.type>=FirstMonster && e.type<=LastMonster)
         {
             route[e.index] = map::Attack;
             map::route::around(e.index, map::Attack);
         }
-        else if(e.id==TreasureChest
-                || (e.id>=(int)FirstResource && e.id<=(int)LastResource))
+        else if(e.type ==TreasureChest
+                || (e.type >=FirstResource && e.type <=LastResource))
             route[e.index] = map::Action;
-    }
-}
-
-static int object_get(int rec, int id)
-{
-    auto& e = objects[rec-FirstMoveable];
-    switch(id)
-    {
-    case Index:
-        return e.index;
-    case Type:
-        return e.id;
-	case Count:
-		return e.count;
-    default:
-        return 0;
-    }
-}
-
-static void object_set(int rec, int id, int value)
-{
-    auto& e = objects[rec-FirstMoveable];
-    switch(id)
-    {
-    case Index:
-        e.index = value;
-        break;
-    case Type:
-        e.id = value;
-        break;
-    case Count:
-        e.count = value;
-        break;
     }
 }
 
@@ -96,11 +71,11 @@ int map::moveable::nearest(int index, int id1, int id2, int radius)
 	int y2 = y+radius;
 	for(auto& e : objects)
 	{
-		if(!e.id)
+		if(!e.type)
 			break;
-		if(e.index==-1)
+		if(e.index==0xFFFF)
 			continue;
-		if(e.id<id1 && e.id>id2)
+		if(e.type<id1 && e.type>id2)
 			continue;
 		x = map::i2x(e.index);
 		if(x<x1 || x>x2)

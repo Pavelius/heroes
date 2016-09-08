@@ -267,7 +267,7 @@ static void select_animation(drawable** objects)
 {
 	combat_timeout = combat_timeout_values[combat::setting::speed];
 	objects[0] = 0;
-	dwselect(zend(objects), 1);
+	dwselect(zend(objects), DFCombat);
 	zcat(objects, static_cast<drawable*>(&attacker_leader));
 	zcat(objects, static_cast<drawable*>(&defender_leader));
 }

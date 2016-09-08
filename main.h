@@ -248,6 +248,11 @@ enum image_flags
 	AFCenter = 4,
 	AFCenterV = 8,
 };
+enum draw_flags
+{
+	DFGround = 1, DFObjects = 2, DFHightObjects = 4,
+	DFCombat = 0x80,
+};
 namespace res
 {
 	enum tokens

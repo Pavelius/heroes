@@ -1048,7 +1048,9 @@ bool draw::create(const char* title, unsigned milliseconds, bool fullscreen)
 		pal4[i4 + 1] = pal3[i3 + 1] << 2;
 		pal4[i4 + 0] = pal3[i3 + 2] << 2;
 	}
+	// Set colors
 	colorize();
+	// Create Window
 	return sys_create(title, milliseconds, fullscreen, bits, width, height);
 }
 
