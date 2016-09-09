@@ -612,7 +612,6 @@ namespace draw
 	int						input(bool wait_message = true);
 	res::tokens				isevil(res::tokens evil, res::tokens good);
 	int						isqrt(int num);
-	void					map(int x, int y, int* route);
 	void					line(int x1, int y1, int x2, int y2, unsigned char color);
 	void					pixel(int x, int y, unsigned char color);
 	unsigned char*			ptr(int x, int y);

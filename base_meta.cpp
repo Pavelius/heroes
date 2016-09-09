@@ -244,6 +244,10 @@ void bsmeta::ref::set(int id, const char* value)
 			*((const char**)p) = value;
 		else if(f->size == sizeof(char*) * 2)
 			((const char**)p)[locale] = value;
+		else if(value)
+			zcpy(p, value, f->size_total - 1);
+		else
+			p[0] = 0;
 	}
 }
 

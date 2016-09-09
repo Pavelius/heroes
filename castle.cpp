@@ -9,7 +9,7 @@ static struct castle : public drawable
 	tokens				player;
 	tokens				type;
 	short unsigned		index;
-	char				name[14];
+	char				name[16];
 	unsigned char		moved;
 	short unsigned		creatures[LastCreatureCount - FirstCreatureCount + 1];
 	unsigned char		dwellings[LastBuilding - FirstBuilding + 1];
@@ -131,17 +131,17 @@ void draw::castle(int x, int y, int tile, int race, bool town)
 	for(int ii = 0; ii < 5; ++ii)
 		image(x + ii * 32, y + 3 * 32, res::OBJNTOWN, index + 11 + ii);
 	// Shadow
-	//for(int iy = 0; iy < 4; iy++)
-	//{
-	//	for(int ix = -2; ix <= 1; ix++)
-	//	{
-	//		int x1 = x + ix * 32;
-	//		int y1 = y + iy * 32;
-	//		if(iy == 3)
-	//			x1 += 32;
-	//		draw::image(x1, y1, res::OBJNTWSH, index + iy * 4 + ix);
-	//	}
-	//}
+	for(int iy = 0; iy < 4; iy++)
+	{
+		for(int ix = -2; ix <= 1; ix++)
+		{
+			int x1 = x + ix * 32;
+			int y1 = y + iy * 32;
+			if(iy == 3)
+				x1 += 32;
+			draw::image(x1, y1, res::OBJNTWSH, index + iy * 4 + (ix + 2));
+		}
+	}
 }
 
 static struct castle_drawable_plugin : public drawable::plugin

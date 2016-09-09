@@ -16,6 +16,28 @@ static tokens	week_monsters[] =
 	Sprite, Dwarf, Elf,
 	Halfling, Boar, Roc,
 };
+static struct hero_data
+{
+	const char*		name[2];
+} heroes_data[LastHero - FirstHero + 1] = {
+	{{"Lord Killburn", "Лорд Килбурн"}}, {{"Sir Gallanth", "Сэр Галлант"}}, {{"Ector", "Эктор"}}, {{"Gvenneth", "Гвиннет"}}, {{"Tyro", "Тиро"}},
+	{{"Ambrose", "Амброуз"}}, {{"Ruby", "Руби"}}, {{"Maximus", "Максимус"}}, {{"Dimitry", "Димитрий"}},
+	//
+	{{"Thundax", "Громотопор"}}, {{"Fineous", "Прекраснейший"}}, {{"Jojosh", "Джоджош"}}, {{"Crag Hack", "Крэг Хек"}}, {{"Jezebel", "Жезебель"}},
+	{{"Jaclyn", "Жаклин"}}, {{"Ergon", "Эргон"}}, {{"Tsabu", "Тсабу"}}, {{"Atlas", "Атлас"}},
+	//
+	{{"Astra", "Астра"}}, {{"Natasha", "Наташа"}}, {{"Troyan", "Троян"}}, {{"Vatawna", "Ваттавна"}}, {{"Rebecca", "Ребека"}},
+	{{"Gem", "Джем"}}, {{"Ariel", "Ариэль"}}, {{"Carlawn", "Карлавн"}}, {{"Luna", "Луна"}},
+	//
+	{{"Arie", "Ари"}}, {{"Alamar", "Аламар"}}, {{"Vesper", "Веспер"}}, {{"Crodo", "Кродо"}}, {{"Barok", "Барок"}},
+	{{"Kastore", "Кастор"}}, {{"Agar", "Агар"}}, {{"Falagar", "Фалагар"}}, {{"Wrathmont", "Врасмонт"}},
+	//
+	{{"Myra", "Мира"}}, {{"Flint", "Флинт"}}, {{"Dawn", "Давн"}}, {{"Halon", "Халон"}}, {{"Myrini", "Мирини"}},
+	{{"Wilfrey", "Вилфрей"}}, {{"Sarakin", "Саракин"}}, {{"Kalindra", "Калиндра"}}, {{"Mandigal", "Мандигал"}},
+	//
+	{{"Zom", "Зом"}}, {{"Darlana", "Дарлана"}}, {{"Zam", "Зам"}}, {{"Ranloo", "Ранлу"}}, {{"Charity", "Чарити"}},
+	{{"Rialdo", "Риалдо"}}, {{"Roxana", "Роксана"}}, {{"Sandro", "Сандро"}}, {{"Celia", "Целиа"}},
+};
 
 int artifacts_bonuses(int rec, int id)
 {
@@ -622,6 +644,7 @@ void game::initialize()
 	month_of = Empthy;
 	// Setup random generator
 	game::random::initialize();
+	bsmeta::getbase("hero")->count = LastHero - FirstHero + 1;
 	// Clear all players
 	for(int rec = FirstPlayer; rec <= LastPlayer; rec++)
 	{
@@ -642,6 +665,7 @@ void game::initialize()
 		bsset(rec, SpellPoints, game::get(rec, SpellPointsMax));
 		bsset(rec, MovePoints, game::get(rec, MovePointsMax));
 		bsset(rec, Index, -1);
+		bsset(rec, Name, heroes_data[rec - FirstHero].name[locale]);
 		game::cleararmy(rec);
 		for(int i = FirstSkill; i <= LastSkill; i++)
 			bsset(rec, i, 0);

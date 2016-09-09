@@ -167,29 +167,33 @@ static void shadowview()
 	while(true)
 	{
 		draw::rectf(0, 0, draw::width - 1, draw::height - 1, 0x12);
-		auto x = 100;
-		auto y = 100;
+		auto x = 200;
+		auto y = 200;
 		auto index = 96;
 		auto icn = res::OBJNTWSH;
+		draw::line(x - 32, y, x + 32, y, 0x0C);
+		draw::line(x, y-32, x, y+32, 0x0C);
+		x -= 2 * 32;
+		y -= 3 * 32;
 		for(int iy = 0; iy < 4; iy++)
 		{
-			for(int ix = 0; ix < 4; ix++)
+			for(int ix = -2; ix <= 1; ix++)
 			{
 				int x1 = x + ix * 32;
 				int y1 = y + iy * 32;
 				if(iy == 3)
 					x1 += 32;
-				draw::image(x1, y1, icn, index + iy * 4 + ix);
-				draw::line(x1, y1, x1 + 32, y1, 0x10);
-				draw::line(x1, y1, x1, y1 + 32, 0x10);
+				draw::image(x1, y1, res::OBJNTWSH, index + iy * 4 + (ix+2));
 			}
 		}
-		//for(int ii = 0; ii < 5; ++ii)
-		//	draw::image(x + ii * 32, y + 1 * 32, icn, index + 1 + ii);
-		//for(int ii = 0; ii < 5; ++ii)
-		//	draw::image(x + ii * 32, y + 2 * 32, icn, index + 6 + ii);
-		//for(int ii = 0; ii < 5; ++ii)
-		//	draw::image(x + ii * 32, y + 3 * 32, icn, index + 11 + ii);
+		icn = res::OBJNTOWN;
+		draw::image(x + 2 * 32, y, res::OBJNTOWN, index);
+		for(int ii = 0; ii < 5; ++ii)
+			draw::image(x + ii * 32, y + 1 * 32, icn, index + 1 + ii);
+		for(int ii = 0; ii < 5; ++ii)
+			draw::image(x + ii * 32, y + 2 * 32, icn, index + 6 + ii);
+		for(int ii = 0; ii < 5; ++ii)
+			draw::image(x + ii * 32, y + 3 * 32, icn, index + 11 + ii);
 		draw::cursor(res::ADVMCO, 0);
 		int id = draw::input();
 		switch(id)
