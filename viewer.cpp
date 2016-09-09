@@ -26,9 +26,9 @@
 
 struct terrain
 {
-	int		first;
-	int		last;
-	tokens	id;
+	int			first;
+	int			last;
+	tokens		id;
 };
 static terrain tarrains[LastTerrain - FirstTerrain + 1] = {
 	{0, 29, Water},
@@ -41,9 +41,192 @@ static terrain tarrains[LastTerrain - FirstTerrain + 1] = {
 	{361, 414, Wastelands},
 	{415, 431, Beach},
 };
-//Water, Grass, Snow, Swamp, Lava, Desert, Dirt, Wastelands, Beach,
+enum shape_type {
+	SH1x1,
+	SH2x1, SH2x2J,
+	SH3x1, SH3x2, SH3x2u1, SH3x2u1r1, SH3x3, SH3x2u2a5,
+	SH4x1, SH4x2, SH4x2u1, SH4x2u2, SH4x2d1, SH4x3u2a3,
+	SH5x3,
+};
+struct mapobjectinfo
+{
+	tokens			object;
+	shape_type		shape;
+	int				start;
+};
+struct shapeinfo
+{
+	int				count;
+	point			size;
+	point			points[25];
+	unsigned char	animation[25];
+	unsigned char	indecies[25];
+};
+static shapeinfo	shapes[] = {
+	{1, {1, 1}, {{0, 0}}},
+	//
+	{2, {2, 1}, {{-1, 0}, {0, 0}}},
+	{3, {2, 2}, {{0, -1}, {-1, 0}, {0, 0}}},
+	//
+	{3, {3, 1}, {{-1, 0}, {0, 0}, {1, 0}}},
+	{6, {3, 2}, {{-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {0, 0}, {1, 0}}},
+	{5, {3, 2}, {{0, -1}, {1, -1}, {-1, 0}, {0, 0}, {1, 0}}},
+	{4, {2, 2}, {{0, -1}, {-1, 0}, {0, 0}, {1, 0}}},
+	{9, {3, 3}, {{-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {0, 0}, {1, 0}, {-1, 1}, {0, 1}, {1, 1}}},
+	{4, {3, 2}, {{0, -1}, {-2, 0}, {-1, 0}, {0, 0}}, {6, 6, 6, 6}},
+	//
+	{4, {4, 1}, {{-2, 0}, {-1, 0}, {0, 0}, {1, 0}}},
+	{8, {4, 2}, {{-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}}},
+	{7, {4, 2}, {{-1, -1}, {0, -1}, {1, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}}},
+	{6, {4, 2}, {{0, -1}, {1, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}}},
+	{7, {4, 2}, {{-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {0, 0}, {1, 0}}},
+	{10, {4, 3}, {{0, -2}, {1, -2}, {-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}}, {3, 3, 3, 3, 3, 3, 3, 3, 3, 3}},
+	//
+	{14, {5, 3}, {{-1, -1}, {0, -1}, {1, -1}, {2, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {2, 0}, {-2, 1}, {-1, 1}, {0, 1}, {1, 1}, {2, 1}}},
+};
+static mapobjectinfo grass[] = {
+	{Mines, SH4x2}, // Haunted mine
+	{Empthy, SH2x1},
+	{Empthy, SH4x2d1},
+	{Empthy, SH3x3},
+	{Empthy, SH2x2J},
+	{Empthy, SH3x1},
+	{Empthy, SH3x1},
+	{Empthy, SH3x2u1r1}, // Big boulder
+	{Empthy, SH2x1}, // Big 
+	{Empthy, SH1x1}, // Single Rock
+	{Empthy, SH2x1}, // Rock
+	{Empthy, SH2x1}, // Rock
+	{Empthy, SH2x1}, // Flat Rock
+	{Empthy, SH2x1}, // Rock
+	{Empthy, SH5x3}, // Lake
+	{Empthy, SH1x1}, // Flower
+	{Empthy, SH4x2}, // Lake
+	{Empthy, SH3x1}, // Lake
+	{Empthy, SH3x1}, // Hill
+	{Empthy, SH4x2u1}, // Trees
+	{Empthy, SH3x2u1}, // Trees
+	{Empthy, SH2x2J}, // Trees
+	{Empthy, SH4x1}, // Brush flowers
+	{Empthy, SH4x1}, // Brush
+	{Empthy, SH3x1}, // Brush small
+	{Empthy, SH3x1}, // Brush small flowers
+	{Empthy, SH3x1}, // Brush small to up
+	{Empthy, SH2x1}, // Single brush
+	{Empthy, SH4x1}, // Flowers red
+	{Empthy, SH4x2u1}, // Flowers red
+	{Empthy, SH4x1}, // Flowers red another
+	{Empthy, SH4x1}, // Flowers blue
+	{Empthy, SH3x2u1}, // Flowers blue
+	{Empthy, SH1x1}, // Flowers tiny
+	{Empthy, SH3x1}, // Flowers
+	{Empthy, SH2x1}, // Flowers
+	{Empthy, SH2x1}, // Flowers to up
+	{Empthy, SH2x1}, // Flowers white
+	{Empthy, SH2x1}, // Flowers ultraviolet
+	{Empthy, SH2x1}, // Hill
+};
+static mapobjectinfo grass2[] = {
+	{HillFort, SH3x2u1},
+	{HalflingHole, SH4x1},
+	{Empthy, SH1x1}, // Dig crate
+	{Empthy, SH2x1}, // Cliff
+	{Empthy, SH2x1}, // Cliff
+	{Empthy, SH3x1}, // Cliff
+	{SpriteHouse, SH4x2u2},
+	{WindMill, SH4x3u2a3},
+	{ArcherHouse, SH3x2u2a5},
+	{GoblinHut, SH2x1},
+	{PeasantHut, SH3x2u2a5},
+	{Oracle, SH3x2},
+	{Obelisk, SH2x2J},
+};
+static struct mapobjectset
+{
+	tokens			tile;
+	res::tokens		icn;
+	int				count;
+	mapobjectinfo*	objects;
+} mapobjectsets[] = {
+	{Grass, res::OBJNGRAS, sizeof(grass) / sizeof(grass[0]), grass},
+	{Grass, res::OBJNGRA2, sizeof(grass2) / sizeof(grass2[0]), grass2},
+};
 
 const char*	rsname(int res);
+
+static void grassview()
+{
+	int index = 0;
+	int start = 0;
+	for(auto& sh : shapes)
+	{
+		int index = 0;
+		for(int i = 0; i < sh.count; i++)
+		{
+			sh.indecies[i] = index;
+			index += 1 + sh.animation[i];
+		}
+	}
+	auto& ts = mapobjectsets[1];
+	for(int i = 0; i < ts.count; i++)
+	{
+		ts.objects[i].start = start;
+		auto& sh = shapes[ts.objects[i].shape];
+		start += sh.indecies[sh.count - 1] + 1 + sh.animation[sh.count - 1];
+	}
+	char temp[64];
+	while(true)
+	{
+		auto x1 = 200;
+		auto y1 = 200;
+		if(index > ts.count - 1)
+			index = ts.count - 1;
+		else if(index < 0)
+			index = 0;
+		auto icn = ts.icn;
+		auto& e = ts.objects[index];
+		shapeinfo& sh = shapes[e.shape];
+		draw::rectf(0, 0, draw::width - 1, draw::height - 1, 0x12);
+		int e_count = sh.indecies[sh.count - 1] + 1 + sh.animation[sh.count - 1];
+		szprint(temp, "object %1i (start=%2i, count=%3i, next=%4i)", index, e.start, e_count, e.start + e_count);
+		draw::text(0, 0, temp);
+		point center = {0, 0};
+		for(int i = 0; i < sh.count; i++)
+		{
+			auto px = x1 + sh.points[i].x * 32;
+			auto py = y1 + sh.points[i].y * 32;
+			auto frame = e.start + sh.indecies[i];
+			if(sh.animation[i])
+				draw::image(px, py, icn, frame + 1 + (draw::counter % sh.animation[i]));
+			draw::image(px, py, icn, frame);
+			if(!sh.points[i])
+			{
+				center.x = px;
+				center.y = py;
+			}
+			draw::rectb(px, py, px + 32, py + 32, 0xC);
+		}
+		draw::rectb(center.x+1, center.y+1, center.x + 32 - 1, center.y + 32 - 1, 0x72);
+		draw::cursor(res::ADVMCO, 0);
+		int id = draw::input();
+		switch(id)
+		{
+		case KeyEscape:
+		case Cancel:
+			return;
+		case KeyRight:
+			index++;
+			if(index >= sizeof(grass) / sizeof(grass[0]) - 1)
+				index = sizeof(grass) / sizeof(grass[0]) - 1;
+			break;
+		case KeyLeft:
+			index--;
+			if(index < 0)
+				index = 0;
+			break;
+		}
+	}
+}
 
 const char* strstr(const char* s1, const char* s2)
 {
@@ -172,7 +355,7 @@ static void shadowview()
 		auto index = 96;
 		auto icn = res::OBJNTWSH;
 		draw::line(x - 32, y, x + 32, y, 0x0C);
-		draw::line(x, y-32, x, y+32, 0x0C);
+		draw::line(x, y - 32, x, y + 32, 0x0C);
 		x -= 2 * 32;
 		y -= 3 * 32;
 		for(int iy = 0; iy < 4; iy++)
@@ -183,7 +366,7 @@ static void shadowview()
 				int y1 = y + iy * 32;
 				if(iy == 3)
 					x1 += 32;
-				draw::image(x1, y1, res::OBJNTWSH, index + iy * 4 + (ix+2));
+				draw::image(x1, y1, res::OBJNTWSH, index + iy * 4 + (ix + 2));
 			}
 		}
 		icn = res::OBJNTOWN;
@@ -350,6 +533,9 @@ static int view()
 			break;
 		case Ctrl + Alpha + 'F':
 			draw::execute(Accept);
+			break;
+		case Alpha + 'G':
+			grassview();
 			break;
 		case Alpha + 'P':
 			palview();

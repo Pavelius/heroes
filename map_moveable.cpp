@@ -42,7 +42,9 @@ struct map_moveable : public drawable
 
 	point getzpos() const override
 	{
-		return getpos();
+		auto pt = getpos();
+		pt.y++;
+		return pt;
 	}
 
 	void painting(point camera, unsigned flags) const override

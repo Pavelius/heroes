@@ -661,7 +661,7 @@ void game::initialize()
 		bsset(rec, Player, 0);
 		bsset(rec, Recruit, 0);
 		bsset(rec, Portrait, rec - FirstHero);
-		bsset(rec, Direction, map::Up);
+		bsset(rec, Direction, map::Right);
 		bsset(rec, SpellPoints, game::get(rec, SpellPointsMax));
 		bsset(rec, MovePoints, game::get(rec, MovePointsMax));
 		bsset(rec, Index, -1);

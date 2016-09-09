@@ -204,7 +204,7 @@ enum tokens
 	RndUltimateArtifact, RndArtifact, RndResource, RndMonster, // 0xAC-0xAF
 	RndTown, RndCastle, Map0xB2, RndMonster1, // 0xB0-0xB3
 	RndMonster2, RndMonster3, RndMonster4, Hero, // 0xB4-0xB7
-	Map0xB8, Map0xB9, WatchTower, TreeHouse, // 0xB8-0xBB
+	Map0xB8, Map0xB9, WatchTower, SpriteHouse, // 0xB8-0xBB
 	TreeCity, Ruins, Fort, TradingPost, // 0xBC-0xBF
 	AbandoneMine, ThatchedHut, StandingStones, Idol, // 0xC0-xC3
 	TreeKnowledge, DoctorHut, Temple, HillFort, // 0xC4-0xC7
