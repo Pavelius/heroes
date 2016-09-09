@@ -541,6 +541,10 @@ static void add_object(int pos, unsigned char object, unsigned char index, unsig
 		break;
 	case res::FLAG32:
 		return;
+	case res::OBJNTOWN:
+	case res::OBJNTWBA:
+	case res::OBJNTWRD:
+		return;
 	default:
 		break;
 	}
@@ -789,44 +793,45 @@ void map::load(gamefile& game)
 	// Prepare monster/artifact/resource
 	for(short unsigned i = 0; i < tiles_count; i++)
 	{
+		int i1 = map::m2i((i%map::width), (i / map::width));
 		int m = tiles[i].generalObject;
 		switch(m)
 		{
 		case mp2obj(RndMonster):
-			add_moveable(i, game::random::monster(0), 0);
+			add_moveable(i1, game::random::monster(0), 0);
 			break;
 		case mp2obj(RndMonster1):
 		case mp2obj(RndMonster2):
 		case mp2obj(RndMonster3):
 		case mp2obj(RndMonster4):
-			add_moveable(i, game::random::monster(tiles[i].generalObject - mp2obj(RndMonster1) + 1), 0);
+			add_moveable(i1, game::random::monster(tiles[i].generalObject - mp2obj(RndMonster1) + 1), 0);
 			break;
 		case mp2obj(Artifact):
-			add_moveable(i, FirstArtifact + (tiles[i].indexName1 - 1) / 2, 0);
+			add_moveable(i1, FirstArtifact + (tiles[i].indexName1 - 1) / 2, 0);
 			break;
 		case mp2obj(RndArtifact):
-			add_moveable(i, game::random::artifact(0), 0);
+			add_moveable(i1, game::random::artifact(0), 0);
 			break;
 		case mp2obj(RndArtifact1):
 		case mp2obj(RndArtifact2):
 		case mp2obj(RndArtifact3):
-			add_moveable(i, game::random::artifact(m - mp2obj(RndArtifact1) + 1), 0);
+			add_moveable(i1, game::random::artifact(m - mp2obj(RndArtifact1) + 1), 0);
 			break;
 		case mp2obj(RndUltimateArtifact):
-			add_moveable(i, game::random::artifact(4), 0);
+			add_moveable(i1, game::random::artifact(4), 0);
 			break;
 		case mp2obj(Monster):
-			add_moveable(i, FirstMonster + tiles[i].indexName1, 0);
+			add_moveable(i1, FirstMonster + tiles[i].indexName1, 0);
 			break;
 		case mp2obj(Resource):
-			add_moveable(i, FirstResource + (tiles[i].indexName1 - 1) / 2, 0);
+			add_moveable(i1, FirstResource + (tiles[i].indexName1 - 1) / 2, 0);
 			break;
 		case mp2obj(RndResource):
-			add_moveable(i, FirstResource + xrand(0, 6), 0);
+			add_moveable(i1, FirstResource + xrand(0, 6), 0);
 			break;
 		case mp2obj(TreasureChest):
 			if(res::map(tiles[i].objectName1) == res::OBJNRSRC)
-				add_moveable(i, TreasureChest, 0);
+				add_moveable(i1, TreasureChest, 0);
 			break;
 		}
 	}
@@ -840,7 +845,7 @@ void map::load(gamefile& game)
 		{
 			// level 1.0
 			if(tiles[i].indexName1 != 0xFF && (tiles[i].quantity1 % 4) == level)
-				add_object(i, tiles[i].objectName1, tiles[i].indexName1, tiles[i].quantity1);
+				add_object(i1, tiles[i].objectName1, tiles[i].indexName1, tiles[i].quantity1);
 			// level 1.N
 			if(tiles[i].indexAddon)
 			{
@@ -849,13 +854,13 @@ void map::load(gamefile& game)
 				{
 					mp2::addon& a = addons[ai];
 					if(a.objectNameN1 && a.indexNameN1 != 0xFF && (a.quantityN % 4) == level)
-						add_object(i, a.objectNameN1, a.indexNameN1, a.quantityN);
+						add_object(i1, a.objectNameN1, a.indexNameN1, a.quantityN);
 					ai = a.indexAddon;
 				}
 			}
 			// level 2.0
 			if(tiles[i].indexName2 != 0xFF && (tiles[i].quantity2 % 4) == level)
-				add_object(i, tiles[i].objectName2, tiles[i].indexName2, tiles[i].quantity2);
+				add_object(i1, tiles[i].objectName2, tiles[i].indexName2, tiles[i].quantity2);
 			// level 2.N
 			if(tiles[i].indexAddon)
 			{
@@ -864,7 +869,7 @@ void map::load(gamefile& game)
 				{
 					mp2::addon& a = addons[ai];
 					if(a.objectNameN2 && a.indexNameN2 != 0xFF && (a.quantityN % 4) == level)
-						add_object(i, a.objectNameN2, a.indexNameN2, a.quantityN);
+						add_object(i1, a.objectNameN2, a.indexNameN2, a.quantityN);
 					ai = a.indexAddon;
 				}
 			}

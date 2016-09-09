@@ -1,5 +1,24 @@
 #include "main.h"
 
+static void statelack(const void* c1, const void* c2)
+{
+	char temp[260];
+	szprint(temp, "%1 ", szt("Lack", "Не хватает"));
+	auto p = zend(temp);
+	auto c1i = (int*)c1;
+	auto c2i = (int*)c2;
+	for(int i = FirstResource; i <= LastResource; i++)
+	{
+		int d = c1i[i - FirstResource] - c2i[i - FirstResource];
+		if(d <= 0)
+			continue;
+		if(p[0])
+			zcat(p, ", ");
+		szprint(zend(p), "%1i %2", d, bsgets(i, Name));
+	}
+	draw::status(temp);
+}
+
 static void building_control(int x, int y, int w, int h, int building, int rec, bool blank)
 {
 	auto race = bsget(rec, Type);
@@ -55,23 +74,7 @@ static void building_control(int x, int y, int w, int h, int building, int rec, 
 		if(blank)
 			draw::image(x, y + h + 18, res::CASLXTRA, 2);
 		if(hilite)
-		{
-			char temp[260];
-			szprint(temp, "%1 ", szt("Lack", "Не хватает"));
-			auto p = zend(temp);
-			auto c1i = (int*)c1;
-			auto c2i = (int*)c2;
-			for(int i = FirstResource; i <= LastResource; i++)
-			{
-				int d = c1i[i - FirstResource] - c2i[i - FirstResource];
-				if(d <= 0)
-					continue;
-				if(p[0])
-					zcat(p, ", ");
-				szprint(zend(p), "%1i %2", d, bsgets(i, Name));
-			}
-			draw::status(temp);
-		}
+			statelack(c1, c2);
 	}
 	if(blank)
 	{
@@ -147,10 +150,12 @@ static void captain(int x, int y, int rec)
 	}
 }
 
-static void heroport(int x, int y, int index, int rec)
+static void heroport(int x, int y, int player, int index, int rec)
 {
 	if(rec == -1)
 		return;
+	auto c1 = bsptr(player, FirstResource);
+	auto c2 = game::gethirecost(rec);
 	draw::clipart(x, y, rec, LargeSize);
 	rect rc = {x - 50, y, x + 50, y + res::width(res::PORT0000, 0)};
 	if(bsfind(FirstHero, Index, index))
@@ -158,6 +163,12 @@ static void heroport(int x, int y, int index, int rec)
 		draw::image(rc.x2 - 16, rc.y2 - 24, res::TOWNWIND, 12);
 		if(hot::mouse.in(rc))
 			draw::status(szt("Cannot hire another hero in town", "Нельзя нанять героя, когда друго герой в городе"));
+	}
+	else if(!game::ismatch(c1, c2))
+	{
+		draw::image(rc.x2 - 16, rc.y2 - 24, res::TOWNWIND, 13);
+		if(hot::mouse.in(rc))
+			statelack(c1, c2);
 	}
 	else
 	{
@@ -212,8 +223,8 @@ int show::build(int mid)
 		building(293, 387, Moat, mid);
 		captain(444, 165, mid);
 		//
-		heroport(443 + 50, 260, index, h1);
-		heroport(443 + 50, 362, index, h2);
+		heroport(443 + 50, 260, player, index, h1);
+		heroport(443 + 50, 362, player, index, h2);
 		//
 		draw::button(553, 428, res::SWAPBTN, Cancel, 0, 0, 1, KeyEscape, 0, szt("Back to castle view", "Назад к обзору замка"));
 		draw::image(0, 461, res::CASLBAR, 0);

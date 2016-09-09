@@ -6,19 +6,6 @@ const int       viewx1 = 15;
 const int       viewy1 = 14;
 int			    hot::index;
 
-static const unsigned char monster_animation_cicle[] =
-{
-	1, 2, 1, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	3, 4, 5, 4, 3, 0,
-	0, 0, 0, 0,
-};
-static const unsigned char monster_animation_cicl1[] =
-{
-	1, 2, 1, 0,
-	3, 4, 5, 4, 3, 0,
-};
-
 //static void offs_hero(int& x, int& y, int direction, int frame)
 //{
 //	if(!frame)
@@ -116,31 +103,4 @@ void animate::heroshad(int x, int y, int mid, int index)
 	default: break;
 	}
 	draw::image(x, y, icn, index_sprite + (index % 9));
-}
-
-void animate::monster(int x, int y, int mid, int ticket)
-{
-	if(mid >= (int)MonsterRnd1)
-		draw::image(x, y, res::MONS32, mid - FirstMonster);
-	else
-	{
-		draw::image(x, y, res::MINIMON, (mid - FirstMonster) * 9);
-		switch(bsget(mid, AnimationType))
-		{
-		case 1:
-			draw::image(x, y, res::MINIMON, (mid - FirstMonster) * 9
-				+ 1 + monster_animation_cicl1[(draw::counter + ticket*ticket) % (sizeof(monster_animation_cicl1) / sizeof(monster_animation_cicl1[0]))]);
-			break;
-		default:
-			draw::image(x, y, res::MINIMON, (mid - FirstMonster) * 9
-				+ 1 + monster_animation_cicle[(draw::counter + ticket*ticket) % (sizeof(monster_animation_cicle) / sizeof(monster_animation_cicle[0]))]);
-			break;
-		}
-	}
-}
-
-void animate::artifact(int x, int y, int mid, int ticket)
-{
-	draw::image(x - 32, y, res::OBJNARTI, (mid - FirstArtifact) * 2);
-	draw::image(x, y, res::OBJNARTI, (mid - FirstArtifact) * 2 + 1);
 }

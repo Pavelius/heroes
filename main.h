@@ -251,8 +251,8 @@ enum image_flags
 };
 enum draw_flags
 {
-	DFGround = 1, DFObjects = 2, DFHightObjects = 4,
-	DFCombat = 0x80,
+	DWCombat, DWObjects, DWHightObjects,
+	DWMask = 0x0F,
 };
 namespace res
 {
@@ -725,11 +725,9 @@ struct order
 };
 namespace animate
 {
-	void					artifact(int x, int y, int rec, int ticket);
 	void					hero(int x, int y, int rec, int ticket);
 	void					heroshad(int x, int y, int rec, int ticket);
 	void					heroflag(int x, int y, int rec, int ticket);
-	void					monster(int x, int y, int mid, int ticket);
 }
 struct gamefile
 {

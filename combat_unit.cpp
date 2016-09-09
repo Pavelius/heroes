@@ -183,7 +183,7 @@ static struct creature_drawable_plugin : public drawable::plugin
 {
 	void selecting(drawable** result, rect screen, unsigned flags) override
 	{
-		if((flags & DFCombat) == 0)
+		if((flags & DWMask) != DWCombat)
 			return;
 		auto p = result;
 		for(int i = 0; i < combat_units.count; i++)

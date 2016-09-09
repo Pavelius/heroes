@@ -37,7 +37,7 @@ void show::highscore()
 			draw::text(420-draw::textw(temp), y+70, temp);
 			sznum(temp, e.score);
 			draw::text(456, y+70, temp);
-			animate::monster(540, y+86, y%(WaterElement-FirstMonster)+FirstMonster, y);
+			//animate::monster(540, y+86, y%(WaterElement-FirstMonster)+FirstMonster, y);
 			y += 40;
 		}
 		draw::button(9, 315, res::HISCORE, NewGame, 0, 0, 1);

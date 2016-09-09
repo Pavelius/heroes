@@ -1,5 +1,9 @@
 #include "main.h"
 
+// animate::heroshad(x1, y1 + 26, id, 0);
+// animate::hero(x1, y1 + 26, id, 0);
+// animate::heroflag(x1, y1 + 26, id, 0);
+
 struct hero
 {
 	const char*			name[2];

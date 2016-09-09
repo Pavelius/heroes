@@ -2,7 +2,6 @@
 
 static int selected_object;
 static int information_mode;
-static int cashe_index;
 
 static void handle_input(int x, int y, int object)
 {
@@ -230,7 +229,7 @@ static void paint_cursor(rect screen, point camera)
 	m.painting(hot::mouse);
 }
 
-static void paint_map(rect screen, point camera)
+static void paint_tiles(rect screen, point camera)
 {
 	for(int y = screen.y1; y < screen.y2; y += 32)
 	{
@@ -238,61 +237,19 @@ static void paint_map(rect screen, point camera)
 		{
 			int index = map::m2i((x+camera.x) / 32, (y + camera.y) / 32);
 			draw::imager(x, y, res::TisGROUND32, map::show::tiles[index], map::show::flags[index] % 4);
-			//for(auto e : map::show::objects[i])
-			//{
-			//	if(!e[0])
-			//		break;
-			//	int index = e[1];
-			//	res::tokens res = res::map(e[0]);
-			//	if(res::ishight(res, index))
-			//		continue;
-			//	image(x1, y1, res, index);
-			//	index = indexes::animate(res, index, draw::counter + index*index, false);
-			//	if(index)
-			//		image(x1, y1, res, index);
-			//}
 		}
 	}
-	// Object is last layer in render
-	//i = map::view();
-	//for(int y1 = y; y1 < y2; y1 += dy)
-	//{
-	//	for(int x1 = x; x1 < x2; x1 += dx)
-	//	{
-	//		int ticket = i*i;
-	//		int ix = map::i2x(i) - ix1;
-	//		int iy = map::i2y(i) - iy1;
-	//		int j = iy*viewx1 + ix;
-	//		int id = objects[j];
-	//		if(id)
-	//		{
-	//			//draw::rectb(x1,y1,x1+32,y1+32, 0xC4);
-	//			if(id >= (int)FirstResource && id <= (int)LastResource)
-	//			{
-	//				draw::image(x1 - 32, y1, res::OBJNRSRC, (id - FirstResource) * 2);
-	//				draw::image(x1, y1, res::OBJNRSRC, (id - FirstResource) * 2 + 1);
-	//			}
-	//			else if(id >= (int)FirstMonster && id <= (int)LastMonster)
-	//				animate::monster(x1 + 16, y1 + 30, id, ticket);
-	//			else if(id >= (int)FirstArtifact && id <= (int)LastArtifact)
-	//				animate::artifact(x1, y1, id, ticket);
-	//			else if(id == TreasureChest)
-	//			{
-	//				draw::image(x1 - 32, y1, res::OBJNRSRC, 18);
-	//				draw::image(x1, y1, res::OBJNRSRC, 19);
-	//			}
-	//			else if(id >= (int)FirstHero && id <= (int)LastHero)
-	//			{
-	//				animate::heroshad(x1, y1 + 26, id, 0);
-	//				animate::hero(x1, y1 + 26, id, 0);
-	//				animate::heroflag(x1, y1 + 26, id, 0);
-	//			}
-	//		}
 }
 
-static void paint_objects(rect screen, point camera)
+static void paint_objects(rect screen, point camera, unsigned flags)
 {
-
+	draw::state push;
+	draw::clipping = screen;
+	drawable* drawables[1024];
+	dwselect(drawables, screen, camera, flags);
+	dwclipping(drawables, screen, camera);
+	dworder(drawables, zlen(drawables));
+	dwpaint(drawables, screen, camera);
 }
 
 int show::game(int player)
@@ -317,7 +274,8 @@ int show::game(int player)
 	rect rcmap = {16, 16, 16 + 32 * 14, 16 + 32 * 14};
 	while(true)
 	{
-		if(bsget(selected_object, First) == FirstHero && selected_wave != selected_object)
+		if(selected_object>=FirstHero && selected_object<=LastHero
+			&& selected_wave != selected_object)
 		{
 			map::route::wave(bsget(selected_object, Index),
 				bsget(selected_object, SkillPathfinding),
@@ -326,7 +284,6 @@ int show::game(int player)
 				map::route::path(bsget(selected_object, Index),
 					bsget(selected_object, MoveTo));
 			selected_wave = selected_object;
-			cashe_index = -1;
 		}
 		hot::index = -1;
 		draw::image(0, 0, draw::isevil(res::ADVBORDE, res::ADVBORD), 0, 0);
@@ -336,7 +293,9 @@ int show::game(int player)
 		paint_information(480, 320, player);
 		if(hot::key == KeyEnter)
 			draw::execute(Change);
-		paint_map(rcmap, map::camera);
+		paint_tiles(rcmap, map::camera);
+		paint_objects(rcmap, map::camera, DWObjects);
+		paint_objects(rcmap, map::camera, DWHightObjects);
 		paint_cursor(rcmap, map::camera);
 		int id = draw::input();
 		switch(id)

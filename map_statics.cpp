@@ -3,10 +3,12 @@
 struct mapobject : public drawable
 {
 
-	tokens			res;
+	res::tokens		icn;
 	short unsigned	frame;
 	short unsigned	index;
 	short unsigned	count;
+
+	int getid() const override;
 
 	point getpos() const
 	{
@@ -23,18 +25,29 @@ struct mapobject : public drawable
 
 	point getzpos() const override
 	{
-		return getpos();
+		auto pt = getpos();
+		pt.y -= (count & 3) * 8;
+		return pt;
 	}
 
-	void painting(point position) const override
+	void painting(point camera) const override
 	{
-		auto pt = getpos();
+		auto pt = getpos() - camera;
+		auto nframe = indexes::animate(icn, frame, draw::counter + index*index, false);
+		draw::image(pt.x, pt.y, icn, frame);
+		if(nframe)
+			draw::image(pt.x, pt.y, icn, nframe);
+	}
+
+	int priority() const override
+	{
+		return getid();
 	}
 
 };
 static mapobject objects[LastMapObject - FirstMapObject + 1];
 static bsmeta::field fields[] = {
-	BSREQ(mapobject, res, Type, Number),
+	BSREQ(mapobject, icn, Type, Number),
 	BSREQ(mapobject, frame, Frame, Number),
 	BSREQ(mapobject, index, Index, Number),
 	BSREQ(mapobject, count, Count, Number),
@@ -42,17 +55,35 @@ static bsmeta::field fields[] = {
 };
 BSMETA(mapobject, "Objects", "Îáúåêòû", FirstMapObject);
 
+int mapobject::getid() const
+{
+	return FirstMapObject + (this - objects);
+}
+
 static struct mapobject_drawable_plugin : public drawable::plugin
 {
 	void selecting(drawable** result, rect screen, unsigned flags) override
 	{
-		if((flags & (DFGround|DFHightObjects)) == 0)
+		auto mode = flags&DWMask;
+		if(mode!=DWHightObjects && mode!=DWObjects)
 			return;
 		auto p = result;
 		for(auto& e : objects)
 		{
-			if(!e.res)
+			if(!e.icn)
 				break;
+			if(mode==DWHightObjects)
+			{
+				if(!res::ishight(e.icn, e.frame))
+					continue;
+			}
+			else
+			{
+				if(res::ishight(e.icn, e.frame))
+					continue;
+			}
+			if(!e.getrect().intersect(screen))
+				continue;
 			*p++ = &e;
 		}
 		*p = 0;
