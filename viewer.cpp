@@ -46,7 +46,8 @@ enum shape_type {
 	SH2x1, SH2x2J,
 	SH3x1, SH3x2, SH3x2u1, SH3x2u1r1, SH3x3, SH3x2u2a5,
 	SH4x1, SH4x2, SH4x2u1, SH4x2u2, SH4x2d1, SH4x3u2a3,
-	SH5x3,
+	SH5x2, SH5x2u1, SH5x3,
+	SH8x3
 };
 struct mapobjectinfo
 {
@@ -82,7 +83,11 @@ static shapeinfo	shapes[] = {
 	{7, {4, 2}, {{-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {0, 0}, {1, 0}}},
 	{10, {4, 3}, {{0, -2}, {1, -2}, {-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}}, {3, 3, 3, 3, 3, 3, 3, 3, 3, 3}},
 	//
+	{10, {5, 2}, {{-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {2, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {2, 0}}},
+	{9, {5, 2}, {{-1, -1}, {0, -1}, {1, -1}, {2, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {2, 0}}},
 	{14, {5, 3}, {{-1, -1}, {0, -1}, {1, -1}, {2, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {2, 0}, {-2, 1}, {-1, 1}, {0, 1}, {1, 1}, {2, 1}}},
+	//
+	{8*3, {8, 3}, {{-4, -1}, {-3, -1}, {-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {2, -1}, {3, -1}, {-4, 0}, {-3, 0}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {2, 0}, {3, 0}, {-4, 1}, {-3, 1}, {-2, 1}, {-1, 1}, {0, 1}, {1, 1}, {2, 1}, {3, 1}}},
 };
 static mapobjectinfo grass[] = {
 	{Mines, SH4x2}, // Haunted mine
@@ -141,6 +146,56 @@ static mapobjectinfo grass2[] = {
 	{Oracle, SH3x2},
 	{Obelisk, SH2x2J},
 };
+static mapobjectinfo dirt[] = {
+	{Mines, SH5x2}, // Haunted mine
+	{Empthy, SH2x1}, // Erth hole
+	{Empthy, SH2x1}, // Hill
+	{Empthy, SH3x1}, // Hill
+	{Empthy, SH2x1}, // Cracked earth
+	{Empthy, SH2x1}, // Cracked earth
+	{Empthy, SH2x1}, // Cracked earth
+	{Empthy, SH8x3}, // Lake
+	{Empthy, SH5x2}, // Lake
+	{Empthy, SH2x1}, // Lake
+	{Empthy, SH3x1}, // Brush
+	{Empthy, SH3x1}, // Brush
+	{Empthy, SH3x1}, // Brush
+	{Empthy, SH2x1}, // Brush
+	{Empthy, SH2x1}, // Brush
+	{Empthy, SH3x1}, // Flowers
+	{Empthy, SH3x1}, // Flowers
+	{Empthy, SH3x1}, // Flowers
+	{Empthy, SH3x1}, // Flowers
+	{Empthy, SH2x1}, // Flowers
+	{Empthy, SH1x1}, // Flowers
+	{Empthy, SH2x1}, // Flowers
+	{Empthy, SH1x1}, // Flowers
+	{Empthy, SH1x1}, // Flowers
+	{Empthy, SH3x1}, // Rock
+	{Empthy, SH3x2}, // Rock
+	{Empthy, SH3x1}, // Rock
+	{Empthy, SH2x1}, // Rock
+	{Empthy, SH1x1}, // Rock
+	{Empthy, SH1x1}, // Flowers
+	{Empthy, SH2x1}, // Flowers
+	{Empthy, SH2x1}, // Flowers
+	{Empthy, SH2x1}, // Plant
+	{Empthy, SH1x1}, // Plant
+	{Empthy, SH3x2}, // Tree
+	{Empthy, SH3x2u1}, // Tree
+	{Empthy, SH2x2J}, // Tree
+	{Empthy, SH3x1}, // Mushrums
+	{HillFort, SH3x2u1},
+	{HalflingHole, SH4x1},
+	{Empthy, SH1x1}, // Artifact digging
+	{Empthy, SH2x1}, // Cliff
+	{Empthy, SH2x1}, // Cliff
+	{Empthy, SH2x1}, // Cliff
+	{SpriteHouse, SH4x2u2},
+	{WindMill, SH4x3u2a3},
+	{Oracle, SH3x2},
+	{Obelisk, SH2x2J},
+};
 static struct mapobjectset
 {
 	tokens			tile;
@@ -150,6 +205,7 @@ static struct mapobjectset
 } mapobjectsets[] = {
 	{Grass, res::OBJNGRAS, sizeof(grass) / sizeof(grass[0]), grass},
 	{Grass, res::OBJNGRA2, sizeof(grass2) / sizeof(grass2[0]), grass2},
+	{Dirt, res::OBJNDIRT, sizeof(dirt) / sizeof(dirt[0]), dirt},
 };
 
 const char*	rsname(int res);
@@ -167,7 +223,7 @@ static void grassview()
 			index += 1 + sh.animation[i];
 		}
 	}
-	auto& ts = mapobjectsets[1];
+	auto& ts = mapobjectsets[2];
 	for(int i = 0; i < ts.count; i++)
 	{
 		ts.objects[i].start = start;
@@ -216,13 +272,9 @@ static void grassview()
 			return;
 		case KeyRight:
 			index++;
-			if(index >= sizeof(grass) / sizeof(grass[0]) - 1)
-				index = sizeof(grass) / sizeof(grass[0]) - 1;
 			break;
 		case KeyLeft:
 			index--;
-			if(index < 0)
-				index = 0;
 			break;
 		}
 	}
