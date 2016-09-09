@@ -671,7 +671,6 @@ void map::load(gamefile& game)
 		if(findobject > 0)
 		{
 			const mp2::tile& tile = tiles[findobject];
-			//const mp2::addon* addon = 0;
 			switch(tile.generalObject)
 			{
 			case mp2obj(CastleOnMap):
@@ -682,8 +681,7 @@ void map::load(gamefile& game)
 				{
 					int rec = bscreate(FirstCastle);
 					load_object((mp2::castle*)pblock, rec);
-					if(tile.generalObject == mp2obj(RndTown) || tile.generalObject == mp2obj(RndCastle))
-						update_castle(mp2i(findobject), bsget(rec, Type), tiles, addons);
+					bsset(rec, Index, mp2i(findobject));
 				}
 				break;
 			case mp2obj(Hero):
@@ -793,8 +791,8 @@ void map::load(gamefile& game)
 	// Prepare monster/artifact/resource
 	for(short unsigned i = 0; i < tiles_count; i++)
 	{
-		int i1 = map::m2i((i%map::width), (i / map::width));
-		int m = tiles[i].generalObject;
+		auto i1 = mp2i(i);
+		auto m = tiles[i].generalObject;
 		switch(m)
 		{
 		case mp2obj(RndMonster):
@@ -838,7 +836,7 @@ void map::load(gamefile& game)
 	// after load tiles
 	for(int i = 0; i < tiles_count; i++)
 	{
-		int i1 = map::m2i((i%map::width), (i/map::width));
+		auto i1 = mp2i(i);
 		show::tiles[i1] = tiles[i].tileIndex;
 		show::flags[i1] = tiles[i].shape % 4;
 		for(int level = 3; level >= 0; level--)

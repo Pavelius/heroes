@@ -540,6 +540,8 @@ void draw::image(int x, int y, res::tokens res, unsigned frame, unsigned flags, 
 		x -= r.width / 2;
 	if(flags&AFCenterV)
 		y -= r.height / 2;
+	if(y + height < clipping.y1 || y >= clipping.y2)
+		return;
 	if(r.type == 0x20)
 	{
 		if(flags&AFMirror)
@@ -571,6 +573,8 @@ void draw::image(int x, int y, res::tokens res, unsigned frame, unsigned flags, 
 		}
 		else
 		{
+			if(x + width < clipping.x1 || x >= clipping.x2)
+				return;
 			sprite_v1(ptr(x, y), width, d, clipping.y2 - y,
 				ptr(clipping.x1, y),
 				ptr(clipping.x2, y),
@@ -933,77 +937,6 @@ bool draw::area(int x1, int y1, int x2, int y2)
 {
 	return hot::mouse.x >= x1 && hot::mouse.x <= x2
 		&& hot::mouse.y >= y1 && hot::mouse.y <= y2;
-}
-
-void draw::castle(int x, int y, int tile, int race, bool town)
-{
-	int index;
-	switch(tile)
-	{
-	case Grass:
-		index = 0;
-		break;
-	case Snow:
-		index = 10;
-		break;
-	case Swamp:
-		index = 20;
-		break;
-	case Lava:
-		index = 30;
-		break;
-	case Desert:
-		index = 40;
-		break;
-	case Dirt:
-		index = 50;
-		break;
-	case Wastelands:
-		index = 60;
-		break;
-	case Beach:
-		index = 70;
-		break;
-	default:
-		return;
-	}
-	for(int ii = 0; ii < 5; ++ii)
-		image(x + ii * 32, y + 3 * 32, res::OBJNTWBA, index + ii);
-	for(int ii = 0; ii < 5; ++ii)
-		image(x + ii * 32, y + 4 * 32, res::OBJNTWBA, index + 5 + ii);
-	// draw castle
-	switch(race)
-	{
-	case Knight:
-		index = 0;
-		break;
-	case Barbarian:
-		index = 32;
-		break;
-	case Sorcerer:
-		index = 64;
-		break;
-	case Warlock:
-		index = 96;
-		break;
-	case Wizard:
-		index = 128;
-		break;
-	case Necromancer:
-		index = 160;
-		break;
-	default:
-		break;
-	}
-	if(town)
-		index += 16;
-	image(x + 2 * 32, y, res::OBJNTOWN, index);
-	for(int ii = 0; ii < 5; ++ii)
-		image(x + ii * 32, y + 1 * 32, res::OBJNTOWN, index + 1 + ii);
-	for(int ii = 0; ii < 5; ++ii)
-		image(x + ii * 32, y + 2 * 32, res::OBJNTOWN, index + 6 + ii);
-	for(int ii = 0; ii < 5; ++ii)
-		image(x + ii * 32, y + 3 * 32, res::OBJNTOWN, index + 11 + ii);
 }
 
 void hot::clear()

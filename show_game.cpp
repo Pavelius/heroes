@@ -231,6 +231,8 @@ static void paint_cursor(rect screen, point camera)
 
 static void paint_tiles(rect screen, point camera)
 {
+	draw::state push;
+	draw::clipping = screen;
 	for(int y = screen.y1; y < screen.y2; y += 32)
 	{
 		for(int x = screen.x1; x < screen.x2; x += 32)
@@ -245,7 +247,7 @@ static void paint_objects(rect screen, point camera, unsigned flags)
 {
 	draw::state push;
 	draw::clipping = screen;
-	drawable* drawables[1024];
+	drawable* drawables[2048];
 	dwselect(drawables, screen, camera, flags);
 	dwclipping(drawables, screen, camera);
 	dworder(drawables, zlen(drawables));
