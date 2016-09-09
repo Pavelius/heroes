@@ -32,7 +32,7 @@ static struct castle : public drawable
 
 	point getzpos() const override
 	{
-		return{(short)(map::i2x(index) * 32) - 2 * 32, (short)(map::i2y(index) * 32)};
+		return{(short)(map::i2x(index) * 32), (short)(map::i2y(index) * 32) + 8};
 	}
 
 	void painting(point camera, unsigned paint_flags) const override
@@ -130,6 +130,18 @@ void draw::castle(int x, int y, int tile, int race, bool town)
 		image(x + ii * 32, y + 2 * 32, res::OBJNTOWN, index + 6 + ii);
 	for(int ii = 0; ii < 5; ++ii)
 		image(x + ii * 32, y + 3 * 32, res::OBJNTOWN, index + 11 + ii);
+	// Shadow
+	//for(int iy = 0; iy < 4; iy++)
+	//{
+	//	for(int ix = -2; ix <= 1; ix++)
+	//	{
+	//		int x1 = x + ix * 32;
+	//		int y1 = y + iy * 32;
+	//		if(iy == 3)
+	//			x1 += 32;
+	//		draw::image(x1, y1, res::OBJNTWSH, index + iy * 4 + ix);
+	//	}
+	//}
 }
 
 static struct castle_drawable_plugin : public drawable::plugin
