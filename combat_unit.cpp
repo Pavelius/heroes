@@ -25,7 +25,7 @@ static struct combat_unit : public animation
 		return 10;
 	}
 
-	void painting(point pt) const override
+	void painting(point pt, unsigned paint_flags) const override
 	{
 		draw::image(pt.x + pos.x, pt.y + pos.y, icn, frame, flags);
 		// Draw count

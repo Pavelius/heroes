@@ -3,6 +3,87 @@
 static int selected_object;
 static int information_mode;
 
+void animate::hero(int x, int y, int mid, int ticket)
+{
+	res::tokens icn = res::Empthy;
+	int index = 0;
+	if(bsget(mid, ShipMaster))
+		icn = res::BOAT32;
+	else switch(bsget(mid, Type))
+	{
+	case Knight: icn = res::KNGT32; break;
+	case Barbarian: icn = res::BARB32; break;
+	case Sorcerer: icn = res::SORC32; break;
+	case Warlock: icn = res::WRLK32; break;
+	case Wizard: icn = res::WZRD32; break;
+	case Necromancer: icn = res::NECR32; break;
+	default: return;
+	}
+	unsigned flags = 0;
+	switch(bsget(mid, Direction))
+	{
+	case map::Up:          index = 0; break;
+	case map::RightUp:     index = 9; break;
+	case map::Right:       index = 18; break;
+	case map::RightDown:   index = 27; break;
+	case map::Down:        index = 36; break;
+	case map::LeftDown:    index = 27; flags |= AFMirror; break;
+	case map::Left:        index = 18; flags |= AFMirror; break;
+	case map::LeftUp:      index = 9; flags |= AFMirror; break;
+	default: break;
+	}
+	draw::image(x, y, icn, index, flags);
+}
+
+void animate::heroflag(int x, int y, int mid, int index)
+{
+	res::tokens icn = res::Empthy;
+	int index_sprite = 0;
+	switch(bsget(mid, Player))
+	{
+	case PlayerBlue: icn = res::B_FLAG32; break;
+	case PlayerGreen: icn = res::G_FLAG32; break;
+	case PlayerRed: icn = res::R_FLAG32; break;
+	case PlayerYellow: icn = res::Y_FLAG32; break;
+	case PlayerOrange: icn = res::O_FLAG32; break;
+	case PlayerPurple: icn = res::P_FLAG32; break;
+	default: return;
+	}
+	unsigned flags = 0;
+	switch(bsget(mid, Direction))
+	{
+	case map::Up:        index_sprite = 0; break;
+	case map::RightUp:   index_sprite = 9; break;
+	case map::Right:     index_sprite = 18; break;
+	case map::RightDown: index_sprite = 27; break;
+	case map::Down:      index_sprite = 36; break;
+	case map::LeftDown:  index_sprite = 27; flags |= AFMirror; x += 8; break;
+	case map::Left:      index_sprite = 18; flags |= AFMirror; x += 12; break;
+	case map::LeftUp:    index_sprite = 9; flags |= AFMirror; x += 19; break;
+	default: break;
+	}
+	draw::image(x, y, icn, index_sprite + (index % 9), flags);
+}
+
+void animate::heroshad(int x, int y, int mid, int index)
+{
+	res::tokens icn = res::SHADOW32;
+	int index_sprite = 0;
+	switch(bsget(mid, Direction))
+	{
+	case map::Up:          index_sprite = 0; break;
+	case map::RightUp:     index_sprite = 9; break;
+	case map::Right:       index_sprite = 18; break;
+	case map::RightDown:   index_sprite = 27; break;
+	case map::Down:        index_sprite = 36; break;
+	case map::LeftDown:    index_sprite = 45; break;
+	case map::Left:        index_sprite = 54; break;
+	case map::LeftUp:      index_sprite = 63; break;
+	default: break;
+	}
+	draw::image(x, y, icn, index_sprite + (index % 9));
+}
+
 static void handle_input(int x, int y, int object)
 {
 	if(object && selected_object==object)
@@ -251,7 +332,7 @@ static void paint_objects(rect screen, point camera, unsigned flags)
 	dwselect(drawables, screen, camera, flags);
 	dwclipping(drawables, screen, camera);
 	dworder(drawables, zlen(drawables));
-	dwpaint(drawables, screen, camera);
+	dwpaint(drawables, screen, camera, flags);
 }
 
 int show::game(int player)
@@ -287,7 +368,6 @@ int show::game(int player)
 					bsget(selected_object, MoveTo));
 			selected_wave = selected_object;
 		}
-		hot::index = -1;
 		draw::image(0, 0, draw::isevil(res::ADVBORDE, res::ADVBORD), 0, 0);
 		minimap(480, 16, 0);
 		heroes.draw(481, 176, 32, 32, 4);

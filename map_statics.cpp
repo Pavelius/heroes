@@ -25,12 +25,10 @@ struct mapobject : public drawable
 
 	point getzpos() const override
 	{
-		auto pt = getpos();
-		pt.y -= (count & 3) * 8;
-		return pt;
+		return getpos();
 	}
 
-	void painting(point camera) const override
+	void painting(point camera, unsigned flags) const override
 	{
 		auto pt = getpos() - camera;
 		auto nframe = indexes::animate(icn, frame, draw::counter + index*index, false);

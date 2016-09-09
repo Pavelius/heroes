@@ -195,7 +195,7 @@ int show::build(int mid)
 		draw::status(21, draw::height - 16, 21 + res::width(res::SMALLBAR, 0), draw::height - 1);
 		draw::image(0, 0, res::CASLWIND, 0);
 		// hide captain options
-		draw::castle(460, 5, Grass, race, false);
+		draw::castle(460, 5, Dirt, race, false);
 		draw::text(536, 2, bsgets(mid, Name), 0);
 		draw::resource(552, 262, bsptr(player, FirstResource));
 		//

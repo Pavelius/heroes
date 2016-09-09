@@ -45,7 +45,7 @@ struct map_moveable : public drawable
 		return getpos();
 	}
 
-	void painting(point camera) const override
+	void painting(point camera, unsigned flags) const override
 	{
 		auto pt = getpos() - camera;
 		if(type >= FirstResource && type <= LastResource)

@@ -35,7 +35,6 @@
     <ClCompile Include="map_moveable.cpp" />
     <ClCompile Include="map_objects.cpp" />
     <ClCompile Include="map_route.cpp" />
-    <ClCompile Include="map_show.cpp" />
     <ClCompile Include="spells.cpp" />
     <ClCompile Include="tokens.cpp" />
     <ClCompile Include="game.cpp" />

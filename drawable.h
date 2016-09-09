@@ -32,13 +32,13 @@ struct drawable
 	virtual bool		hittest(point position, point mouse) const { return false; }
 	virtual bool		isvisible() const { return true; }
 	virtual bool		isvisibleactive() const { return false; } // Drawable visible only when active.
-	virtual void		painting(point position) const = 0; // How to paint drawable.
+	virtual void		painting(point position, unsigned flags) const = 0; // How to paint drawable.
 	virtual int			priority() const { return 100; }// Priority for z-order sortering (lesser was be most visible). If there is two drawable in same position.
 	virtual void		update() { }// Update some states (animation, frame etc)
 };
 int						dwclipping(drawable** da, rect screen, point camera); // In place clipping drawable by draft mode.
 drawable*				dwfind(drawable** da, rect screen, point camera, point hitpoint); // Make hittest by previously Z-Ordered or clipped arrays of drawables.
 drawable**				dworder(drawable** da, int count); // Prepare right z-order of each drawable for painting.
-void					dwpaint(drawable** da, rect screen, point camera); // Calling painting() for each drawable in list.
+void					dwpaint(drawable** da, rect screen, point camera, unsigned flags = 0); // Calling painting() for each drawable in list.
 drawable**				dwselect(drawable** da, rect screen, point camera, unsigned flags = 0);
 void					dwupdate();

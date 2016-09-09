@@ -8,7 +8,7 @@ struct leader : public animation
 		set(game::get(rec, Type), type, param);
 	}
 
-	void painting(point screen) const override
+	void painting(point screen, unsigned flags) const override
 	{
 		animation::painting(screen);
 		int player = bsget(rec, Player);

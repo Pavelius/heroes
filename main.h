@@ -669,7 +669,7 @@ struct animation : public drawable
 	bool					hasanimation(tokens id, int param = 0) const;
 	virtual bool			incframe();
 	bool					islast() const { return frame == (start + count - 1); }
-	void				    painting(point screen) const override;
+	void				    painting(point screen, unsigned flags = 0) const override;
 	int						priority() const override { return rec; }
 	void				    set(int rec, int action, int param = 0);
 	virtual void			setaction(tokens action, int param = 0) { set(rec, action, param); }
@@ -711,10 +711,9 @@ namespace indexes
 }
 namespace hot
 {
-	extern int				index;
 	extern int				command;
-	extern int				param2;
 	extern int				level;
+	extern int				param2;
 };
 struct order
 {

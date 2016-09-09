@@ -62,14 +62,14 @@ int dwclipping(drawable** da, rect rc, point camera)
 	return pd-da;
 }
 
-void dwpaint(drawable** da, rect screen, point camera)
+void dwpaint(drawable** da, rect screen, point camera, unsigned flags)
 {
 	camera.x -= screen.x1;
 	camera.y -= screen.x1;
 	while(*da)
 	{
 		drawable* p = *da++;
-		p->painting(camera);
+		p->painting(camera, flags);
 	}
 }
 

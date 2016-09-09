@@ -11,7 +11,7 @@ static struct castle : public drawable
 	short unsigned		index;
 	char				name[14];
 	unsigned char		moved;
-	short unsigned		creatures[LastCreatureCount - FirstCreatureCount +1];
+	short unsigned		creatures[LastCreatureCount - FirstCreatureCount + 1];
 	unsigned char		dwellings[LastBuilding - FirstBuilding + 1];
 	unsigned char		spells[LastSpell - FirstSpell + 1];
 	unsigned short		army[LastTroopsIndex - FirstArtifactIndex + 1];
@@ -27,21 +27,23 @@ static struct castle : public drawable
 	rect getrect() const override
 	{
 		auto pt = getpos();
-		return{pt.x - 2*32, pt.y-3*32, pt.x + 3*32, pt.y + 3*32};
+		return{pt.x - 2 * 32, pt.y - 3 * 32, pt.x + 3 * 32, pt.y + 3 * 32};
 	}
 
 	point getzpos() const override
 	{
-		return{(short)(map::i2x(index) * 32), (short)(map::i2y(index) * 32)};
+		return{(short)(map::i2x(index) * 32) - 2 * 32, (short)(map::i2y(index) * 32)};
 	}
 
-	void painting(point camera) const override
+	void painting(point camera, unsigned paint_flags) const override
 	{
 		auto pt = getpos() - camera;
+		auto tl = map::gettile(index);
+		auto town = dwellings[Castle - FirstBuilding] != 2;
 		pt.x -= 2 * 32;
 		pt.y -= 3 * 32;
 		// TODO: Paint Shadow
-		draw::castle(pt.x, pt.y, map::gettile(index), type, dwellings[Castle - FirstBuilding] != 2);
+		draw::castle(pt.x, pt.y, map::gettile(index), type, town);
 	}
 
 } objects[LastCastle - FirstCastle + 1];

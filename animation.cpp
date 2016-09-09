@@ -145,7 +145,7 @@ void animation::clear()
 	icn = res::Empthy;
 }
 
-void animation::painting(point pt) const
+void animation::painting(point pt, unsigned paint_flags) const
 {
 	draw::image(pt.x + pos.x, pt.y + pos.y, icn, frame, flags);
 }

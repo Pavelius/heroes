@@ -67,7 +67,6 @@
     <ClCompile Include="map_moveable.cpp" />
     <ClCompile Include="map_objects.cpp" />
     <ClCompile Include="map_route.cpp" />
-    <ClCompile Include="map_show.cpp" />
     <ClCompile Include="draw_controls.cpp" />
     <ClCompile Include="monster.cpp" />
     <ClCompile Include="mp2.cpp" />
