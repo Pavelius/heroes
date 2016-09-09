@@ -61,7 +61,7 @@ static bsmeta::field fields[] = {
 };
 BSMETA(castle, "Castles", "Замки", FirstCastle);
 
-void draw::castle(int x, int y, int tile, int race, bool town)
+void draw::castle(int x, int y, int tile, int race, bool town, bool shadow)
 {
 	int index;
 	switch(tile)
@@ -123,6 +123,21 @@ void draw::castle(int x, int y, int tile, int race, bool town)
 	}
 	if(town)
 		index += 16;
+	if(shadow)
+	{
+		for(int iy = 0; iy < 4; iy++)
+		{
+			for(int ix = -2; ix <= 1; ix++)
+			{
+				int x1 = x + ix * 32;
+				int y1 = y + iy * 32;
+				if(iy == 3)
+					x1 += 32;
+				draw::image(x1, y1, res::OBJNTWSH, index + iy * 4 + (ix + 2));
+			}
+		}
+	}
+	// Town
 	image(x + 2 * 32, y, res::OBJNTOWN, index);
 	for(int ii = 0; ii < 5; ++ii)
 		image(x + ii * 32, y + 1 * 32, res::OBJNTOWN, index + 1 + ii);
@@ -130,18 +145,6 @@ void draw::castle(int x, int y, int tile, int race, bool town)
 		image(x + ii * 32, y + 2 * 32, res::OBJNTOWN, index + 6 + ii);
 	for(int ii = 0; ii < 5; ++ii)
 		image(x + ii * 32, y + 3 * 32, res::OBJNTOWN, index + 11 + ii);
-	// Shadow
-	for(int iy = 0; iy < 4; iy++)
-	{
-		for(int ix = -2; ix <= 1; ix++)
-		{
-			int x1 = x + ix * 32;
-			int y1 = y + iy * 32;
-			if(iy == 3)
-				x1 += 32;
-			draw::image(x1, y1, res::OBJNTWSH, index + iy * 4 + (ix + 2));
-		}
-	}
 }
 
 static struct castle_drawable_plugin : public drawable::plugin
