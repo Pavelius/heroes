@@ -44,11 +44,12 @@ static terrain tarrains[LastTerrain - FirstTerrain + 1] = {
 enum shape_type {
 	SH1x1, SH1x1a6, SH1x1a11,
 	SH2x1, SH2x1a6, SH2x2, SH2x2J, SH2x2Ja9, SH2x3,
-	SH3x1, SH3x1a6, SH3x2, SH3x2a3, SH3x2u1a6, SH3x2u2, SH3x2a6, SH3x2a15, SH3x2u1, SH3x2r1, SH3x2u1r1, SH3x2u2a10, SH3x2u2a9, SH3x3, SH3x3u1u1, SH3x3u1d1, SH3x3u1r1a6, SH3x3r1a6, SH3x3u2u2, SH3x3u2u2a6, SH3x2u2a5, SH3x2u2a5v2,
+	SH3x1, SH3x1a6, SH3x2, SH3x2a3, SH3x2u1a6, SH3x2u2, SH3x2a6, SH3x2a15, SH3x2u1, SH3x2r1, SH3x2u1r1, SH3x2u2a10, SH3x2u2a9,
+	SH3x3, SH3x3u1u1, SH3x3u1r1, SH3x3d1b1, SH3x3u1d1, SH3x3u1r1a6, SH3x3r1a6, SH3x3u2u2, SH3x3u2u2a6, SH3x2u2a5, SH3x2u2a5v2,
 	SH4x1, SH4x2, SH4x2u1, SH4x2r1, SH4x2u2, SH4x2d1, SH4x2r1d1, SH4x2u1b1, SH4x2à6, SH4x3, SH4x3u1r1, SH4x3r1d1, SH4x3u1b1, SH4x3u2a3, SH4x3u2r1d1a9,
 	SH5x2, SH5x2u1, SH5x2r1, SH5x3, SH5x3a6, SH5x3a4, SH5x3u2a6,
 	SH6x2, SH6x3r1d2, SH6x3u1b2, SH6x3u1a10, SH6x4r1d2, SH6x4u1b2,
-	SH7x3r1,
+	SH7x3r1, SH7x4,
 	SH8x3, SH8x5a10,
 };
 struct mapobjectinfo
@@ -57,11 +58,16 @@ struct mapobjectinfo
 	shape_type		shape;
 	int				start;
 };
+struct pointc
+{
+	char			x;
+	char			y;
+};
 struct shapeinfo
 {
-	int				count;
-	point			size;
-	point			points[25];
+	unsigned char	count;
+	pointc			size;
+	pointc			points[25];
 	unsigned char	animation[25];
 	unsigned char	indecies[25];
 };
@@ -90,8 +96,11 @@ static shapeinfo	shapes[] = {
 	{4, {3, 2}, {{0, -1}, {-1, 0}, {0, 0}, {1, 0}}},
 	{4, {3, 2}, {{1, -1}, {-1, 0}, {0, 0}, {1, 0}}, {10, 0, 10, 0}},
 	{4, {3, 2}, {{1, -1}, {-1, 0}, {0, 0}, {1, 0}}, {9, 9, 9, 0}},
+	//
 	{9, {3, 3}, {{-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {0, 0}, {1, 0}, {-1, 1}, {0, 1}, {1, 1}}},
 	{7, {3, 3}, {{0, -1}, {1, -1}, {0, 0}, {1, 0}, {-1, 1}, {0, 1}, {1, 1}}},
+	{7, {3, 3}, {{0, 0}, {-1, 1}, {0, 1}, {1, 1}, {-1, 2}, {0, 2}, {1, 2}}}, 
+	{7, {3, 3}, {{-1, 0}, {0, 0}, {1, 0}, {-1, 1}, {0, 1}, {1, 1}, {0, 2}}},
 	{7, {3, 3}, {{0, -2}, {1, -2}, {-1, -1}, {0, -1}, {1, -1}, {0, 0}, {1, 0}}},
 	{7, {3, 3}, {{0, -2}, {-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {0, 0}, {1, 0}}, {0, 6, 6, 0, 6, 6, 0}},
 	{8, {3, 3}, {{0, -2}, {1, -2}, {-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {0, 0}, {1, 0}}, {6, 0, 0, 6, 0, 0, 0, 0}},
@@ -132,6 +141,7 @@ static shapeinfo	shapes[] = {
 	{21, {6, 4}, {{-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {2, -1}, {-3, 0}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {2, 0}, {-3, 1}, {-2, 1}, {-1, 1}, {0, 1}, {1, 1}, {2, 1}, {-3, 2}, {-2, 2}, {-1, 2}, {0, 2}}},
 	//
 	{20, {7, 3}, {{-3, -1}, {-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {2, -1}, {-3, 0}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {2, 0}, {3, 0}, {-3, 1}, {-2, 1}, {-1, 1}, {0, 1}, {1, 1}, {2, 1}, {3, 1}}},
+	{22, {7, 4}, {{-2, -3}, {-1, -3}, {0, -3}, {-3, -2}, {-2, -2}, {-1, -2}, {0, -2}, {1, -2}, {-5, -1}, {-4, -1}, {-3, -1}, {-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {-5, 0}, {-4, 0}, {-3, 0}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}}},
 	//
 	{8 * 3, {8, 3}, {{-4, -1}, {-3, -1}, {-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {2, -1}, {3, -1}, {-4, 0}, {-3, 0}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {2, 0}, {3, 0}, {-4, 1}, {-3, 1}, {-2, 1}, {-1, 1}, {0, 1}, {1, 1}, {2, 1}, {3, 1}}},
 	{23, {8, 5}, {{0, -4}, {1, -4}, {2, -4}, {-1, -3}, {0, -3}, {1, -3}, {2, -3}, {3, -3}, {-3, -2}, {0, -2}, {1, -2}, {2, -2}, {-4, -1}, {-3, -1}, {-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {2, -1}, {-1, 0}, {0, 0}, {1, 0}, {2, 0}}, {14,14,14, 14,14,14,14,14, 14,14,14,14, 14,14,14,14,0,0,0,0,0,0,0}},
@@ -238,7 +248,7 @@ static mapobjectinfo dirt[] = {
 	{Cliff, SH2x1},
 	{Cliff, SH2x1},
 	{Cliff, SH2x1},
-	{SpriteHouse, SH4x2u2},
+	{SpriteHouseCity, SH4x2u2},
 	{WindMill, SH4x3u2a3},
 	{Oracle, SH3x2},
 	{Obelisk, SH2x2J},
@@ -513,6 +523,15 @@ static mapobjectinfo multiobj[] = {
 	{CampFire, SH2x1a6},
 };
 static mapobjectinfo multiobj2[] = {
+	{RiverDeltaDown, SH3x3u1r1},
+	{RiverDeltaDown, SH3x3d1b1},
+	{Fountain, SH2x1},
+	{Stumps, SH1x1},
+	{Stumps, SH2x1},
+	{Stumps, SH1x1},
+	{AlchemyLab, SH4x2à6},
+	{DragonCity, SH7x4},
+	{Graveyard, SH3x1}, // Not usable
 };
 static struct mapobjectset
 {
@@ -548,6 +567,7 @@ static struct mapobjectset
 	{Mountains, res::MTNSNOW, sizeof(mountains) / sizeof(mountains[0]), mountains},
 	{Mountains, res::MTNSWMP, sizeof(mountains) / sizeof(mountains[0]), mountains},
 	{Empthy, res::OBJNMULT, sizeof(multiobj) / sizeof(multiobj[0]), multiobj},
+	{Empthy, res::OBJNMUL2, sizeof(multiobj2) / sizeof(multiobj2[0]), multiobj2},
 };
 
 const char*	rsname(int res);
@@ -605,7 +625,7 @@ static void grassview()
 			if(sh.animation[i])
 				draw::image(px, py, icn, frame + 1 + (draw::counter % sh.animation[i]));
 			draw::image(px, py, icn, frame);
-			if(!sh.points[i])
+			if(sh.points[i].x==0 && sh.points[i].y==0)
 			{
 				center.x = px;
 				center.y = py;
@@ -882,7 +902,7 @@ static int view()
 	int max_resource = res_read(resdata);
 	int current_resource = 0;//find_index(resdata, max_resource, res::P_FLAG32);
 	int current_frame = 0;
-	int mode = 0;
+	int mode = 2;
 	bool border_image = false;
 	while(true)
 	{
