@@ -43,12 +43,13 @@ static terrain tarrains[LastTerrain - FirstTerrain + 1] = {
 };
 enum shape_type {
 	SH1x1, SH1x1a6, SH1x1a11,
-	SH2x1, SH2x1a6, SH2x2J,
-	SH3x1, SH3x1a6, SH3x2, SH3x2a3, SH3x2u1a6, SH3x2u2, SH3x2a6, SH3x2a15, SH3x2u1, SH3x2r1, SH3x2u1r1, SH3x3, SH3x3u1d1, SH3x3u1r1a6, SH3x3r1a6, SH3x3u2u2a6, SH3x2u2a5,
-	SH4x1, SH4x2, SH4x2u1, SH4x2u2, SH4x2d1, SH4x2а6, SH4x3u1r1, SH4x3u2a3,
-	SH5x2, SH5x2u1, SH5x2r1, SH5x3, SH5x3u2a6,
+	SH2x1, SH2x1a6, SH2x2, SH2x2J, SH2x2Ja9, SH2x3,
+	SH3x1, SH3x1a6, SH3x2, SH3x2a3, SH3x2u1a6, SH3x2u2, SH3x2a6, SH3x2a15, SH3x2u1, SH3x2r1, SH3x2u1r1, SH3x2u2a10, SH3x3, SH3x3u1d1, SH3x3u1r1a6, SH3x3r1a6, SH3x3u2u2a6, SH3x2u2a5,
+	SH4x1, SH4x2, SH4x2u1, SH4x2u2, SH4x2d1, SH4x2а6, SH4x3, SH4x3u1r1, SH4x3u2a3,
+	SH5x2, SH5x2u1, SH5x2r1, SH5x3, SH5x3a6, SH5x3a4, SH5x3u2a6,
+	SH6x2, SH6x3u1a10,
 	SH7x3r1,
-	SH8x3
+	SH8x3, SH8x5a10,
 };
 struct mapobjectinfo
 {
@@ -71,7 +72,10 @@ static shapeinfo	shapes[] = {
 	//
 	{2, {2, 1}, {{-1, 0}, {0, 0}}},
 	{2, {2, 1}, {{-1, 0}, {0, 0}}, {6, 6}},
+	{4, {2, 2}, {{0, 0}, {1, 0}, {0, 1}, {1, 1}}},
 	{3, {2, 2}, {{0, -1}, {-1, 0}, {0, 0}}},
+	{3, {2, 2}, {{0, -1}, {-1, 0}, {0, 0}}, {9, 9, 9}},
+	{6, {2, 3}, {{-1, -1}, {0, -1}, {-1, 0}, {0, 0}, {-1, 1}, {0, 1}}},
 	//
 	{3, {3, 1}, {{-1, 0}, {0, 0}, {1, 0}}},
 	{3, {3, 1}, {{-1, 0}, {0, 0}, {1, 0}}, {6, 6, 6}},
@@ -83,7 +87,8 @@ static shapeinfo	shapes[] = {
 	{6, {3, 2}, {{-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {0, 0}, {1, 0}}, {15, 15, 15, 15, 0, 0}},
 	{5, {3, 2}, {{0, -1}, {1, -1}, {-1, 0}, {0, 0}, {1, 0}}},
 	{5, {3, 2}, {{-1, -1}, {0, -1}, {-1, 0}, {0, 0}, {1, 0}}},
-	{4, {2, 2}, {{0, -1}, {-1, 0}, {0, 0}, {1, 0}}},
+	{4, {3, 2}, {{0, -1}, {-1, 0}, {0, 0}, {1, 0}}},
+	{4, {3, 2}, {{1, -1}, {-1, 0}, {0, 0}, {1, 0}}, {10, 0, 10, 0}},
 	{9, {3, 3}, {{-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {0, 0}, {1, 0}, {-1, 1}, {0, 1}, {1, 1}}},
 	{7, {3, 3}, {{0, -2}, {1, -2}, {-1, -1}, {0, -1}, {1, -1}, {0, 0}, {1, 0}}},
 	{7, {3, 3}, {{0, -2}, {-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {0, 0}, {1, 0}}, {0, 6, 6, 0, 6, 6, 0}},
@@ -97,6 +102,7 @@ static shapeinfo	shapes[] = {
 	{6, {4, 2}, {{0, -1}, {1, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}}},
 	{7, {4, 2}, {{-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {0, 0}, {1, 0}}},
 	{8, {4, 2}, {{-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}}, {0, 0, 0, 0, 0, 0, 0, 6}},
+	{12, {4, 3}, {{-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {-2, 1}, {-1, 1}, {0, 1}, {1, 1}}},
 	{10, {4, 3}, {{-1, -2}, {0, -2}, {-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}}},
 	{10, {4, 3}, {{0, -2}, {1, -2}, {-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}}, {3, 3, 3, 3, 3, 3, 3, 3, 3, 3}},
 	//
@@ -104,12 +110,18 @@ static shapeinfo	shapes[] = {
 	{9, {5, 2}, {{-1, -1}, {0, -1}, {1, -1}, {2, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {2, 0}}},
 	{9, {5, 2}, {{-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {2, 0}}},
 	{14, {5, 3}, {{-1, -1}, {0, -1}, {1, -1}, {2, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {2, 0}, {-2, 1}, {-1, 1}, {0, 1}, {1, 1}, {2, 1}}},
-	{13, {5, 3}, {{-1, -2}, {0, -2}, {1, -2}, {-3, -1}, {-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {-3, 0}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}}, {6,0,0, 6,0,6,6,0,0,6,6}},
+	{9, {5, 3}, {{1, -2}, {-2, -1}, {-1, -1}, {1, -1}, {2, -1}, {-1, 0}, {0, 0}, {1, 0}, {2, 0}}, {6, 6, 6, 6, 0, 0, 0, 0, 0}},
+	{9, {5, 3}, {{1, -2}, {-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {0, 0}, {1, 0}, {2, 0}}, {10, 10, 10, 0, 10, 0, 0, 0, 0}},
+	{13, {5, 3}, {{-1, -2}, {0, -2}, {1, -2}, {-3, -1}, {-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {-3, 0}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}}, {6, 0, 0, 6, 0, 6, 6, 0, 0, 6, 6}},
+	//
+	{12, {6, 2}, {{0, 0}, {1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}, {0, 1}, {1, 1}, {2, 1}, {3, 1}, {4, 1}, {5, 1}}},
+	{17, {6, 3}, {{-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {2, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {2, 0}, {3, 0}, {-2, 1}, {-1, 1}, {0, 1}, {1, 1}, {2, 1}, {3, 1}}, {0, 0, 0, 0, 0, 10, 10, 10, 10, 10, 0, 0, 10, 10, 10, 10, 0, 0}},
 	//
 	{20, {7, 3}, {{-3, -1}, {-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {2, -1}, {-3, 0}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {2, 0}, {3, 0}, {-3, 1}, {-2, 1}, {-1, 1}, {0, 1}, {1, 1}, {2, 1}, {3, 1}}},
 	//
 	{8 * 3, {8, 3}, {{-4, -1}, {-3, -1}, {-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {2, -1}, {3, -1}, {-4, 0}, {-3, 0}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {2, 0}, {3, 0}, {-4, 1}, {-3, 1}, {-2, 1}, {-1, 1}, {0, 1}, {1, 1}, {2, 1}, {3, 1}}},
-	};
+	{23, {8, 5}, {{0, -4}, {1, -4}, {2, -4}, {-1, -3}, {0, -3}, {1, -3}, {2, -3}, {3, -3}, {-3, -2}, {0, -2}, {1, -2}, {2, -2}, {-4, -1}, {-3, -1}, {-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {2, -1}, {-1, 0}, {0, 0}, {1, 0}, {2, 0}}, {14,14,14, 14,14,14,14,14, 14,14,14,14, 14,14,14,14,0,0,0,0,0,0,0}},
+};
 static mapobjectinfo grass[] = {
 	{AbandoneMine, SH4x2}, // Haunted mine
 	{Empthy, SH2x1},
@@ -370,6 +382,72 @@ static mapobjectinfo swamp[] = {
 	{Empthy, SH3x1}, // Кувшинка
 	{Obelisk, SH2x2J},
 };
+static mapobjectinfo wasteland[] = {
+	{ArtesianSpring, SH3x2u1},
+	{Empthy, SH2x1}, // Hole
+	{Empthy, SH3x2u1}, // Пальмы
+	{Empthy, SH2x2J}, // Кактус
+	{Empthy, SH2x1}, // Куст
+	{Empthy, SH1x1}, // Череп рогатого скота
+	{Empthy, SH1x1}, // Камень
+	{Empthy, SH3x2u1r1}, // Камень
+	{Empthy, SH3x1}, // Камень
+	{Empthy, SH3x2u1}, // Камень
+	{Empthy, SH2x1}, // Камень
+	{Empthy, SH3x1}, // Камень
+	{Empthy, SH3x1}, // Камень
+	{Empthy, SH3x1}, // Камень
+	{Empthy, SH2x1}, // Камень
+	{Empthy, SH2x2J}, // Камень
+	{Empthy, SH2x2J}, // Камень
+	{Empthy, SH2x2J}, // Камень
+	{Empthy, SH2x2J}, // Камень
+	{Empthy, SH2x1}, // Засохшая трава
+	{Empthy, SH4x3}, // Трещина
+	{Empthy, SH1x1}, // Digging
+	{Empthy, SH1x1}, // Засохшая трава
+	{Empthy, SH1x1}, // Засохшая трава
+	{Wagon, SH2x1},
+	{Empthy, SH6x3u1a10},
+	{TrollBridge, SH4x2},
+	{Empthy, SH3x2u2a10}, // Торговый порт
+	{Empthy, SH4x2u1},
+	{Empthy, SH3x2}, // Трещина
+	{Empthy, SH2x3}, // Трещина
+	{Empthy, SH3x1}, // Трещина
+	{Obelisk, SH2x2J},
+	{SawMill, SH4x2},
+};
+static mapobjectinfo lava[] = {
+	{Empthy, SH2x1}, // Hole
+	{Empthy, SH4x2}, // Куча камней
+	{Empthy, SH2x1}, // Error???
+	{Empthy, SH2x3}, // Stones
+	{Empthy, SH2x2J}, // Stones and lava
+	{Empthy, SH3x2u1}, // Stones and lava
+	{Empthy, SH1x1}, // Digg
+	{Empthy, SH6x2}, // Fire Lake
+	{Empthy, SH3x2}, // Fire Lake
+	{Empthy, SH4x2}, // Fire Lake
+	{Empthy, SH2x2}, // Lava
+	{Empthy, SH2x2J}, // Lava
+	{Empthy, SH2x2}, // Lava
+	{Empthy, SH3x2r1}, // Lava
+	{Empthy, SH3x2r1}, // Lava
+	{Empthy, SH2x2}, // Volcano
+	{Empthy, SH2x2Ja9}, // Steam
+	{Obelisk, SH2x2J},
+	{DemonCave, SH3x2u1},
+	{Sign, SH2x1},
+	{SawMill, SH4x2},
+};
+static mapobjectinfo lava2[] = {
+	{Volcano, SH5x3a6},
+	{Volcano, SH5x3a4},
+};
+static mapobjectinfo lava3[] = {
+	{Volcano, SH8x5a10},
+};
 static struct mapobjectset
 {
 	tokens			tile;
@@ -385,6 +463,10 @@ static struct mapobjectset
 	{Water, res::OBJNWATR, sizeof(water) / sizeof(water[0]), water},
 	{Water, res::OBJNWAT2, sizeof(water2) / sizeof(water2[0]), water2},
 	{Swamp, res::OBJNSWMP, sizeof(swamp) / sizeof(swamp[0]), swamp},
+	{Wastelands, res::OBJNCRCK, sizeof(wasteland) / sizeof(wasteland[0]), wasteland},
+	{Lava, res::OBJNLAVA, sizeof(lava) / sizeof(lava[0]), lava},
+	{Lava, res::OBJNLAV2, sizeof(lava2) / sizeof(lava2[0]), lava2},
+	{Lava, res::OBJNLAV3, sizeof(lava3) / sizeof(lava3[0]), lava3},
 };
 
 const char*	rsname(int res);
@@ -402,7 +484,7 @@ static void grassview()
 			index += 1 + sh.animation[i];
 		}
 	}
-	auto& ts = mapobjectsets[7];
+	auto& ts = mapobjectsets[11];
 	for(int i = 0; i < ts.count; i++)
 	{
 		ts.objects[i].start = start;
