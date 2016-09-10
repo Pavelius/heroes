@@ -42,11 +42,11 @@ static terrain tarrains[LastTerrain - FirstTerrain + 1] = {
 	{415, 431, Beach},
 };
 enum shape_type {
-	SH1x1,
-	SH2x1, SH2x2J,
-	SH3x1, SH3x2, SH3x2u1, SH3x2u1r1, SH3x3, SH3x2u2a5,
-	SH4x1, SH4x2, SH4x2u1, SH4x2u2, SH4x2d1, SH4x3u2a3,
-	SH5x2, SH5x2u1, SH5x3,
+	SH1x1, SH1x1a6, SH1x1a11,
+	SH2x1, SH2x1a6, SH2x2J,
+	SH3x1, SH3x1a6, SH3x2, SH3x2a3, SH3x2u1a6, SH3x2a6, SH3x2a15, SH3x2u1, SH3x2r1, SH3x2u1r1, SH3x3, SH3x3u1r1a6, SH3x3r1a6, SH3x2u2a5,
+	SH4x1, SH4x2, SH4x2u1, SH4x2u2, SH4x2d1, SH4x2а6, SH4x3u2a3,
+	SH5x2, SH5x2u1, SH5x2r1, SH5x3,
 	SH8x3
 };
 struct mapobjectinfo
@@ -65,15 +65,26 @@ struct shapeinfo
 };
 static shapeinfo	shapes[] = {
 	{1, {1, 1}, {{0, 0}}},
+	{1, {1, 1}, {{0, 0}}, {6}},
+	{1, {1, 1}, {{0, 0}}, {11}},
 	//
 	{2, {2, 1}, {{-1, 0}, {0, 0}}},
+	{2, {2, 1}, {{-1, 0}, {0, 0}}, {6, 6}},
 	{3, {2, 2}, {{0, -1}, {-1, 0}, {0, 0}}},
 	//
 	{3, {3, 1}, {{-1, 0}, {0, 0}, {1, 0}}},
+	{3, {3, 1}, {{-1, 0}, {0, 0}, {1, 0}}, {6, 6, 6}},
 	{6, {3, 2}, {{-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {0, 0}, {1, 0}}},
+	{6, {3, 2}, {{-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {0, 0}, {1, 0}}, {3, 3, 3, 3, 3, 3}},
+	{6, {3, 2}, {{0, -1}, {1, -1}, {-1, 0}, {0, 0}, {1, 0}}, {6, 6, 0, 6, 6}},
+	{6, {3, 2}, {{-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {0, 0}, {1, 0}}, {0, 0, 0, 6, 6, 6}},
+	{6, {3, 2}, {{-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {0, 0}, {1, 0}}, {15, 15, 15, 15, 0, 0}},
 	{5, {3, 2}, {{0, -1}, {1, -1}, {-1, 0}, {0, 0}, {1, 0}}},
+	{5, {3, 2}, {{-1, -1}, {0, -1}, {-1, 0}, {0, 0}, {1, 0}}},
 	{4, {2, 2}, {{0, -1}, {-1, 0}, {0, 0}, {1, 0}}},
 	{9, {3, 3}, {{-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {0, 0}, {1, 0}, {-1, 1}, {0, 1}, {1, 1}}},
+	{7, {3, 3}, {{0, -2}, {-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {0, 0}, {1, 0}}, {0, 6, 6, 0, 6, 6, 0}},
+	{8, {3, 3}, {{0, -2}, {1, -2}, {-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {0, 0}, {1, 0}}, {6, 0, 0, 6, 0, 0, 0, 0}},
 	{4, {3, 2}, {{0, -1}, {-2, 0}, {-1, 0}, {0, 0}}, {6, 6, 6, 6}},
 	//
 	{4, {4, 1}, {{-2, 0}, {-1, 0}, {0, 0}, {1, 0}}},
@@ -81,16 +92,18 @@ static shapeinfo	shapes[] = {
 	{7, {4, 2}, {{-1, -1}, {0, -1}, {1, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}}},
 	{6, {4, 2}, {{0, -1}, {1, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}}},
 	{7, {4, 2}, {{-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {0, 0}, {1, 0}}},
+	{8, {4, 2}, {{-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}}, {0, 0, 0, 0, 0, 0, 0, 6}},
 	{10, {4, 3}, {{0, -2}, {1, -2}, {-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}}, {3, 3, 3, 3, 3, 3, 3, 3, 3, 3}},
 	//
 	{10, {5, 2}, {{-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {2, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {2, 0}}},
 	{9, {5, 2}, {{-1, -1}, {0, -1}, {1, -1}, {2, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {2, 0}}},
+	{9, {5, 2}, {{-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {2, 0}}},
 	{14, {5, 3}, {{-1, -1}, {0, -1}, {1, -1}, {2, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {2, 0}, {-2, 1}, {-1, 1}, {0, 1}, {1, 1}, {2, 1}}},
 	//
-	{8*3, {8, 3}, {{-4, -1}, {-3, -1}, {-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {2, -1}, {3, -1}, {-4, 0}, {-3, 0}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {2, 0}, {3, 0}, {-4, 1}, {-3, 1}, {-2, 1}, {-1, 1}, {0, 1}, {1, 1}, {2, 1}, {3, 1}}},
-};
+	{8 * 3, {8, 3}, {{-4, -1}, {-3, -1}, {-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {2, -1}, {3, -1}, {-4, 0}, {-3, 0}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {2, 0}, {3, 0}, {-4, 1}, {-3, 1}, {-2, 1}, {-1, 1}, {0, 1}, {1, 1}, {2, 1}, {3, 1}}},
+	};
 static mapobjectinfo grass[] = {
-	{Mines, SH4x2}, // Haunted mine
+	{AbandoneMine, SH4x2}, // Haunted mine
 	{Empthy, SH2x1},
 	{Empthy, SH4x2d1},
 	{Empthy, SH3x3},
@@ -147,7 +160,7 @@ static mapobjectinfo grass2[] = {
 	{Obelisk, SH2x2J},
 };
 static mapobjectinfo dirt[] = {
-	{Mines, SH5x2}, // Haunted mine
+	{AbandoneMine, SH5x2}, // Haunted mine
 	{Empthy, SH2x1}, // Erth hole
 	{Empthy, SH2x1}, // Hill
 	{Empthy, SH3x1}, // Hill
@@ -196,6 +209,120 @@ static mapobjectinfo dirt[] = {
 	{Oracle, SH3x2},
 	{Obelisk, SH2x2J},
 };
+static mapobjectinfo snow[] = {
+	{Empthy, SH2x1}, // Hole in Earth
+	{CentautCave, SH2x1},
+	{CampFire, SH1x1a6},
+	{Empthy, SH1x1}, // Digging
+	{LeanTo, SH2x1},
+	{Empthy, SH2x1}, // Cliff
+	{Empthy, SH2x1}, // Cliff
+	{Empthy, SH3x1}, // Cliff
+	{Empthy, SH2x1}, // Rock
+	{Empthy, SH3x2u1}, // Rock
+	{Empthy, SH1x1}, // Rock
+	{Empthy, SH2x1}, // Rock
+	{Empthy, SH2x1}, // Rock
+	{Empthy, SH3x1}, // Rock
+	{Empthy, SH2x1}, // Rock
+	{Empthy, SH2x1}, // Rock
+	{Empthy, SH2x1}, // Wood (пеньки)
+	{Empthy, SH1x1}, // Wood (пеньки)
+	{Empthy, SH1x1}, // Grass
+	{Empthy, SH1x1}, // Grass
+	{Empthy, SH1x1}, // Grass
+	{Empthy, SH3x2u1}, // Tree
+	{Empthy, SH4x2u1}, // Tree
+	{Empthy, SH2x2J}, // Tree
+	{Empthy, SH3x2u1}, // Tree
+	{Empthy, SH2x2J}, // Tree
+	{Empthy, SH2x2J}, // Tree
+	{Empthy, SH2x2J}, // Tree
+	{Empthy, SH2x2J}, // Tree
+	{Empthy, SH2x2J}, // Tree
+	{Empthy, SH5x2r1}, // Lake
+	{Empthy, SH3x1}, // Lake
+	{Empthy, SH3x1}, // Lake
+	{WindMill, SH4x3u2a3},
+	{ThatchedHut, SH2x2J},
+	{Obelisk, SH2x2J},
+	{Sign, SH2x1},
+	{AlchemyLab, SH4x2а6},
+	{Graveyard, SH3x1},
+	{SawMill, SH3x3u1r1a6},
+	{Well, SH2x2J},
+	{Empthy, SH4x2},
+	{Graveyard, SH4x2},
+};
+static mapobjectinfo desert[] = {
+	{Empthy, SH2x1}, // Hole in Earth
+	{Empthy, SH2x1}, // Tree
+	{Empthy, SH2x2J}, // Tree
+	{Empthy, SH2x2J}, // Tree
+	{Empthy, SH2x2J}, // Tree
+	{Empthy, SH3x1}, // Hill
+	{Empthy, SH3x1}, // Hill
+	{Empthy, SH4x1}, // Tree
+	{Empthy, SH2x1}, // Tree
+	{Empthy, SH2x1}, // Tree
+	{Empthy, SH2x1},
+	{Empthy, SH2x1},
+	{Empthy, SH1x1}, // Cactus
+	{Empthy, SH1x1}, // Cactus
+	{Empthy, SH2x1}, // Cactus
+	{Empthy, SH2x1}, // Cactuses
+	{Empthy, SH2x2J}, // Cactuses
+	{Empthy, SH1x1}, // Cactuses
+	{Empthy, SH2x1}, // Cactuses
+	{Empthy, SH2x2J}, // Cactuses
+	{Empthy, SH2x2J}, // Cactuses
+	{Empthy, SH1x1}, // Cactuses
+	{Empthy, SH2x1}, // Cactuses
+	{Empthy, SH2x1}, // Cactuses
+	{CampFire, SH2x1a6}, // Cactuses
+	{Empthy, SH1x1}, // Cactuses
+	{DesertTent, SH3x2u1}, // Tent
+	{Empthy, SH2x2J},
+	{Pyramid, SH3x2},
+	{DeadSkeleton, SH2x1},
+	{Sphinx, SH3x2u1r1},
+	{CityDead, SH5x2},
+	{Excavation, SH3x1},
+	{Obelisk, SH2x2J},
+	{Empthy, SH3x2u1},
+	{Empthy, SH3x1}, // Hole
+	{Empthy, SH3x2u1},
+	{Sign, SH2x1},
+	{Graveyard, SH3x1},
+	{Mines, SH4x2},
+};
+static mapobjectinfo water[] = {
+	{Bottle, SH1x1a11},
+	{WaterChest, SH2x1a6},
+	{Empthy, SH1x1a6}, // Error?
+	{Empthy, SH3x2u1}, // Error?
+	{Empthy, SH2x1a6}, // Woods
+	{WaterBoatStation, SH3x2a6}, // Map crafter woods
+	{Empthy, SH3x1a6}, // Водросли
+	{Empthy, SH2x1a6}, // Водросли
+	{Empthy, SH1x1a6}, // Утопабщий
+	{Empthy, SH3x2a15}, // Птицы
+	{Empthy, SH2x1},
+	{Empthy, SH2x1},
+	{Empthy, SH2x1a6},
+	{Empthy, SH3x2a3},
+	{ShipWreck, SH3x2u1a6},
+};
+static mapobjectinfo water2[] = {
+	{Empthy, SH2x2J}, // Rock
+	{ShipWreck, SH3x3r1a6},
+	{Boat, SH1x1},
+};
+static mapobjectinfo swamp[] = {
+	{Empthy, SH2x2J}, // Rock
+	{ShipWreck, SH3x3r1a6},
+	{Boat, SH1x1},
+};
 static struct mapobjectset
 {
 	tokens			tile;
@@ -206,6 +333,11 @@ static struct mapobjectset
 	{Grass, res::OBJNGRAS, sizeof(grass) / sizeof(grass[0]), grass},
 	{Grass, res::OBJNGRA2, sizeof(grass2) / sizeof(grass2[0]), grass2},
 	{Dirt, res::OBJNDIRT, sizeof(dirt) / sizeof(dirt[0]), dirt},
+	{Snow, res::OBJNSNOW, sizeof(snow) / sizeof(snow[0]), snow},
+	{Desert, res::OBJNDSRT, sizeof(desert) / sizeof(desert[0]), desert},
+	{Water, res::OBJNWATR, sizeof(water) / sizeof(water[0]), water},
+	{Water, res::OBJNWAT2, sizeof(water2) / sizeof(water2[0]), water2},
+	{Swamp, res::OBJNSWMP, sizeof(swamp) / sizeof(swamp[0]), swamp},
 };
 
 const char*	rsname(int res);
@@ -223,7 +355,7 @@ static void grassview()
 			index += 1 + sh.animation[i];
 		}
 	}
-	auto& ts = mapobjectsets[2];
+	auto& ts = mapobjectsets[6];
 	for(int i = 0; i < ts.count; i++)
 	{
 		ts.objects[i].start = start;
@@ -262,7 +394,7 @@ static void grassview()
 			}
 			draw::rectb(px, py, px + 32, py + 32, 0xC);
 		}
-		draw::rectb(center.x+1, center.y+1, center.x + 32 - 1, center.y + 32 - 1, 0x72);
+		draw::rectb(center.x + 1, center.y + 1, center.x + 32 - 1, center.y + 32 - 1, 0x72);
 		draw::cursor(res::ADVMCO, 0);
 		int id = draw::input();
 		switch(id)

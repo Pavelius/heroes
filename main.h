@@ -205,13 +205,13 @@ enum tokens
 	RndTown, RndCastle, Map0xB2, RndMonster1, // 0xB0-0xB3
 	RndMonster2, RndMonster3, RndMonster4, Hero, // 0xB4-0xB7
 	Map0xB8, Map0xB9, WatchTower, SpriteHouse, // 0xB8-0xBB
-	TreeCity, Ruins, Fort, TradingPost, // 0xBC-0xBF
+	SpriteHouseCity, Ruins, Fort, TradingPost, // 0xBC-0xBF
 	AbandoneMine, ThatchedHut, StandingStones, Idol, // 0xC0-xC3
 	TreeKnowledge, DoctorHut, Temple, HillFort, // 0xC4-0xC7
 	HalflingHole, MercenaryCamp, Shrine2, Shrine3, // 0xC8-0xCB
 	Pyramid, CityDead, Excavation, Sphinx, // 0xCC-0xCF
 	Wagon, Map0xD1, ArtesianSpring, TrollBridge, // 0xD0-0xD3
-	WateringHole, WitchHut, Xanadu, Cave, // 0xD4-0xD7
+	WateringHole, WitchHut, Xanadu, CentautCave, // 0xD4-0xD7
 	LeanTo, MagellanMaps, Flotsam, DeRelictShip, // 0xD8-0xDB
 	ShipWreckSurvivor, Bottle, MagicWell, MagicGarden, // 0xDC-0xDF
 	ObservationTower, FreemanFoundry, Map0xE2, Map0xE3, // 0xE0-0xE3
@@ -224,6 +224,7 @@ enum tokens
 	FireAltar, AirAltar, EarthAltar, WaterAltar, // 0xFC-0xFF
 	FirstObject = WaterChest, LastObject = WaterAltar,
 	LastAction = LastObject,
+	WaterBoatStation,
 	// Custom tokens
 	FirstCreatureCount, LastCreatureCount = FirstCreatureCount + 6,
 	FirstCastle, LastCastle = FirstCastle + 128,
