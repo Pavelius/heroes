@@ -226,7 +226,7 @@ enum tokens
 	LastAction = LastObject,
 	WaterBoatStation, Mushrooms, DemonCave, Volcano,
 	Lake, Flowers, Hill, Mountains, Trees, DiggingHole, Bouler, Rock,
-	Cliff, Hole,
+	Cliff, Hole, DruidicCircle,
 	// Custom tokens
 	FirstCreatureCount, LastCreatureCount = FirstCreatureCount + 6,
 	FirstCastle, LastCastle = FirstCastle + 128,

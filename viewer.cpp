@@ -44,10 +44,10 @@ static terrain tarrains[LastTerrain - FirstTerrain + 1] = {
 enum shape_type {
 	SH1x1, SH1x1a6, SH1x1a11,
 	SH2x1, SH2x1a6, SH2x2, SH2x2J, SH2x2Ja9, SH2x3,
-	SH3x1, SH3x1a6, SH3x2, SH3x2a3, SH3x2u1a6, SH3x2u2, SH3x2a6, SH3x2a15, SH3x2u1, SH3x2r1, SH3x2u1r1, SH3x2u2a10, SH3x3, SH3x3u1d1, SH3x3u1r1a6, SH3x3r1a6, SH3x3u2u2a6, SH3x2u2a5,
-	SH4x1, SH4x2, SH4x2u1, SH4x2r1, SH4x2u2, SH4x2d1, SH4x2r1d1, SH4x2u1b1, SH4x2à6, SH4x3, SH4x3u1r1, SH4x3r1d1, SH4x3u1b1, SH4x3u2a3,
+	SH3x1, SH3x1a6, SH3x2, SH3x2a3, SH3x2u1a6, SH3x2u2, SH3x2a6, SH3x2a15, SH3x2u1, SH3x2r1, SH3x2u1r1, SH3x2u2a10, SH3x2u2a9, SH3x3, SH3x3u1u1, SH3x3u1d1, SH3x3u1r1a6, SH3x3r1a6, SH3x3u2u2, SH3x3u2u2a6, SH3x2u2a5, SH3x2u2a5v2,
+	SH4x1, SH4x2, SH4x2u1, SH4x2r1, SH4x2u2, SH4x2d1, SH4x2r1d1, SH4x2u1b1, SH4x2à6, SH4x3, SH4x3u1r1, SH4x3r1d1, SH4x3u1b1, SH4x3u2a3, SH4x3u2r1d1a9,
 	SH5x2, SH5x2u1, SH5x2r1, SH5x3, SH5x3a6, SH5x3a4, SH5x3u2a6,
-	SH6x2, SH6x3u1a10, SH6x4r1d2, SH6x4u1b2,
+	SH6x2, SH6x3r1d2, SH6x3u1b2, SH6x3u1a10, SH6x4r1d2, SH6x4u1b2,
 	SH7x3r1,
 	SH8x3, SH8x5a10,
 };
@@ -89,12 +89,16 @@ static shapeinfo	shapes[] = {
 	{5, {3, 2}, {{-1, -1}, {0, -1}, {-1, 0}, {0, 0}, {1, 0}}},
 	{4, {3, 2}, {{0, -1}, {-1, 0}, {0, 0}, {1, 0}}},
 	{4, {3, 2}, {{1, -1}, {-1, 0}, {0, 0}, {1, 0}}, {10, 0, 10, 0}},
+	{4, {3, 2}, {{1, -1}, {-1, 0}, {0, 0}, {1, 0}}, {9, 9, 9, 0}},
 	{9, {3, 3}, {{-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {0, 0}, {1, 0}, {-1, 1}, {0, 1}, {1, 1}}},
+	{7, {3, 3}, {{0, -1}, {1, -1}, {0, 0}, {1, 0}, {-1, 1}, {0, 1}, {1, 1}}},
 	{7, {3, 3}, {{0, -2}, {1, -2}, {-1, -1}, {0, -1}, {1, -1}, {0, 0}, {1, 0}}},
 	{7, {3, 3}, {{0, -2}, {-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {0, 0}, {1, 0}}, {0, 6, 6, 0, 6, 6, 0}},
 	{8, {3, 3}, {{0, -2}, {1, -2}, {-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {0, 0}, {1, 0}}, {6, 0, 0, 6, 0, 0, 0, 0}},
+	{5, {3, 3}, {{0, -2}, {0, -1}, {-2, 0}, {-1, 0}, {0, 0}}},
 	{5, {3, 3}, {{0, -2}, {0, -1}, {-2, 0}, {-1, 0}, {0, 0}}, {6, 6, 6, 0, 6}},
 	{4, {3, 2}, {{0, -1}, {-2, 0}, {-1, 0}, {0, 0}}, {6, 6, 6, 6}},
+	{4, {3, 2}, {{0, -1}, {-2, 0}, {-1, 0}, {0, 0}}, {6, 6, 6, 0}},
 	//
 	{4, {4, 1}, {{-2, 0}, {-1, 0}, {0, 0}, {1, 0}}},
 	{8, {4, 2}, {{-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}}},
@@ -110,6 +114,7 @@ static shapeinfo	shapes[] = {
 	{10, {4, 3}, {{-2, -1}, {-1, -1}, {0, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {-1, 1}, {0, 1}, {1, 1}}},
 	{10, {4, 3}, {{-1, -1}, {0, -1}, {1, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {-2, 1}, {-1, 1}, {0, 1}}},
 	{10, {4, 3}, {{0, -2}, {1, -2}, {-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}}, {3, 3, 3, 3, 3, 3, 3, 3, 3, 3}},
+	{8, {4, 3}, {{-1, -2}, {-3, -1}, {-2, -1}, {-1, -1}, {0, -1}, {-2, 0}, {-1, 0}, {0, 0}}, {8, 8, 0, 0, 0, 0, 0, 0, 0, 0}},
 	//
 	{10, {5, 2}, {{-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {2, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {2, 0}}},
 	{9, {5, 2}, {{-1, -1}, {0, -1}, {1, -1}, {2, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {2, 0}}},
@@ -120,6 +125,8 @@ static shapeinfo	shapes[] = {
 	{13, {5, 3}, {{-1, -2}, {0, -2}, {1, -2}, {-3, -1}, {-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {-3, 0}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}}, {6, 0, 0, 6, 0, 6, 6, 0, 0, 6, 6}},
 	//
 	{12, {6, 2}, {{0, 0}, {1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}, {0, 1}, {1, 1}, {2, 1}, {3, 1}, {4, 1}, {5, 1}}},
+	{15, {6, 3}, {{-3, -1}, {-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {-3, 0}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {2, 0}, {-1, 1}, {0, 1}, {1, 1}, {2, 1}}},
+	{15, {6, 3}, {{-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {2, -1}, {-3, 0}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {2, 0}, {-3, 1}, {-2, 1}, {-1, 1}, {0, 1}}},
 	{17, {6, 3}, {{-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {2, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {2, 0}, {3, 0}, {-2, 1}, {-1, 1}, {0, 1}, {1, 1}, {2, 1}, {3, 1}}, {0, 0, 0, 0, 0, 10, 10, 10, 10, 10, 0, 0, 10, 10, 10, 10, 0, 0}},
 	{21, {6, 4}, {{-3, -1}, {-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {-3, 0}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {2, 0}, {-3, 1}, {-2, 1}, {-1, 1}, {0, 1}, {1, 1}, {2, 1}, {-1, 2}, {0, 2}, {1, 2}, {2, 2}}},
 	{21, {6, 4}, {{-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {2, -1}, {-3, 0}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {2, 0}, {-3, 1}, {-2, 1}, {-1, 1}, {0, 1}, {1, 1}, {2, 1}, {-3, 2}, {-2, 2}, {-1, 2}, {0, 2}}},
@@ -466,6 +473,46 @@ static mapobjectinfo trees[] = {
 static mapobjectinfo mountains[] = {
 	{Mountains, SH6x4r1d2},
 	{Mountains, SH6x4u1b2},
+	{Mountains, SH4x3r1d1},
+	{Mountains, SH4x3u1b1},
+	{Mountains, SH4x2r1d1},
+	{Mountains, SH4x2u1b1},
+	{Mines, SH5x2},
+};
+static mapobjectinfo mountains2[] = {
+	{Mountains, SH6x4r1d2},
+	{Mountains, SH6x4u1b2},
+	{Mountains, SH6x3r1d2},
+	{Mountains, SH6x3u1b2},
+	{Mountains, SH4x3r1d1},
+	{Mountains, SH4x3u1b1},
+	{Mountains, SH4x2r1d1},
+	{Mountains, SH4x2u1b1},
+	{Mines, SH5x2},
+};
+static mapobjectinfo multiobj[] = {
+	{Trees, SH2x2J},
+	{Trees, SH2x1},
+	{PeasantHut, SH3x2u2a9},
+	{Fort, SH4x3u2r1d1a9},
+	{Gazebo, SH2x2J},
+	{Flowers, SH3x1},
+	{DoctorHut, SH3x2u2},
+	{MercenaryCamp, SH3x1},
+	{Ruins, SH2x1},
+	{Shrine2, SH2x1},
+	{Shrine3, SH2x1},
+	{Shrine1, SH2x1},
+	{Idol, SH2x1},
+	{DruidicCircle, SH3x1},
+	{Temple, SH2x2},
+	{MarketPlace, SH3x2u2a5v2},
+	{SpriteHouse, SH2x2J},
+	{ThatchedHut, SH2x1},
+	{TreeKnowledge, SH3x3u1u1},
+	{CampFire, SH2x1a6},
+};
+static mapobjectinfo multiobj2[] = {
 };
 static struct mapobjectset
 {
@@ -492,7 +539,15 @@ static struct mapobjectset
 	{Trees, res::TREEVIL, sizeof(trees) / sizeof(trees[0]), trees},
 	{Trees, res::TREFIR, sizeof(trees) / sizeof(trees[0]), trees},
 	{Trees, res::TRESNOW, sizeof(trees) / sizeof(trees[0]), trees},
+	{Mountains, res::MTNDIRT, sizeof(mountains2) / sizeof(mountains2[0]), mountains2},
+	{Mountains, res::MTNCRCK, sizeof(mountains2) / sizeof(mountains2[0]), mountains2},
+	{Mountains, res::MTNDSRT, sizeof(mountains) / sizeof(mountains[0]), mountains},
 	{Mountains, res::MTNGRAS, sizeof(mountains) / sizeof(mountains[0]), mountains},
+	{Mountains, res::MTNLAVA, sizeof(mountains) / sizeof(mountains[0]), mountains},
+	{Mountains, res::MTNMULT, sizeof(mountains) / sizeof(mountains[0]), mountains},
+	{Mountains, res::MTNSNOW, sizeof(mountains) / sizeof(mountains[0]), mountains},
+	{Mountains, res::MTNSWMP, sizeof(mountains) / sizeof(mountains[0]), mountains},
+	{Empthy, res::OBJNMULT, sizeof(multiobj) / sizeof(multiobj[0]), multiobj},
 };
 
 const char*	rsname(int res);
