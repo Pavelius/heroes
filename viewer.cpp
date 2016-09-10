@@ -47,7 +47,7 @@ enum shape_type {
 	SH3x1, SH3x1a6, SH3x2, SH3x2a3, SH3x2u1a6, SH3x2u2, SH3x2a6, SH3x2a15, SH3x2u1, SH3x2r1, SH3x2u1r1, SH3x2u2a10, SH3x3, SH3x3u1d1, SH3x3u1r1a6, SH3x3r1a6, SH3x3u2u2a6, SH3x2u2a5,
 	SH4x1, SH4x2, SH4x2u1, SH4x2r1, SH4x2u2, SH4x2d1, SH4x2r1d1, SH4x2u1b1, SH4x2à6, SH4x3, SH4x3u1r1, SH4x3r1d1, SH4x3u1b1, SH4x3u2a3,
 	SH5x2, SH5x2u1, SH5x2r1, SH5x3, SH5x3a6, SH5x3a4, SH5x3u2a6,
-	SH6x2, SH6x3u1a10,
+	SH6x2, SH6x3u1a10, SH6x4r1d2, SH6x4u1b2,
 	SH7x3r1,
 	SH8x3, SH8x5a10,
 };
@@ -121,6 +121,8 @@ static shapeinfo	shapes[] = {
 	//
 	{12, {6, 2}, {{0, 0}, {1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}, {0, 1}, {1, 1}, {2, 1}, {3, 1}, {4, 1}, {5, 1}}},
 	{17, {6, 3}, {{-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {2, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {2, 0}, {3, 0}, {-2, 1}, {-1, 1}, {0, 1}, {1, 1}, {2, 1}, {3, 1}}, {0, 0, 0, 0, 0, 10, 10, 10, 10, 10, 0, 0, 10, 10, 10, 10, 0, 0}},
+	{21, {6, 4}, {{-3, -1}, {-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {-3, 0}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {2, 0}, {-3, 1}, {-2, 1}, {-1, 1}, {0, 1}, {1, 1}, {2, 1}, {-1, 2}, {0, 2}, {1, 2}, {2, 2}}},
+	{21, {6, 4}, {{-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {2, -1}, {-3, 0}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {2, 0}, {-3, 1}, {-2, 1}, {-1, 1}, {0, 1}, {1, 1}, {2, 1}, {-3, 2}, {-2, 2}, {-1, 2}, {0, 2}}},
 	//
 	{20, {7, 3}, {{-3, -1}, {-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {2, -1}, {-3, 0}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {2, 0}, {3, 0}, {-3, 1}, {-2, 1}, {-1, 1}, {0, 1}, {1, 1}, {2, 1}, {3, 1}}},
 	//
@@ -461,6 +463,10 @@ static mapobjectinfo trees[] = {
 	{Trees, SH2x1},
 	{Trees, SH2x1},
 };
+static mapobjectinfo mountains[] = {
+	{Mountains, SH6x4r1d2},
+	{Mountains, SH6x4u1b2},
+};
 static struct mapobjectset
 {
 	tokens			tile;
@@ -486,6 +492,7 @@ static struct mapobjectset
 	{Trees, res::TREEVIL, sizeof(trees) / sizeof(trees[0]), trees},
 	{Trees, res::TREFIR, sizeof(trees) / sizeof(trees[0]), trees},
 	{Trees, res::TRESNOW, sizeof(trees) / sizeof(trees[0]), trees},
+	{Mountains, res::MTNGRAS, sizeof(mountains) / sizeof(mountains[0]), mountains},
 };
 
 const char*	rsname(int res);
@@ -493,7 +500,6 @@ const char*	rsname(int res);
 static void grassview()
 {
 	int index = 0;
-	int start = 0;
 	for(auto& sh : shapes)
 	{
 		int index = 0;
@@ -503,18 +509,27 @@ static void grassview()
 			index += 1 + sh.animation[i];
 		}
 	}
-	auto& ts = mapobjectsets[17];
-	for(int i = 0; i < ts.count; i++)
+	for(auto& ts : mapobjectsets)
 	{
-		ts.objects[i].start = start;
-		auto& sh = shapes[ts.objects[i].shape];
-		start += sh.indecies[sh.count - 1] + 1 + sh.animation[sh.count - 1];
+		int start_ex = 0;
+		for(int i = 0; i < ts.count; i++)
+		{
+			ts.objects[i].start = start_ex;
+			auto& sh = shapes[ts.objects[i].shape];
+			start_ex += sh.indecies[sh.count - 1] + 1 + sh.animation[sh.count - 1];
+		}
 	}
+	auto ts_index = 0;
 	char temp[64];
 	while(true)
 	{
 		auto x1 = 200;
 		auto y1 = 200;
+		if(ts_index < 0)
+			ts_index = 0;
+		else if(ts_index >= sizeof(mapobjectsets) / sizeof(mapobjectsets[0]))
+			ts_index = sizeof(mapobjectsets) / sizeof(mapobjectsets[0]) - 1;
+		auto& ts = mapobjectsets[ts_index];
 		if(index > ts.count - 1)
 			index = ts.count - 1;
 		else if(index < 0)
@@ -524,7 +539,7 @@ static void grassview()
 		shapeinfo& sh = shapes[e.shape];
 		draw::rectf(0, 0, draw::width - 1, draw::height - 1, 0x12);
 		int e_count = sh.indecies[sh.count - 1] + 1 + sh.animation[sh.count - 1];
-		szprint(temp, "object %1i (start=%2i, count=%3i, next=%4i)", index, e.start, e_count, e.start + e_count);
+		szprint(temp, "object %1i/%5i (start=%2i, count=%3i, next=%4i)", index, e.start, e_count, e.start + e_count, ts.count);
 		draw::text(0, 0, temp);
 		point center = {0, 0};
 		for(int i = 0; i < sh.count; i++)
@@ -555,6 +570,12 @@ static void grassview()
 			break;
 		case KeyLeft:
 			index--;
+			break;
+		case KeyUp:
+			ts_index++;
+			break;
+		case KeyDown:
+			ts_index--;
 			break;
 		}
 	}
