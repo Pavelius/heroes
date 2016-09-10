@@ -45,7 +45,7 @@ enum shape_type {
 	SH1x1, SH1x1a6, SH1x1a11,
 	SH2x1, SH2x1a6, SH2x2, SH2x2J, SH2x2Ja9, SH2x3,
 	SH3x1, SH3x1a6, SH3x2, SH3x2a3, SH3x2u1a6, SH3x2u2, SH3x2a6, SH3x2a15, SH3x2u1, SH3x2r1, SH3x2u1r1, SH3x2u2a10, SH3x3, SH3x3u1d1, SH3x3u1r1a6, SH3x3r1a6, SH3x3u2u2a6, SH3x2u2a5,
-	SH4x1, SH4x2, SH4x2u1, SH4x2u2, SH4x2d1, SH4x2à6, SH4x3, SH4x3u1r1, SH4x3u2a3,
+	SH4x1, SH4x2, SH4x2u1, SH4x2r1, SH4x2u2, SH4x2d1, SH4x2r1d1, SH4x2u1b1, SH4x2à6, SH4x3, SH4x3u1r1, SH4x3r1d1, SH4x3u1b1, SH4x3u2a3,
 	SH5x2, SH5x2u1, SH5x2r1, SH5x3, SH5x3a6, SH5x3a4, SH5x3u2a6,
 	SH6x2, SH6x3u1a10,
 	SH7x3r1,
@@ -99,11 +99,16 @@ static shapeinfo	shapes[] = {
 	{4, {4, 1}, {{-2, 0}, {-1, 0}, {0, 0}, {1, 0}}},
 	{8, {4, 2}, {{-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}}},
 	{7, {4, 2}, {{-1, -1}, {0, -1}, {1, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}}},
+	{7, {4, 2}, {{-2, -1}, {-1, -1}, {0, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}}},
 	{6, {4, 2}, {{0, -1}, {1, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}}},
 	{7, {4, 2}, {{-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {0, 0}, {1, 0}}},
+	{6, {4, 2}, {{-1, -1}, {0, -1}, {1, -1}, {0, 0}, {1, 0}, {2, 0}}},
+	{6, {4, 2}, {{0, -1}, {1, -1}, {2, -1}, {-1, 0}, {0, 0}, {1, 0}}},
 	{8, {4, 2}, {{-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}}, {0, 0, 0, 0, 0, 0, 0, 6}},
 	{12, {4, 3}, {{-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {-2, 1}, {-1, 1}, {0, 1}, {1, 1}}},
 	{10, {4, 3}, {{-1, -2}, {0, -2}, {-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}}},
+	{10, {4, 3}, {{-2, -1}, {-1, -1}, {0, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {-1, 1}, {0, 1}, {1, 1}}},
+	{10, {4, 3}, {{-1, -1}, {0, -1}, {1, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {-2, 1}, {-1, 1}, {0, 1}}},
 	{10, {4, 3}, {{0, -2}, {1, -2}, {-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}}, {3, 3, 3, 3, 3, 3, 3, 3, 3, 3}},
 	//
 	{10, {5, 2}, {{-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {2, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {2, 0}}},
@@ -132,19 +137,19 @@ static mapobjectinfo grass[] = {
 	{Empthy, SH3x1},
 	{Empthy, SH3x2u1r1}, // Big boulder
 	{Empthy, SH2x1}, // Big 
-	{Empthy, SH1x1}, // Single Rock
-	{Empthy, SH2x1}, // Rock
-	{Empthy, SH2x1}, // Rock
-	{Empthy, SH2x1}, // Flat Rock
-	{Empthy, SH2x1}, // Rock
-	{Empthy, SH5x3}, // Lake
-	{Empthy, SH1x1}, // Flower
-	{Empthy, SH4x2}, // Lake
-	{Empthy, SH3x1}, // Lake
-	{Empthy, SH3x1}, // Hill
-	{Empthy, SH4x2u1}, // Trees
-	{Empthy, SH3x2u1}, // Trees
-	{Empthy, SH2x2J}, // Trees
+	{Rock, SH1x1},
+	{Rock, SH2x1},
+	{Rock, SH2x1},
+	{Rock, SH2x1},
+	{Rock, SH2x1},
+	{Lake, SH5x3},
+	{Flowers, SH1x1}, // Flower
+	{Lake, SH4x2}, // Lake
+	{Lake, SH3x1}, // Lake
+	{Hill, SH3x1}, // Hill
+	{Trees, SH4x2u1}, // Trees
+	{Trees, SH3x2u1}, // Trees
+	{Trees, SH2x2J}, // Trees
 	{Empthy, SH4x1}, // Brush flowers
 	{Empthy, SH4x1}, // Brush
 	{Empthy, SH3x1}, // Brush small
@@ -162,15 +167,15 @@ static mapobjectinfo grass[] = {
 	{Empthy, SH2x1}, // Flowers to up
 	{Empthy, SH2x1}, // Flowers white
 	{Empthy, SH2x1}, // Flowers ultraviolet
-	{Empthy, SH2x1}, // Hill
+	{Hill, SH2x1}, // Hill
 };
 static mapobjectinfo grass2[] = {
 	{HillFort, SH3x2u1},
 	{HalflingHole, SH4x1},
-	{Empthy, SH1x1}, // Dig crate
-	{Empthy, SH2x1}, // Cliff
-	{Empthy, SH2x1}, // Cliff
-	{Empthy, SH3x1}, // Cliff
+	{DiggingHole, SH1x1},
+	{Cliff, SH2x1},
+	{Cliff, SH2x1},
+	{Cliff, SH3x1},
 	{SpriteHouse, SH4x2u2},
 	{WindMill, SH4x3u2a3},
 	{ArcherHouse, SH3x2u2a5},
@@ -180,50 +185,50 @@ static mapobjectinfo grass2[] = {
 	{Obelisk, SH2x2J},
 };
 static mapobjectinfo dirt[] = {
-	{AbandoneMine, SH5x2}, // Haunted mine
-	{Empthy, SH2x1}, // Erth hole
-	{Empthy, SH2x1}, // Hill
-	{Empthy, SH3x1}, // Hill
+	{AbandoneMine, SH5x2},
+	{Hole, SH2x1},
+	{Hill, SH2x1},
+	{Hill, SH3x1},
 	{Empthy, SH2x1}, // Cracked earth
 	{Empthy, SH2x1}, // Cracked earth
 	{Empthy, SH2x1}, // Cracked earth
-	{Empthy, SH8x3}, // Lake
-	{Empthy, SH5x2}, // Lake
-	{Empthy, SH2x1}, // Lake
+	{Lake, SH8x3},
+	{Lake, SH5x2},
+	{Lake, SH2x1},
 	{Empthy, SH3x1}, // Brush
 	{Empthy, SH3x1}, // Brush
 	{Empthy, SH3x1}, // Brush
 	{Empthy, SH2x1}, // Brush
 	{Empthy, SH2x1}, // Brush
-	{Empthy, SH3x1}, // Flowers
-	{Empthy, SH3x1}, // Flowers
-	{Empthy, SH3x1}, // Flowers
-	{Empthy, SH3x1}, // Flowers
-	{Empthy, SH2x1}, // Flowers
-	{Empthy, SH1x1}, // Flowers
-	{Empthy, SH2x1}, // Flowers
-	{Empthy, SH1x1}, // Flowers
-	{Empthy, SH1x1}, // Flowers
-	{Empthy, SH3x1}, // Rock
-	{Empthy, SH3x2}, // Rock
-	{Empthy, SH3x1}, // Rock
-	{Empthy, SH2x1}, // Rock
-	{Empthy, SH1x1}, // Rock
-	{Empthy, SH1x1}, // Flowers
-	{Empthy, SH2x1}, // Flowers
-	{Empthy, SH2x1}, // Flowers
-	{Empthy, SH2x1}, // Plant
-	{Empthy, SH1x1}, // Plant
-	{Empthy, SH3x2}, // Tree
-	{Empthy, SH3x2u1}, // Tree
-	{Empthy, SH2x2J}, // Tree
-	{Empthy, SH3x1}, // Mushrums
+	{Flowers, SH3x1},
+	{Flowers, SH3x1},
+	{Flowers, SH3x1},
+	{Flowers, SH3x1},
+	{Flowers, SH2x1},
+	{Flowers, SH1x1},
+	{Flowers, SH2x1},
+	{Flowers, SH1x1},
+	{Flowers, SH1x1},
+	{Rock, SH3x1},
+	{Rock, SH3x2},
+	{Rock, SH3x1},
+	{Rock, SH2x1},
+	{Rock, SH1x1},
+	{Flowers, SH1x1},
+	{Flowers, SH2x1},
+	{Flowers, SH2x1},
+	{Empthy, SH2x1},
+	{Empthy, SH1x1},
+	{Trees, SH3x2},
+	{Trees, SH3x2u1},
+	{Trees, SH2x2J},
+	{Mushrooms, SH3x1},
 	{HillFort, SH3x2u1},
 	{HalflingHole, SH4x1},
-	{Empthy, SH1x1}, // Artifact digging
-	{Empthy, SH2x1}, // Cliff
-	{Empthy, SH2x1}, // Cliff
-	{Empthy, SH2x1}, // Cliff
+	{DiggingHole, SH1x1},
+	{Cliff, SH2x1},
+	{Cliff, SH2x1},
+	{Cliff, SH2x1},
 	{SpriteHouse, SH4x2u2},
 	{WindMill, SH4x3u2a3},
 	{Oracle, SH3x2},
@@ -448,6 +453,14 @@ static mapobjectinfo lava2[] = {
 static mapobjectinfo lava3[] = {
 	{Volcano, SH8x5a10},
 };
+static mapobjectinfo trees[] = {
+	{Trees, SH4x3r1d1},
+	{Trees, SH4x3u1b1},
+	{Trees, SH4x2r1d1},
+	{Trees, SH4x2u1b1},
+	{Trees, SH2x1},
+	{Trees, SH2x1},
+};
 static struct mapobjectset
 {
 	tokens			tile;
@@ -467,6 +480,12 @@ static struct mapobjectset
 	{Lava, res::OBJNLAVA, sizeof(lava) / sizeof(lava[0]), lava},
 	{Lava, res::OBJNLAV2, sizeof(lava2) / sizeof(lava2[0]), lava2},
 	{Lava, res::OBJNLAV3, sizeof(lava3) / sizeof(lava3[0]), lava3},
+	{Trees, res::TREDECI, sizeof(trees) / sizeof(trees[0]), trees},
+	{Trees, res::TREFALL, sizeof(trees) / sizeof(trees[0]), trees},
+	{Trees, res::TREJNGL, sizeof(trees) / sizeof(trees[0]), trees},
+	{Trees, res::TREEVIL, sizeof(trees) / sizeof(trees[0]), trees},
+	{Trees, res::TREFIR, sizeof(trees) / sizeof(trees[0]), trees},
+	{Trees, res::TRESNOW, sizeof(trees) / sizeof(trees[0]), trees},
 };
 
 const char*	rsname(int res);
@@ -484,7 +503,7 @@ static void grassview()
 			index += 1 + sh.animation[i];
 		}
 	}
-	auto& ts = mapobjectsets[11];
+	auto& ts = mapobjectsets[17];
 	for(int i = 0; i < ts.count; i++)
 	{
 		ts.objects[i].start = start;
