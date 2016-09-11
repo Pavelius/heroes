@@ -227,7 +227,7 @@ enum tokens
 	WaterBoatStation, Mushrooms, DemonCave, Volcano,
 	Lake, Flowers, Hill, Mountains, Trees, DiggingHole, Bouler, Rock,
 	Cliff, Hole, DruidicCircle, RiverDeltaDown, RiverDeltaUp, Stumps,
-	RogueCamp,
+	RogueCamp, Leprechaunt,
 	// Custom tokens
 	FirstCreatureCount, LastCreatureCount = FirstCreatureCount + 6,
 	FirstCastle, LastCastle = FirstCastle + 128,
