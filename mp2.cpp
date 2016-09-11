@@ -524,7 +524,9 @@ bool gamefile::load(const char* url)
 	return true;
 }
 
-static void add_object(int pos, unsigned char object, unsigned char index, unsigned char quantity)
+void add_mapobject(int pos, res::tokens icn, unsigned char frame, unsigned char object, unsigned char quantity);
+
+static void add_object(int pos, unsigned char object, unsigned char frame, unsigned char quantity)
 {
 	auto r = res::map(object);
 	switch(r)
@@ -536,7 +538,7 @@ static void add_object(int pos, unsigned char object, unsigned char index, unsig
 	case res::OBJNRSRC: // turn off all resources
 		return;
 	case res::OBJNMUL2:
-		if(index == 163) // event
+		if(frame == 163) // event
 			return;
 		break;
 	case res::FLAG32:
@@ -548,24 +550,7 @@ static void add_object(int pos, unsigned char object, unsigned char index, unsig
 	default:
 		break;
 	}
-	// autodetect level
-	//unsigned level = 0;
-	//while(map::show::objects[pos][level][0])
-	//{
-	//	level++;
-	//	if(level >= sizeof(map::show::objects[pos]) / sizeof(map::show::objects[pos][0]))
-	//		return;
-	//}
-	//map::show::objects[pos][level][0] = object;
-	//map::show::objects[pos][level][1] = index;
-	//map::show::objects[pos][level][2] = quantity % 4;
-	auto rec = bscreate(FirstMapObject, false);
-	if(!rec)
-		return;
-	bsset(rec, Type, r);
-	bsset(rec, Frame, index);
-	bsset(rec, Index, pos);
-	bsset(rec, Count, quantity);
+	add_mapobject(pos, r, frame, object, quantity);
 }
 
 static void add_moveable(short unsigned index, int id, int quality)
@@ -601,12 +586,12 @@ static void add_moveable(short unsigned index, int id, int quality)
 	bsset(rec, Count, count);
 }
 
-void map::load(gamefile& game)
+bool map::load(gamefile& game)
 {
 	char temp[260];
 	io::file st(szurl(temp, "maps", game.file, "mp2"));
 	if(!st)
-		return;
+		return false;
 	// apply players
 	for(int i = 0; i < 6; i++)
 	{
@@ -615,8 +600,10 @@ void map::load(gamefile& game)
 	}
 	// width and heigh
 	st.seek(420, SeekSet);
-	st.read(&map::width, 4);
-	st.read(&map::height, 4);
+	map::width = st.get32();
+	map::height = st.get32();
+	if(!map::width || !map::height)
+		return false;
 	// tiles loading
 	short unsigned tiles_count = map::height * map::width;
 	mp2::tile* tiles = new mp2::tile[tiles_count];
@@ -888,4 +875,5 @@ void map::load(gamefile& game)
 	}
 	delete tiles;
 	delete addons;
+	return true;
 }

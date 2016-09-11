@@ -877,7 +877,8 @@ int game::play(gamefile& game)
 {
 	game.validate();
 	game::initialize();
-	map::load(game);
+	if(!map::load(game))
+		return Cancel;
 	game::prepare();
 	while(true)
 	{

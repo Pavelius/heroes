@@ -296,7 +296,6 @@ int show::game(int player)
 			draw::execute(Change);
 		paint_tiles(rcmap, map::camera);
 		paint_objects(rcmap, map::camera, DWObjects);
-		paint_objects(rcmap, map::camera, DWHightObjects);
 		paint_cursor(rcmap, map::camera);
 		int id = draw::input();
 		switch(id)

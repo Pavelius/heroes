@@ -488,8 +488,8 @@ static int mainmenu()
             }
             break;
         case LoadGame:
-            game.load("_brokena.mp2");
-            game.load("_beltway.mp2");
+			if(!game.load("_beltway.mp2"))
+				break;
             game.players(1);
             if(!tune_scenario(game))
 				break;

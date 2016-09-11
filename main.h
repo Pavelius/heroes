@@ -227,6 +227,7 @@ enum tokens
 	WaterBoatStation, Mushrooms, DemonCave, Volcano,
 	Lake, Flowers, Hill, Mountains, Trees, DiggingHole, Bouler, Rock,
 	Cliff, Hole, DruidicCircle, RiverDeltaDown, RiverDeltaUp, Stumps,
+	RogueCamp,
 	// Custom tokens
 	FirstCreatureCount, LastCreatureCount = FirstCreatureCount + 6,
 	FirstCastle, LastCastle = FirstCastle + 128,
@@ -254,7 +255,7 @@ enum image_flags
 };
 enum draw_flags
 {
-	DWCombat, DWObjects, DWHightObjects,
+	DWCombat, DWObjects,
 	DWMask = 0x0F,
 };
 namespace res
@@ -782,7 +783,7 @@ namespace map
 	bool					ispassable(int index);
 	tokens					gettile(int index);
 	void					jumpto(int index);
-	void					load(gamefile& e);
+	bool					load(gamefile& e);
 	unsigned				movecost(int index);
 	unsigned				movecost(int index, unsigned char direct, unsigned pathfinding = 0);
 	int						moveto(int index, directions direction);
