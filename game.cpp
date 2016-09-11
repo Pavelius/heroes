@@ -798,7 +798,7 @@ void game::build(int rec, int id)
 	bsset(rec, id, next_level);
 	if(next_level == 1 && id >= Dwelving1 && id <= Dwelving6)
 		bsadd(rec, id - Dwelving1 + FirstCreatureCount, growth_per_week[id - Dwelving1]);
-	//bsadd(rec, AlreadyMoved, 1);
+	bsadd(rec, AlreadyMoved, 1);
 }
 
 void game::prepare()
