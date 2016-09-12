@@ -225,9 +225,8 @@ enum tokens
 	FireAltar, AirAltar, EarthAltar, WaterAltar, // 0xFC-0xFF
 	FirstObject = WaterChest, LastObject = WaterAltar,
 	LastAction = LastObject,
-	Mushrooms, Volcano,
-	Lake, Flowers, Hill, Mountains, Trees, DiggingHole, Bouler, Rock,
-	Cliff, Hole, DruidicCircle, RiverDeltaDown, RiverDeltaUp, Stumps,
+	Mushrooms, Volcano, Lake, Flowers, Hill, Mountains, Trees, DiggingHole,
+	Bouler, Rock, Cliff, Hole, RiverDeltaDown, RiverDeltaUp, Stumps,
 	RogueCamp, Leprechaunt,
 	// Custom tokens
 	FirstCreatureCount, LastCreatureCount = FirstCreatureCount + 6,

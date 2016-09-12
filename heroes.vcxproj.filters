@@ -33,7 +33,6 @@
     <ClCompile Include="combat_route.cpp" />
     <ClCompile Include="combat_spells.cpp" />
     <ClCompile Include="indexes.cpp" />
-    <ClCompile Include="map_objects.cpp" />
     <ClCompile Include="map_route.cpp" />
     <ClCompile Include="spells.cpp" />
     <ClCompile Include="tokens.cpp" />
@@ -67,8 +66,9 @@
     <ClCompile Include="show_tavern.cpp" />
     <ClCompile Include="draw_controls.cpp" />
     <ClCompile Include="show_marketplace.cpp" />
-    <ClCompile Include="map_statics.cpp" />
     <ClCompile Include="show_game.cpp" />
     <ClCompile Include="command.cpp" />
+    <ClCompile Include="map_passable.cpp" />
+    <ClCompile Include="map_objects.cpp" />
   </ItemGroup>
 </Project>

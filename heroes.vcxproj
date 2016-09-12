@@ -41,7 +41,7 @@
     <ClCompile Include="crt.cpp" />
     <ClCompile Include="draw.cpp" />
     <ClCompile Include="game_statistic.cpp" />
-    <ClCompile Include="map_statics.cpp" />
+    <ClCompile Include="map_objects.cpp" />
     <ClCompile Include="show_castle_build.cpp" />
     <ClCompile Include="buildings.cpp" />
     <ClCompile Include="show_castle.cpp" />
@@ -66,7 +66,7 @@
     <ClCompile Include="list.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="map.cpp" />
-    <ClCompile Include="map_objects.cpp" />
+    <ClCompile Include="map_passable.cpp" />
     <ClCompile Include="map_route.cpp" />
     <ClCompile Include="draw_controls.cpp" />
     <ClCompile Include="monster.cpp" />
