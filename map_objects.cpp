@@ -20,16 +20,16 @@ static shapeinfo sh1x1 = {1, {1, 1}, {{0, 0}}, {0}, {2}};
 static shapeinfo sh1x1a6 = {1, {1, 1}, {{0, 0}}, {6}, {2}};
 static shapeinfo sh1x1a11 = {1, {1, 1}, {{0, 0}}, {11}, {2}};
 //
-static shapeinfo sh2x1 = {2, {2, 1}, {{-1, 0}, {0, 0}}, {0}, {0,2}};
+static shapeinfo sh2x1 = {2, {2, 1}, {{-1, 0}, {0, 0}}, {0}, {0, 2}};
 static shapeinfo sh2x1a6 = {2, {2, 1}, {{-1, 0}, {0, 0}}, {6, 6}, {0, 2}};
 static shapeinfo sh2x1a6v2 = {2, {2, 1}, {{-1, 0}, {0, 0}}, {0, 6}, {0, 2}};
 static shapeinfo sh2x2 = {4, {2, 2}, {{0, 0}, {1, 0}, {0, 1}, {1, 1}}, {0}, {2, 2, 2, 2}};
 static shapeinfo sh2x2J = {3, {2, 2}, {{0, -1}, {-1, 0}, {0, 0}}, {0}, {1, 0, 2}};
-static shapeinfo sh2x2Ja9 = {3, {2, 2}, {{0, -1}, {-1, 0}, {0, 0}}, {9, 9, 9}};
-static shapeinfo sh2x3 = {6, {2, 3}, {{-1, -1}, {0, -1}, {-1, 0}, {0, 0}, {-1, 1}, {0, 1}}};
+static shapeinfo sh2x2Ja9 = {3, {2, 2}, {{0, -1}, {-1, 0}, {0, 0}}, {9, 9, 9}, {1, 0, 2}};
+static shapeinfo sh2x3 = {6, {2, 3}, {{-1, -1}, {0, -1}, {-1, 0}, {0, 0}, {-1, 1}, {0, 1}}, {0, 1, 1, 0, 2, 2}};
 //
-static shapeinfo sh3x1 = {3, {3, 1}, {{-2, 0}, {-1, 0}, {0, 0}}};
-static shapeinfo sh3x1a6 = {3, {3, 1}, {{-1, 0}, {0, 0}, {1, 0}}, {6, 6, 6}};
+static shapeinfo sh3x1 = {3, {3, 1}, {{-2, 0}, {-1, 0}, {0, 0}}, {0}, {0, 2, 2}};
+static shapeinfo sh3x1a6 = {3, {3, 1}, {{-1, 0}, {0, 0}, {1, 0}}, {6, 6, 6}, {0, 2, 2}};
 static shapeinfo sh3x2 = {6, {3, 2}, {{-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {0, 0}, {1, 0}}};
 static shapeinfo sh3x2a3 = {6, {3, 2}, {{-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {0, 0}, {1, 0}}, {3, 3, 3, 3, 3, 3}};
 static shapeinfo sh3x2u1a6 = {6, {3, 2}, {{0, -1}, {1, -1}, {-1, 0}, {0, 0}, {1, 0}, {0, 0}}, {6, 6, 0, 6, 6, 0}};
@@ -67,8 +67,8 @@ static shapeinfo sh4x2à6 = {8, {4, 2}, {{-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {-
 static shapeinfo sh4x2à6_rogcmp = {8, {4, 2}, {{-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}}, {0, 0, 0, 0, 0, 0, 6, 0}};
 static shapeinfo sh4x3 = {12, {4, 3}, {{-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {-2, 1}, {-1, 1}, {0, 1}, {1, 1}}};
 static shapeinfo sh4x3u1r1 = {10, {4, 3}, {{-1, -2}, {0, -2}, {-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}}};
-static shapeinfo sh4x3r1d1 = {10, {4, 3}, {{-2, -1}, {-1, -1}, {0, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {-1, 1}, {0, 1}, {1, 1}}};
-static shapeinfo sh4x3u1b1 = {10, {4, 3}, {{-1, -1}, {0, -1}, {1, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {-2, 1}, {-1, 1}, {0, 1}}};
+static shapeinfo sh4x3r1d1 = {10, {4, 3}, {{-2, -1}, {-1, -1}, {0, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {-1, 1}, {0, 1}, {1, 1}}, {0}, {0, 1, 1, 0, 2, 2, 1, 0, 2, 2}};
+static shapeinfo sh4x3u1b1 = {10, {4, 3}, {{-1, -1}, {0, -1}, {1, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {-2, 1}, {-1, 1}, {0, 1}}, {0}, {0, 1, 1, 0, 1, 2, 2, 0, 2, 2}};
 static shapeinfo sh4x3u2a3 = {10, {4, 3}, {{0, -2}, {1, -2}, {-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}}, {3, 3, 3, 3, 3, 3, 3, 3, 3, 3}};
 static shapeinfo sh4x3u2r1d1a9 = {8, {4, 3}, {{-1, -2}, {-3, -1}, {-2, -1}, {-1, -1}, {0, -1}, {-2, 0}, {-1, 0}, {0, 0}}, {8, 8, 0, 0, 0, 0, 0, 0}};
 //
@@ -626,8 +626,8 @@ void tilesetsview()
 	char temp[64];
 	while(true)
 	{
-		auto x1 = 200;
-		auto y1 = 200;
+		auto x1 = 640 / 2 - 16;
+		auto y1 = 480 / 2 - 16;
 		if(ts_index < 0)
 			ts_index = 0;
 		else if(ts_index >= sizeof(mapobjectsets) / sizeof(mapobjectsets[0]))
@@ -659,12 +659,14 @@ void tilesetsview()
 				center.y = py;
 			}
 			draw::rectb(px, py, px + 32, py + 32, 0xC);
+			if(sh.content[i] == 2)
+				draw::rectb(px + 1, py + 1, px + 32 - 1, py + 32 - 1, 0xBF);
 		}
 		int rx1 = x1 + sh.offset.x * 32;
 		int ry1 = y1 + sh.offset.y * 32;
-		draw::rectb(rx1, ry1, rx1 + sh.size.x * 32, ry1 + sh.size.y * 32, 0xBF);
+		//draw::rectb(rx1, ry1, rx1 + sh.size.x * 32, ry1 + sh.size.y * 32, 0xBF);
 		draw::cursor(res::ADVMCO, 0);
-		draw::rectb(center.x + 1, center.y + 1, center.x + 32 - 1, center.y + 32 - 1, 0x72);
+		draw::rectb(center.x + 2, center.y + 2, center.x + 32 - 2, center.y + 32 - 2, 0x72);
 		int id = draw::input();
 		switch(id)
 		{
@@ -910,6 +912,32 @@ void add_object(unsigned short index, unsigned char object, unsigned char frame,
 	e.type = type;
 }
 
+static void map_block()
+{
+	for(int i = 0; i<mapobjects.count; i++)
+	{
+		auto& e = objects[i];
+		if(!e.icn)
+			continue;
+		if(e.info)
+		{
+			auto& sh = e.info->shape;
+			int x = map::i2x(e.index);
+			int y = map::i2y(e.index);
+			for(int index = 0; index < sh.count; index++)
+			{
+				int x1 = x + sh.points[index].x;
+				int y1 = y + sh.points[index].y;
+				if(x1 < 0 || y1 < 0 || x1 >= map::width || y1 >= map::height)
+					continue;
+				if(sh.content[index] == 2)
+					map::show::route[map::m2i(x1, y1)] = map::Blocked;
+			}
+		}
+	}
+}
+static command command_map_block("map_block", map_block);
+
 static struct mapobject_drawable_plugin : public drawable::plugin
 {
 	void selecting(drawable** result, rect screen, unsigned flags) override
@@ -917,7 +945,7 @@ static struct mapobject_drawable_plugin : public drawable::plugin
 		if((flags&DWMask) != DWObjects)
 			return;
 		auto p = result;
-		for(int i=0; i<mapobjects.count; i++)
+		for(int i = 0; i < mapobjects.count; i++)
 		{
 			if(!objects[i].getrect().intersect(screen))
 				continue;

@@ -515,7 +515,6 @@ static int mainmenu()
 
 int main()
 {
-	command::execute("initialize");
 	draw::font = res::FONT;
 	draw::create("Heroes II", 200, false);
 	return mainmenu();

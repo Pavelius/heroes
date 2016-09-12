@@ -983,6 +983,7 @@ bool draw::create(const char* title, unsigned milliseconds, bool fullscreen)
 	}
 	// Set colors
 	colorize();
+	command::execute("initialize");
 	// Create Window
 	return sys_create(title, milliseconds, fullscreen, bits, width, height);
 }

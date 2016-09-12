@@ -390,20 +390,32 @@ void map::route::wave(int start, int skill, int ship_master)
 	memset(map::show::route, 0, sizeof(map::show::route));
 	if(start==-1)
 		return;
-	int count = map::width*map::height;
 	if(ship_master)
 	{
-		for(int i = 0; i<count; i++)
-			map::show::route[i] = map::ispassable(i) ? 0 : 0xFFFFFFFF;
+		// Block all water part
+		for(int y = 0; y < map::height; y++)
+		{
+			for(int x = 0; x < map::width; x++)
+			{
+				auto i = map::m2i(x, y);
+				map::show::route[i] = map::ispassable(i) ? 0 : 0xFFFFFFFF;
+			}
+		}
 	}
 	else
 	{
-		//map::moveable::block(map::show::route);
-		for(int i = 0; i<count; i++)
+		// Block all water part
+		for(int y = 0; y < map::height; y++)
 		{
-			if(!map::ispassable(i) || map::gettile(i)==Water)
-				map::show::route[i] = map::Blocked;
+			for(int x = 0; x < map::width; x++)
+			{
+				auto i = map::m2i(x, y);
+				if(map::gettile(i)==Water)
+					map::show::route[i] = map::Blocked;
+			}
 		}
+		// Block overland part
+		command::execute("map_block");
 	}
 	path_push = 0;
 	path_pop = 0;

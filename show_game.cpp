@@ -243,25 +243,38 @@ static void paint_tiles(rect screen, point camera)
 	}
 }
 
-static void write_log(drawable** drawables)
+static void paint_blocked(rect screen, point camera)
 {
-	io::file file("d:/applications/heroes/log.txt", StreamWrite);
-	if(!file)
-		return;
-	auto count = 0;
-	auto start = drawables;
-	while(*drawables)
+	for(int y = screen.y1; y < screen.y2; y += 32)
 	{
-		auto p = *drawables;
-		auto rc = p->getrect();
-		auto rec = p->getid();
-		file << "rect = ";
-		file << "(" << rc.x1 << "," << rc.y1 << "," << rc.x2 << "," << rc.y2 << ")";
-		file << "\r\n";
-		drawables++;
+		for(int x = screen.x1; x < screen.x2; x += 32)
+		{
+			int index = map::m2i((x + camera.x) / 32, (y + camera.y) / 32);
+			if(map::show::route[index] == map::Blocked)
+				draw::rectb(x + 1, y + 1, x + 32 - 1, y + 32 - 1, 0xC0);
+		}
 	}
-	file << "count = " << (drawables-start);
 }
+
+//static void write_log(drawable** drawables)
+//{
+//	io::file file("d:/applications/heroes/log.txt", StreamWrite);
+//	if(!file)
+//		return;
+//	auto count = 0;
+//	auto start = drawables;
+//	while(*drawables)
+//	{
+//		auto p = *drawables;
+//		auto rc = p->getrect();
+//		auto rec = p->getid();
+//		file << "rect = ";
+//		file << "(" << rc.x1 << "," << rc.y1 << "," << rc.x2 << "," << rc.y2 << ")";
+//		file << "\r\n";
+//		drawables++;
+//	}
+//	file << "count = " << (drawables-start);
+//}
 
 static void paint_objects(rect screen, point camera, unsigned flags)
 {
@@ -271,8 +284,6 @@ static void paint_objects(rect screen, point camera, unsigned flags)
 	dwselect(drawables, screen, camera, flags);
 	dwclipping(drawables, screen, camera);
 	dworder(drawables, zlen(drawables));
-	if(hot::key == (Alpha + 'W'))
-		write_log(drawables);
 	dwpaint(drawables, screen, camera, flags);
 }
 
@@ -295,6 +306,7 @@ int show::game(int player)
 	int index = bsget(selected_object, Index);
 	if(index > 0)
 		map::jumpto(index);
+	bool show_blocked = false;
 	rect rcmap = {16, 16, 16 + 32 * 14, 16 + 32 * 14};
 	while(true)
 	{
@@ -318,6 +330,8 @@ int show::game(int player)
 			draw::execute(Change);
 		paint_tiles(rcmap, map::camera);
 		paint_objects(rcmap, map::camera, DWObjects);
+		if(show_blocked)
+			paint_blocked(rcmap, map::camera);
 		paint_cursor(rcmap, map::camera);
 		int id = draw::input();
 		switch(id)
@@ -376,6 +390,9 @@ int show::game(int player)
 			break;
 		case KeyLeft:
 			map::slide(map::Left);
+			break;
+		case Alpha+'B':
+			show_blocked = !show_blocked;
 			break;
 		case EndTurn:
 			return EndTurn;
