@@ -579,9 +579,9 @@ static void initialize()
 				if(y < my)
 					my = y;
 				sh.indecies[i] = index;
-				index += 1 + sh.animation[i];
 				if(sh.points[i].x == 0 && sh.points[i].y == 0)
 					sh.zero = index;
+				index += 1 + sh.animation[i];
 			}
 			sh.offset.x = mx;
 			sh.offset.y = my;
@@ -733,7 +733,6 @@ struct mapobject : public drawable
 		if(info)
 		{
 			auto& sh = info->shape;
-			pt.x -= 32;
 			for(int i = 0; i < sh.count; i++)
 			{
 				auto px = pt.x + sh.points[i].x * 32;
@@ -840,6 +839,13 @@ void add_moveable(short unsigned index, short unsigned type, short unsigned quan
 	}
 	else if(type >= FirstArtifact && type <= LastArtifact)
 		icn = res::OBJNARTI;
+	else if(type == TreasureChest)
+		icn = res::OBJNRSRC;
+	else
+	{
+		assert(0);
+		return;
+	}
 	e.icn = icn;
 	e.index = index;
 	e.count = quantity;
@@ -880,8 +886,7 @@ void add_object(unsigned short index, unsigned char object, unsigned char frame,
 		break;
 	default:
 		pi = find_object(icn, frame);
-		if(!pi)
-			return; // Error?
+		assert(pi);
 		break;
 	}
 	if(pi)
@@ -908,17 +913,14 @@ static struct mapobject_drawable_plugin : public drawable::plugin
 {
 	void selecting(drawable** result, rect screen, unsigned flags) override
 	{
-		auto mode = flags&DWMask;
-		if(mode != DWObjects)
+		if((flags&DWMask) != DWObjects)
 			return;
 		auto p = result;
-		for(auto& e : objects)
+		for(int i=0; i<mapobjects.count; i++)
 		{
-			if(!e.icn)
-				break;
-			if(!e.getrect().intersect(screen))
+			if(!objects[i].getrect().intersect(screen))
 				continue;
-			*p++ = &e;
+			*p++ = objects + i;
 		}
 		*p = 0;
 	}
