@@ -716,6 +716,46 @@ bool map::load(gamefile& game)
 			// error
 		}
 	}
+	// after load tiles
+	for(int i = 0; i < tiles_count; i++)
+	{
+		short unsigned i1 = mp2i(i);
+		show::tiles[i1] = tiles[i].tileIndex;
+		show::flags[i1] = tiles[i].shape % 4;
+		for(int level = 3; level >= 0; level--)
+		{
+			// level 1.0
+			if(tiles[i].indexName1 != 0xFF && (tiles[i].quantity1 % 4) == level)
+				add_object(i1, tiles[i].objectName1, tiles[i].indexName1, tiles[i].quantity1);
+			// level 1.N
+			if(tiles[i].indexAddon)
+			{
+				int ai = tiles[i].indexAddon;
+				while(ai)
+				{
+					mp2::addon& a = addons[ai];
+					if(a.objectNameN1 && a.indexNameN1 != 0xFF && (a.quantityN % 4) == level)
+						add_object(i1, a.objectNameN1, a.indexNameN1, a.quantityN);
+					ai = a.indexAddon;
+				}
+			}
+			// level 2.0
+			if(tiles[i].indexName2 != 0xFF && (tiles[i].quantity2 % 4) == level)
+				add_object(i1, tiles[i].objectName2, tiles[i].indexName2, tiles[i].quantity2);
+			// level 2.N
+			if(tiles[i].indexAddon)
+			{
+				int ai = tiles[i].indexAddon;
+				while(ai)
+				{
+					mp2::addon& a = addons[ai];
+					if(a.objectNameN2 && a.indexNameN2 != 0xFF && (a.quantityN % 4) == level)
+						add_object(i1, a.objectNameN2, a.indexNameN2, a.quantityN);
+					ai = a.indexAddon;
+				}
+			}
+		}
+	}
 	// Prepare monster/artifact/resource
 	for(short unsigned i = 0; i < tiles_count; i++)
 	{
@@ -759,46 +799,6 @@ bool map::load(gamefile& game)
 			if(res::map(tiles[i].objectName1) == res::OBJNRSRC)
 				add_moveable(i1, TreasureChest, 0);
 			break;
-		}
-	}
-	// after load tiles
-	for(int i = 0; i < tiles_count; i++)
-	{
-		short unsigned i1 = mp2i(i);
-		show::tiles[i1] = tiles[i].tileIndex;
-		show::flags[i1] = tiles[i].shape % 4;
-		for(int level = 3; level >= 0; level--)
-		{
-			// level 1.0
-			if(tiles[i].indexName1 != 0xFF && (tiles[i].quantity1 % 4) == level)
-				add_object(i1, tiles[i].objectName1, tiles[i].indexName1, tiles[i].quantity1);
-			// level 1.N
-			if(tiles[i].indexAddon)
-			{
-				int ai = tiles[i].indexAddon;
-				while(ai)
-				{
-					mp2::addon& a = addons[ai];
-					if(a.objectNameN1 && a.indexNameN1 != 0xFF && (a.quantityN % 4) == level)
-						add_object(i1, a.objectNameN1, a.indexNameN1, a.quantityN);
-					ai = a.indexAddon;
-				}
-			}
-			// level 2.0
-			if(tiles[i].indexName2 != 0xFF && (tiles[i].quantity2 % 4) == level)
-				add_object(i1, tiles[i].objectName2, tiles[i].indexName2, tiles[i].quantity2);
-			// level 2.N
-			if(tiles[i].indexAddon)
-			{
-				int ai = tiles[i].indexAddon;
-				while(ai)
-				{
-					mp2::addon& a = addons[ai];
-					if(a.objectNameN2 && a.indexNameN2 != 0xFF && (a.quantityN % 4) == level)
-						add_object(i1, a.objectNameN2, a.indexNameN2, a.quantityN);
-					ai = a.indexAddon;
-				}
-			}
 		}
 	}
 	// Create start heroes if need

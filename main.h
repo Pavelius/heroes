@@ -192,7 +192,7 @@ enum tokens
 	Rumor, Riddle,
 	// Map objects (order is impotant)
 	WaterChest, AlchemyLab, Sign, WaterBue, // 0x80-0x83
-	DeadSkeleton, DaemonCave, TreasureChest, FaerieRing, // 0x84-0x87
+	DeadSkeleton, DemonCave, TreasureChest, FaerieRing, // 0x84-0x87
 	CampFire, Fountain, Gazebo, AncientLamp, // 0x88-0x8B
 	Graveyard, ArcherHouse, GoblinHut, DwarfCottage, // 0x8C-0x8F
 	PeasantHut, Map0x91, Map0x92, Event, // 0x90-0x93
@@ -213,7 +213,7 @@ enum tokens
 	Pyramid, CityDead, Excavation, Sphinx, // 0xCC-0xCF
 	Wagon, Map0xD1, ArtesianSpring, TrollBridge, // 0xD0-0xD3
 	WateringHole, WitchHut, Xanadu, CentautCave, // 0xD4-0xD7
-	LeanTo, MagellanMaps, Flotsam, DeRelictShip, // 0xD8-0xDB
+	LeanTo, WaterBoatStation, Flotsam, DeRelictShip, // 0xD8-0xDB
 	ShipWreckSurvivor, Bottle, MagicWell, MagicGarden, // 0xDC-0xDF
 	ObservationTower, FreemanFoundry, Map0xE2, Map0xE3, // 0xE0-0xE3
 	Map0xE4, Map0xE5, Map0xE6, Map0xE7, // 0xE4-0xE7
@@ -225,7 +225,7 @@ enum tokens
 	FireAltar, AirAltar, EarthAltar, WaterAltar, // 0xFC-0xFF
 	FirstObject = WaterChest, LastObject = WaterAltar,
 	LastAction = LastObject,
-	WaterBoatStation, Mushrooms, DemonCave, Volcano,
+	Mushrooms, Volcano,
 	Lake, Flowers, Hill, Mountains, Trees, DiggingHole, Bouler, Rock,
 	Cliff, Hole, DruidicCircle, RiverDeltaDown, RiverDeltaUp, Stumps,
 	RogueCamp, Leprechaunt,
