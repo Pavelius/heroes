@@ -3,6 +3,150 @@
 static int selected_object;
 static int information_mode;
 
+static int routeindex(int from, int throught, int to, int mod)
+{
+	// ICN::ROUTE
+	// start index 1, 25, 49, 73, 97, 121 (size arrow path)
+	// 1 - from left to up+
+	// 9 - from down to up+
+	int index = 1;
+	if(mod >= 200)
+		index = 121;
+	else if(mod >= 175)
+		index = 97;
+	else if(mod >= 150)
+		index = 73;
+	else if(mod >= 125)
+		index = 49;
+	else if(mod >= 100)
+		index = 25;
+	map::directions d = map::orient(from, throught);
+	map::directions d1 = map::orient(throught, to);
+	if(from == throught)
+	{
+		switch(d)
+		{
+		case map::Up:		index += 8; break;
+		case map::RightUp:	index += 17; break;
+		case map::Right:	index += 18; break;
+		case map::Left:		index += 6; break;
+		case map::LeftUp:	index += 7; break;
+		case map::LeftDown:	index += 5; break;
+		case map::RightDown:index += 19; break;
+		default: 			index = 0; break;
+		}
+	}
+	else switch(d)
+	{
+	case map::Up:
+		switch(d1)
+		{
+		case map::Up:		index += 8; break;
+		case map::RightUp:	index += 17; break;
+		case map::Right:	index += 18; break;
+		case map::Left:		index += 6; break;
+		case map::LeftUp:	index += 7; break;
+		case map::LeftDown:	index += 5; break;
+		case map::RightDown:index += 19; break;
+		default: 			index = 0; break;
+		}
+		break;
+	case map::RightUp:
+		switch(d1)
+		{
+		case map::Up:		index += 0; break;
+		case map::RightUp:	index += 9; break;
+		case map::Right:	index += 18; break;
+		case map::RightDown:index += 19; break;
+		case map::LeftUp:	index += 7; break;
+		case map::Down:		index += 20; break;
+		case map::Left:		index += 6; break;
+		default: 			index = 0; break;
+		}
+		break;
+	case map::Right:
+		switch(d1)
+		{
+		case map::Up:		index += 0; break;
+		case map::Down:		index += 20; break;
+		case map::RightDown:index += 19; break;
+		case map::Right:	index += 10; break;
+		case map::RightUp:	index += 1; break;
+		case map::LeftUp:	index += 7; break;
+		case map::LeftDown:	index += 21; break;
+		default: 			index = 0; break;
+		}
+		break;
+	case map::RightDown:
+		switch(d1)
+		{
+		case map::RightUp:	index += 1; break;
+		case map::Right:	index += 2; break;
+		case map::RightDown:index += 11; break;
+		case map::Down:		index += 20; break;
+		case map::LeftDown:	index += 21; break;
+		case map::Up:		index += 0; break;
+		case map::Left:		index += 22; break;
+		default: 			index = 0; break;
+		}
+		break;
+	case map::Down:
+		switch(d1)
+		{
+		case map::Right:	index += 2; break;
+		case map::RightDown:index += 3; break;
+		case map::Down:		index += 12; break;
+		case map::LeftDown:	index += 21; break;
+		case map::Left:		index += 22; break;
+		case map::LeftUp:	index += 16; break;
+		case map::RightUp:	index += 1; break;
+		default: 			index = 0; break;
+		}
+		break;
+	case map::LeftDown:
+		switch(d1)
+		{
+		case map::RightDown:index += 3; break;
+		case map::Down:		index += 4; break;
+		case map::LeftDown:	index += 13; break;
+		case map::Left:		index += 22; break;
+		case map::LeftUp:	index += 23; break;
+		case map::Up:		index += 16; break;
+		case map::Right:	index += 2; break;
+		default: 			index = 0; break;
+		}
+		break;
+	case map::Left:
+		switch(d1)
+		{
+		case map::Up:		index += 16; break;
+		case map::Down:		index += 4; break;
+		case map::LeftDown:	index += 5; break;
+		case map::Left:		index += 14; break;
+		case map::LeftUp:	index += 23; break;
+		case map::RightUp:	index += 17; break;
+		case map::RightDown:index += 3; break;
+		default: 			index = 0; break;
+		}
+		break;
+	case map::LeftUp:
+		switch(d1)
+		{
+		case map::Up:		index += 16; break;
+		case map::RightUp:	index += 17; break;
+		case map::LeftDown:	index += 5; break;
+		case map::Left:		index += 6; break;
+		case map::LeftUp:	index += 15; break;
+		case map::Down:		index += 4; break;
+		case map::Right:	index += 18; break;
+		default: 			index = 0; break;
+		}
+		break;
+	default: index = 0; break;
+	}
+	return index;
+}
+
 static void handle_input(int x, int y, int object)
 {
 	if(object && selected_object==object)
@@ -276,11 +420,16 @@ static void paint_route(rect screen, point camera)
 	auto count = map::route::getpathcount();
 	if(!count)
 		return;
-	for(int i = 0; i < count; i++)
+	int from = path[count - 1];
+	for(int i = count-2; i >= 0; i--)
 	{
 		int index = path[i];
-		int x = map::i2x(index);
-		int y = map::i2y(index);
+		int to = index;
+		if(i > 0)
+			to = path[i - 1];
+		int x = map::i2x(index)*32 - 12 - camera.x + screen.x1;
+		int y = map::i2y(index)*32 - camera.y + screen.y1;
+		draw::image(x, y, res::ROUTE, routeindex(from, index, to, 100));
 	}
 }
 
