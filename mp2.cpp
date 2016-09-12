@@ -526,7 +526,7 @@ bool gamefile::load(const char* url)
 
 void add_mapobject(int pos, res::tokens icn, unsigned char frame, unsigned char object, unsigned char quantity);
 
-static void add_object(int pos, unsigned char object, unsigned char frame, unsigned char quantity)
+static void add_object(unsigned short pos, unsigned char object, unsigned char frame, unsigned char quantity)
 {
 	auto r = res::map(object);
 	switch(r)
@@ -536,21 +536,23 @@ static void add_object(int pos, unsigned char object, unsigned char frame, unsig
 	case res::MINIHERO: // turn off heroes
 	case res::SHADOW32: // turn off all shadows
 	case res::OBJNRSRC: // turn off all resources
-		return;
+		break;
 	case res::OBJNMUL2:
 		if(frame == 163) // event
 			return;
+		add_mapobject(pos, r, frame, object, quantity);
 		break;
 	case res::FLAG32:
-		return;
+		break;
 	case res::OBJNTOWN:
 	case res::OBJNTWBA:
 	case res::OBJNTWRD:
-		return;
+	case res::OBJNTWSH:
+		break;
 	default:
+		add_mapobject(pos, r, frame, object, quantity);
 		break;
 	}
-	add_mapobject(pos, r, frame, object, quantity);
 }
 
 static void add_moveable(short unsigned index, int id, int quality)
@@ -823,7 +825,7 @@ bool map::load(gamefile& game)
 	// after load tiles
 	for(int i = 0; i < tiles_count; i++)
 	{
-		auto i1 = mp2i(i);
+		short unsigned i1 = mp2i(i);
 		show::tiles[i1] = tiles[i].tileIndex;
 		show::flags[i1] = tiles[i].shape % 4;
 		for(int level = 3; level >= 0; level--)

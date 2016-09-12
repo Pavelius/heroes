@@ -1,5 +1,6 @@
 #include "array.h"
 #include "base.h"
+#include "command.h"
 #include "crt.h"
 #include "drawable.h"
 #include "io.h"

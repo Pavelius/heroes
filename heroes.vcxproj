@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClInclude Include="array.h" />
     <ClInclude Include="base.h" />
+    <ClInclude Include="command.h" />
     <ClInclude Include="crt.h" />
     <ClInclude Include="drawable.h" />
     <ClInclude Include="input.h" />
@@ -36,6 +37,7 @@
     <ClCompile Include="base.cpp" />
     <ClCompile Include="base_meta.cpp" />
     <ClCompile Include="castle.cpp" />
+    <ClCompile Include="command.cpp" />
     <ClCompile Include="crt.cpp" />
     <ClCompile Include="draw.cpp" />
     <ClCompile Include="game_statistic.cpp" />

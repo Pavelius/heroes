@@ -11,6 +11,7 @@
     <ClInclude Include="input.h" />
     <ClInclude Include="point.h" />
     <ClInclude Include="rect.h" />
+    <ClInclude Include="command.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -69,5 +70,6 @@
     <ClCompile Include="show_marketplace.cpp" />
     <ClCompile Include="map_statics.cpp" />
     <ClCompile Include="show_game.cpp" />
+    <ClCompile Include="command.cpp" />
   </ItemGroup>
 </Project>

@@ -542,7 +542,7 @@ static struct mapobjectset
 	{Empthy, res::OBJNMUL2, sizeof(multiobj2) / sizeof(multiobj2[0]), multiobj2},
 };
 
-void map_objects_initialize()
+static void initialize()
 {
 	// Initialize shapes
 	for(auto& ts : mapobjectsets)
@@ -587,6 +587,7 @@ void map_objects_initialize()
 		}
 	}
 }
+static command command_initialize("initialize", initialize);
 
 static mapobjectinfo* find_object(res::tokens icn, unsigned char frame)
 {
@@ -691,7 +692,14 @@ struct mapobject : public drawable
 	rect getrect() const override
 	{
 		auto pt = getpos();
-		return{pt.x, pt.y, pt.x + 32, pt.y + 32};
+		if(info)
+		{
+			short x1 = pt.x + info->shape.offset.x * 32;
+			short y1 = pt.y + info->shape.offset.y * 32;
+			return{x1, y1, x1 + info->shape.size.x * 32, y1 + info->shape.size.y * 32};
+		}
+		else
+			return{pt.x, pt.y, pt.x + 32, pt.y + 32};
 	}
 
 	point getzpos() const override
@@ -702,21 +710,28 @@ struct mapobject : public drawable
 	void painting(point camera, unsigned flags) const override
 	{
 		auto pt = getpos() - camera;
-		auto& sh = info->shape;
-		for(int i = 0; i < sh.count; i++)
+		if(info)
 		{
-			auto px = pt.x + sh.points[i].x * 32 - 32;
-			auto py = pt.y + sh.points[i].y * 32;
-			auto frame = info->first + sh.indecies[i];
-			if(sh.animation[i])
-				draw::image(px, py, icn, frame + 1 + ((draw::counter + count) % sh.animation[i]));
-			draw::image(px, py, icn, frame);
+			auto& sh = info->shape;
+			pt.x -= 32;
+			for(int i = 0; i < sh.count; i++)
+			{
+				auto px = pt.x + sh.points[i].x * 32;
+				auto py = pt.y + sh.points[i].y * 32;
+				auto frame = info->first + sh.indecies[i];
+				if(sh.animation[i])
+					draw::image(px, py, icn, frame + 1 + ((draw::counter + count) % sh.animation[i]));
+				draw::image(px, py, icn, frame);
+			}
+			switch(info->object)
+			{
+			case Mines:
+				draw::image(pt.x, pt.y, res::EXTRAOVR, count);
+				break;
+			}
 		}
-	}
-
-	int priority() const override
-	{
-		return getid();
+		else
+			draw::image(pt.x, pt.y, icn, count);
 	}
 
 };
@@ -748,23 +763,29 @@ mapobject* find_object_on_map(short unsigned index, tokens type)
 
 void add_mapobject(int index, res::tokens icn, unsigned char frame, unsigned char object, unsigned char quantity)
 {
+	static unsigned char last_mine_overlay;
 	// Конкретный тип шахты добавим в тип
 	if(icn == res::EXTRAOVR)
 	{
-		auto p = find_object_on_map(index, Mines);
-		if(!p)
-			// Error
-			return;
-		p->count = frame;
+		last_mine_overlay = frame;
 		return;
 	}
 	auto pi = find_object(icn, frame);
-	if(!pi)
-		// Error;
-		return;
-	// Skip all frame, tha are not zero point.
-	if((pi->first + pi->shape.zero) != frame)
-		return;
+	if(pi)
+	{
+		// Skip all frame, tha are not zero point.
+		if((pi->first + pi->shape.zero) != frame)
+			return;
+		if(pi->object == Mines)
+			quantity = last_mine_overlay;
+	}
+	else
+	{
+		if(icn == res::STREAM || icn == res::ROAD)
+			quantity = frame;
+		else
+			return; // Error
+	}
 	if(mapobjects.from + mapobjects.count >= mapobjects.to)
 		return;
 	auto& e = objects[mapobjects.count++];

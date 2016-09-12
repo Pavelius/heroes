@@ -766,6 +766,7 @@ void game::initialize()
 			res += hal * 4;
 		bsset(i, Rating, (int)res);
 	}
+	command::execute("game_initialize");
 }
 
 static void game_endweek()

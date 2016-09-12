@@ -968,8 +968,6 @@ int draw::input(bool wait_input)
 	return id;
 }
 
-void map_objects_initialize();
-
 bool draw::create(const char* title, unsigned milliseconds, bool fullscreen)
 {
 	// Set pallette
@@ -985,8 +983,6 @@ bool draw::create(const char* title, unsigned milliseconds, bool fullscreen)
 	}
 	// Set colors
 	colorize();
-	// Initialize map objects
-	map_objects_initialize();
 	// Create Window
 	return sys_create(title, milliseconds, fullscreen, bits, width, height);
 }
