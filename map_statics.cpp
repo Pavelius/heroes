@@ -92,6 +92,20 @@ static shapeinfo sh7x4 = {22, {7, 4}, {{-2, -3}, {-1, -3}, {0, -3}, {-3, -2}, {-
 //
 static shapeinfo sh8x3 = {24, {8, 3}, {{-4, -1}, {-3, -1}, {-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {2, -1}, {3, -1}, {-4, 0}, {-3, 0}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {2, 0}, {3, 0}, {-4, 1}, {-3, 1}, {-2, 1}, {-1, 1}, {0, 1}, {1, 1}, {2, 1}, {3, 1}}};
 static shapeinfo sh8x5a10 = {23, {8, 5}, {{0, -4}, {1, -4}, {2, -4}, {-1, -3}, {0, -3}, {1, -3}, {2, -3}, {3, -3}, {-3, -2}, {0, -2}, {1, -2}, {2, -2}, {-4, -1}, {-3, -1}, {-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {2, -1}, {-1, 0}, {0, 0}, {1, 0}, {2, 0}}, {14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 0, 0, 0, 0, 0, 0, 0}};
+// Monster animation
+static const unsigned char monster_animation_cicle[] =
+{
+	1, 2, 1, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	3, 4, 5, 4, 3, 0,
+	0, 0, 0, 0,
+};
+// Monster another animation
+static const unsigned char monster_animation_cicl1[] =
+{
+	1, 2, 1, 0,
+	3, 4, 5, 4, 3, 0,
+};
 // Map object description
 struct mapobjectinfo
 {
@@ -676,6 +690,7 @@ struct mapobject : public drawable
 {
 
 	res::tokens		icn;
+	tokens			type;
 	short unsigned	index;
 	short unsigned	count;
 	mapobjectinfo*	info;
@@ -686,6 +701,11 @@ struct mapobject : public drawable
 	{
 		auto x = map::i2x(index) * 32;
 		auto y = map::i2y(index) * 32;
+		if(type >= FirstMonster && type <= LastMonster)
+		{
+			x += 16;
+			y += 30;
+		}
 		return{(short)x, (short)y};
 	}
 
@@ -699,7 +719,7 @@ struct mapobject : public drawable
 			return{x1, y1, x1 + info->shape.size.x * 32, y1 + info->shape.size.y * 32};
 		}
 		else
-			return{pt.x, pt.y, pt.x + 32, pt.y + 32};
+			return{pt.x - 32, pt.y - 32, pt.x + 32, pt.y + 32};
 	}
 
 	point getzpos() const override
@@ -723,21 +743,62 @@ struct mapobject : public drawable
 					draw::image(px, py, icn, frame + 1 + ((draw::counter + count) % sh.animation[i]));
 				draw::image(px, py, icn, frame);
 			}
-			switch(info->object)
+			switch(type)
 			{
 			case Mines:
 				draw::image(pt.x, pt.y, res::EXTRAOVR, count);
 				break;
 			}
 		}
+		else if(type >= FirstResource && type <= LastResource)
+		{
+			draw::image(pt.x - 32, pt.y, res::OBJNRSRC, (type - FirstResource) * 2);
+			draw::image(pt.x, pt.y, res::OBJNRSRC, (type - FirstResource) * 2 + 1);
+		}
+		else if(type >= FirstMonster && type <= LastMonster)
+		{
+			if(type >= MonsterRnd1)
+				draw::image(pt.x, pt.y, res::MONS32, type - FirstMonster);
+			else
+			{
+				draw::image(pt.x, pt.y, res::MINIMON, (type - FirstMonster) * 9);
+				switch(bsget(type, AnimationType))
+				{
+				case 1:
+					draw::image(pt.x, pt.y, res::MINIMON, (type - FirstMonster) * 9
+						+ 1 + monster_animation_cicl1[(draw::counter + index*index) % (sizeof(monster_animation_cicl1) / sizeof(monster_animation_cicl1[0]))]);
+					break;
+				default:
+					draw::image(pt.x, pt.y, res::MINIMON, (type - FirstMonster) * 9
+						+ 1 + monster_animation_cicle[(draw::counter + index*index) % (sizeof(monster_animation_cicle) / sizeof(monster_animation_cicle[0]))]);
+					break;
+				}
+			}
+		}
+		else if(type >= FirstArtifact  && type <= LastArtifact)
+		{
+			draw::image(pt.x - 32, pt.y, res::OBJNARTI, (type - FirstArtifact) * 2);
+			draw::image(pt.x, pt.y, res::OBJNARTI, (type - FirstArtifact) * 2 + 1);
+		}
+		else if(type == TreasureChest)
+		{
+			draw::image(pt.x - 32, pt.y, res::OBJNRSRC, 18);
+			draw::image(pt.x, pt.y, res::OBJNRSRC, 19);
+		}
 		else
 			draw::image(pt.x, pt.y, icn, count);
+	}
+
+	int priority() const override
+	{
+		return getid();
 	}
 
 };
 static mapobject objects[LastMapObject - FirstMapObject + 1];
 static bsmeta::field fields[] = {
 	BSREQ(mapobject, index, Index, Number),
+	BSREQ(mapobject, type, Type, Number),
 	BSREQ(mapobject, count, Count, Number),
 	{0}
 };
@@ -748,44 +809,91 @@ int mapobject::getid() const
 	return FirstMapObject + (this - objects);
 }
 
-mapobject* find_object_on_map(short unsigned index, tokens type)
+void add_moveable(short unsigned index, short unsigned type, short unsigned quantity)
 {
-	for(int i=0; i<mapobjects.count; i++)
+	// А можно ли добавить новый объект?
+	if(mapobjects.from + mapobjects.count >= mapobjects.to)
+		return;
+	auto& e = objects[mapobjects.count++];
+	res::tokens icn = res::Empthy;
+	if(type >= FirstResource && type <= LastResource)
 	{
-		if(objects[i].index == index)
+		switch(type)
 		{
-			if(objects[i].info && objects[i].info->object==type)
-				return objects + i;
+		case Ore:
+		case Wood:
+			quantity = xrand(5, 10);
+			break;
+		case Gold:
+			quantity = 100 * xrand(5, 10);
+			break;
+		default:
+			quantity = xrand(3, 6);
+			break;
 		}
+		icn = res::OBJNRSRC;
 	}
-	return 0;
+	else if(type >= FirstMonster && type <= LastMonster)
+	{
+		icn = res::MONS32;
+		quantity = xrand(12, 40);
+	}
+	else if(type >= FirstArtifact && type <= LastArtifact)
+		icn = res::OBJNARTI;
+	e.icn = icn;
+	e.index = index;
+	e.count = quantity;
+	e.info = 0;
+	e.type = tokens(type);
 }
 
-void add_mapobject(int index, res::tokens icn, unsigned char frame, unsigned char object, unsigned char quantity)
+void add_object(unsigned short index, unsigned char object, unsigned char frame, unsigned char quantity)
 {
 	static unsigned char last_mine_overlay;
-	// Конкретный тип шахты добавим в тип
-	if(icn == res::EXTRAOVR)
+	tokens type = Empthy;
+	mapobjectinfo* pi = 0;
+	auto icn = res::map(object);
+	switch(icn)
 	{
-		last_mine_overlay = frame;
+	case res::MINIHERO: // turn off heroes
+	case res::SHADOW32: // turn off all shadows
+	case res::FLAG32: // Не будем добавлять флаги
+	case res::OBJNTOWN: // Не будем добавлять города
+	case res::OBJNTWBA: // Не будем добавлять базу городов
+	case res::OBJNTWRD: // Не будем добавлять случайные города
+	case res::OBJNTWSH: // Не будем добавлять тени городов и замков
+	case res::OBJNARTI: // turn off atrifacts
+	case res::MONS32: // turn off monsters
+	case res::OBJNRSRC: // turn off all resources
 		return;
+	case res::OBJNMUL2:
+		if(frame == 163) // Не будем добавлять надпись Событие
+			return;
+		pi = find_object(icn, frame);
+		break;
+	case res::EXTRAOVR:
+		last_mine_overlay = frame; // Конкретный тип шахты добавим в шахту сразу после этого
+		return;
+	case res::STREAM:
+	case res::ROAD:
+		quantity = frame;
+		break;
+	default:
+		pi = find_object(icn, frame);
+		if(!pi)
+			return; // Error?
+		break;
 	}
-	auto pi = find_object(icn, frame);
 	if(pi)
 	{
 		// Skip all frame, tha are not zero point.
 		if((pi->first + pi->shape.zero) != frame)
 			return;
+		type = pi->object;
 		if(pi->object == Mines)
 			quantity = last_mine_overlay;
 	}
-	else
-	{
-		if(icn == res::STREAM || icn == res::ROAD)
-			quantity = frame;
-		else
-			return; // Error
-	}
+	// А можно ли добавить новый объект?
 	if(mapobjects.from + mapobjects.count >= mapobjects.to)
 		return;
 	auto& e = objects[mapobjects.count++];
@@ -793,6 +901,7 @@ void add_mapobject(int index, res::tokens icn, unsigned char frame, unsigned cha
 	e.index = index;
 	e.count = quantity;
 	e.info = pi;
+	e.type = type;
 }
 
 static struct mapobject_drawable_plugin : public drawable::plugin

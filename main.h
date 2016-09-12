@@ -239,7 +239,6 @@ enum tokens
 	FirstRecruit, LastRecruit = FirstRecruit + 6,
 	FirstCombatant, LastCombatant = FirstCombatant + 5 + 5 + 10,
 	FirstEffect, LastEffect = FirstEffect + 32,
-	FirstMoveable, LastMoveable = FirstMoveable + 128 * 256,
 	FirstMapObject, LastMapObject = FirstMapObject + 128 * 256
 };
 enum blocks

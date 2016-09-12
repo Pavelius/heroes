@@ -19,6 +19,7 @@ enum stream_flags
 	StreamRead = 1,
 	StreamWrite = 2,
 	StreamText = 4,
+	StreamAppend = 8,
 };
 
 namespace io

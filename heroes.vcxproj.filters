@@ -33,7 +33,6 @@
     <ClCompile Include="combat_route.cpp" />
     <ClCompile Include="combat_spells.cpp" />
     <ClCompile Include="indexes.cpp" />
-    <ClCompile Include="map_moveable.cpp" />
     <ClCompile Include="map_objects.cpp" />
     <ClCompile Include="map_route.cpp" />
     <ClCompile Include="spells.cpp" />

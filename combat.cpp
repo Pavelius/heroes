@@ -312,7 +312,7 @@ static void add_army(int rec)
 			combat::add(u, bsget(rec, i + 1), rec);
 		}
 	}
-	else if(rec >= FirstMoveable && rec <= LastMoveable)
+	else if(rec >= FirstMapObject && rec <= LastMapObject)
 		add_army(bsget(rec, Type), bsget(rec, Count), rec);
 }
 

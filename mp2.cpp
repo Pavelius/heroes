@@ -524,69 +524,8 @@ bool gamefile::load(const char* url)
 	return true;
 }
 
-void add_mapobject(int pos, res::tokens icn, unsigned char frame, unsigned char object, unsigned char quantity);
-
-static void add_object(unsigned short pos, unsigned char object, unsigned char frame, unsigned char quantity)
-{
-	auto r = res::map(object);
-	switch(r)
-	{
-	case res::OBJNARTI: // turn off atrifacts
-	case res::MONS32: // turn off monsters
-	case res::MINIHERO: // turn off heroes
-	case res::SHADOW32: // turn off all shadows
-	case res::OBJNRSRC: // turn off all resources
-		break;
-	case res::OBJNMUL2:
-		if(frame == 163) // event
-			return;
-		add_mapobject(pos, r, frame, object, quantity);
-		break;
-	case res::FLAG32:
-		break;
-	case res::OBJNTOWN:
-	case res::OBJNTWBA:
-	case res::OBJNTWRD:
-	case res::OBJNTWSH:
-		break;
-	default:
-		add_mapobject(pos, r, frame, object, quantity);
-		break;
-	}
-}
-
-static void add_moveable(short unsigned index, int id, int quality)
-{
-	int rec = bscreate(FirstMoveable);
-	bsset(rec, Type, id);
-	bsset(rec, Index, index);
-	// Count depends on type
-	int count = 0;
-	switch(bsget(id, First))
-	{
-	case FirstResource:
-		switch(id)
-		{
-		case Ore:
-		case Wood:
-			count = xrand(5, 10);
-			break;
-		case Gold:
-			count = 100 * xrand(5, 10);
-			break;
-		default:
-			count = xrand(3, 6);
-			break;
-		}
-		break;
-	case FirstMonster:
-		count = xrand(12, 40);
-		break;
-	default:
-		break;
-	}
-	bsset(rec, Count, count);
-}
+void add_moveable(short unsigned index, short unsigned type, short unsigned quantity);
+void add_object(unsigned short pos, unsigned char object, unsigned char frame, unsigned char quantity);
 
 bool map::load(gamefile& game)
 {

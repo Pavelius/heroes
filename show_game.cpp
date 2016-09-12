@@ -243,6 +243,26 @@ static void paint_tiles(rect screen, point camera)
 	}
 }
 
+static void write_log(drawable** drawables)
+{
+	io::file file("d:/applications/heroes/log.txt", StreamWrite);
+	if(!file)
+		return;
+	auto count = 0;
+	auto start = drawables;
+	while(*drawables)
+	{
+		auto p = *drawables;
+		auto rc = p->getrect();
+		auto rec = p->getid();
+		file << "rect = ";
+		file << "(" << rc.x1 << "," << rc.y1 << "," << rc.x2 << "," << rc.y2 << ")";
+		file << "\r\n";
+		drawables++;
+	}
+	file << "count = " << (drawables-start);
+}
+
 static void paint_objects(rect screen, point camera, unsigned flags)
 {
 	draw::state push;
@@ -251,6 +271,8 @@ static void paint_objects(rect screen, point camera, unsigned flags)
 	dwselect(drawables, screen, camera, flags);
 	dwclipping(drawables, screen, camera);
 	dworder(drawables, zlen(drawables));
+	if(hot::key == (Alpha + 'W'))
+		write_log(drawables);
 	dwpaint(drawables, screen, camera, flags);
 }
 

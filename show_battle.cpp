@@ -88,7 +88,7 @@ void combat::board(int attacker, int defender)
 	bool light = true;
 	bool trees = false;
 	tokens area = Lava;
-	if(defender >= (int)FirstMoveable && defender <= (int)LastMoveable)
+	if(defender >= FirstMapObject && defender <= LastMapObject)
 	{
 		int pos = bsget(defender, Index);
 		area = map::gettile(pos);

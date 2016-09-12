@@ -398,7 +398,7 @@ void map::route::wave(int start, int skill, int ship_master)
 	}
 	else
 	{
-		map::moveable::block(map::show::route);
+		//map::moveable::block(map::show::route);
 		for(int i = 0; i<count; i++)
 		{
 			if(!map::ispassable(i) || map::gettile(i)==Water)
@@ -519,10 +519,10 @@ static bool reactionto(int rec, int pos2, void(*callback)())
 {
 	if(!makestep(rec, pos2))
 		return false;
-	int m = bsfind(FirstMoveable, Index, pos2);
+	int m = bsfind(FirstMapObject, Index, pos2);
     if(!m)
         return false;
-	map::moveable::reaction(m, rec);
+	//map::moveable::reaction(m, rec);
 	bsset(rec, MoveTo, bsget(rec, Index));
 	if(callback)
 		callback();
@@ -534,10 +534,10 @@ static void battle(int rec, int pos2, void(*callback)())
 	if(!makestep(rec, pos2))
 		return;
 	bsset(rec, Index, pos2);
-	int enemy = map::moveable::nearest(pos2, FirstMonster, LastMonster, 1);
-	if(enemy==-1)
-		return;
-	combat::start(rec, enemy);
+	//int enemy = map::moveable::nearest(pos2, FirstMonster, LastMonster, 1);
+	//if(enemy==-1)
+	//	return;
+	//combat::start(rec, enemy);
 }
 
 void map::route::move(int rec, void(*callback)())

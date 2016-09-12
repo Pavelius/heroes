@@ -56,13 +56,9 @@ bool io::file::create(const char* url, unsigned flags)
 {
 	if(handle)
 		return true;
-	handle = (int)CreateFileA(url,
-		(flags&StreamWrite) ? GENERIC_WRITE : GENERIC_READ,
-		0,
-		0,
-		(flags&StreamWrite) ? CREATE_ALWAYS : OPEN_EXISTING,
-		FILE_ATTRIBUTE_NORMAL,
-		0);
+	unsigned io_right = (flags&(StreamWrite|StreamAppend)) ? GENERIC_WRITE : GENERIC_READ;
+	unsigned io_flags = (flags&StreamWrite) ? CREATE_ALWAYS : OPEN_EXISTING;
+	handle = (int)CreateFileA(url, io_right, 0, 0, io_flags, FILE_ATTRIBUTE_NORMAL, 0);
 	if(handle==-1)
 		handle = 0;
 	else
