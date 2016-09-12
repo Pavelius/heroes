@@ -1,6 +1,8 @@
 #include "main.h"
 
-static unsigned short	path_stack[256*256];
+const unsigned Blocked = 0xFFFFFFF0;
+static unsigned			path[144 * 144];
+static unsigned short	path_stack[256 * 256];
 static unsigned short	path_push;
 static unsigned short	path_pop;
 static unsigned short	path_goal;
@@ -8,22 +10,22 @@ static unsigned short	path_start;
 
 static void snode(unsigned short index, unsigned cost)
 {
-	if(index==-1)
+	if(index == -1)
 		return;
-	auto a = map::show::route[index];
-	if(a>map::Passable)
+	auto a = path[index];
+	if(a >= Blocked)
 		return;
-	if(a!=0 && cost>=a)
+	if(a != 0 && cost >= a)
 		return;
 	path_stack[path_push++] = index;
-	map::show::route[index] = cost;
+	path[index] = cost;
 }
 
 static void gnext(int index, unsigned& level, int& pos)
 {
-	if(index==-1)
+	if(index == -1)
 		return;
-	auto nlevel = map::show::route[index];
+	auto nlevel = path[index];
 	if(!nlevel)
 		return;
 	if(nlevel <= level)
@@ -42,7 +44,7 @@ bool map::route::pathable(int index)
 	for(auto a : direction)
 	{
 		int i = map::moveto(index, a);
-		if(i!=-1 && map::show::route[i] && map::show::route[i]<=map::Passable)
+		if(i != -1 && path[i] && path[i] < Blocked)
 			return true;
 	}
 	return false;
@@ -57,16 +59,16 @@ void map::route::around(int index, unsigned m)
 	for(auto a : direction)
 	{
 		int i = map::moveto(index, a);
-		if(i!=-1 && map::show::route[i]<m)
-			map::show::route[i] = m;
+		if(i != -1 && path[i] < m)
+			path[i] = m;
 	}
 }
 
 unsigned map::movecost(int index)
 {
-	if(index==-1)
+	if(index == -1)
 		return 0xFFFFFFFF;
-	return map::show::route[index];
+	return path[index];
 }
 
 unsigned map::movecost(int index, unsigned char direct, unsigned pathfinding)
@@ -82,8 +84,8 @@ unsigned map::movecost(int index, unsigned char direct, unsigned pathfinding)
 	// Grass   1.00   1.00   1.00   1.00
 	// Water   1.00   1.00   1.00   1.00
 	// Road    0.75   0.75   0.75   0.75
-	if(map::is(index, isroad, direct))
-		return 75;
+	//if(map::is(index, isroad, direct))
+	//	return 75;
 	unsigned result = 100;
 	switch(gettile(index))
 	{
@@ -108,7 +110,7 @@ unsigned map::movecost(int index, unsigned char direct, unsigned pathfinding)
 		break;
 	case Wastelands:
 	case Beach:
-		result += (pathfinding==0) ? 25 : 0;
+		result += (pathfinding == 0) ? 25 : 0;
 		break;
 	default: break;
 	}
@@ -170,11 +172,11 @@ map::directions map::orient(int from, int to)
 	int div = imax(iabs(dx), iabs(dy));
 	if(!div)
 		return map::Center; //default
-	if(div>3)
+	if(div > 3)
 		div /= 2;
-	int ax = dx/div;
-	int ay = dy/div;
-	return orientations[(ay+2)*5+ax+2];
+	int ax = dx / div;
+	int ay = dy / div;
+	return orientations[(ay + 2) * 5 + ax + 2];
 }
 
 bool map::isroad(unsigned char object, unsigned char index, unsigned char direct)
@@ -184,31 +186,31 @@ bool map::isroad(unsigned char object, unsigned char index, unsigned char direct
 		// from sprite road
 	case res::ROAD:
 		if(0 == index || 4 == index || 5 == index || 13 == index || 26 == index)
-			return (direct&(Up|Down))!=0;
+			return (direct&(Up | Down)) != 0;
 		else if(2 == index || 21 == index || 28 == index)
-			return (direct&(Left|Right))!=0;
+			return (direct&(Left | Right)) != 0;
 		else if(17 == index || 29 == index)
-			return (direct & (LeftUp|RightDown))!=0;
+			return (direct & (LeftUp | RightDown)) != 0;
 		else if(18 == index || 30 == index)
-			return (direct & (RightUp|LeftDown))!=0;
+			return (direct & (RightUp | LeftDown)) != 0;
 		else if(3 == index)
-			return (direct & (Up | Down | Left | Right))!=0;
+			return (direct & (Up | Down | Left | Right)) != 0;
 		else if(6 == index)
-			return (direct & (Up | Down | Right))!=0;
+			return (direct & (Up | Down | Right)) != 0;
 		else if(7 == index)
-			return (direct & (Up | Right))!=0;
+			return (direct & (Up | Right)) != 0;
 		else if(9 == index)
-			return (direct & (Down | Right))!=0;
+			return (direct & (Down | Right)) != 0;
 		else if(12 == index)
-			return (direct & (Down | Left))!=0;
+			return (direct & (Down | Left)) != 0;
 		else if(14 == index)
-			return (direct & (Up | Down | Left))!=0;
+			return (direct & (Up | Down | Left)) != 0;
 		else if(16 == index)
-			return (direct & (Up | Left))!=0;
+			return (direct & (Up | Left)) != 0;
 		else if(19 == index)
-			return (direct & (LeftUp | RightDown))!=0;
+			return (direct & (LeftUp | RightDown)) != 0;
 		else if(20 == index)
-			return (direct & (RightUp | LeftDown))!=0;
+			return (direct & (RightUp | LeftDown)) != 0;
 		// castle and tower (gate)
 	case res::OBJNTOWN:
 		if(13 == index ||
@@ -223,7 +225,7 @@ bool map::isroad(unsigned char object, unsigned char index, unsigned char direct
 			157 == index ||
 			173 == index ||
 			189 == index)
-			return (direct & (Up | Down))!=0;
+			return (direct & (Up | Down)) != 0;
 		// castle lands (gate)
 	case res::OBJNTWBA:
 		if(7 == index ||
@@ -234,7 +236,7 @@ bool map::isroad(unsigned char object, unsigned char index, unsigned char direct
 			57 == index ||
 			67 == index ||
 			77 == index)
-			return (direct & (Up | Down))!=0;
+			return (direct & (Up | Down)) != 0;
 	default:
 		return false;
 	}
@@ -247,19 +249,19 @@ static int routeindex(int from, int throught, int to, int mod)
 	// 1 - from left to up+
 	// 9 - from down to up+
 	int index = 1;
-	if(mod>=200)
+	if(mod >= 200)
 		index = 121;
-	else if(mod>=175)
+	else if(mod >= 175)
 		index = 97;
-	else if(mod>=150)
+	else if(mod >= 150)
 		index = 73;
-	else if(mod>=125)
+	else if(mod >= 125)
 		index = 49;
-	else if(mod>=100)
+	else if(mod >= 100)
 		index = 25;
 	map::directions d = map::orient(from, throught);
 	map::directions d1 = map::orient(throught, to);
-	if(from==throught)
+	if(from == throught)
 	{
 		switch(d)
 		{
@@ -288,7 +290,7 @@ static int routeindex(int from, int throught, int to, int mod)
 		default: 			index = 0; break;
 		}
 		break;
-    case map::RightUp:
+	case map::RightUp:
 		switch(d1)
 		{
 		case map::Up:		index += 0; break;
@@ -384,23 +386,39 @@ static int routeindex(int from, int throught, int to, int mod)
 	return index;
 }
 
+static void apply_map_type()
+{
+	for(int y = 0; y < map::height; y++)
+	{
+		int i1 = map::m2i(0, y);
+		int i2 = i1 + map::width;
+		for(; i1 < i2; i1++)
+		{
+			switch(map::show::type[i1])
+			{
+			case TypeBlock:
+				path[i1] = Blocked;
+				break;
+			case TypeAttack:
+				path[i1] = Blocked;
+				break;
+			}
+		}
+	}
+}
+
 // First, make wave and see what cell on map is passable
 void map::route::wave(int start, int skill, int ship_master)
 {
-	memset(map::show::route, 0, sizeof(map::show::route));
-	if(start==-1)
+	static point block_castle[] = {{-1, -1}, {0, -1}, {1, -1}, {-2, 0}, {-1, 0}, {1, 0}, {2, 0}};
+	path_push = 0;
+	path_pop = 0;
+	memset(path, 0, sizeof(path));
+	memset(map::show::type, 0, sizeof(map::show::type));
+	if(start == -1)
 		return;
 	if(ship_master)
 	{
-		// Block all water part
-		for(int y = 0; y < map::height; y++)
-		{
-			for(int x = 0; x < map::width; x++)
-			{
-				auto i = map::m2i(x, y);
-				map::show::route[i] = map::ispassable(i) ? 0 : 0xFFFFFFFF;
-			}
-		}
 	}
 	else
 	{
@@ -410,31 +428,50 @@ void map::route::wave(int start, int skill, int ship_master)
 			for(int x = 0; x < map::width; x++)
 			{
 				auto i = map::m2i(x, y);
-				if(map::gettile(i)==Water)
-					map::show::route[i] = map::Blocked;
+				if(map::gettile(i) == Water)
+					show::type[i] = TypeBlock;
 			}
+		}
+		// Block all known castle parts
+		int rec2 = bsget(FirstCastle, Last);
+		for(int rec = FirstCastle; rec < rec2; rec++)
+		{
+			int index = bsget(rec, Index);
+			int x = map::i2x(index);
+			int y = map::i2y(index);
+			for(auto pt : block_castle)
+			{
+				int x1 = x + pt.x;
+				int y1 = y + pt.y;
+				if(y1 < 0 || y1 >= map::height)
+					continue;
+				if(x1 < 0 || x1 >= map::width)
+					continue;
+				int i = map::m2i(x1, y1);
+				show::type[i] = TypeBlock;
+			}
+			show::type[index] = TypeAction;
 		}
 		// Block overland part
 		command::execute("map_block");
 	}
-	path_push = 0;
-	path_pop = 0;
+	apply_map_type();
 	path_stack[path_push++] = start;
-	map::show::route[start] = 1;
+	path[start] = 1;
 	while(path_push != path_pop)
 	{
 		auto pos = path_stack[path_pop++];
-		auto cost = map::show::route[pos];
-		if(cost>=Passable-200)
+		auto cost = path[pos];
+		if(cost >= Blocked - 200)
 			break;
-		snode(moveto(pos, map::Left), cost+movecost2(pos, map::Left, skill));
-		snode(moveto(pos, map::Right), cost+movecost2(pos, map::Right, skill));
-		snode(moveto(pos, map::Up), cost+movecost2(pos, map::Up, skill));
-		snode(moveto(pos, map::Down), cost+movecost2(pos, map::Down, skill));
-		snode(moveto(pos, map::LeftUp), cost+movecost2(pos, map::LeftUp, skill));
-		snode(moveto(pos, map::LeftDown), cost+movecost2(pos, map::LeftDown, skill));
-		snode(moveto(pos, map::RightUp), cost+movecost2(pos, map::RightUp, skill));
-		snode(moveto(pos, map::RightDown), cost+movecost2(pos, map::RightDown, skill));
+		snode(moveto(pos, map::Left), cost + movecost2(pos, map::Left, skill));
+		snode(moveto(pos, map::Right), cost + movecost2(pos, map::Right, skill));
+		snode(moveto(pos, map::Up), cost + movecost2(pos, map::Up, skill));
+		snode(moveto(pos, map::Down), cost + movecost2(pos, map::Down, skill));
+		snode(moveto(pos, map::LeftUp), cost + movecost2(pos, map::LeftUp, skill));
+		snode(moveto(pos, map::LeftDown), cost + movecost2(pos, map::LeftDown, skill));
+		snode(moveto(pos, map::RightUp), cost + movecost2(pos, map::RightUp, skill));
+		snode(moveto(pos, map::RightDown), cost + movecost2(pos, map::RightDown, skill));
 	}
 	path_pop = 0;
 	path_push = 0;
@@ -443,12 +480,12 @@ void map::route::wave(int start, int skill, int ship_master)
 }
 
 // Second calculate path to any cell on map use wave result
-void map::route::path(int start, int goal)
+void map::route::walk(int start, int goal)
 {
 	path_push = 0;
 	path_goal = -1;
 	int pos = goal;
-	unsigned level = Passable;
+	unsigned level = Blocked;
 	while(pos != start)
 	{
 		auto n = pos;
@@ -460,61 +497,41 @@ void map::route::path(int start, int goal)
 		gnext(map::moveto(pos, LeftUp), level, n);
 		gnext(map::moveto(pos, RightDown), level, n);
 		gnext(map::moveto(pos, RightUp), level, n);
-		if(pos==n)
+		if(pos == n)
 			return;
 		pos = n;
 		path_stack[path_push++] = n;
-		level = map::show::route[pos];
+		level = path[pos];
 	}
 	path_goal = goal;
 }
 
-void map::route::load(int* rec, int index, int w, int h)
+short unsigned* map::route::getpath()
 {
-	if(!path_push || path_goal==-1)
-		return;
-	int x1 = map::i2x(index);
-	int y1 = map::i2y(index);
-	int p0 = path_goal;
-	int x = map::i2x(p0);
-	int y = map::i2y(p0);
-	if(x>=x1 && x<x1+w && y>=y1 && y<y1+h)
-		rec[(y-y1)*w + (x-x1)] = 0;
-	for(int i = 0; i<path_push; i++)
-	{
-		int p1 = path_stack[i];
-		if(p1==path_start)
-			break;
-		int p2 = path_stack[i+1];
-		int x = map::i2x(p1);
-		int y = map::i2y(p1);
-		if(x<x1 || x>=x1+w)
-			continue;
-		if(y<y1 || y>=y1+h)
-			continue;
-		int m = (y-y1)*w + (x-x1);
-		rec[m] = routeindex(p2, p1, p0, map::show::route[p2]-map::show::route[p1]);
-		p0 = p1;
-		p1 = p2;
-	}
+	return path_stack;
 }
 
-int map::route::get(int index)
+int	map::route::getpathcount()
 {
-	return map::show::route[index];
+	return path_push;
 }
+
+//int map::route::get(int index)
+//{
+//	return path[index];
+//}
 
 static bool makestep(int rec, int pos2)
 {
 	int mp = bsget(rec, MovePoints);
-    int pos1 = bsget(rec, Index);
+	int pos1 = bsget(rec, Index);
 	map::directions d = map::orient(pos1, pos2);
 	bsset(rec, Direction, d);
 	int mc = movecost2(pos1, d, bsget(rec, SkillPathfinding));
-	if(mp<mc)
-        return false;
-    bsset(rec, MovePoints, mp-mc);
-    return true;
+	if(mp < mc)
+		return false;
+	bsset(rec, MovePoints, mp - mc);
+	return true;
 }
 
 static bool movingto(int rec, int pos2, void(*callback)())
@@ -532,8 +549,8 @@ static bool reactionto(int rec, int pos2, void(*callback)())
 	if(!makestep(rec, pos2))
 		return false;
 	int m = bsfind(FirstMapObject, Index, pos2);
-    if(!m)
-        return false;
+	if(!m)
+		return false;
 	//map::moveable::reaction(m, rec);
 	bsset(rec, MoveTo, bsget(rec, Index));
 	if(callback)
@@ -550,50 +567,4 @@ static void battle(int rec, int pos2, void(*callback)())
 	//if(enemy==-1)
 	//	return;
 	//combat::start(rec, enemy);
-}
-
-void map::route::move(int rec, void(*callback)())
-{
-	if(!path_push)
-		return;
-    // Walk by calculated path
-	path_push--;
-	while(path_push)
-	{
-		int pos2 = path_stack[--path_push];
-		if(!movingto(rec, pos2, callback))
-            break;
-	}
-	// Last step to goal can be done
-	// only if there is no any obstacle
-	auto pv = map::show::route[path_goal];
-	if(pv<=Passable)
-		movingto(rec, path_goal, callback);
-    else if(pv==Action)
-        reactionto(rec, path_goal, callback);
-	else if(pv==Attack)
-		battle(rec, path_goal, callback);
-	wave(bsget(rec, Index),
-      bsget(rec, SkillPathfinding),
-      bsget(rec, ShipMaster));
-}
-
-void draw::route(int x, int y, int* rec, int w, int h, int distance)
-{
-	// route
-	const int dy = 32;
-	const int dx = 32;
-	int x2 = x + w*dx;
-	int y2 = y + h*dy;
-	int ri = 0;
-	for(int y1 = y; y1<y2; y1 += dy)
-	{
-		for(int x1 = x; x1<x2; x1 += dx)
-		{
-			auto id = rec[ri];
-			if(id!=-1)
-				draw::image(x1-12, y1, res::ROUTE, id);
-			ri++;
-		}
-	}
 }

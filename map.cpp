@@ -5,7 +5,7 @@ unsigned char	map::width;
 unsigned char	map::height;
 unsigned short	map::show::tiles[144*144];
 unsigned char	map::show::flags[144*144];
-unsigned		map::show::route[144*144];
+unsigned char	map::show::type[144 * 144];
 point			map::camera;
 
 int	map::moveto(int index, map::directions direction)
@@ -93,12 +93,9 @@ tokens map::gettile(int index)
 	return Beach;
 }
 
-bool map::is(int index, bool(*callback)(unsigned char object, unsigned char index, unsigned char param), unsigned char param)
+bool map::ispassable(int index)
 {
-	//for(auto e : map::show::objects[index])
-	//{
-	//	if(callback(e[0], e[1], param))
-	//		return true;
-	//}
-	return false;
+	if(show::type[index] == 2)
+		return false;
+	return true;
 }

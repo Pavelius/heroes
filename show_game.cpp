@@ -186,14 +186,14 @@ static void paint_cursor(rect screen, point camera)
 	if(draw::area(screen.x1, screen.y1, screen.x2, screen.y2))
 	{
 		int i1 = map::m2i((camera.x + hot::mouse.x - screen.x1) / 32, (camera.y + hot::mouse.y - screen.y1) / 32);
-		int mc = map::movecost(i1);
+		int mc = map::show::type[i1];
 		switch(mc)
 		{
-		case map::Blocked:
+		case TypeBlock:
 			// Non passable area. Mountains, Tree and like this.
 			// Use default cursor
 			break;
-		case map::Attack:
+		case TypeAttack:
 			// Monster area
 			m.set(CursorAdventure, Attack, 0);
 			if(hot::key == MouseLeft && hot::pressed)
@@ -202,7 +202,7 @@ static void paint_cursor(rect screen, point camera)
 					draw::execute(MoveTo, i1);
 			}
 			break;
-		case map::Action:
+		case TypeAction:
 			// Action able area. Chest, resource, gazebo, mine and like this
 			m.set(CursorAdventure, MakeAction, 0);
 			if(hot::key == MouseLeft && hot::pressed)
@@ -212,16 +212,15 @@ static void paint_cursor(rect screen, point camera)
 			}
 			break;
 		default:
-			if(mc != 0)
+			// Only reachable targets
+			// If targets pleced in area where you can't go by obstacle - we call it temporary unreachable
+			if(!map::route::pathable(i1))
+				break;
+			m.set(CursorAdventure, MoveTo, 0);
+			if(hot::key == MouseLeft && hot::pressed)
 			{
-				// Only reachable targets
-				// If targets pleced in area where you can't go by obstacle - we call it temporary unreachable
-				m.set(CursorAdventure, MoveTo, 0);
-				if(hot::key == MouseLeft && hot::pressed)
-				{
-					if(bsget(selected_object, First) == FirstHero)
-						draw::execute(MoveTo, i1);
-				}
+				if(bsget(selected_object, First) == FirstHero)
+					draw::execute(MoveTo, i1);
 			}
 			break;
 		}
@@ -250,31 +249,13 @@ static void paint_blocked(rect screen, point camera)
 		for(int x = screen.x1; x < screen.x2; x += 32)
 		{
 			int index = map::m2i((x + camera.x) / 32, (y + camera.y) / 32);
-			if(map::show::route[index] == map::Blocked)
+			if(map::show::type[index] == 2)
 				draw::rectb(x + 1, y + 1, x + 32 - 1, y + 32 - 1, 0xC0);
+			else if(map::show::type[index] == 3)
+				draw::rectb(x + 1, y + 1, x + 32 - 1, y + 32 - 1, 0x70);
 		}
 	}
 }
-
-//static void write_log(drawable** drawables)
-//{
-//	io::file file("d:/applications/heroes/log.txt", StreamWrite);
-//	if(!file)
-//		return;
-//	auto count = 0;
-//	auto start = drawables;
-//	while(*drawables)
-//	{
-//		auto p = *drawables;
-//		auto rc = p->getrect();
-//		auto rec = p->getid();
-//		file << "rect = ";
-//		file << "(" << rc.x1 << "," << rc.y1 << "," << rc.x2 << "," << rc.y2 << ")";
-//		file << "\r\n";
-//		drawables++;
-//	}
-//	file << "count = " << (drawables-start);
-//}
 
 static void paint_objects(rect screen, point camera, unsigned flags)
 {
@@ -285,6 +266,22 @@ static void paint_objects(rect screen, point camera, unsigned flags)
 	dwclipping(drawables, screen, camera);
 	dworder(drawables, zlen(drawables));
 	dwpaint(drawables, screen, camera, flags);
+}
+
+static void paint_route(rect screen, point camera)
+{
+	auto path = map::route::getpath();
+	if(!path)
+		return;
+	auto count = map::route::getpathcount();
+	if(!count)
+		return;
+	for(int i = 0; i < count; i++)
+	{
+		int index = path[i];
+		int x = map::i2x(index);
+		int y = map::i2y(index);
+	}
 }
 
 int show::game(int player)
@@ -313,12 +310,14 @@ int show::game(int player)
 		if(selected_object>=FirstHero && selected_object<=LastHero
 			&& selected_wave != selected_object)
 		{
+			// Расчитаем карту пути
 			map::route::wave(bsget(selected_object, Index),
 				bsget(selected_object, SkillPathfinding),
 				0);
-			if(bsget(selected_object, MoveTo) != -1)
-				map::route::path(bsget(selected_object, Index),
-					bsget(selected_object, MoveTo));
+			// Создадим путь
+			int move_to = bsget(selected_object, MoveTo);
+			if(move_to != -1)
+				map::route::walk(bsget(selected_object, Index), move_to);
 			selected_wave = selected_object;
 		}
 		draw::image(0, 0, draw::isevil(res::ADVBORDE, res::ADVBORD), 0, 0);
@@ -332,6 +331,7 @@ int show::game(int player)
 		paint_objects(rcmap, map::camera, DWObjects);
 		if(show_blocked)
 			paint_blocked(rcmap, map::camera);
+		paint_route(rcmap, map::camera);
 		paint_cursor(rcmap, map::camera);
 		int id = draw::input();
 		switch(id)
@@ -343,10 +343,7 @@ int show::game(int player)
 			hot::param = bsget(selected_object, MoveTo);
 		case MoveTo:
 			if(bsget(selected_object, MoveTo) == hot::param)
-			{
 				bsset(selected_object, MoveTo, hot::param);
-				map::route::move(selected_object, 0);
-			}
 			else
 				bsset(selected_object, MoveTo, hot::param);
 			selected_wave = -1;

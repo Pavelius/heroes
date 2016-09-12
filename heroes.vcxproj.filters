@@ -68,7 +68,6 @@
     <ClCompile Include="show_marketplace.cpp" />
     <ClCompile Include="show_game.cpp" />
     <ClCompile Include="command.cpp" />
-    <ClCompile Include="map_passable.cpp" />
     <ClCompile Include="map_objects.cpp" />
   </ItemGroup>
 </Project>

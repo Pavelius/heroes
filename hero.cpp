@@ -145,6 +145,7 @@ static bsmeta::field fields[] = {
 	BSREQ(hero, spell_points, SpellPoints, Number),
 	BSREQ(hero, move_points, MovePoints, Number),
 	BSREQ(hero, index, Index, Number),
+	BSREQ(hero, index_move, MoveTo, Number),
 	BSREQ(hero, direction, Direction, Number),
 	BSREQ(hero, portrait, Portrait, Number),
 	BSREQ(hero, player, Player, Number),

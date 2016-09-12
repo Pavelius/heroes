@@ -21,10 +21,12 @@ static shapeinfo sh1x1a6 = {1, {1, 1}, {{0, 0}}, {6}, {2}};
 static shapeinfo sh1x1a11 = {1, {1, 1}, {{0, 0}}, {11}, {2}};
 //
 static shapeinfo sh2x1 = {2, {2, 1}, {{-1, 0}, {0, 0}}, {0}, {0, 2}};
+static shapeinfo sh2x1bk = {2, {2, 1}, {{-1, 0}, {0, 0}}, {0}, {2, 2}};
 static shapeinfo sh2x1a6 = {2, {2, 1}, {{-1, 0}, {0, 0}}, {6, 6}, {0, 2}};
 static shapeinfo sh2x1a6v2 = {2, {2, 1}, {{-1, 0}, {0, 0}}, {0, 6}, {0, 2}};
 static shapeinfo sh2x2 = {4, {2, 2}, {{0, 0}, {1, 0}, {0, 1}, {1, 1}}, {0}, {2, 2, 2, 2}};
 static shapeinfo sh2x2J = {3, {2, 2}, {{0, -1}, {-1, 0}, {0, 0}}, {0}, {1, 0, 2}};
+static shapeinfo sh2x2bk = {3, {2, 2}, {{0, -1}, {-1, 0}, {0, 0}}, {0}, {2, 2, 2}};
 static shapeinfo sh2x2Ja9 = {3, {2, 2}, {{0, -1}, {-1, 0}, {0, 0}}, {9, 9, 9}, {1, 0, 2}};
 static shapeinfo sh2x3 = {6, {2, 3}, {{-1, -1}, {0, -1}, {-1, 0}, {0, 0}, {-1, 1}, {0, 1}}, {0, 1, 1, 0, 2, 2}};
 //
@@ -56,11 +58,11 @@ static shapeinfo sh3x2u2a5 = {4, {3, 2}, {{0, -1}, {-2, 0}, {-1, 0}, {0, 0}}, {6
 static shapeinfo sh3x2u2a5v2 = {4, {3, 2}, {{0, -1}, {-2, 0}, {-1, 0}, {0, 0}}, {6, 6, 6, 0}};
 //
 static shapeinfo sh4x1 = {4, {4, 1}, {{-2, 0}, {-1, 0}, {0, 0}, {1, 0}}};
-static shapeinfo sh4x2 = {8, {4, 2}, {{-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}}};
+static shapeinfo sh4x2 = {8, {4, 2}, {{-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}}, {0}, {0, 1, 1, 2, 0, 2, 2, 2}};
 static shapeinfo sh4x2u1 = {7, {4, 2}, {{-1, -1}, {0, -1}, {1, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}}};
 static shapeinfo sh4x2r1 = {7, {4, 2}, {{-2, -1}, {-1, -1}, {0, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}}};
 static shapeinfo sh4x2u2 = {6, {4, 2}, {{0, -1}, {1, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}}};
-static shapeinfo sh4x2d1 = {7, {4, 2}, {{-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {0, 0}, {1, 0}}};
+static shapeinfo sh4x2d1 = {7, {4, 2}, {{-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {0, 0}, {1, 0}}, {0}, {2, 2, 2, 2, 1, 2, 2}};
 static shapeinfo sh4x2r1d1 = {6, {4, 2}, {{-1, -1}, {0, -1}, {1, -1}, {0, 0}, {1, 0}, {2, 0}}};
 static shapeinfo sh4x2u1b1 = {6, {4, 2}, {{0, -1}, {1, -1}, {2, -1}, {-1, 0}, {0, 0}, {1, 0}}};
 static shapeinfo sh4x2а6 = {8, {4, 2}, {{-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}}, {0, 0, 0, 0, 0, 0, 0, 6}};
@@ -85,8 +87,8 @@ static shapeinfo sh6x3r1d2 = {15, {6, 3}, {{-3, -1}, {-2, -1}, {-1, -1}, {0, -1}
 static shapeinfo sh6x3u1b2 = {15, {6, 3}, {{-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {2, -1}, {-3, 0}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {2, 0}, {-3, 1}, {-2, 1}, {-1, 1}, {0, 1}}};
 static shapeinfo sh6x3u1a10 = {17, {6, 3}, {{-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {2, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {2, 0}, {3, 0}, {-2, 1}, {-1, 1}, {0, 1}, {1, 1}, {2, 1}, {3, 1}}, {0, 0, 0, 0, 0, 10, 10, 10, 10, 10, 0, 0, 10, 10, 10, 10, 0}};
 static shapeinfo sh6x4 = {24, {6, 4}, {{-3, -3}, {-2, -3}, {-1, -3}, {0, -3}, {1, -3}, {2, -3}, {-3, -2}, {-2, -2}, {-1, -2}, {0, -2}, {1, -2}, {2, -2}, {-3, -1}, {-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {2, -1}, {-3, 0}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {2, 0}}};
-static shapeinfo sh6x4r1d2 = {21, {6, 4}, {{-3, -1}, {-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {-3, 0}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {2, 0}, {-3, 1}, {-2, 1}, {-1, 1}, {0, 1}, {1, 1}, {2, 1}, {-1, 2}, {0, 2}, {1, 2}, {2, 2}}};
-static shapeinfo sh6x4u1b2 = {21, {6, 4}, {{-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {2, -1}, {-3, 0}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {2, 0}, {-3, 1}, {-2, 1}, {-1, 1}, {0, 1}, {1, 1}, {2, 1}, {-3, 2}, {-2, 2}, {-1, 2}, {0, 2}}};
+static shapeinfo sh6x4r1d2 = {21, {6, 4}, {{-3, -1}, {-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {-3, 0}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {2, 0}, {-3, 1}, {-2, 1}, {-1, 1}, {0, 1}, {1, 1}, {2, 1}, {-1, 2}, {0, 2}, {1, 2}, {2, 2}}, {0}, {0, 1, 1, 1, 1, 0, 2, 2, 2, 2, 1, 0, 2, 2, 2, 2, 2, 0, 2, 2, 2}};
+static shapeinfo sh6x4u1b2 = {21, {6, 4}, {{-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {2, -1}, {-3, 0}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {2, 0}, {-3, 1}, {-2, 1}, {-1, 1}, {0, 1}, {1, 1}, {2, 1}, {-3, 2}, {-2, 2}, {-1, 2}, {0, 2}}, {0}, {0, 1, 1, 1, 2, 0, 1, 2, 2, 2, 2, 0, 2, 2, 2, 2, 2, 0, 2, 2, 2}};
 //
 static shapeinfo sh7x3r1 = {20, {7, 3}, {{-3, -1}, {-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {2, -1}, {-3, 0}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {2, 0}, {3, 0}, {-3, 1}, {-2, 1}, {-1, 1}, {0, 1}, {1, 1}, {2, 1}, {3, 1}}};
 static shapeinfo sh7x4 = {22, {7, 4}, {{-2, -3}, {-1, -3}, {0, -3}, {-3, -2}, {-2, -2}, {-1, -2}, {0, -2}, {1, -2}, {-5, -1}, {-4, -1}, {-3, -1}, {-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {-5, 0}, {-4, 0}, {-3, 0}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}}};
@@ -117,10 +119,10 @@ struct mapobjectinfo
 };
 static mapobjectinfo grass[] = {
 	{AbandoneMine, sh4x2}, // Haunted mine
-	{Empthy, sh2x1},
-	{Empthy, sh4x2d1},
-	{Empthy, sh3x3},
-	{Empthy, sh2x2J},
+	{Hole, sh2x1bk},
+	{Crack, sh4x2d1},
+	{Crack, sh3x3},
+	{Crack, sh2x2bk},
 	{Empthy, sh3x1},
 	{Empthy, sh3x1},
 	{Empthy, sh3x2u1r1}, // Big boulder
@@ -514,8 +516,8 @@ static mapobjectinfo multiobj2[] = {
 	{Event, sh1x1},
 	{MagicWell, sh2x1},
 	{FreemanFoundry, sh3x2u1a6v2},
-	{MagicGarden, sh2x1a6v2},
-	{Leprechaunt, sh1x1}, // Lephrechaunt is no here
+	{MagicGarden, sh2x1},
+	{Leprechaunt, sh1x1a6}, // Lephrechaunt here
 	{WatchTower, sh3x2u2},
 	{Graveyard, sh4x2},
 	{SawMill, sh4x2}, // Green grass
@@ -914,24 +916,73 @@ void add_object(unsigned short index, unsigned char object, unsigned char frame,
 
 static void map_block()
 {
-	for(int i = 0; i<mapobjects.count; i++)
+	// Другие объекты
+	for(int i = 0; i < mapobjects.count; i++)
 	{
 		auto& e = objects[i];
-		if(!e.icn)
+		switch(e.type)
+		{
+			// Non-Blocking
+		case Cliff:
+		case Crack:
+		case RiverDeltaDown:
+		case RiverDeltaUp:
+		case Empthy:
 			continue;
+		}
 		if(e.info)
 		{
 			auto& sh = e.info->shape;
 			int x = map::i2x(e.index);
 			int y = map::i2y(e.index);
-			for(int index = 0; index < sh.count; index++)
+			if(sh.size.y == 1)
 			{
-				int x1 = x + sh.points[index].x;
-				int y1 = y + sh.points[index].y;
-				if(x1 < 0 || y1 < 0 || x1 >= map::width || y1 >= map::height)
+				continue;
+			}
+			if(sh.size.y > 1)
+			{
+				for(int index = 0; index < sh.count; index++)
+				{
+					int x1 = x + sh.points[index].x;
+					int y1 = y + sh.points[index].y;
+					if(x1 < 0 || y1 < 0 || x1 >= map::width || y1 >= map::height)
+						continue;
+					auto i = map::m2i(x1, y1);
+					if(sh.content[index] == 2)
+						map::show::type[i] = 2;
+				}
+			}
+		}
+		if(e.type >= FirstObject && e.type <= LastObject)
+			map::show::type[e.index] = 3;
+		else if(e.type>=FirstResource && e.type<=LastResource)
+			map::show::type[e.index] = 3;
+		else if(e.type >= FirstArtifact && e.type <= LastArtifact)
+			map::show::type[e.index] = 3;
+	}
+	// Пройдемся по монстрам
+	for(int i = 0; i < mapobjects.count; i++)
+	{
+		auto& e = objects[i];
+		if(!e.icn)
+			continue;
+		if(e.type >= FirstMonster && e.type <= LastMonster)
+		{
+			int x = map::i2x(e.index);
+			int y = map::i2y(e.index);
+			for(int y1 = y - 1; y1 <= y + 1; y1++)
+			{
+				if(y1 < 0 || y1 >= map::height)
 					continue;
-				if(sh.content[index] == 2)
-					map::show::route[map::m2i(x1, y1)] = map::Blocked;
+				for(int x1 = x - 1; x1 <= x + 1; x1++)
+				{
+					if(x1 < 0 || x1 >= map::width)
+						continue;
+					int i = map::m2i(x1, y1);
+					if(map::show::type[i] == 2)
+						continue;
+					map::show::type[i] = 4;
+				}
 			}
 		}
 	}

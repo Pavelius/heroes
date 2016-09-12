@@ -665,6 +665,7 @@ void game::initialize()
 		bsset(rec, SpellPoints, game::get(rec, SpellPointsMax));
 		bsset(rec, MovePoints, game::get(rec, MovePointsMax));
 		bsset(rec, Index, -1);
+		bsset(rec, MoveTo, -1);
 		bsset(rec, Name, heroes_data[rec - FirstHero].name[locale]);
 		game::cleararmy(rec);
 		for(int i = FirstSkill; i <= LastSkill; i++)

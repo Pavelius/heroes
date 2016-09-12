@@ -200,7 +200,7 @@ enum tokens
 	Monster, Obelisk, Oasis, Resource, // 0x98-0x9B
 	Map0x9C, SawMill, Oracle, Shrine1, // 0x9C-0x9F
 	ShipWreck, Map0xA1, DesertTent, CastleOnMap, // 0xA0-0xA3
-	Teleporter, WagonCamp, Map0xA6, WhirlPool, // 0xA4-0xA7
+	Teleporter, RogueCamp, Map0xA6, WhirlPool, // 0xA4-0xA7
 	WindMill, Artifact, Map0xAA, Boat, // 0xA8-0xAB
 	RndUltimateArtifact, RndArtifact, RndResource, RndMonster, // 0xAC-0xAF
 	RndTown, RndCastle, Map0xB2, RndMonster1, // 0xB0-0xB3
@@ -225,9 +225,10 @@ enum tokens
 	FireAltar, AirAltar, EarthAltar, WaterAltar, // 0xFC-0xFF
 	FirstObject = WaterChest, LastObject = WaterAltar,
 	LastAction = LastObject,
-	Mushrooms, Volcano, Lake, Flowers, Hill, Mountains, Trees, DiggingHole,
-	Bouler, Rock, Cliff, Hole, RiverDeltaDown, RiverDeltaUp, Stumps,
-	RogueCamp, Leprechaunt,
+	Mushrooms, Volcano, DiggingHole, Flowers,
+	Lake, Hill, Mountains, Trees,
+	Rock, Cliff, Hole, Crack,
+	RiverDeltaDown, RiverDeltaUp, Stumps, Leprechaunt,
 	// Custom tokens
 	FirstCreatureCount, LastCreatureCount = FirstCreatureCount + 6,
 	FirstCastle, LastCastle = FirstCastle + 128,
@@ -244,6 +245,10 @@ enum blocks
 {
 	PassableSquadWideLeft = 245, PassableSquadWideRight,
 	BlockSquad, BlockSquadWideLeft, BlockSquadWideRight, BlockTerrain,
+};
+enum map_types
+{
+	TypeShadow, TypeHighObject, TypeBlock, TypeAction, TypeAttack,
 };
 enum image_flags
 {
@@ -766,17 +771,11 @@ namespace map
 		LeftDown = 0x40,
 		Left = 0x80,
 	};
-	enum movements
-	{
-		Passable = 0xFFFFFFF0, Blocked, Action, Attack,
-	};
 	extern unsigned char	width;
 	extern unsigned char	height;
-	int						action(int index);
 	extern point			camera;
 	inline int				i2x(int i) { return i % 144; }
 	inline int				i2y(int i) { return i / 144; }
-	bool					is(int index, bool(*callback)(unsigned char object, unsigned char index, unsigned char param), unsigned char param);
 	bool					isaction(int object);
 	bool					isroad(unsigned char object, unsigned char index, unsigned char direct);
 	bool					ispassable(int index);
@@ -788,91 +787,24 @@ namespace map
 	int						moveto(int index, directions direction);
 	inline int				m2i(int x, int y) { return 144 * y + x; }
 	directions				orient(int from, int to);
-	bool					preload(const char* filename);
-	void					postload();
-	bool					overlay(int index, bool(*callback)(int object, int index, int param), int param);
 	int						revers(int direction);
 	void					slide(directions type);
-	namespace moveable
-	{
-		void				block(unsigned* route);
-		void        		load(int* rec, int index, int w, int h);
-		int					nearest(int index, int id1, int id2, int radius);
-		void				reaction(int rec, int user);
-	}
 	namespace show
 	{
-		struct element
-		{
-			unsigned char   object;
-			unsigned char   index;
-			unsigned char   level;
-		};
 		extern unsigned short   tiles[144 * 144];
 		extern unsigned char    flags[144 * 144];
-		extern unsigned		route[144 * 144];
+		extern unsigned char    type[144 * 144];
 	}
 	namespace route
 	{
 		void				around(int index, unsigned m);
-		void				draw(int x, int y);
 		int					get(int index);
+		short unsigned*		getpath();
+		int					getpathcount();
 		void        		load(int* rec, int index, int w, int h);
-		void				move(int rec, void(*callback)());
 		bool				pathable(int index);
-		void				path(int start, int dest);
+		void				walk(int start, int dest);
 		void				wave(int start, int skill, int ship_master);
-	}
-	namespace tree
-	{
-		bool				ispassable(unsigned char index);
-		bool				isshadow(unsigned char index);
-		int					action(unsigned char index);
-	}
-	namespace grass
-	{
-		bool				ispassable(unsigned char index);
-		int					action(unsigned char index);
-	}
-	namespace dirt
-	{
-		bool				ispassable(unsigned char index);
-		int					action(unsigned char index);
-	}
-	namespace desert
-	{
-		bool				ispassable(unsigned char index);
-		int					action(unsigned char index);
-	}
-	namespace crack
-	{
-		bool				ispassable(unsigned char index);
-		int					action(unsigned char index);
-	}
-	namespace multi
-	{
-		bool				ispassable(unsigned char index);
-		bool				ispassable2(unsigned char index);
-		int					action(unsigned char index);
-	}
-	namespace mountain
-	{
-		bool				ispassable(unsigned char index);
-		bool				ispassable2(unsigned char index);
-		bool				ispassable3(unsigned char index);
-		bool				isshadow(unsigned char index);
-		bool				isshadow2(unsigned char index);
-		int					action(unsigned char index);
-	}
-	namespace swamp
-	{
-		bool				ispassable(unsigned char index);
-		int					action(unsigned char index);
-	}
-	namespace towns
-	{
-		bool				ispassable(unsigned char index);
-		int					action(unsigned char index);
 	}
 };
 namespace current
