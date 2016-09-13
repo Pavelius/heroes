@@ -444,7 +444,7 @@ static void paint_screen(drawable** drawables, int player)
 	paint_route(rcmap, map::camera);
 }
 
-static void paint_screen(int player)
+void show::adventure::screen(int player)
 {
 	drawable* drawables[2048];
 	dwselect(drawables, rcmap, map::camera, DWObjects);
@@ -457,7 +457,7 @@ void show::adventure::move(int from, int to, int hero, int player)
 	if(!player)
 		return;
 	map::jumpto(to);
-	paint_screen(player);
+	screen(player);
 	draw::input(false);
 	sleep(50);
 }
@@ -495,7 +495,7 @@ int show::game(int player)
 				map::route::walk(bsget(selected_object, Index), move_to);
 			selected_wave = selected_object;
 		}
-		paint_screen(player);
+		show::adventure::screen(player);
 		if(hot::key == KeyEnter)
 			draw::execute(Change);
 		if(show_blocked)

@@ -1325,7 +1325,8 @@ void game::interact(int index, int object, int hero, int player)
 {
 	bool move_to_object = true;
 	bool disapear = false;
-	bool isinteractive = (bsget(player, Type) == Human);
+	bool isinteractive = (bsget(player, PlayerType) == Human);
+	bool islog = false;
 	int type = bsget(object, Type);
 	int count = bsget(object, Count);
 	if(type >= FirstResource && type <= LastResource)
@@ -1335,7 +1336,19 @@ void game::interact(int index, int object, int hero, int player)
 		move_to_object = false;
 	}
 	if(disapear)
-		bsdelete(object);
+	{
+		if(isinteractive)
+		{
+			show::adventure::screen(player);
+			draw::screenshoot before;
+			bsdelete(object);
+			show::adventure::screen(player);
+			draw::screenshoot after;
+			before.blend(after);
+		}
+		else
+			bsdelete(object);
+	}
 	if(move_to_object)
 		bsset(hero, Index, index);
 }

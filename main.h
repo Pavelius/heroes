@@ -701,6 +701,7 @@ namespace show
 	namespace adventure
 	{
 		void				move(int from, int to, int hero, int player);
+		void				screen(int player);
 	}
 	int						build(int rec);
 	void				    castle(int rec);
