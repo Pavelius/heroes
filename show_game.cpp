@@ -462,6 +462,18 @@ void show::adventure::move(int from, int to, int hero, int player)
 	sleep(50);
 }
 
+void show::adventure::disapear(int player, int object)
+{
+	draw::state push;
+	draw::cicling = false;
+	show::adventure::screen(player);
+	draw::screenshoot before;
+	bsdelete(object);
+	show::adventure::screen(player);
+	draw::screenshoot after;
+	before.blend(after);
+}
+
 int show::game(int player)
 {
 	int selected_wave = -1;

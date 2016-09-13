@@ -32,9 +32,10 @@ void draw::screenshoot::blend(screenshoot& source)
 		unsigned char a = j * 4;
 		for(int i = 0; i < 640 * 480; i++)
 		{
+			// This will better visual effect and speed
+			if(source.bits[i] == this->bits[i])
+				continue;
 			unsigned char res[4];
-			//unsigned char* c1 = pallette[source.bits[i]];
-			//unsigned char* c2 = pallette[this->bits[i]];
 			unsigned char* c1 = rgb_pal + source.bits[i]*3;
 			unsigned char* c2 = rgb_pal + this->bits[i]*3;
 			res[0] = (((int)c1[0] * a + c2[0] * (64 - a))) >> (6 + 1);

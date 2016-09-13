@@ -578,6 +578,7 @@ namespace draw
 	private:
 		res::tokens			font;
 		rect				clipping;
+		bool				cicling;
 	};
 	struct screenshoot
 	{
@@ -602,6 +603,7 @@ namespace draw
 	bool					area(int x1, int y1, int x2, int y2);
 	void					button(int x, int y, res::tokens icn, int id, int normal, int hilite, int pressed, int key = 0, unsigned flags = 0, const char* tips = 0, int param = 0);
 	void					castle(int x, int y, int tile, int race, bool town, bool shadow = true);
+	extern bool				cicling;
 	int						clipart(int x, int y, int id, int param, int param2 = 0, bool border = false);
 	extern rect				clipping;
 	extern unsigned			counter; // increse every 100 milliseconds
@@ -700,6 +702,7 @@ namespace show
 	}
 	namespace adventure
 	{
+		void				disapear(int player, int object);
 		void				move(int from, int to, int hero, int player);
 		void				screen(int player);
 	}

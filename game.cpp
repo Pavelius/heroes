@@ -1338,14 +1338,7 @@ void game::interact(int index, int object, int hero, int player)
 	if(disapear)
 	{
 		if(isinteractive)
-		{
-			show::adventure::screen(player);
-			draw::screenshoot before;
-			bsdelete(object);
-			show::adventure::screen(player);
-			draw::screenshoot after;
-			before.blend(after);
-		}
+			show::adventure::disapear(player, object);
 		else
 			bsdelete(object);
 	}
