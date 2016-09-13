@@ -1,8 +1,10 @@
 #include "main.h"
 
-static int	selected_object;
-static int	information_mode;
-static rect	rcmap = {16, 16, 16 + 32 * 14, 16 + 32 * 14};
+static int		selected_object;
+static int		information_mode;
+static rect		rcmap = {16, 16, 16 + 32 * 14, 16 + 32 * 14};
+static char		info_text[512];
+static unsigned	info_stamp;
 
 static int routeindex(int from, int throught, int to, int mod)
 {
@@ -150,7 +152,7 @@ static int routeindex(int from, int throught, int to, int mod)
 
 static void handle_input(int x, int y, int object)
 {
-	if(object && selected_object==object)
+	if(object && selected_object == object)
 		draw::rectb(x, y, x + 54, y + 31, 0x56);
 	if(draw::area(x, y, x + 54, y + 31))
 	{
@@ -174,7 +176,7 @@ static struct castlelist : public list
 
 	void row(int x, int y, int index) const
 	{
-		if(index<maximum && data[index])
+		if(index < maximum && data[index])
 		{
 			int rec = data[index];
 			int index_sprite = 1;
@@ -225,7 +227,7 @@ static struct herolist : public list
 
 	void row(int x, int y, int index) const
 	{
-		if(index<maximum && data[index])
+		if(index < maximum && data[index])
 		{
 			draw::image(x + 4, y + 5, res::PORTXTRA, 0);
 			draw::image(x - 1, y, res::MINIPORT, bsget(data[index], Portrait));
@@ -254,7 +256,7 @@ static void information_resource(int x, int y, int id, int player)
 	auto cost = (int*)bsptr(player, FirstResource);
 	if(!cost)
 		return;
-	sznum(temp, cost[id-FirstResource]);
+	sznum(temp, cost[id - FirstResource]);
 	draw::text(x - draw::textw(temp) / 2, y, temp);
 }
 
@@ -262,64 +264,77 @@ static void paint_information(int x, int y, int player)
 {
 	char temp[256];
 	if(!information_mode)
-		draw::image(x, y, draw::isevil(res::HEROLOGE, res::HEROLOGO), 0, 0);
-	else
 	{
-		res::tokens icn = draw::isevil(res::ADVEBTNS, res::ADVBTNS);
-		draw::button(x + 0 * 36, y + 0 * 36, icn, 1, 0, 0, 1, Alpha + 'H', 0, szt("Next hero", "Следующий герой"));
-		draw::button(x + 1 * 36, y + 0 * 36, icn, Move, 2, 2, 3, Alpha + 'M', 0, szt("Continue moving", "Продолжить движение"));
-		draw::button(x + 2 * 36, y + 0 * 36, icn, 1, 4, 4, 5);
-		draw::button(x + 3 * 36, y + 0 * 36, icn, 1, 6, 6, 7);
-		draw::button(x + 0 * 36, y + 1 * 36, icn, EndTurn, 8, 8, 9, Alpha + 'E', 0, szt("End turn", "Закончить ход"));
-		draw::button(x + 1 * 36, y + 1 * 36, icn, 1, 10, 10, 11);
-		draw::button(x + 2 * 36, y + 1 * 36, icn, 1, 12, 12, 13);
-		draw::button(x + 3 * 36, y + 1 * 36, icn, 1, 14, 14, 15);
-		y += 2 * 36;
-		draw::image(x, y, draw::isevil(res::STONBAKE, res::STONBACK), 0);
+		draw::image(x, y, draw::isevil(res::HEROLOGE, res::HEROLOGO), 0, 0);
+		return;
+	}
+	res::tokens icn = draw::isevil(res::ADVEBTNS, res::ADVBTNS);
+	draw::button(x + 0 * 36, y + 0 * 36, icn, 1, 0, 0, 1, Alpha + 'H', 0, szt("Next hero", "Следующий герой"));
+	draw::button(x + 1 * 36, y + 0 * 36, icn, Move, 2, 2, 3, Alpha + 'M', 0, szt("Continue moving", "Продолжить движение"));
+	draw::button(x + 2 * 36, y + 0 * 36, icn, 1, 4, 4, 5);
+	draw::button(x + 3 * 36, y + 0 * 36, icn, 1, 6, 6, 7);
+	draw::button(x + 0 * 36, y + 1 * 36, icn, EndTurn, 8, 8, 9, Alpha + 'E', 0, szt("End turn", "Закончить ход"));
+	draw::button(x + 1 * 36, y + 1 * 36, icn, 1, 10, 10, 11);
+	draw::button(x + 2 * 36, y + 1 * 36, icn, 1, 12, 12, 13);
+	draw::button(x + 3 * 36, y + 1 * 36, icn, 1, 14, 14, 15);
+	y += 2 * 36;
+	draw::image(x, y, draw::isevil(res::STONBAKE, res::STONBACK), 0);
+	// Show text information
+	if(info_text[0])
+	{
+		draw::state push;
+		draw::font = res::SMALFONT;
+		draw::textf(x + 2, y + 8, 142 - 4, info_text);
 		if(draw::area(x, y, x + 142, y + 4 * 36))
 		{
 			if(hot::key == MouseLeft && hot::pressed)
-				draw::execute(ChangeMode);
+				info_text[0] = 0;
 		}
-		switch(information_mode)
+		return;
+	}
+	if(draw::area(x, y, x + 142, y + 4 * 36))
+	{
+		if(hot::key == MouseLeft && hot::pressed)
+			draw::execute(ChangeMode);
+	}
+	switch(information_mode)
+	{
+	case Resource:
+		if(true)
 		{
-		case Resource:
-			if(true)
-			{
-				draw::state push;
-				draw::font = res::SMALFONT;
-				draw::image(x, y, res::RESSMALL, 0);
-				draw::text(x + 26, y + 31, "1"); // castle
-				draw::text(x + 78, y + 31, "0"); // town
-				information_resource(x + 122, y + 31, Gold, player);
-				information_resource(x + 14, y + 61, Wood, player);
-				information_resource(x + 35, y + 61, Mercury, player);
-				information_resource(x + 59, y + 61, Ore, player);
-				information_resource(x + 82, y + 61, Sulfur, player);
-				information_resource(x + 106, y + 61, Crystal, player);
-				information_resource(x + 128, y + 61, Gems, player);
-			}
-			break;
-		case Hero:
-			//army(x + 4, y + 20, 132, world::hero->garmy()->units, 5, false);
-			break;
-		case Information:
-			draw::image(x, y, draw::isevil(res::SUNMOONE, res::SUNMOON), 3 - ((game::getweek() - 1) % 4) + 1);
-			if(true)
-			{
-				draw::state push;
-				draw::font = res::SMALFONT;
-				szprint(temp, "%1: %3i, %2: %4i",
-					szt("Month", "Месяц"), szt("Week", "Неделя"),
-					game::getmonth(), game::getweek());
-				draw::textm(x, y + 34, 140, draw::Center, temp);
-			}
-			szprint(temp, "%1: %2i",
-				szt("Day", "День"),
-				game::getday());
-			draw::textm(x, y + 50, 140, draw::Center, temp);
-			break;
+			draw::state push;
+			draw::font = res::SMALFONT;
+			draw::image(x, y, res::RESSMALL, 0);
+			draw::text(x + 26, y + 31, "1"); // castle
+			draw::text(x + 78, y + 31, "0"); // town
+			information_resource(x + 122, y + 31, Gold, player);
+			information_resource(x + 14, y + 61, Wood, player);
+			information_resource(x + 35, y + 61, Mercury, player);
+			information_resource(x + 59, y + 61, Ore, player);
+			information_resource(x + 82, y + 61, Sulfur, player);
+			information_resource(x + 106, y + 61, Crystal, player);
+			information_resource(x + 128, y + 61, Gems, player);
 		}
+		break;
+	case Hero:
+		//army(x + 4, y + 20, 132, world::hero->garmy()->units, 5, false);
+		break;
+	case Information:
+		draw::image(x, y, draw::isevil(res::SUNMOONE, res::SUNMOON), 3 - ((game::getweek() - 1) % 4) + 1);
+		if(true)
+		{
+			draw::state push;
+			draw::font = res::SMALFONT;
+			szprint(temp, "%1: %3i, %2: %4i",
+				szt("Month", "Месяц"), szt("Week", "Неделя"),
+				game::getmonth(), game::getweek());
+			draw::textm(x, y + 34, 140, draw::Center, temp);
+		}
+		szprint(temp, "%1: %2i",
+			szt("Day", "День"),
+			game::getday());
+		draw::textm(x, y + 50, 140, draw::Center, temp);
+		break;
 	}
 }
 
@@ -381,7 +396,7 @@ static void paint_tiles(rect screen, point camera)
 	{
 		for(int x = screen.x1; x < screen.x2; x += 32)
 		{
-			int index = map::m2i((x+camera.x) / 32, (y + camera.y) / 32);
+			int index = map::m2i((x + camera.x) / 32, (y + camera.y) / 32);
 			draw::imager(x, y, res::TisGROUND32, map::show::tiles[index], map::show::flags[index] % 4);
 		}
 	}
@@ -412,21 +427,23 @@ static void paint_objects(drawable** drawables, rect screen, point camera)
 
 static void paint_route(rect screen, point camera)
 {
+	draw::state push;
+	draw::clipping = screen;
 	auto path = map::route::getpath();
 	if(!path)
 		return;
 	auto count = map::route::getpathcount();
 	if(!count)
 		return;
-	int from = path[count-1];
-	for(int i = count-2; i >= 0; i--)
+	int from = path[count - 1];
+	for(int i = count - 2; i >= 0; i--)
 	{
 		int index = path[i];
 		int to = index;
 		if(i > 0)
 			to = path[i - 1];
-		int x = map::i2x(index)*32 - 12 - camera.x + screen.x1;
-		int y = map::i2y(index)*32 - camera.y + screen.y1;
+		int x = map::i2x(index) * 32 - 12 - camera.x + screen.x1;
+		int y = map::i2y(index) * 32 - camera.y + screen.y1;
 		draw::image(x, y, res::ROUTE, routeindex(from, index, to, 100));
 		from = index;
 	}
@@ -434,6 +451,9 @@ static void paint_route(rect screen, point camera)
 
 static void paint_screen(drawable** drawables, int player)
 {
+	// After some time clear text info
+	if(info_stamp < clock())
+		info_text[0] = 0;
 	draw::image(0, 0, draw::isevil(res::ADVBORDE, res::ADVBORD), 0, 0);
 	minimap(480, 16, 0);
 	heroes.draw(481, 176, 32, 32, 4);
@@ -460,6 +480,12 @@ void show::adventure::move(int from, int to, int hero, int player)
 	screen(player);
 	draw::input(false);
 	sleep(50);
+}
+
+void show::adventure::message(const char* format, ...)
+{
+	szprintv(info_text, format, xva_start(format));
+	info_stamp = clock() + 5000;
 }
 
 void show::adventure::disapear(int player, int object)
@@ -492,7 +518,7 @@ int show::game(int player)
 	bool show_blocked = false;
 	while(true)
 	{
-		if(selected_object>=FirstHero && selected_object<=LastHero
+		if(selected_object >= FirstHero && selected_object <= LastHero
 			&& selected_wave != selected_object)
 		{
 			// Расчитаем карту пути
@@ -534,11 +560,11 @@ int show::game(int player)
 		case InputChoose:
 			selected_object = hot::param;
 			index = bsget(selected_object, Index);
-			if(index>0)
-			    map::jumpto(index);
+			if(index > 0)
+				map::jumpto(index);
 			break;
 		case Change:
-			if(selected_object>=FirstHero && selected_object<=LastHero)
+			if(selected_object >= FirstHero && selected_object <= LastHero)
 				show::hero((tokens)selected_object);
 			else if(selected_object >= FirstCastle && selected_object <= LastCastle)
 				show::castle(selected_object);
@@ -571,7 +597,7 @@ int show::game(int player)
 		case KeyLeft:
 			map::slide(map::Left);
 			break;
-		case Alpha+'B':
+		case Alpha + 'B':
 			show_blocked = !show_blocked;
 			break;
 		case EndTurn:

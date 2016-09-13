@@ -701,9 +701,11 @@ namespace show
 	namespace adventure
 	{
 		void				disapear(int player, int object);
+		void				message(const char* text, ...);
 		void				move(int from, int to, int hero, int player);
 		void				screen(int player);
 	}
+	bool					ask(const char* format, const char* argument);
 	int						build(int rec);
 	void				    castle(int rec);
 	void					fadeback(int count);

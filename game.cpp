@@ -1321,6 +1321,13 @@ bool game::trade(int player, tokens from, tokens to, int count, int discount)
 	return true;
 }
 
+static bool ask(int player, int hero, const char* format, ...)
+{
+	if(bsget(player, PlayerType) != Human)
+		return (d100() < 50);
+	return show::ask(format, xva_start(format));
+}
+
 void game::interact(int index, int object, int hero, int player)
 {
 	bool move_to_object = true;
@@ -1334,6 +1341,23 @@ void game::interact(int index, int object, int hero, int player)
 		bsadd(player, type, count);
 		disapear = true;
 		move_to_object = false;
+		if(isinteractive)
+			show::adventure::message("%1 %2\n$(%3i/%4i)",
+				szt("You found", "Вы нашли"),
+				bsgets(type, Name),
+				type, count);
+	}
+	else if(type == TreasureChest)
+	{
+		disapear = true;
+		move_to_object = false;
+		auto side = bsget(hero, Player);
+		auto count = bsget(object, Count);
+		auto result = ask(player, hero, szt("Searching area you found a old treasure chest. Do you want keep gold for himself or get it to peasant?", "Исследую окресности вы наткнулись на древний ларец. Золото можно оставить себе или отдать крестьянам в обмен на опыт. Оставите золото себе?"));
+		if(result)
+			bsadd(side, Gold, 1000 + count * 500);
+		else
+			bsadd(hero, Experience, 500 + count * 500);
 	}
 	if(disapear)
 	{

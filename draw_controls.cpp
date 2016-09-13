@@ -275,7 +275,7 @@ int draw::textf(int x, int y, int width, const char* p)
 					p++;
 			}
 			if(count)
-				y += paint_icons(x, y, width, params, count) + 16;
+				y += paint_icons(x, y, width, params, count) + draw::texth();
 		}
 		else
 		{
@@ -284,7 +284,7 @@ int draw::textf(int x, int y, int width, const char* p)
 			y += draw::texth();
 			p += c;
 			if(p > start && p[-1] == '\n')
-				y += 6;
+				y += draw::texth()/2;
 			p = zskipspcr(p);
 		}
 	}
@@ -395,6 +395,13 @@ bool dlgask(const char* title, const char* text)
 	}
 }
 
+bool show::ask(const char* format, const char* argument)
+{
+	char temp[4096];
+	szprintv(temp, format, argument);
+	return dlgask(0, temp);
+}
+
 void dlgmsg(const char* title, const char* text)
 {
 	draw::screenshoot surface;
@@ -402,12 +409,12 @@ void dlgmsg(const char* title, const char* text)
 	draw::font = res::FONT;
 	auto ic1 = draw::isevil(res::SYSTEME, res::SYSTEM);
 	auto tw = 304 - 54 - 16;
-	auto th = draw::texth(text, tw);
+	auto th = draw::textf(tw, text);
 	while(true)
 	{
 		surface.restore();
 		int y1 = draw::dialog(th + res::height(ic1, 1) + padding);
-		y1 = y1 + draw::textm((draw::width - tw) / 2, y1, tw, draw::Center, text) + padding; // message text
+		y1 = y1 + draw::textf((draw::width - tw) / 2, y1, tw, text) + padding; // message text
 		draw::button((draw::width - res::width(ic1, 1)) / 2, y1,
 			ic1, 1, 1, 1, 2, KeyEnter);
 		draw::cursor(res::ADVMCO, 0);
