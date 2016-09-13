@@ -33,10 +33,13 @@ static void paint_hero(int x, int y, int type, unsigned char direction, bool shi
 	case map::LeftUp:      index = 9; flags |= AFMirror; break;
 	default: break;
 	}
-	draw::image(x, y, icn, index, flags);
+	if(flags&AFMirror)
+		draw::image(x+32, y, icn, index, flags);
+	else
+		draw::image(x, y, icn, index, flags);
 }
 
-static void paint_flag(int x, int y, int player, unsigned char direction, int tick)
+static void paint_flag(int x, int y, int player, unsigned char direction, int tick, bool still)
 {
 	res::tokens icn = res::Empthy;
 	int index_sprite = 0;
@@ -63,7 +66,13 @@ static void paint_flag(int x, int y, int player, unsigned char direction, int ti
 	case map::LeftUp:    index_sprite = 9; flags |= AFMirror; x += 19; break;
 	default: break;
 	}
-	draw::image(x, y, icn, index_sprite + (tick % 9), flags);
+	if(still)
+		index_sprite += 56;
+	int id = index_sprite + (tick % ((index_sprite>=45)?8:9));
+	if(flags&AFMirror)
+		draw::image(x + 16 + res::ox(icn, id)*2, y, icn, id, flags);
+	else
+		draw::image(x, y, icn, id, flags);
 }
 
 static void paint_shad(int x, int y, unsigned direction, int index)
@@ -131,7 +140,7 @@ struct hero : public drawable
 		pt.y += 30;
 		int rec = getid();
 		paint_hero(pt.x, pt.y, game::get(rec, Type), direction, map::gettile(index)==Water);
-		paint_flag(pt.x, pt.y, bsget(rec, Player), direction, 0);
+		paint_flag(pt.x, pt.y, bsget(rec, Player), direction, draw::counter, true);
 		paint_shad(pt.x, pt.y, direction, 0);
 	}
 

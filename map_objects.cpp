@@ -756,8 +756,10 @@ struct mapobject : public drawable
 		}
 		else if(type >= FirstResource && type <= LastResource)
 		{
-			draw::image(pt.x - 32, pt.y, res::OBJNRSRC, (type - FirstResource) * 2);
-			draw::image(pt.x, pt.y, res::OBJNRSRC, (type - FirstResource) * 2 + 1);
+			static int decode_resource[LastResource - FirstResource + 1] = {13/2, 1/2, 3/2, 5/2, 7/2, 9/2, 11/2};
+			auto id = decode_resource[type - FirstResource];
+			draw::image(pt.x - 32, pt.y, res::OBJNRSRC, id * 2);
+			draw::image(pt.x, pt.y, res::OBJNRSRC, id * 2 + 1);
 		}
 		else if(type >= FirstMonster && type <= LastMonster)
 		{
@@ -788,6 +790,11 @@ struct mapobject : public drawable
 		{
 			draw::image(pt.x - 32, pt.y, res::OBJNRSRC, 18);
 			draw::image(pt.x, pt.y, res::OBJNRSRC, 19);
+		}
+		else if(type == GeniusLamp)
+		{
+			draw::image(pt.x - 32, pt.y, res::OBJNRSRC, 14);
+			draw::image(pt.x, pt.y, res::OBJNRSRC, 15);
 		}
 		else
 			draw::image(pt.x, pt.y, icn, count);
@@ -820,6 +827,8 @@ void add_moveable(short unsigned index, short unsigned type, short unsigned quan
 		return;
 	auto& e = objects[mapobjects.count++];
 	res::tokens icn = res::Empthy;
+	if(type == Resource)
+		type = xrand(FirstResource, LastResource);
 	if(type >= FirstResource && type <= LastResource)
 	{
 		switch(type)
@@ -829,7 +838,7 @@ void add_moveable(short unsigned index, short unsigned type, short unsigned quan
 			quantity = xrand(5, 10);
 			break;
 		case Gold:
-			quantity = 100 * xrand(5, 10);
+			quantity = 100 * xrand(3, 9);
 			break;
 		default:
 			quantity = xrand(3, 6);
@@ -845,6 +854,23 @@ void add_moveable(short unsigned index, short unsigned type, short unsigned quan
 	else if(type >= FirstArtifact && type <= LastArtifact)
 		icn = res::OBJNARTI;
 	else if(type == TreasureChest)
+	{
+		icn = res::OBJNRSRC;
+		if(!quantity)
+		{
+			int percent = d100();
+			if(percent < 75) // Золото
+				quantity = rand() % 4;
+			else if(percent < 95)
+				quantity = game::random::artifact(1);
+			else
+			{
+				static tokens bad_artifacts[] = {TaxLien, FizbinMesfortune, HideousMask};
+				quantity = bad_artifacts[rand()%sizeof(bad_artifacts)/ sizeof(bad_artifacts[0])];
+			}
+		}
+	}
+	else if(type == GeniusLamp)
 		icn = res::OBJNRSRC;
 	else
 	{
@@ -886,7 +912,11 @@ void add_object(unsigned short index, unsigned char object, unsigned char frame,
 		last_mine_overlay = frame; // Конкретный тип шахты добавим в шахту сразу после этого
 		return;
 	case res::STREAM:
+		type = Stream;
+		quantity = frame;
+		break;
 	case res::ROAD:
+		type = Road;
 		quantity = frame;
 		break;
 	default:
@@ -900,6 +930,8 @@ void add_object(unsigned short index, unsigned char object, unsigned char frame,
 		if((pi->first + pi->shape.zero) != frame)
 			return;
 		type = pi->object;
+		if(!type)
+			type = Resource;
 		if(pi->object == Mines)
 			quantity = last_mine_overlay;
 	}
@@ -948,17 +980,19 @@ static void map_block()
 					if(x1 < 0 || y1 < 0 || x1 >= map::width || y1 >= map::height)
 						continue;
 					auto i = map::m2i(x1, y1);
-					if(sh.content[index] == 2)
-						map::show::type[i] = 2;
+					if(sh.content[index] == TypeBlock)
+						map::show::type[i] = TypeBlock;
 				}
 			}
 		}
 		if(e.type >= FirstObject && e.type <= LastObject)
-			map::show::type[e.index] = 3;
+			map::show::type[e.index] = TypeAction;
 		else if(e.type>=FirstResource && e.type<=LastResource)
-			map::show::type[e.index] = 3;
+			map::show::type[e.index] = TypeAction;
 		else if(e.type >= FirstArtifact && e.type <= LastArtifact)
-			map::show::type[e.index] = 3;
+			map::show::type[e.index] = TypeAction;
+		else if(e.type == TreasureChest && e.type == GeniusLamp)
+			map::show::type[e.index] = TypeAction;
 	}
 	// Пройдемся по монстрам
 	for(int i = 0; i < mapobjects.count; i++)
@@ -998,6 +1032,8 @@ static struct mapobject_drawable_plugin : public drawable::plugin
 		auto p = result;
 		for(int i = 0; i < mapobjects.count; i++)
 		{
+			if(!objects[i].type)
+				continue;
 			if(!objects[i].getrect().intersect(screen))
 				continue;
 			*p++ = objects + i;

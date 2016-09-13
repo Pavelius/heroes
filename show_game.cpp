@@ -418,7 +418,7 @@ static void paint_route(rect screen, point camera)
 	auto count = map::route::getpathcount();
 	if(!count)
 		return;
-	int from = path[count - 1];
+	int from = path[count-1];
 	for(int i = count-2; i >= 0; i--)
 	{
 		int index = path[i];
@@ -428,6 +428,7 @@ static void paint_route(rect screen, point camera)
 		int x = map::i2x(index)*32 - 12 - camera.x + screen.x1;
 		int y = map::i2y(index)*32 - camera.y + screen.y1;
 		draw::image(x, y, res::ROUTE, routeindex(from, index, to, 100));
+		from = index;
 	}
 }
 
@@ -458,7 +459,7 @@ void show::adventure::move(int from, int to, int hero, int player)
 	map::jumpto(to);
 	paint_screen(player);
 	draw::input(false);
-	sleep(100);
+	sleep(50);
 }
 
 int show::game(int player)

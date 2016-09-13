@@ -293,6 +293,7 @@ static int view()
 	int current_frame = 0;
 	int mode = 2;
 	bool border_image = false;
+	unsigned flags = 0;
 	while(true)
 	{
 		char temp[256];
@@ -309,7 +310,7 @@ static int view()
 			x = 0;
 			y = 0;
 		}
-		draw::image(x, y, icn, current_frame, (mode <= 1) ? AFNoOffset : 0);
+		draw::image(x, y, icn, current_frame, flags | ((mode <= 1) ? AFNoOffset : 0));
 		if(border_image)
 		{
 			draw::line(x - 32, y, x + 32, y, 0xBD);
@@ -357,7 +358,7 @@ static int view()
 		case Alpha + 'P':
 			palview();
 			break;
-		case Alpha + 'M':
+		case Alpha + 'T':
 			mapview();
 			break;
 		case Alpha + 'C':
@@ -368,6 +369,9 @@ static int view()
 			break;
 		case Alpha + 'S':
 			shadowview();
+			break;
+		case Alpha + 'M':
+			flags ^= AFMirror;
 			break;
 		case Accept:
 			id = search_image();

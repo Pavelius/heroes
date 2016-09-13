@@ -225,9 +225,10 @@ enum tokens
 	FireAltar, AirAltar, EarthAltar, WaterAltar, // 0xFC-0xFF
 	FirstObject = WaterChest, LastObject = WaterAltar,
 	LastAction = LastObject,
+	GeniusLamp,
 	Mushrooms, Volcano, DiggingHole, Flowers,
 	Lake, Hill, Mountains, Trees,
-	Rock, Cliff, Hole, Crack,
+	Rock, Cliff, Hole, Crack, Road, Stream,
 	RiverDeltaDown, RiverDeltaUp, Stumps, Leprechaunt,
 	// Custom tokens
 	FirstCreatureCount, LastCreatureCount = FirstCreatureCount + 6,
@@ -943,6 +944,7 @@ namespace game
 	bool					hasspellbook(int rec);
 	bool					hire(int hero, int player, int index);
 	void					initialize();
+	void					interact(int index, int object, int hero, int player);
 	bool					isarcher(int rec);
 	bool					isboosted(int rec);
 	bool					iscombat(int rec);

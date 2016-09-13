@@ -529,6 +529,7 @@ void add_object(unsigned short pos, unsigned char object, unsigned char frame, u
 
 bool map::load(gamefile& game)
 {
+	static tokens decode_resource[] = {Wood, Mercury, Ore, Sulfur, Crystal, Gems, Gold, GeniusLamp, Resource, TreasureChest};
 	char temp[260];
 	io::file st(szurl(temp, "maps", game.file, "mp2"));
 	if(!st)
@@ -790,14 +791,14 @@ bool map::load(gamefile& game)
 			add_moveable(i1, FirstMonster + tiles[i].indexName1, 0);
 			break;
 		case mp2obj(Resource):
-			add_moveable(i1, FirstResource + (tiles[i].indexName1 - 1) / 2, 0);
+			add_moveable(i1, decode_resource[tiles[i].indexName1/2], 0);
 			break;
 		case mp2obj(RndResource):
-			add_moveable(i1, FirstResource + xrand(0, 6), 0);
+			add_moveable(i1, xrand(FirstResource,LastResource), 0);
 			break;
 		case mp2obj(TreasureChest):
 			if(res::map(tiles[i].objectName1) == res::OBJNRSRC)
-				add_moveable(i1, TreasureChest, 0);
+				add_moveable(i1, TreasureChest, tiles[i].quantity1);
 			break;
 		}
 	}

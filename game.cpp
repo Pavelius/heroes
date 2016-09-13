@@ -1320,3 +1320,22 @@ bool game::trade(int player, tokens from, tokens to, int count, int discount)
 	addresources(resources, resources, resource_add);
 	return true;
 }
+
+void game::interact(int index, int object, int hero, int player)
+{
+	bool move_to_object = true;
+	bool disapear = false;
+	bool isinteractive = (bsget(player, Type) == Human);
+	int type = bsget(object, Type);
+	int count = bsget(object, Count);
+	if(type >= FirstResource && type <= LastResource)
+	{
+		bsadd(player, type, count);
+		disapear = true;
+		move_to_object = false;
+	}
+	if(disapear)
+		bsdelete(object);
+	if(move_to_object)
+		bsset(hero, Index, index);
+}

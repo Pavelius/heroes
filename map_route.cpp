@@ -1,6 +1,7 @@
 #include "main.h"
 
-const unsigned Blocked = 0xFFFFFFF0;
+const unsigned Blocked = 0xFFFFFFFA;
+const unsigned BlockedUpDown = 0xFFFFFFF9;
 static unsigned			path[144 * 144];
 static unsigned short	path_stack[256 * 256];
 static unsigned short	path_push;
@@ -37,17 +38,7 @@ static void gnext(int index, unsigned& level, int& pos)
 
 bool map::route::pathable(int index)
 {
-	static const map::directions direction[] = {
-		map::Left, map::Right, map::Up, map::Down,
-		map::LeftUp, map::LeftDown, map::RightUp, map::RightDown
-	};
-	for(auto a : direction)
-	{
-		int i = map::moveto(index, a);
-		if(i != -1 && path[i] && path[i] < Blocked)
-			return true;
-	}
-	return false;
+	return path[index]<Blocked;
 }
 
 void map::route::around(int index, unsigned m)
@@ -253,6 +244,7 @@ static void apply_map_type()
 			switch(map::show::type[i1])
 			{
 			case TypeBlock:
+			case TypeAction:
 				path[i1] = Blocked;
 				break;
 			case TypeAttack:
@@ -373,72 +365,38 @@ int	map::route::getpathcount()
 	return path_push;
 }
 
-//int map::route::get(int index)
-//{
-//	return path[index];
-//}
-
-static bool makestep(int rec, int pos2)
-{
-	int mp = bsget(rec, MovePoints);
-	int pos1 = bsget(rec, Index);
-	map::directions d = map::orient(pos1, pos2);
-	bsset(rec, Direction, d);
-	int mc = movecost2(pos1, d, bsget(rec, SkillPathfinding));
-	if(mp < mc)
-		return false;
-	bsset(rec, MovePoints, mp - mc);
-	return true;
-}
-
-static bool movingto(int rec, int pos2, void(*callback)())
-{
-	if(!makestep(rec, pos2))
-		return false;
-	if(callback)
-		callback();
-	bsset(rec, Index, pos2);
-	return true;
-}
-
-static bool reactionto(int rec, int pos2, void(*callback)())
-{
-	if(!makestep(rec, pos2))
-		return false;
-	int m = bsfind(FirstMapObject, Index, pos2);
-	if(!m)
-		return false;
-	//map::moveable::reaction(m, rec);
-	bsset(rec, MoveTo, bsget(rec, Index));
-	if(callback)
-		callback();
-	return true;
-}
-
-static void battle(int rec, int pos2, void(*callback)())
-{
-	if(!makestep(rec, pos2))
-		return;
-	bsset(rec, Index, pos2);
-	//int enemy = map::moveable::nearest(pos2, FirstMonster, LastMonster, 1);
-	//if(enemy==-1)
-	//	return;
-	//combat::start(rec, enemy);
-}
-
 void game::moveto(int hero, int player)
 {
-	if(!path_push)
+	if(path_push<2)
 		return;
-	while(path_push!=0)
+	while(path_push-1)
 	{
-		int from = bsget(hero, Index);
-		int to = path_stack[path_push-1];
+		auto from = bsget(hero, Index);
+		auto to = path_stack[path_push-2];
 		auto d = map::orient(from, to);
+		unsigned mp = bsget(hero, MovePoints);
+		auto mc = movecost2(from, d, bsget(hero, SkillPathfinding));
+		if(mp < mc)
+			return;
 		if(d != map::Center)
 			bsset(hero, Direction, d);
+		bsset(hero, MovePoints, mp - mc);
+		//
+		if(map::show::type[to] == TypeAction)
+		{
+			int object = bsfind(FirstMapObject, Index, to);
+			if(object)
+				game::interact(to, object, hero, player);
+			bsset(hero, MoveTo, -1);
+			path_push = 0;
+			return;
+		}
+		else
+		{
+			bsset(hero, Index, to);
+			path_push--;
+		}
+		// Interactive show movement
 		show::adventure::move(from, to, hero, player);
-		bsset(hero, Index, to);
-		path_push--;
 	}
 }
