@@ -425,3 +425,20 @@ static void battle(int rec, int pos2, void(*callback)())
 	//	return;
 	//combat::start(rec, enemy);
 }
+
+void game::moveto(int hero, int player)
+{
+	if(!path_push)
+		return;
+	while(path_push!=0)
+	{
+		int from = bsget(hero, Index);
+		int to = path_stack[path_push-1];
+		auto d = map::orient(from, to);
+		if(d != map::Center)
+			bsset(hero, Direction, d);
+		show::adventure::move(from, to, hero, player);
+		bsset(hero, Index, to);
+		path_push--;
+	}
+}

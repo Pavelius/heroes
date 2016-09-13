@@ -1,7 +1,8 @@
 #include "main.h"
 
-static int selected_object;
-static int information_mode;
+static int	selected_object;
+static int	information_mode;
+static rect	rcmap = {16, 16, 16 + 32 * 14, 16 + 32 * 14};
 
 static int routeindex(int from, int throught, int to, int mod)
 {
@@ -160,7 +161,7 @@ static void handle_input(int x, int y, int object)
 	}
 }
 
-struct castlelist : public list
+static struct castlelist : public list
 {
 
 	int	data[LastCastle - FirstCastle + 1];
@@ -209,9 +210,9 @@ struct castlelist : public list
 			draw::image(x - 1, y, draw::isevil(res::LOCATORE, res::LOCATORS), 1 + index);
 	}
 
-};
+} castles;
 
-struct herolist : public list
+static struct herolist : public list
 {
 
 	int	data[LastHero - FirstHero + 1];
@@ -236,7 +237,7 @@ struct herolist : public list
 			draw::image(x - 1, y, draw::isevil(res::LOCATORE, res::LOCATORS), 1 + index);
 	}
 
-};
+} heroes;
 
 static void minimap(int x, int y, int mode)
 {
@@ -401,15 +402,12 @@ static void paint_blocked(rect screen, point camera)
 	}
 }
 
-static void paint_objects(rect screen, point camera, unsigned flags)
+static void paint_objects(drawable** drawables, rect screen, point camera)
 {
 	draw::state push;
 	draw::clipping = screen;
-	drawable* drawables[2048];
-	dwselect(drawables, screen, camera, flags);
-	dwclipping(drawables, screen, camera);
 	dworder(drawables, zlen(drawables));
-	dwpaint(drawables, screen, camera, flags);
+	dwpaint(drawables, screen, camera, DWObjects);
 }
 
 static void paint_route(rect screen, point camera)
@@ -433,13 +431,41 @@ static void paint_route(rect screen, point camera)
 	}
 }
 
+static void paint_screen(drawable** drawables, int player)
+{
+	draw::image(0, 0, draw::isevil(res::ADVBORDE, res::ADVBORD), 0, 0);
+	minimap(480, 16, 0);
+	heroes.draw(481, 176, 32, 32, 4);
+	castles.draw(553, 176, 32, 32, 4);
+	paint_information(480, 320, player);
+	paint_tiles(rcmap, map::camera);
+	paint_objects(drawables, rcmap, map::camera);
+	paint_route(rcmap, map::camera);
+}
+
+static void paint_screen(int player)
+{
+	drawable* drawables[2048];
+	dwselect(drawables, rcmap, map::camera, DWObjects);
+	dwclipping(drawables, rcmap, map::camera);
+	paint_screen(drawables, player);
+}
+
+void show::adventure::move(int from, int to, int hero, int player)
+{
+	if(!player)
+		return;
+	map::jumpto(to);
+	paint_screen(player);
+	draw::input(false);
+	sleep(100);
+}
+
 int show::game(int player)
 {
 	int selected_wave = -1;
 	if(!information_mode)
 		information_mode = Information;
-	herolist heroes;
-	castlelist castles;
 	heroes.setup(player);
 	castles.setup(player);
 	if(!heroes.maximum && !castles.maximum)
@@ -453,7 +479,6 @@ int show::game(int player)
 	if(index > 0)
 		map::jumpto(index);
 	bool show_blocked = false;
-	rect rcmap = {16, 16, 16 + 32 * 14, 16 + 32 * 14};
 	while(true)
 	{
 		if(selected_object>=FirstHero && selected_object<=LastHero
@@ -469,18 +494,11 @@ int show::game(int player)
 				map::route::walk(bsget(selected_object, Index), move_to);
 			selected_wave = selected_object;
 		}
-		draw::image(0, 0, draw::isevil(res::ADVBORDE, res::ADVBORD), 0, 0);
-		minimap(480, 16, 0);
-		heroes.draw(481, 176, 32, 32, 4);
-		castles.draw(553, 176, 32, 32, 4);
-		paint_information(480, 320, player);
+		paint_screen(player);
 		if(hot::key == KeyEnter)
 			draw::execute(Change);
-		paint_tiles(rcmap, map::camera);
-		paint_objects(rcmap, map::camera, DWObjects);
 		if(show_blocked)
 			paint_blocked(rcmap, map::camera);
-		paint_route(rcmap, map::camera);
 		paint_cursor(rcmap, map::camera);
 		int id = draw::input();
 		switch(id)
@@ -489,10 +507,15 @@ int show::game(int player)
 		case Cancel:
 			return 0;
 		case Move:
-			hot::param = bsget(selected_object, MoveTo);
+			if(selected_object >= FirstHero && selected_object <= LastHero)
+			{
+				game::moveto(selected_object, player);
+				selected_wave = -1;
+			}
+			break;
 		case MoveTo:
 			if(bsget(selected_object, MoveTo) == hot::param)
-				bsset(selected_object, MoveTo, hot::param);
+				draw::execute(Move);
 			else
 				bsset(selected_object, MoveTo, hot::param);
 			selected_wave = -1;

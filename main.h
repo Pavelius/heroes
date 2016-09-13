@@ -697,6 +697,10 @@ namespace show
 		int					target(int side, int spell, int target);
 		int					unit(int rec, int casted);
 	}
+	namespace adventure
+	{
+		void				move(int from, int to, int hero, int player);
+	}
 	int						build(int rec);
 	void				    castle(int rec);
 	void					fadeback(int count);
@@ -952,6 +956,7 @@ namespace game
 	bool					istwiceattack(int rec);
 	bool					iswide(int rec);
 	bool					ismeleearcher(int rec);
+	void					moveto(int hero, int player);
 	void					mulresource(int* result, const void* source, int value);
 	bool					passrequipment(int rec, int building, int level);
 	int						play(gamefile& game);
