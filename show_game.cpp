@@ -464,8 +464,6 @@ void show::adventure::move(int from, int to, int hero, int player)
 
 void show::adventure::disapear(int player, int object)
 {
-	draw::state push;
-	draw::cicling = false;
 	show::adventure::screen(player);
 	draw::screenshoot before;
 	bsdelete(object);

@@ -384,11 +384,11 @@ void game::moveto(int hero, int player)
 		//
 		if(map::show::type[to] == TypeAction)
 		{
+			bsset(hero, MoveTo, -1);
+			path_push = 0;
 			int object = bsfind(FirstMapObject, Index, to);
 			if(object)
 				game::interact(to, object, hero, player);
-			bsset(hero, MoveTo, -1);
-			path_push = 0;
 			return;
 		}
 		else

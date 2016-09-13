@@ -31,7 +31,6 @@ namespace res
 static unsigned char	bits[draw::width*draw::height];
 rect					draw::clipping = {0, 0, draw::width, draw::height};
 unsigned				draw::counter;
-bool					draw::cicling = true;
 static rect             status_rect;
 static char             status_text[260];
 static char             tooltips_text[260];
@@ -866,7 +865,7 @@ res::tokens draw::isevil(res::tokens evil, res::tokens good)
 	return evil;
 }
 
-draw::state::state() : font(draw::font), clipping(draw::clipping), cicling(draw::cicling)
+draw::state::state() : font(draw::font), clipping(draw::clipping)
 {
 }
 
@@ -874,7 +873,6 @@ draw::state::~state()
 {
 	draw::font = font;
 	draw::clipping = clipping;
-	draw::cicling = cicling;
 }
 
 void draw::cursor(res::tokens icn, int id, int ox, int oy)
@@ -963,8 +961,7 @@ int draw::input(bool wait_input)
 		id = Cancel;
 	else if(id == InputTimer)
 	{
-		if(cicling)
-			colorize();
+		colorize();
 		counter++;
 	}
 	return id;
