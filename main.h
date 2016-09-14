@@ -42,7 +42,7 @@ enum tokens
 	HotSeatGame,
 	AutoCombat, Character, RunAway, Surrender, CastSpell, Recruit, RecruitLast, Index, MoveTo, MakeAction,
 	Cursor, CursorAdventure, CursorCombat, All, AttackDefence, SpellPowerWisdow, Information,
-	Accept, Count, Random, Portrait, Rating, ChangeMode, Dismiss,
+	Accept, Learn, Count, Random, Portrait, Rating, ChangeMode, Dismiss, Yes, No,
 	EndTurn, Damage, Block, Income,
 	NameMulti, Level, Target, Side, Base, Expire,
 	SingleVersion, RequiredTarget, MassEffect, DamageMin, DamageMax, Frame,

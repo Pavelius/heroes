@@ -8,12 +8,12 @@ static struct player
 	int			recruiters[RecruitLast - Recruit + 1];
 	int			cost[LastResource - FirstResource + 1];
 } objects[LastPlayer - FirstPlayer + 1] = {
-	{{"Blue"}},
-	{{"Green"}},
-	{{"Red"}},
-	{{"Yellow"}},
-	{{"Orange"}},
-	{{"Purple"}},
+	{{"Blue", "Синий"}},
+	{{"Green", "Зеленый"}},
+	{{"Red", "Красный"}},
+	{{"Yellow", "Желтый"}},
+	{{"Orange", "Оранжевый"}},
+	{{"Purple", "Фиолетовый"}},
 };
 static bsmeta::field fields[] = {
 	BSREQ(player, type, Type, Number),

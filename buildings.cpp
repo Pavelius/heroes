@@ -329,17 +329,17 @@ const char* game::getbuildingname(int race, int building, int level)
 {
 	static char temp[64];
 	static const char* buildings[][2] = {
-		{"Castle"},
-		{"Thieves Guild"},
-		{"Tavern"},
-		{"Shipyard"},
-		{"Well"},
-		{"Statue"},
-		{"Left Turret"},
-		{"Right Turret"},
-		{"Moat"},
-		{"Marketplace"},
-		{"Captain quarter"},
+		{"Castle", "Замок"},
+		{"Thieves Guild", "Гильдия воров"},
+		{"Tavern", "Таверна"},
+		{"Shipyard", "Верфь"},
+		{"Well", "Колодец"},
+		{"Statue", "Статуя"},
+		{"Left Turret", "Левая башня"},
+		{"Right Turret", "Правая башня"},
+		{"Moat", "Ров"},
+		{"Marketplace", "Рынок"},
+		{"Captain quarter", "Пристройка капитана"},
 	};
 	static const char* well2[][2] = {
 		{"Garbage Heap", "Куча мусора"},
@@ -366,12 +366,47 @@ const char* game::getbuildingname(int race, int building, int level)
 	};
 	static const char* dwellings[][2] =
 	{
-		{"Hut", "Хижина"}, {"Thatched Hut", "Соломенная Хижина"}, {"Excavation", "Захоронения"}, {"Treehouse", "Дома на деревьях"}, {"Cave", "Пещера"}, {"Habitat", "Норы"},
-		{"Stick Hut", "Хижина"}, {"Archery Range", "Полигон"}, {"Graveyard", "Кладбище"}, {"Cottage", "Коттедж"}, {"Crypt", "Крипта"}, {"Pen", "Загон"},
-		{"Den", "Логово"}, {"Blacksmith", "Кузница"}, {"Pyramid", "Пирамида"}, {"Archery Range", "Полигон"}, {"Nest", "Гнездо"}, {"Foundry", "Фабрика"},
-		{"Adobe", "Логово"}, {"Armory", "Оружейная"}, {"Mansion", "Особняк"}, {"Stonehenge", "Камни"}, {"Maze", "Лабиринт"}, {"Cliff Nest", "Гнездо на утесе"},
-		{"Bridge", "Мост"}, {"Jousting Arena", "Турнирная Арена"}, {"Mausoleum", "Мавзолей"}, {"Fenced Meadow", "Загон"}, {"Swamp", "Болото"}, {"Ivory Tower", "Башня магов"},
-		{"Pyramid", "Пирамида"}, {"Cathedral", "Собор"}, {"Laboratory", "Лаборатория"}, {"Red Tower", "Красная Башня"}, {"Green Tower", "Зеленая Башня"}, {"Cloud Castle", "Небесный замок"}
+		{"Hut", "Хижина"},
+		{"Thatched Hut", "Соломенная Хижина"},
+		{"Excavation", "Захоронения"},
+		{"Treehouse", "Дома на деревьях"},
+		{"Cave", "Пещера"},
+		{"Habitat", "Норы"},
+		//
+		{"Stick Hut", "Хижина"},
+		{"Archery Range", "Полигон"},
+		{"Graveyard", "Кладбище"},
+		{"Cottage", "Коттедж"},
+		{"Crypt", "Крипта"},
+		{"Pen", "Загон"},
+		//
+		{"Den", "Логово"},
+		{"Blacksmith", "Кузница"},
+		{"Pyramid", "Пирамида"},
+		{"Archery Range", "Полигон"},
+		{"Nest", "Гнездо"},
+		{"Foundry", "Фабрика"},
+		//
+		{"Adobe", "Логово"},
+		{"Armory", "Оружейная"},
+		{"Mansion", "Особняк"},
+		{"Stonehenge", "Камни"},
+		{"Maze", "Лабиринт"},
+		{"Cliff Nest", "Гнездо на утесе"},
+		//
+		{"Bridge", "Мост"},
+		{"Jousting Arena", "Турнирная Арена"},
+		{"Mausoleum", "Мавзолей"},
+		{"Fenced Meadow", "Загон"},
+		{"Swamp", "Болото"},
+		{"Ivory Tower", "Башня магов"},
+		//
+		{"Pyramid", "Пирамида"},
+		{"Cathedral", "Собор"},
+		{"Laboratory", "Лаборатория"},
+		{"Red Tower", "Красная Башня"},
+		{"Green Tower", "Зеленая Башня"},
+		{"Cloud Castle", "Небесный замок"}
 	};
 	static const char* warlock_dwelling6[][2] = {
 		{"Red Tower", "Красная башня"},
@@ -381,10 +416,10 @@ const char* game::getbuildingname(int race, int building, int level)
 		return buildings[building - Castle][locale];
 	if(building >= Dwelving1 && building <= Dwelving6)
 	{
-		if(level<=1)
+		if(level <= 1)
 			return dwellings[race - Barbarian + (building - Dwelving1) * 6][locale];
-		if(level>=2 && race==Warlock && building==Dwelving6)
-			return warlock_dwelling6[level-2][locale];
+		if(level >= 2 && race == Warlock && building == Dwelving6)
+			return warlock_dwelling6[level - 2][locale];
 		szprint(temp, "%1. %2", szt("Upg", "Ул"), dwellings[race - Barbarian + (building - Dwelving1) * 6][locale]);
 		return temp;
 	}
@@ -392,8 +427,8 @@ const char* game::getbuildingname(int race, int building, int level)
 		return well2[race - Barbarian][locale];
 	if(building == SpecialBuilding)
 		return special[race - Barbarian][locale];
-	if(building == MageGuild && level>=1 && level<=5)
-		return mageguild[level-1][locale];
+	if(building == MageGuild && level >= 1 && level <= 5)
+		return mageguild[level - 1][locale];
 	return "";
 }
 
@@ -401,17 +436,17 @@ const char* game::getbuildinginfo(int type, int building, int level)
 {
 	static char temp[260];
 	const char* buildings[][2] = {
-		{"The Castle improves town defense and increases income to 1000 gold per day.", ""},
-		{"The Thieves' Guild provides information on enemy players. Thieves' Guilds can also provide scouting information on enemy towns.", ""},
-		{"The Tavern increases morale for troops defending the castle.", ""},
-		{"The Shipyard allows ships to be built.", ""},
-		{"The Well increases the growth rate of all dwellings by 2 creatures per week.", ""},
-		{"The Statue increases your town's income by 250 per day.", ""},
-		{"The Left Turret provides extra firepower during castle combat.", ""},
-		{"The Right Turret provides extra firepower during castle combat."},
-		{"The Moat slows attacking units. Any unit entering the moat must end its turn there and becomes more vulnerable to attack."},
-		{"The Marketplace can be used to convert one type of resource into another. The more marketplaces you control, the better the exchange rate."},
-		{"The Captain's Quarters provides a captain to assist in the castle's defense when no hero is present."},
+		{"The Castle improves town defense and increases income to 1000 gold per day.", "Замок улучшает защиту города и увеличивает доход до 1000 золотых в день"},
+		{"The Thieves' Guild provides information on enemy players. Thieves' Guilds can also provide scouting information on enemy towns.", "Гильдия воров предоставляет информацию о вражеских игроках. Также предоставляет информацию о гарнизоне вражеских замков."},
+		{"The Tavern increases morale for troops defending the castle.", "Таверна увеличивает мораль защитников замка."},
+		{"The Shipyard allows ships to be built.", "Верфь позволяет строить корабли."},
+		{"The Well increases the growth rate of all dwellings by 2 creatures per week.", "Колодец увеличивает уровень роста существ в каждом жилище на 2 в неделю."},
+		{"The Statue increases your town's income by 250 per day.", "Статуя увеличивает доход вашего города на 250 золотых в день."},
+		{"The Left Turret provides extra firepower during castle combat.", "Левая башня дает дополнительную огневую мощь во время осады замка."},
+		{"The Right Turret provides extra firepower during castle combat.", "Правая башня дает дополнительную огневую мощь во время осады замка."},
+		{"The Moat slows attacking units. Any unit entering the moat must end its turn there and becomes more vulnerable to attack.", ""},
+		{"The Marketplace can be used to convert one type of resource into another. The more marketplaces you control, the better the exchange rate.", ""},
+		{"The Captain's Quarters provides a captain to assist in the castle's defense when no hero is present.", ""},
 	};
 	const char* mageguild[2] = {"The Mage Guild allows heroes to learn spells and replenish their spell points.", ""};
 	const char* dwelwings[2] = {"Allow to recruit %1.", "Позволяет нанимать %1."};

@@ -1,41 +1,6 @@
 #include "main.h"
 
-const int				padding = 16;
-
-struct picture
-{
-	int id;
-	int	count;
-
-	int width() const
-	{
-		if(id >= (int)FirstHero && id <= (int)LastHero)
-			return 101;
-		else if(id >= (int)FirstResource && id <= (int)LastResource)
-			return 60;
-		else if(id >= (int)FirstBuilding && id <= (int)LastBuilding)
-			return 137;
-		else if(id >= (int)FirstMonster && id <= (int)LastMonster)
-			return 80;
-		else if(id >= (int)FirstSkill && id <= (int)LastSkill)
-			return 80;
-		return 0;
-	}
-
-	int height() const
-	{
-		if(id >= (int)FirstHero && id <= (int)LastHero)
-			return 93;
-		else if(id >= (int)FirstResource && id <= (int)LastResource)
-			return 50;
-		else if(id >= (int)FirstBuilding && id <= (int)LastBuilding)
-			return 58;
-		else if(id >= (int)FirstMonster && id <= (int)LastMonster)
-			return 93;
-		return 0;
-	}
-
-};
+const int	padding = 16;
 
 static int index_by_type(int id)
 {
@@ -124,121 +89,220 @@ void draw::splitter(int x, int y, int id, res::tokens icn, int from, int to, int
 	button(x + res::width(icn, body) - res::width(icn, right) - 1, y + 1, icn, id, right, right, right + pressed, 0, 0, 0, KeyRight);
 }
 
-int draw::clipart(int x, int y, int id, int param, int param2, bool border)
+struct picture
 {
-	int w = 0;
-	int h = 0;
-	char temp[32];
-	if(id >= FirstHero && id <= LastHero)
+
+	int			id, count, frame;
+	res::tokens	icn;
+
+	void initialize()
 	{
-		if(param == 1)
+		icn = res::Empthy;
+		frame = 0;
+		if(id >= FirstHero && id <= LastHero)
 		{
-			w = 43;
-			h = 27;
-			image(x - res::width(res::MINIPORT, 0) / 2, y + res::oy(res::MINIPORT, 0), res::MINIPORT, id - FirstHero, AFNoOffset);
+			if(count == 1)
+			{
+				icn = res::MINIPORT;
+				frame = id - FirstHero;
+			}
+			else
+			{
+				icn = (res::tokens)(res::PORT0000 + id - FirstHero);
+				frame = 0;
+			}
+		}
+		else if(id >= FirstCaptain && id <=LastCaptain)
+		{
+			static int indicies[] = {1, 0, 5, 2, 3, 4};
+			icn = res::tokens(res::PORT0090 + indicies[id - FirstCaptain]);
+			frame = 0;
+		}
+		else if(id >= FirstResource && id <= LastResource)
+		{
+			static unsigned char frames[] = {6, 0, 1, 2, 3, 4, 5};
+			icn = res::RESOURCE;
+			frame = frames[id - FirstResource];
+		}
+		else if(id >= FirstBuilding && id <= LastBuilding)
+		{
+			icn = res::buildings(count);
+			frame = indexes::buildings(id, 0);
+		}
+		else if(id >= FirstMonster && id <= LastMonster)
+		{
+			icn = res::STRIP;
+			frame = index_by_type(game::get(id, Type));
+		}
+		else if(id >= FirstSkill && id <= LastSkill)
+		{
+			icn = res::SECSKILL;
+			frame = id - FirstSkill + 1;
+		}
+		else if(id >= FirstArtifact && id <= LastArtifact)
+		{
+			icn = res::ARTIFACT;
+			frame = id - FirstArtifact + 1;
+		}
+		else if(id == Experience)
+		{
+			icn = res::EXPMRL;
+			frame = 4;
+		}
+		else if(id == Morale)
+		{
+			icn = res::EXPMRL;
+			if(count<0)
+				frame = 3;
+			else
+				frame = 2;
+		}
+		else if(id == Yes)
+		{
+			icn = draw::isevil(res::SYSTEME, res::SYSTEM);
+			frame = 5;
+		}
+		else if(id == Yes)
+		{
+			icn = draw::isevil(res::SYSTEME, res::SYSTEM);
+			frame = 5;
+		}
+		else if(id == Yes)
+		{
+			icn = draw::isevil(res::SYSTEME, res::SYSTEM);
+			frame = 5;
+		}
+		else if(id == No)
+		{
+			icn = draw::isevil(res::SYSTEME, res::SYSTEM);
+			frame = 7;
+		}
+		else if(id == Accept)
+		{
+			icn = draw::isevil(res::SYSTEME, res::SYSTEM);
+			frame = 1;
+		}
+		else if(id == Cancel)
+		{
+			icn = draw::isevil(res::SYSTEME, res::SYSTEM);
+			frame = 3;
+		}
+		else if(id == Learn)
+		{
+			icn = draw::isevil(res::SYSTEME, res::SYSTEM);
+			frame = 9;
+		}
+	}
+
+	int getheight() const
+	{
+		if(id >= FirstResource && id <= LastResource)
+			return 46;
+		if(id == Experience)
+			return res::height(icn, frame) + res::height(res::SMALFONT, 'I' - 0x20) + 2 + 2;
+		return res::height(icn, frame);
+	}
+
+	int getwidth() const
+	{
+		return res::width(icn, frame);
+	}
+
+	void paint(int x, int y) const
+	{
+		char temp[32];
+		int w = getwidth();
+		int h = getheight();
+		int paint_count = 0;
+		if(id >= FirstResource && id <= LastResource)
+		{
+			draw::image(x - w / 2, y + h - draw::texth() - 2 - res::height(icn, frame), icn, frame, AFNoOffset);
+			paint_count = 1;
+		}
+		else if(id >= FirstSkill && id <= LastSkill)
+		{
+			draw::image(x - w / 2, y, icn, frame, AFNoOffset);
+			const char* p = bsgets(id, Name);
+			draw::text(x - w / 2 + (w - draw::textw(p)) / 2, y + 3, p);
+			p = bsgets(count, Name);
+			draw::text(x - w / 2 + (w - draw::textw(p)) / 2, y + 3 + 52, p);
+		}
+		else if(id >= FirstCaptain && id <= LastCaptain)
+		{
+			draw::image(x - w / 2, y, icn, frame, AFNoOffset);
+			if(count)
+				draw::image(x - w / 2 + 6, y - 2, res::CFLGSMAL, count - FirstPlayer);
+		}
+		else if(id >= FirstMonster && id <= LastMonster)
+		{
+			draw::image(x - w / 2 + 1, y, icn, frame, AFNoOffset);
+			draw::image(x - w / 2, y, res::tokens(res::MONH0000 + id - FirstMonster), 0);
+			paint_count = 2;
+		}
+		else if(id == Experience)
+		{
+			draw::image(x - w / 2, y, icn, frame, AFNoOffset);
+			paint_count = 1;
 		}
 		else
+			draw::image(x - w / 2, y, icn, frame, AFNoOffset);
+		if(paint_count)
 		{
-			w = 101;
-			h = 93;
-			image(x - w / 2, y, res::tokens(res::PORT0000 + id - FirstHero), 0, 0);
-		}
-		if(border)
-			rectb(x - w / 2, y, x + w / 2, y + h, 0x0C);
-	}
-	if(id >= FirstCaptain && id <= LastCaptain)
-	{
-		static int indicies[] = {1, 0, 5, 2, 3, 4};
-		w = 101;
-		h = 93;
-		image(x - w / 2, y, res::tokens(res::PORT0090 + indicies[id - FirstCaptain]), 0, 0);
-		if(param)
-			draw::image(x - w / 2 + 6, y - 2, res::CFLGSMAL, param - FirstPlayer);
-		if(border)
-			rectb(x - w / 2, y, x + w / 2, y + h, 0x0C);
-	}
-	else if(id >= FirstResource && id <= LastResource)
-	{
-		static unsigned char frames[] = {6, 0, 1, 2, 3, 4, 5};
-		int id1 = frames[id - FirstResource];
-		h = 50;
-		w = res::width(res::RESOURCE, id1);
-		image(x - w / 2, y + 30 - res::height(res::RESOURCE, id1), res::RESOURCE, id1, AFNoOffset);
-		draw::state push;
-		draw::font = res::SMALFONT;
-		sznum(temp, param);
-		text(x - textw(temp) / 2, y + 33, temp);
-	}
-	else if(id >= FirstBuilding && id <= LastBuilding)
-	{
-		h = 58;
-		w = 137;
-		image(x - w / 2 + 1, y + 1, res::buildings(param), indexes::buildings(id, 0));
-		if(border)
-			rectb(x - w / 2, y, x + w / 2, y + h, 0x0C);
-	}
-	else if(id >= FirstMonster && id <= LastMonster)
-	{
-		res::tokens tk = res::tokens(res::MONH0000 + id - FirstMonster);
-		int type = game::get(id, Type);
-		w = 80;
-		h = 93;
-		image(x - w / 2, y, res::STRIP, index_by_type(type));
-		image(x - w / 2, y, tk, 0);
-		if(param)
-		{
-			sznum(temp, param);
+			if(paint_count == 2 && count == 0)
+				return;
+			sznum(temp, count);
 			draw::state push;
 			draw::font = res::SMALFONT;
-			text(x + w / 2 - 4 - draw::textw(temp), y + h - draw::texth(), temp);
+			int w1 = draw::textw(temp);
+			int x1 = x + w / 2 - 4 - w1;
+			if(paint_count == 1)
+				x1 = x - w1 / 2;
+			draw::text(x1, y + h - draw::texth(), temp);
 		}
-		if(border)
-			rectb(x - w / 2, y, x + w / 2 + 2, y + h, 0x0C);
-		// Don't uncomment this code! If do - your tooltips in castle not counted hero side.
-		//if(draw::area(x - w / 2, y, x + w / 2, y + h))
-		//{
-		//	if(hot::key == MouseRight && hot::pressed)
-		//		execute(Information, id);
-		//}
 	}
-	else if(id >= FirstSkill && id <= LastSkill)
-	{
-		w = 80;
-		h = res::height(res::SECSKILL, 0);
-		const char* p = bsgets(id, Name);
-		draw::image(x - w / 2, y, res::SECSKILL, id - FirstSkill + 1, 0);
-		draw::text(x - w / 2 - 3 + (w - draw::textw(p)) / 2, y + 3, p);
-		p = bsgets(param, Name);
-		draw::text(x - w / 2 - 3 + (w - draw::textw(p)) / 2, y + 3 + 52, p);
-	}
-	else if(id >= FirstArtifact && id <= LastArtifact)
-	{
-		w = 80;
-		h = res::height(res::ARTIFACT, 0);
-		draw::image(x - w / 2 + 1, y, res::ARTIFACT, id - FirstArtifact + 1, 0);
-	}
-	return h;
+
+};
+
+int draw::clipart(int x, int y, int id, int param, int param2, bool border)
+{
+	picture icon;
+	icon.id = id;
+	icon.count = param;
+	icon.initialize();
+	icon.paint(x, y);
+	return icon.getheight();
 }
 
-static int paint_icons(int x, int y, int width, picture* icons, int count)
+static int paint_icons(int x, int y, int width, picture* icons, int count, bool proportional)
 {
-	const int pad = 4;
 	if(!count)
 		return 0;
+	const int pad = 4;
 	int y1 = y;
 	while(count > 0)
 	{
-		int c = (count < 3) ? count : 3;
-		int h = icons->height();
-		int w1 = icons->width();
-		int w = w1*c + (c - 1)*pad;
+		int c = (count < 4) ? count : 4;
+		int h = 0;
+		int w = 0;
+		for(int i = 0; i < c; i++)
+		{
+			auto h1 = icons[i].getheight();
+			if(h1 > h)
+				h = h1;
+			w += icons[i].getwidth() + pad;
+		}
+		w -= pad;
+		if(proportional)
+			w = (width / c)*c;
 		int x1 = x + (width - w) / 2;
 		for(int i = 0; i < c; i++)
 		{
-			int h1 = draw::clipart(x1 + w1 / 2, y, icons[i].id, icons[i].count, 0, true);
-			if(h < h1)
-				h = h1;
-			x1 += w1 + pad;
+			auto h1 = icons[i].getheight();
+			auto w1 = proportional ? (w/c) : icons[i].getwidth();
+			icons[i].paint(x1 + w1 / 2, y + h - h1);
+			x1 += w1;
+			if(!proportional)
+				x1 += pad;
 		}
 		y += h;
 		icons += c;
@@ -259,12 +323,20 @@ int draw::textf(int x, int y, int width, const char* p)
 		{
 			p += 2;
 			int count = 0;
+			bool proportional = false;
 			while(*p)
 			{
+				if(*p == 'p')
+				{
+					p++;
+					proportional = true;
+					continue;
+				}
 				params[count].id = sz2num(p, &p);
 				params[count].count = 0;
 				if(*p == '/')
 					params[count].count = sz2num(zskipsp(p + 1), &p);
+				params[count].initialize();
 				count++;
 				if(*p == ')')
 				{
@@ -275,7 +347,7 @@ int draw::textf(int x, int y, int width, const char* p)
 					p++;
 			}
 			if(count)
-				y += paint_icons(x, y, width, params, count) + draw::texth();
+				y += paint_icons(x, y, width, params, count, proportional) + draw::texth();
 		}
 		else
 		{
@@ -368,25 +440,24 @@ bool dlgask(const char* title, const char* text)
 	draw::state push;
 	draw::font = res::FONT;
 	res::tokens ic1 = draw::isevil(res::SYSTEME, res::SYSTEM);
-	int tw = 304 - 54 - 16;
-	int th = draw::textf(tw, text) + padding + res::height(ic1, 5);
+	int tw = 300 - 54 - 16;
+	int th = draw::textf(tw, text) + padding/2 + res::height(ic1, 5);
 	int x = (draw::width - tw) / 2;
 	while(true)
 	{
 		surface.restore();
 		int y1 = draw::dialog(th);
 		//draw::rectb(x, y1, x+tw, y1+th, 0x40);
-		y1 += draw::textf(x, y1, tw, text) + padding; // message text
-		draw::button(x + 16, y1, ic1, 1, 5, 5, 6, KeyEnter);
-		draw::button(x + tw - 16 - res::width(ic1, 7), y1, ic1, 2, 7, 7, 8, KeyEscape);
+		y1 += draw::textf(x, y1, tw, text) + padding/2; // message text
+		draw::button(x + 10, y1, ic1, Accept, 5, 5, 6, KeyEnter);
+		draw::button(x + tw - 10 - res::width(ic1, 7), y1, ic1, Cancel, 7, 7, 8, KeyEscape);
 		draw::cursor(res::ADVMCO, 0);
 		int id = draw::input();
 		switch(id)
 		{
-		case 0:
-		case 2:
+		case Cancel:
 			return false;
-		case 1:
+		case Accept:
 			return true;
 		default:
 			draw::definput(id);
@@ -413,8 +484,8 @@ void dlgmsg(const char* title, const char* text)
 	while(true)
 	{
 		surface.restore();
-		int y1 = draw::dialog(th + res::height(ic1, 1) + padding);
-		y1 = y1 + draw::textf((draw::width - tw) / 2, y1, tw, text) + padding; // message text
+		int y1 = draw::dialog(th + res::height(ic1, 1) + padding/2);
+		y1 = y1 + draw::textf((draw::width - tw) / 2, y1, tw, text) + padding/2; // message text
 		draw::button((draw::width - res::width(ic1, 1)) / 2, y1,
 			ic1, 1, 1, 1, 2, KeyEnter);
 		draw::cursor(res::ADVMCO, 0);

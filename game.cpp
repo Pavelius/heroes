@@ -1353,11 +1353,18 @@ void game::interact(int index, int object, int hero, int player)
 		move_to_object = false;
 		auto side = bsget(hero, Player);
 		auto count = bsget(object, Count);
-		auto result = ask(player, hero, szt("Searching area you found a old treasure chest. Do you want keep gold for himself or get it to peasant?", "Исследую окресности вы наткнулись на древний ларец. Золото можно оставить себе или отдать крестьянам в обмен на опыт. Оставите золото себе?"));
+		auto gp = 1000 + count * 500;
+		auto ep = gp - 500;
+		auto result = ask(player, hero,
+			"%1\n$(p%2i/%3i,%4i/%5i)",
+			szt("Searching area you found a old treasure chest. Do you want keep gold for himself or get it to peasant?", "Исследую окресности вы наткнулись на древний ларец. Золото можно оставить себе или отдать крестьянам в обмен на опыт. Оставите золото себе?"),
+			Gold, gp,
+			Experience, ep
+			);
 		if(result)
-			bsadd(side, Gold, 1000 + count * 500);
+			bsadd(side, Gold, gp);
 		else
-			bsadd(hero, Experience, 500 + count * 500);
+			bsadd(hero, Experience, ep);
 	}
 	if(disapear)
 	{

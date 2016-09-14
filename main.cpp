@@ -217,7 +217,7 @@ static void button_type(int x, int y, tokens type, int i, bool show_name = true)
     {
 		draw::state push;
 		draw::font = res::SMALFONT;
-		const char* p = bsgets(FirstPlayer+i+1,Name);
+		const char* p = bsgets(FirstPlayer+i,Name);
         draw::text(x+(rc.width()-draw::textw(p))/2, y+rc.height(), p);
     }
     if(hot::mouse.in(rc))
@@ -515,6 +515,7 @@ static int mainmenu()
 
 int main()
 {
+	locale = 1;
 	draw::font = res::FONT;
 	draw::create("Heroes II", 200, false);
 	return mainmenu();

@@ -37,7 +37,7 @@ void show::hero(tokens rec)
 		{
 			draw::state push;
 			draw::font = res::SMALFONT;
-			int x = 3 + 40;
+			int x = 40;
 			int y = 233;
 			const int dx = res::width(res::SECSKILL, 0) + 5;
 			for(int i = FirstSkill; i <= LastSkill; i++)
@@ -51,7 +51,7 @@ void show::hero(tokens rec)
 			int x2 = 3 + 40 + 8 * dx;
 			while(x < x2)
 			{
-				draw::image(x - 40, y, res::SECSKILL, 0, 0);
+				draw::image(x - 40 + 3, y, res::SECSKILL, 0, 0);
 				x += dx;
 			}
 		}
