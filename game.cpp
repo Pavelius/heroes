@@ -1329,14 +1329,22 @@ static bool ask(int player, int hero, const char* format, ...)
 	return show::ask(format, xva_start(format));
 }
 
+static void message(int player, int hero, const char* format, ...)
+{
+	if(bsget(player, PlayerType) != Human)
+		return;
+	return show::message(format, xva_start(format));
+}
+
 void game::interact(int index, int object, int hero, int player)
 {
 	bool move_to_object = true;
 	bool disapear = false;
 	bool isinteractive = (bsget(player, PlayerType) == Human);
 	bool islog = false;
-	int type = bsget(object, Type);
-	int count = bsget(object, Count);
+	auto side = bsget(hero, Player);
+	auto type = bsget(object, Type);
+	auto count = bsget(object, Count);
 	if(type >= FirstResource && type <= LastResource)
 	{
 		bsadd(player, type, count);
@@ -1352,20 +1360,31 @@ void game::interact(int index, int object, int hero, int player)
 	{
 		disapear = true;
 		move_to_object = false;
-		auto side = bsget(hero, Player);
-		auto count = bsget(object, Count);
-		auto gp = 1000 + count * 500;
-		auto ep = gp - 500;
-		auto result = ask(player, hero,
-			"%1\n$(p%2i/%3i,%4i/%5i)",
-			szt("Searching area you found a old treasure chest. Do you want keep gold for himself or get it to peasant?", "Исследую окресности вы наткнулись на древний ларец. Золото можно оставить себе или отдать крестьянам в обмен на опыт. Оставите золото себе?"),
-			Gold, gp,
-			Experience, ep
+		if(count < 4)
+		{
+			auto gp = 1000 + count * 500;
+			auto ep = gp - 500;
+			auto result = ask(player, hero,
+				"%1\n$(p%2i/%3i,%4i/%5i)",
+				szt("Searching area you found a old treasure chest. Do you want keep gold for himself or get it to peasant?", "Исследую окресности вы наткнулись на древний ларец. Золото можно оставить себе или отдать крестьянам в обмен на опыт. Оставите золото себе?"),
+				Gold, gp,
+				Experience, ep
 			);
-		if(result)
-			bsadd(side, Gold, gp);
+			if(result)
+				bsadd(side, Gold, gp);
+			else
+				bsadd(hero, Experience, ep);
+		}
 		else
-			bsadd(hero, Experience, ep);
+		{
+			message(player, hero,
+				"%1 %3.\n$(p%2i)",
+				szt("Searching area you found a old treasure chest. Inside you found ancient artifact:", "Исследую окресности вы наткнулись на древний ларец. Внутри вы обнаружили артефакт:"),
+				count,
+				bsgets(count, Name)
+				);
+			game::additem(hero, count);
+		}
 	}
 	if(disapear)
 	{

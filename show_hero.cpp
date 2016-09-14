@@ -66,7 +66,7 @@ void show::hero(tokens rec)
 			{
 				int n = bsget(rec, i);
 				if(n)
-					draw::clipart(x, y, n, 0);
+					draw::clipart(x - 7, y, n, 0);
 				else
 					draw::image(x - dx / 2, y, res::ARTIFACT, 0);
 				x += dx;

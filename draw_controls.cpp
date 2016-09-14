@@ -466,10 +466,10 @@ bool dlgask(const char* title, const char* text)
 	}
 }
 
-bool show::ask(const char* format, const char* argument)
+bool show::ask(const char* format, const char* arguments)
 {
 	char temp[4096];
-	szprintv(temp, format, argument);
+	szprintv(temp, format, arguments);
 	return dlgask(0, temp);
 }
 
@@ -496,6 +496,13 @@ void dlgmsg(const char* title, const char* text)
 			return;
 		}
 	}
+}
+
+void show::message(const char* format, const char* arguments)
+{
+	char temp[4096];
+	szprintv(temp, format, arguments);
+	return dlgmsg(0, temp);
 }
 
 void show::tips(const char* text)

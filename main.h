@@ -707,7 +707,7 @@ namespace show
 		void				move(int from, int to, int hero, int player);
 		void				screen(int player);
 	}
-	bool					ask(const char* format, const char* argument);
+	bool					ask(const char* format, const char* arguments);
 	int						build(int rec);
 	void				    castle(int rec);
 	void					fadeback(int count);
@@ -715,6 +715,7 @@ namespace show
 	void				    hero(tokens rec);
 	void				    highscore();
 	void					marketplace(int player);
+	void					message(const char* format, const char* arguments);
 	bool                    recruit(int rec, int& count, int maximum, void* available_resources);
 	int						spellbook(int mid, tokens mode = CombatSpells);
 	void					tavern();
