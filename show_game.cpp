@@ -516,6 +516,17 @@ int show::game(int player)
 	if(index > 0)
 		map::jumpto(index);
 	bool show_blocked = false;
+	switch(bsget(player, Type))
+	{
+	case Wizard:
+	case Sorcerer:
+	case Knight:
+		draw::setevil(false);
+		break;
+	default:
+		draw::setevil(true);
+		break;
+	}
 	while(true)
 	{
 		if(selected_object >= FirstHero && selected_object <= LastHero
