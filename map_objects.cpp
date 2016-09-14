@@ -1,9 +1,5 @@
 #include "main.h"
 
-struct pointc
-{
-	char			x, y;
-};
 struct shapeinfo
 {
 	unsigned char	count;

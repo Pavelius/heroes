@@ -12,6 +12,7 @@
     <ClInclude Include="point.h" />
     <ClInclude Include="rect.h" />
     <ClInclude Include="command.h" />
+    <ClInclude Include="pointc.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

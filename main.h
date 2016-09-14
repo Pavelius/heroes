@@ -5,6 +5,7 @@
 #include "drawable.h"
 #include "io.h"
 #include "input.h"
+#include "pointc.h"
 
 enum tokens
 {

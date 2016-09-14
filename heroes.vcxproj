@@ -28,6 +28,7 @@
     <ClInclude Include="io.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="point.h" />
+    <ClInclude Include="pointc.h" />
     <ClInclude Include="rect.h" />
     <ClInclude Include="win.h" />
   </ItemGroup>

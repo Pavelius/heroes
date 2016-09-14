@@ -435,7 +435,7 @@ const char* game::getbuildingname(int race, int building, int level)
 const char* game::getbuildinginfo(int type, int building, int level)
 {
 	static char temp[260];
-	const char* buildings[][2] = {
+	static const char* buildings[][2] = {
 		{"The Castle improves town defense and increases income to 1000 gold per day.", "Замок улучшает защиту города и увеличивает доход до 1000 золотых в день"},
 		{"The Thieves' Guild provides information on enemy players. Thieves' Guilds can also provide scouting information on enemy towns.", "Гильдия воров предоставляет информацию о вражеских игроках. Также предоставляет информацию о гарнизоне вражеских замков."},
 		{"The Tavern increases morale for troops defending the castle.", "Таверна увеличивает мораль защитников замка."},
@@ -448,6 +448,7 @@ const char* game::getbuildinginfo(int type, int building, int level)
 		{"The Marketplace can be used to convert one type of resource into another. The more marketplaces you control, the better the exchange rate.", ""},
 		{"The Captain's Quarters provides a captain to assist in the castle's defense when no hero is present.", ""},
 	};
+	static const char* well2[2] = {"The %1 increases production of %2 by %3i per week.", "%1 увеличивает прирост %2 на %3i в неделю."};
 	const char* mageguild[2] = {"The Mage Guild allows heroes to learn spells and replenish their spell points.", ""};
 	const char* dwelwings[2] = {"Allow to recruit %1.", "Позволяет нанимать %1."};
 	if(building >= Castle && building <= Captain)
@@ -457,6 +458,12 @@ const char* game::getbuildinginfo(int type, int building, int level)
 	if(building >= Dwelving1 && building <= Dwelving6)
 	{
 		szprint(temp, dwelwings[locale], bsgets(game::getunit(type, building, level), NameMulti));
+		return temp;
+	}
+	if(building == Well2)
+	{
+		auto unit = game::getunit(type, Dwelving1, level);
+		szprint(temp, well2[locale], getbuildingname(type, Well2, 1), bsgets(unit, NameMulti), 8);
 		return temp;
 	}
 	return "";

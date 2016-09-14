@@ -179,11 +179,11 @@ static struct castle_drawable_plugin : public drawable::plugin
 //		switch(objects[rec - FirstCastle].type)
 //		{
 //		case Knight:
-//			return szprint(temp, szt("The Farm increases production of Peasants by %1i per week.", ""), CastleIncomeWell2);
+//			return szprint(temp, szt(, ""), CastleIncomeWell2);
 //		case Barbarian:
-//			return szprint(temp, szt("The Garbage Heap increases production of Goblins by %1i per week.", ""), CastleIncomeWell2);
+//			return szprint(temp, szt(, ""), CastleIncomeWell2);
 //		case Sorcerer:
-//			return szprint(temp, szt("The Crystal Garden increases production of Sprites by %1i per week.", ""), CastleIncomeWell2);
+//			return szprint(temp, szt(, ""), CastleIncomeWell2);
 //		case Warlock:
 //			return szprint(temp, szt("The Waterfall increases production of Centaurs by %1i per week.", ""), CastleIncomeWell2);
 //		case Wizard:
