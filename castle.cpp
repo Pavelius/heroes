@@ -42,7 +42,6 @@ static struct castle : public drawable
 		auto town = dwellings[Castle - FirstBuilding] != 2;
 		pt.x -= 2 * 32;
 		pt.y -= 3 * 32;
-		// TODO: Paint Shadow
 		draw::castle(pt.x, pt.y, map::gettile(index), type, town);
 	}
 
@@ -166,50 +165,3 @@ static struct castle_drawable_plugin : public drawable::plugin
 		*p = 0;
 	}
 } drawable_plugin;
-
-//if(id >= (int)Information)
-//{
-//	static char temp[256];
-//	switch(id - Information + CastleInTown)
-//	{
-//		return szt("The Tent provides workers to build a castle, provided the materials and the gold are available.", "");
-//	case Captain:
-//		return szt(, "");
-//	case Well2:
-//		switch(objects[rec - FirstCastle].type)
-//		{
-//		case Knight:
-//			return szprint(temp, szt(, ""), CastleIncomeWell2);
-//		case Barbarian:
-//			return szprint(temp, szt(, ""), CastleIncomeWell2);
-//		case Sorcerer:
-//			return szprint(temp, szt(, ""), CastleIncomeWell2);
-//		case Warlock:
-//			return szprint(temp, szt("The Waterfall increases production of Centaurs by %1i per week.", ""), CastleIncomeWell2);
-//		case Wizard:
-//			return szprint(temp, szt("The Orchard increases production of Halflings by %1i per week.", ""), CastleIncomeWell2);
-//		default:
-//			return szprint(temp, szt("The Skull Pile increases production of Skeletons by %1i per week.", ""), CastleIncomeWell2);
-//		};
-//	case SpecialBuilding:
-//		switch(objects[rec - FirstCastle].type)
-//		{
-//		case Knight:
-//		case Barbarian:
-//		case Sorcerer:
-//		case Warlock:
-//			break;
-//		case Wizard:
-//			return szt("Open one additional spell's scroll for each level of magic guild.", "");
-//		default:
-//			return szt("Increase Spell power by 2 when hero or captain defend this castle.", "");
-//		}
-//	case Dwelving1:
-//	case Dwelving2:
-//	case Dwelving3:
-//	case Dwelving4:
-//	case Dwelving5:
-//	case Dwelving6:
-//		return szprint(temp, szt("%1 allow recruit %2.", "%1 позволяет нанимать %2."),
-//			bsgets(rec, id - Information + CastleInTown),
-//			bsgets(game::getunit(objects[rec - FirstCastle].type, id - Information + CastleInTown), NameMulti));

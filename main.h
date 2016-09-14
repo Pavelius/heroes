@@ -629,6 +629,7 @@ namespace draw
 	void					rectf(int x1, int y1, int x2, int y2, unsigned char color);
 	void					resource(int x, int y, const void* cost_ptr);
 	void					route(int x, int y, int* rec, int w, int h, int distance);
+	void					setevil(bool value);
 	void					shadow(int x1, int y1, int x2, int y2, int intense);
 	void					splitter(int x, int y, int id, res::tokens icn, int from, int to, int& current);
 	void					status(const char* format, ...);

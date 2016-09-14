@@ -45,6 +45,7 @@ point                   hot::mouse;
 int                     hot::key;
 int                     hot::command;
 bool                    hot::pressed;
+static bool				evil_interface;
 // System driver
 bool					sys_create(const char* title, int milliseconds, bool fullscreen, unsigned char* bits, int width, int height); // Create system window
 int						sys_input(bool wait); // Wait for system input
@@ -860,9 +861,14 @@ void draw::execute(int id, int param, int param2)
 	hot::pressed = false;
 }
 
+void draw::setevil(bool value)
+{
+	evil_interface = value;
+}
+
 res::tokens draw::isevil(res::tokens evil, res::tokens good)
 {
-	return evil;
+	return evil_interface ? evil : good;
 }
 
 draw::state::state() : font(draw::font), clipping(draw::clipping)

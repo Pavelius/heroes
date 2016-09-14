@@ -440,16 +440,16 @@ const char* game::getbuildinginfo(int type, int building, int level)
 		{"The Thieves' Guild provides information on enemy players. Thieves' Guilds can also provide scouting information on enemy towns.", "Гильдия воров предоставляет информацию о вражеских игроках. Также предоставляет информацию о гарнизоне вражеских замков."},
 		{"The Tavern increases morale for troops defending the castle.", "Таверна увеличивает мораль защитников замка."},
 		{"The Shipyard allows ships to be built.", "Верфь позволяет строить корабли."},
-		{"The Well increases the growth rate of all dwellings by 2 creatures per week.", "Колодец увеличивает уровень роста существ в каждом жилище на 2 в неделю."},
+		{"The Well increases the growth rate of all dwellings by 2 creatures per week.", "Колодец увеличивает прирост существ в каждом жилище на 2 в неделю."},
 		{"The Statue increases your town's income by 250 per day.", "Статуя увеличивает доход вашего города на 250 золотых в день."},
 		{"The Left Turret provides extra firepower during castle combat.", "Левая башня дает дополнительную огневую мощь во время осады замка."},
 		{"The Right Turret provides extra firepower during castle combat.", "Правая башня дает дополнительную огневую мощь во время осады замка."},
-		{"The Moat slows attacking units. Any unit entering the moat must end its turn there and becomes more vulnerable to attack.", ""},
-		{"The Marketplace can be used to convert one type of resource into another. The more marketplaces you control, the better the exchange rate.", ""},
-		{"The Captain's Quarters provides a captain to assist in the castle's defense when no hero is present.", ""},
+		{"The Moat slows attacking units. Any unit entering the moat must end its turn there and becomes more vulnerable to attack.", "Ров замедляет атакующий отряд. Любой отряд, зашедший в ров заканчивает свой ход и становится более уязвим для атак."},
+		{"The Marketplace can be used to convert one type of resource into another. The more marketplaces you control, the better the exchange rate.", "Рынок используется для обмена одного вида ресурсов в другой. Чем больше рынков вы построили тем более выгодный курс обмена."},
+		{"The Captain's Quarters provides a captain to assist in the castle's defense when no hero is present.", "Пристройка капитана позволяет капитану защищать замок, когда в замке отсутствует герой."},
 	};
 	static const char* well2[2] = {"The %1 increases production of %2 by %3i per week.", "%1 увеличивает прирост %2 на %3i в неделю."};
-	const char* mageguild[2] = {"The Mage Guild allows heroes to learn spells and replenish their spell points.", ""};
+	const char* mageguild[2] = {"The Mage Guild allows heroes to learn spells and replenish their spell points.", "Гильдия магов позволяет героям изучать заклинания и восстанавливать потраченные очки магии до максимума."};
 	const char* dwelwings[2] = {"Allow to recruit %1.", "Позволяет нанимать %1."};
 	if(building >= Castle && building <= Captain)
 		return buildings[building - Castle][locale];
