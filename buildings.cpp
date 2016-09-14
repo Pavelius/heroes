@@ -453,10 +453,10 @@ const char* game::getbuildinginfo(int type, int building, int level)
 	const char* dwelwings[2] = {"Allow to recruit %1.", "Позволяет нанимать %1."};
 	static const char* special[][2] = {
 		{"The Colliseum gives a besieged army +2 morale.", "Коллизей дает защищающейся армии +2 к морали."},
-		{"", ""},
+		{"The Fortification toughens castle walls in a siege.", "Укрепление усиливает стены замка во время его осады."},
 		{"The Perpetual Storm building gives defending heroes or captains +2 spellpower", "Буря дает защищающимся в замке герою или капитану +2 к Силе магии."},
-		{"", ""},
-		{"", ""},
+		{"The Rainbow gives a besieged army +2 lucks.", "Радуга дает защищающейся армии +2 к удаче."},
+		{"The Dungeon increases town income by 500 Gold per day.", "Подземелье увеличивает доход города на 500 золотых в день."},
 		{"The Library adds one additional spell to every level of the Mage Guild.", "Библиотека добавляет одно дополнительное заклинание на каждый уровень Гильдии магов."},
 	};
 	if(building >= Castle && building <= Captain)
@@ -475,7 +475,7 @@ const char* game::getbuildinginfo(int type, int building, int level)
 		return temp;
 	}
 	else if(building == SpecialBuilding)
-		return special[locale][type - Barbarian];
+		return special[type - Barbarian][locale];
 	return "";
 }
 

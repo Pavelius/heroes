@@ -2,7 +2,6 @@
 
 const int castle_income_well = 2;
 const int castle_income_well2 = 10;
-const int castle_income_statue = 250;
 
 static int		day;
 static tokens	week_of, month_of;
@@ -581,7 +580,7 @@ int game::getincome(int rec)
 	if(bsget(rec, Statue))
 		result += 250;
 	if(bsget(rec, Type) == Warlock && bsget(rec, SpecialBuilding))
-		result += castle_income_statue * 2;
+		result += 250 * 2;
 	return result;
 }
 
