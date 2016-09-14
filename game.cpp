@@ -5,7 +5,6 @@ const int castle_income_well2 = 10;
 const int castle_income_statue = 250;
 
 static int		day;
-static int		growth_per_week[] = {8, 6, 4, 3, 2, 1};
 static tokens	week_of, month_of;
 static tokens	game_difficult = EasyDifficulty;
 static tokens	week_monsters[] =
@@ -799,7 +798,7 @@ void game::build(int rec, int id)
 	addresources(resources, resources, cost, true);
 	bsset(rec, id, next_level);
 	if(next_level == 1 && id >= Dwelving1 && id <= Dwelving6)
-		bsadd(rec, id - Dwelving1 + FirstCreatureCount, growth_per_week[id - Dwelving1]);
+		bsadd(rec, id - Dwelving1 + FirstCreatureCount, getgrowth(rec, id));
 	bsadd(rec, AlreadyMoved, 1);
 }
 
@@ -859,19 +858,22 @@ static void game_endturn()
 
 int game::getgrowth(int rec, int dwelling)
 {
+	static int		growth_per_week[][6] = {
+		{10, 8, 5, 4, 3, 2},
+		{12, 8, 5, 4, 3, 2},
+		{8, 6, 4, 3, 2, 1},
+		{6, 6, 4, 3, 2, 1},
+		{8, 6, 4, 3, 2, 1},
+		{8, 6, 4, 3, 2, 1},
+	};
 	if(!bsget(rec, dwelling))
 		return 0;
 	int type = bsget(rec, Type);
-	bool well = bsget(rec, Well) != 0;
-	bool well2 = bsget(rec, Well2) != 0;
-	int result = growth_per_week[dwelling - Dwelving1];
-	if(well)
+	int result = growth_per_week[type - Barbarian][dwelling - Dwelving1];
+	if(bsget(rec, Well))
 		result += castle_income_well;
-	if(dwelling == Dwelving1 && well2)
+	if(dwelling == Dwelving1 && bsget(rec, Well2))
 		result += castle_income_well2;
-	// RULE: barbarian and knight growth fast
-	if(type == Barbarian || type == Knight)
-		result += castle_income_well;
 	return result;
 }
 

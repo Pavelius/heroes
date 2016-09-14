@@ -451,21 +451,31 @@ const char* game::getbuildinginfo(int type, int building, int level)
 	static const char* well2[2] = {"The %1 increases production of %2 by %3i per week.", "%1 увеличивает прирост %2 на %3i в неделю."};
 	const char* mageguild[2] = {"The Mage Guild allows heroes to learn spells and replenish their spell points.", "Гильдия магов позволяет героям изучать заклинания и восстанавливать потраченные очки магии до максимума."};
 	const char* dwelwings[2] = {"Allow to recruit %1.", "Позволяет нанимать %1."};
+	static const char* special[][2] = {
+		{"The Colliseum gives a besieged army +2 morale.", "Коллизей дает защищающейся армии +2 к морали."},
+		{"", ""},
+		{"The Perpetual Storm building gives defending heroes or captains +2 spellpower", "Буря дает защищающимся в замке герою или капитану +2 к Силе магии."},
+		{"", ""},
+		{"", ""},
+		{"The Library adds one additional spell to every level of the Mage Guild.", "Библиотека добавляет одно дополнительное заклинание на каждый уровень Гильдии магов."},
+	};
 	if(building >= Castle && building <= Captain)
 		return buildings[building - Castle][locale];
-	if(building == MageGuild)
+	else if(building == MageGuild)
 		return mageguild[locale];
-	if(building >= Dwelving1 && building <= Dwelving6)
+	else if(building >= Dwelving1 && building <= Dwelving6)
 	{
 		szprint(temp, dwelwings[locale], bsgets(game::getunit(type, building, level), NameMulti));
 		return temp;
 	}
-	if(building == Well2)
+	else if(building == Well2)
 	{
 		auto unit = game::getunit(type, Dwelving1, level);
 		szprint(temp, well2[locale], getbuildingname(type, Well2, 1), bsgets(unit, NameMulti), 8);
 		return temp;
 	}
+	else if(building == SpecialBuilding)
+		return special[locale][type - Barbarian];
 	return "";
 }
 
