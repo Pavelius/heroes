@@ -1386,6 +1386,22 @@ void game::interact(int index, int object, int hero, int player)
 			game::additem(hero, count);
 		}
 	}
+	else if(type == CampFire)
+	{
+		disapear = true;
+		move_to_object = false;
+		auto gp = (1 + (count % 4)) * 250;
+		auto rs = 2 + ((count>>2) % 4);
+		auto rt = Mercury + (count >> 4) % 4;
+		message(player, hero,
+			"%1\n$(%2i/%3i,%4i/%5i)",
+			szt("Searching enemy camp you found hidden treasure.", "Обыскав вражеский лагерь вы обнаружили скрытый клад."),
+			Gold, gp,
+			rt, rs
+		);
+		bsadd(side, Gold, gp);
+		bsadd(side, rt, rs);
+	}
 	if(disapear)
 	{
 		if(isinteractive)

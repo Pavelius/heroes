@@ -963,10 +963,6 @@ static void map_block()
 			auto& sh = e.info->shape;
 			int x = map::i2x(e.index);
 			int y = map::i2y(e.index);
-			if(sh.size.y == 1)
-			{
-				continue;
-			}
 			if(sh.size.y > 1)
 			{
 				for(int index = 0; index < sh.count; index++)
