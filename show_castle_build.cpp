@@ -255,7 +255,7 @@ int show::build(int mid)
 				}
 				if(p[0])
 					zcat(p, ".");
-				game::getcosttext(zend(temp), e2);
+				game::addicon(zend(temp), e2);
 				show::tips(temp);
 			}
 			break;
@@ -267,7 +267,7 @@ int show::build(int mid)
 				game::getbuilding(temp, race, id, level);
 				zcat(temp, " ");
 				zcat(temp, szt("Do you want to build?", "Хотите построить?"));
-				game::getcosttext(zend(temp), e2);
+				game::addicon(zend(temp), e2);
 				if(dlgask(0, temp))
 					return id;
 			}
@@ -285,7 +285,7 @@ int show::build(int mid)
 					szprint(zend(temp), szt(" with %1i artifacts", " с %1i артифактами"), bsget(id, ArtifactCount));
 				szprint(zend(temp),
 					szt("can work for you. Did you want to hire?", "может работать на вас. Хотите нанять?"));
-				game::getcosttext(zend(temp), cost);
+				game::addicon(zend(temp), cost);
 				if(dlgask(0, temp))
 					return id;
 			}

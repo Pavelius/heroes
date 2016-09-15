@@ -70,5 +70,6 @@
     <ClCompile Include="show_game.cpp" />
     <ClCompile Include="command.cpp" />
     <ClCompile Include="map_objects.cpp" />
+    <ClCompile Include="game_interact.cpp" />
   </ItemGroup>
 </Project>

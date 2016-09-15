@@ -745,8 +745,12 @@ struct mapobject : public drawable
 			}
 			switch(type)
 			{
-			case Mines:
-				draw::image(pt.x, pt.y, res::EXTRAOVR, count);
+			case MineOre:
+			case MineGold:
+			case MineSulfur:
+			case MineCrystal:
+			case MineGems:
+				draw::image(pt.x, pt.y, res::EXTRAOVR, type-FirstMine);
 				break;
 			}
 		}
@@ -880,9 +884,24 @@ void add_moveable(short unsigned index, short unsigned type, short unsigned quan
 	e.type = tokens(type);
 }
 
+static tokens get_resource(tokens type)
+{
+	switch(type)
+	{
+	case MineOre: return Ore;
+	case SawMill: return Wood;
+	case MineGems: return Gems;
+	case MineSulfur: return Sulfur;
+	case MineCrystal: return Crystal;
+	case MineGold: return Gold;
+	case AlchemyLab: return Mercury;
+	default: return Empthy;
+	}
+}
+
 void add_object(unsigned short index, unsigned char object, unsigned char frame, unsigned char quantity)
 {
-	static unsigned char last_mine_overlay;
+	static mapobject* last_object = 0;
 	tokens type = Empthy;
 	mapobjectinfo* pi = 0;
 	auto icn = res::map(object);
@@ -905,7 +924,12 @@ void add_object(unsigned short index, unsigned char object, unsigned char frame,
 		pi = find_object(icn, frame);
 		break;
 	case res::EXTRAOVR:
-		last_mine_overlay = frame; // Конкретный тип шахты добавим в шахту сразу после этого
+		if(last_object)
+		{
+			// Abandone mine and Mountain Mines has overlay just after their objects
+			assert((last_object->type == Mines) || (last_object->type == AbandoneMine));
+			last_object->type = (tokens)(MineOre + frame);
+		}
 		return;
 	case res::STREAM:
 		type = Stream;
@@ -928,8 +952,6 @@ void add_object(unsigned short index, unsigned char object, unsigned char frame,
 		type = pi->object;
 		if(!type)
 			type = Resource;
-		if(pi->object == Mines)
-			quantity = last_mine_overlay;
 	}
 	// А можно ли добавить новый объект?
 	if(mapobjects.from + mapobjects.count >= mapobjects.to)
@@ -940,6 +962,7 @@ void add_object(unsigned short index, unsigned char object, unsigned char frame,
 	e.count = quantity;
 	e.info = pi;
 	e.type = type;
+	last_object = &e;
 }
 
 static void map_block()

@@ -41,6 +41,7 @@
     <ClCompile Include="command.cpp" />
     <ClCompile Include="crt.cpp" />
     <ClCompile Include="draw.cpp" />
+    <ClCompile Include="game_interact.cpp" />
     <ClCompile Include="game_statistic.cpp" />
     <ClCompile Include="map_objects.cpp" />
     <ClCompile Include="show_castle_build.cpp" />

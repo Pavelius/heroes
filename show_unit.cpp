@@ -233,7 +233,7 @@ bool show::recruit(int rec, int& count, int maximum, void* available_resources)
 			// available
 			draw::text(x1 + 32, y1 + 148, 90, draw::Center, szprint(temp, "%1: %2i", szt("Available", "Достпуно"), maximum));
 			// recruit
-			draw::text(x1 + 32, y1 + 164, 90, draw::Left, szt("Number to buy:", "Нанять количество:"));
+			draw::text(x1 + 32, y1 + 164, 90, draw::Left, szt("Number to buy:", "Нанять кол-во:"));
 		}
 		// count
 		draw::edit(x1 + 168, y1 + 163, count, maximum_available);
@@ -247,10 +247,10 @@ bool show::recruit(int rec, int& count, int maximum, void* available_resources)
 				draw::execute(Information);
 		}
 		// Price
-		draw::textf(x1 + 142, y1 + 72, 130, game::getcosttext(temp, monster_cost));
+		draw::textf(x1 + 142, y1 + 72, 130, game::addicon(temp, monster_cost));
 		// total
 		game::mulresource(total, monster_cost, count);
-		draw::textf(x1 + 33, y1 + 190, 250, game::getcosttext(temp, total));
+		draw::textf(x1 + 33, y1 + 190, 250, game::addicon(temp, total));
 		//
 		draw::button(x1 + 34, y1 + 249, res::RECRUIT, Accept, 8, 8, 9, KeyEnter);
 		draw::button(x1 + 187, y1 + 249, res::RECRUIT, Cancel, 6, 6, 7, KeyEscape);

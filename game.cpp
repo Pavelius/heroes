@@ -950,28 +950,6 @@ const int* game::gethirecost(int rec)
 	return cost;
 }
 
-char* game::getcosttext(char* result, const void* cost_void)
-{
-	char* p = result;
-	auto cost = (int*)cost_void;
-	p[0] = 0;
-	for(int id = FirstResource; id <= LastResource; id++)
-	{
-		int value = cost[id - FirstResource];
-		if(!value)
-			continue;
-		if(p == result)
-			zcpy(p, "\n$(");
-		else
-			zcpy(p, ",");
-		szprint(zend(p), "%1i/%2i", id, value);
-		p = zend(p);
-	}
-	if(p != result)
-		zcat(p, ")");
-	return result;
-}
-
 bool game::ismatch(const void* c1_void, const void* c2_void)
 {
 	auto c1 = (int*)c1_void;
@@ -1197,7 +1175,7 @@ bool game::upgrade(int side, int index, bool interactive)
 	{
 		szprint(temp, szt("Upgrade", "Улучшить"));
 		szprint(zend(temp), "\n$(%1i, %2i)\n", monster, monster_new);
-		game::getcosttext(zend(temp), t2);
+		game::addicon(zend(temp), t2);
 	}
 	if(ismatch(pl, t2))
 	{
@@ -1322,93 +1300,46 @@ bool game::trade(int player, tokens from, tokens to, int count, int discount)
 	return true;
 }
 
-static bool ask(int player, int hero, const char* format, ...)
+bool game::isfullartifacts(int hero)
 {
-	if(bsget(player, PlayerType) != Human)
-		return (d100() < 50);
-	return show::ask(format, xva_start(format));
+	for(int i = FirstArtifactIndex; i <= LastArtifactIndex; i++)
+	{
+		if(!bsget(hero, i))
+			return false;
+	}
+	return true;
 }
 
-static void message(int player, int hero, const char* format, ...)
+char* game::addicon(char* result, int type, int count)
 {
-	if(bsget(player, PlayerType) != Human)
-		return;
-	return show::message(format, xva_start(format));
+	szprint(result, "\n$(%1i/%2i)", type, count);
+	return result;
 }
 
-void game::interact(int index, int object, int hero, int player)
+char* game::addicon(char* result, int t1, int c1, int t2, int c2)
 {
-	bool move_to_object = true;
-	bool disapear = false;
-	bool isinteractive = (bsget(player, PlayerType) == Human);
-	bool islog = false;
-	auto side = bsget(hero, Player);
-	auto type = bsget(object, Type);
-	auto count = bsget(object, Count);
-	if(type >= FirstResource && type <= LastResource)
+	szprint(result, "\n$(p%1i/%2i, %3i/%4i)", t1, c1, t2, c2);
+	return result;
+}
+
+char* game::addicon(char* result, const void* cost_void)
+{
+	char* p = result;
+	auto cost = (int*)cost_void;
+	p[0] = 0;
+	for(int id = FirstResource; id <= LastResource; id++)
 	{
-		bsadd(player, type, count);
-		disapear = true;
-		move_to_object = false;
-		if(isinteractive)
-			show::adventure::message("%1 %2\n$(%3i/%4i)",
-				szt("You found", "Вы нашли"),
-				bsgets(type, Name),
-				type, count);
-	}
-	else if(type == TreasureChest)
-	{
-		disapear = true;
-		move_to_object = false;
-		if(count < 4)
-		{
-			auto gp = 1000 + count * 500;
-			auto ep = gp - 500;
-			auto result = ask(player, hero,
-				"%1\n$(p%2i/%3i,%4i/%5i)",
-				szt("Searching area you found a old treasure chest. Do you want keep gold for himself or get it to peasant?", "Исследую окресности вы наткнулись на древний ларец. Золото можно оставить себе или отдать крестьянам в обмен на опыт. Оставите золото себе?"),
-				Gold, gp,
-				Experience, ep
-			);
-			if(result)
-				bsadd(side, Gold, gp);
-			else
-				bsadd(hero, Experience, ep);
-		}
+		int value = cost[id - FirstResource];
+		if(!value)
+			continue;
+		if(p == result)
+			zcpy(p, "\n$(");
 		else
-		{
-			message(player, hero,
-				"%1 %3.\n$(p%2i)",
-				szt("Searching area you found a old treasure chest. Inside you found ancient artifact:", "Исследую окресности вы наткнулись на древний ларец. Внутри вы обнаружили артефакт:"),
-				count,
-				bsgets(count, Name)
-				);
-			game::additem(hero, count);
-		}
+			zcpy(p, ",");
+		szprint(zend(p), "%1i/%2i", id, value);
+		p = zend(p);
 	}
-	else if(type == CampFire)
-	{
-		disapear = true;
-		move_to_object = false;
-		auto gp = (1 + (count % 4)) * 250;
-		auto rs = 2 + ((count>>2) % 4);
-		auto rt = Mercury + (count >> 4) % 4;
-		message(player, hero,
-			"%1\n$(%2i/%3i,%4i/%5i)",
-			szt("Searching enemy camp you found hidden treasure.", "Обыскав вражеский лагерь вы обнаружили скрытый клад."),
-			Gold, gp,
-			rt, rs
-		);
-		bsadd(side, Gold, gp);
-		bsadd(side, rt, rs);
-	}
-	if(disapear)
-	{
-		if(isinteractive)
-			show::adventure::disapear(player, object);
-		else
-			bsdelete(object);
-	}
-	if(move_to_object)
-		bsset(hero, Index, index);
+	if(p != result)
+		zcat(p, ")");
+	return result;
 }

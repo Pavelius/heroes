@@ -226,7 +226,11 @@ enum tokens
 	FireAltar, AirAltar, EarthAltar, WaterAltar, // 0xFC-0xFF
 	FirstObject = WaterChest, LastObject = WaterAltar,
 	LastAction = LastObject,
+	// Major map objects
+	MineOre, MineSulfur, MineCrystal, MineGems, MineGold,
+	FirstMine = MineOre, LastMine = MineGold,
 	GeniusLamp,
+	// Not major map objects
 	Mushrooms, Volcano, DiggingHole, Flowers,
 	Lake, Hill, Mountains, Trees,
 	Rock, Cliff, Hole, Crack, Road, Stream,
@@ -788,7 +792,6 @@ namespace map
 	extern point			camera;
 	inline int				i2x(int i) { return i % 144; }
 	inline int				i2y(int i) { return i / 144; }
-	bool					isaction(int object);
 	bool					isroad(unsigned char object, unsigned char index, unsigned char direct);
 	bool					ispassable(int index);
 	tokens					gettile(int index);
@@ -813,7 +816,6 @@ namespace map
 		int					get(int index);
 		short unsigned*		getpath();
 		int					getpathcount();
-		void        		load(int* rec, int index, int w, int h);
 		bool				pathable(int index);
 		void				walk(int start, int dest);
 		void				wave(int start, int skill, int ship_master);
@@ -910,6 +912,9 @@ namespace game
 		void				initialize();
 		int					monster(int level);
 	}
+	char*					addicon(char* result, int t1, int c2);
+	char*					addicon(char* result, int t1, int c1, int t2, int c2);
+	char*					addicon(char* result, const void* cost_void);
 	bool					additem(int rec, int type);
 	void					addresources(void* result, const void* v1, const void* v2, bool negative = false);
 	bool					addunit(int rec, int type, int count);
@@ -929,7 +934,6 @@ namespace game
 	int						getbuildings(int player, int building);
 	int						getcastle(int index);
 	int						getcastles(int player, int level);
-	char*					getcosttext(char* result, const void* cost);
 	int						getday();
 	int						getdowngrade(int rec);
 	int						getdwelving(int rec);
@@ -957,6 +961,7 @@ namespace game
 	bool					iscombat(int rec);
 	bool					isfly(int rec);
 	bool					isfriendly(int rec);
+	bool					isfullartifacts(int hero);
 	bool					ishostile(int rec);
 	bool					ismatch(const void* c1, const void* c2);
 	bool					ispenalized(int rec);

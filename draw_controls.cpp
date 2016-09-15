@@ -197,7 +197,7 @@ struct picture
 	int getheight() const
 	{
 		if(id >= FirstResource && id <= LastResource)
-			return 46;
+			return 45;
 		if(id == Experience)
 			return res::height(icn, frame) + res::height(res::SMALFONT, 'I' - 0x20) + 2 + 2;
 		return res::height(icn, frame);
@@ -216,7 +216,7 @@ struct picture
 		int paint_count = 0;
 		if(id >= FirstResource && id <= LastResource)
 		{
-			draw::image(x - w / 2, y + h - draw::texth() - 2 - res::height(icn, frame), icn, frame, AFNoOffset);
+			draw::image(x - w / 2, y + h - draw::texth() - res::height(icn, frame), icn, frame, AFNoOffset);
 			paint_count = 1;
 		}
 		else if(id >= FirstSkill && id <= LastSkill)
@@ -431,7 +431,7 @@ void draw::resource(int x, int y, const void* cost_ptr)
 	rectf(x, y, x + 81, y + 191, 0x20);
 	x += 20;
 	for(auto& a : elements)
-		clipart(x + a.pos.x, y + a.pos.y, a.id, cost[a.id - FirstResource], 0);
+		clipart(x + a.pos.x, y + a.pos.y - 2, a.id, cost[a.id - FirstResource], 0);
 }
 
 bool dlgask(const char* title, const char* text)
