@@ -67,16 +67,16 @@ void draw::splitter(int x, int y, int id, res::tokens icn, int from, int to, int
 	{
 		if(hot::key == MouseLeft && hot::pressed)
 		{
-			if(area(x + p0, y, px, y + height))
+			if(mousein(x + p0, y, px, y + height))
 				execute(id, KeyLeft);
-			else if(area(px + bar_width, y, x + p0 + mx1 + bar_width, y + height))
+			else if(mousein(px + bar_width, y, x + p0 + mx1 + bar_width, y + height))
 				execute(id, KeyRight);
-			else if(area(px, y, px + bar_width, y + height))
+			else if(mousein(px, y, px + bar_width, y + height))
 				drag_id = id;
 		}
 		else if(hot::key == MouseWheelUp || hot::key == MouseWheelDown)
 		{
-			if(area(x, y, x + body_width, y + height))
+			if(mousein(x, y, x + body_width, y + height))
 			{
 				if(hot::key==MouseWheelUp)
 					execute(id, KeyLeft);
@@ -290,7 +290,7 @@ int draw::clipart(int x, int y, int id, int param, int param2, bool border, bool
 	rc.y2 = icon.getheight();
 	rc.x1 = x - rc.x2 / 2; rc.x2 += rc.x1;
 	rc.y1 = y; rc.y2 += rc.y1;
-	if(draw::area(rc.x1, rc.y1, rc.x2, rc.y2))
+	if(draw::mousein(rc))
 	{
 		if(clickable && hot::key == MouseLeft && hot::pressed)
 			draw::execute(id);
@@ -670,7 +670,7 @@ void draw::troops(int x, int y, int rec)
 			clipart(x + 40, y, unit, count);
 		if(i == hot_troops_index && hot_troops_owner == rec)
 			image(x, y, res::STRIP, 1);
-		if(area(x, y, x + w, y + h))
+		if(mousein(x, y, x + w, y + h))
 		{
 			if(key == MouseRight && pressed)
 				execute(Information, bsget(rec, i), rec);

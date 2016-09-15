@@ -902,7 +902,7 @@ void draw::button(int x, int y, res::tokens res, int id, int normal, int hilite,
 	{
 		int i = normal;
 		rect rc = res::box(x, y, res, i);
-		if(area(rc.x1, rc.y1, rc.x2, rc.y2))
+		if(mousein(rc))
 		{
 			i = hilite;
 			if(hot::pressed)
@@ -938,10 +938,11 @@ void draw::button(int x, int y, res::tokens res, int id, int normal, int hilite,
 	}
 }
 
-bool draw::area(int x1, int y1, int x2, int y2)
+bool draw::mousein(rect rc)
 {
-	return hot::mouse.x >= x1 && hot::mouse.x <= x2
-		&& hot::mouse.y >= y1 && hot::mouse.y <= y2;
+	if(!hot::mouse.in(clipping))
+		return false;
+	return hot::mouse.in(rc);
 }
 
 void hot::clear()

@@ -241,7 +241,7 @@ bool show::recruit(int rec, int& count, int maximum, void* available_resources)
 		draw::image(x1 + 80 - res::width(icn, 0) / 2,
 			y1 + 100 - res::height(icn, 0) / 2,
 			icn, 0, AFNoOffset);
-		if(draw::area(x1 + 80 - 40, y1 + 100 - 50, x1 + 80 + 40, y1 + 100 + 50))
+		if(draw::mousein(x1 + 80 - 40, y1 + 100 - 50, x1 + 80 + 40, y1 + 100 + 50))
 		{
 			if(hot::key == MouseRight && hot::pressed)
 				draw::execute(Information);
@@ -276,7 +276,7 @@ bool show::recruit(int rec, int& count, int maximum, void* available_resources)
 			count--;
 			break;
 		case Information:
-			show::unit(rec, 0, count, 0);
+			show::unit(rec, 0, 0, 0);
 			break;
 		}
 	}

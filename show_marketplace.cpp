@@ -21,7 +21,7 @@ static void paint_resource(int x, int y, res::tokens icn, int frame, tokens id, 
 	draw::text(x + (34 - draw::textw(temp)) / 2, y + 23, temp);
 	if(select == id)
 		draw::image(x - 2, y - 2, icn, 14);
-	if(draw::area(x - 2, y - 2, x + 37, y + 37))
+	if(draw::mousein(x - 2, y - 2, x + 37, y + 37))
 	{
 		if(hot::key == MouseLeft && hot::pressed)
 			draw::execute(markets ? TargetIndex : SourceIndex, id);

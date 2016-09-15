@@ -25,7 +25,7 @@ static void building_control(int x, int y, int w, int h, int building, int rec, 
 	auto player = bsget(rec, Player);
 	auto c2 = (int*)bsptr(player, FirstResource);
 	auto ab = bsget(rec, AlreadyMoved);
-	bool hilite = draw::area(x, y, x + 132, y + 64);
+	bool hilite = draw::mousein(x, y, x + 132, y + 64);
 	auto max_level = game::getbuildingmaxlevel(race, building);
 	auto level = bsget(rec, building);
 	auto next_level = imin(level+1, max_level);

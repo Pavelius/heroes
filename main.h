@@ -604,7 +604,6 @@ namespace draw
 	const int				height = 480;
 	const int				scanline = 640;
 	//
-	bool					area(int x1, int y1, int x2, int y2);
 	void					button(int x, int y, res::tokens icn, int id, int normal, int hilite, int pressed, int key = 0, unsigned flags = 0, const char* tips = 0, int param = 0);
 	void					castle(int x, int y, int tile, int race, bool town, bool shadow = true);
 	int						clipart(int x, int y, int id, int param, int param2 = 0, bool border = false, bool clickable = false);
@@ -627,6 +626,8 @@ namespace draw
 	res::tokens				isevil(res::tokens evil, res::tokens good);
 	int						isqrt(int num);
 	void					line(int x1, int y1, int x2, int y2, unsigned char color);
+	bool					mousein(rect rc);
+	inline bool				mousein(int x1, int y1, int x2, int y2) { return mousein({x1, y1, x2, y2}); }
 	void					pixel(int x, int y, unsigned char color);
 	unsigned char*			ptr(int x, int y);
 	void					rectb(int x1, int y1, int x2, int y2, unsigned char color);

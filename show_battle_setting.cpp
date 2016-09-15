@@ -2,7 +2,7 @@
 
 static void checkbox(int x, int y, res::tokens icn, bool& value, int off, int on, const char* text)
 {
-	if(draw::area(x, y, x + res::width(icn, off), y + res::height(icn, off)))
+	if(draw::mousein(x, y, x + res::width(icn, off), y + res::height(icn, off)))
 	{
 		if(hot::key == MouseLeft && hot::pressed)
 			value = !value;
@@ -14,7 +14,7 @@ static void checkbox(int x, int y, res::tokens icn, bool& value, int off, int on
 
 static void radiobox(int x, int y, res::tokens icn, int& value, int min, int max, const char* text)
 {
-	if(draw::area(x, y, x + res::width(icn, min), y + res::height(icn, min)))
+	if(draw::mousein(x, y, x + res::width(icn, min), y + res::height(icn, min)))
 	{
 		if(hot::key == MouseLeft && hot::pressed)
 			value++;

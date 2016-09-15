@@ -154,7 +154,7 @@ static void handle_input(int x, int y, int object)
 {
 	if(object && selected_object == object)
 		draw::rectb(x, y, x + 54, y + 31, 0x56);
-	if(draw::area(x, y, x + 54, y + 31))
+	if(draw::mousein(x, y, x + 54, y + 31))
 	{
 		if(hot::key == MouseLeft && hot::pressed)
 			draw::execute(InputChoose, object);
@@ -280,19 +280,20 @@ static void paint_information(int x, int y, int player)
 	y += 2 * 36;
 	draw::image(x, y, draw::isevil(res::STONBAKE, res::STONBACK), 0);
 	// Show text information
+	auto mouse_in_info = draw::mousein(x, y, x + 142, y + 4 * 36);
 	if(info_text[0])
 	{
 		draw::state push;
 		draw::font = res::SMALFONT;
 		draw::textf(x + 2, y + 8, 142 - 4, info_text);
-		if(draw::area(x, y, x + 142, y + 4 * 36))
+		if(mouse_in_info)
 		{
 			if(hot::key == MouseLeft && hot::pressed)
 				info_text[0] = 0;
 		}
 		return;
 	}
-	if(draw::area(x, y, x + 142, y + 4 * 36))
+	if(mouse_in_info)
 	{
 		if(hot::key == MouseLeft && hot::pressed)
 			draw::execute(ChangeMode);
@@ -343,7 +344,7 @@ static void paint_cursor(rect screen, point camera)
 	if(hot::command)
 		return;
 	animation m(res::ADVMCO, 0, 0);
-	if(draw::area(screen.x1, screen.y1, screen.x2, screen.y2))
+	if(draw::mousein(screen))
 	{
 		int i1 = map::m2i((camera.x + hot::mouse.x - screen.x1) / 32, (camera.y + hot::mouse.y - screen.y1) / 32);
 		int mc = map::show::type[i1];
