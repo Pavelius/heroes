@@ -899,6 +899,72 @@ static tokens get_resource(tokens type)
 	}
 }
 
+static unsigned char getroad(unsigned char object, unsigned char index)
+{
+	switch(res::map(object))
+	{
+		// from sprite road
+	case res::ROAD:
+		if(0 == index || 4 == index || 5 == index || 13 == index || 26 == index)
+			return map::Up | map::Down;
+		else if(2 == index || 21 == index || 28 == index)
+			return map::Left | map::Right;
+		else if(17 == index || 29 == index)
+			return map::LeftUp | map::RightDown;
+		else if(18 == index || 30 == index)
+			return map::RightUp | map::LeftDown;
+		else if(3 == index)
+			return map::Up | map::Down | map::Left | map::Right;
+		else if(6 == index)
+			return map::Up | map::Down | map::Right;
+		else if(7 == index)
+			return map::Up | map::Right;
+		else if(9 == index)
+			return map::Down | map::Right;
+		else if(12 == index)
+			return map::Down | map::Left;
+		else if(14 == index)
+			return map::Up | map::Down | map::Left;
+		else if(16 == index)
+			return map::Up | map::Left;
+		else if(19 == index)
+			return map::LeftUp | map::RightDown;
+		else if(20 == index)
+			return map::RightUp | map::LeftDown;
+		return 0;
+		// castle and tower (gate)
+	case res::OBJNTOWN:
+		if(13 == index ||
+			29 == index ||
+			45 == index ||
+			61 == index ||
+			77 == index ||
+			93 == index ||
+			109 == index ||
+			125 == index ||
+			141 == index ||
+			157 == index ||
+			173 == index ||
+			189 == index)
+			return map::Up | map::Down;
+		return 0;
+		// castle lands (gate)
+	case res::OBJNTWBA:
+		if(7 == index ||
+			17 == index ||
+			27 == index ||
+			37 == index ||
+			47 == index ||
+			57 == index ||
+			67 == index ||
+			77 == index)
+			return map::Up | map::Down;
+		return 0;
+	default:
+		return 0;
+	}
+}
+
 void add_object(unsigned short index, unsigned char object, unsigned char frame, unsigned char quantity)
 {
 	static mapobject* last_object = 0;
@@ -907,19 +973,21 @@ void add_object(unsigned short index, unsigned char object, unsigned char frame,
 	auto icn = res::map(object);
 	switch(icn)
 	{
-	case res::MINIHERO: // turn off heroes
-	case res::SHADOW32: // turn off all shadows
-	case res::FLAG32: // Не будем добавлять флаги
 	case res::OBJNTOWN: // Не будем добавлять города
 	case res::OBJNTWBA: // Не будем добавлять базу городов
-	case res::OBJNTWRD: // Не будем добавлять случайные города
-	case res::OBJNTWSH: // Не будем добавлять тени городов и замков
-	case res::OBJNARTI: // turn off atrifacts
-	case res::MONS32: // turn off monsters
-	case res::OBJNRSRC: // turn off all resources
+	case res::OBJNTWRD: // No random towns and castles
+		map::show::road[index] = getroad(object, frame);
+		break;
+	case res::MINIHERO: // No heroes
+	case res::SHADOW32: // No heroes shadows
+	case res::FLAG32: // No player flags
+	case res::OBJNTWSH: // No towns and castles shadow
+	case res::OBJNARTI: // No artifacts tiles
+	case res::MONS32: // No monster images
+	case res::OBJNRSRC: // No resource images
 		return;
 	case res::OBJNMUL2:
-		if(frame == 163) // Не будем добавлять надпись Событие
+		if(frame == 163) // No event signal (used only in editor)
 			return;
 		pi = find_object(icn, frame);
 		break;
@@ -938,6 +1006,7 @@ void add_object(unsigned short index, unsigned char object, unsigned char frame,
 	case res::ROAD:
 		type = Road;
 		quantity = frame;
+		map::show::road[index] = getroad(object, frame);
 		break;
 	default:
 		pi = find_object(icn, frame);
@@ -1037,6 +1106,13 @@ static void map_block()
 	}
 }
 static command command_map_block("map_block", map_block);
+
+static void game_initialize()
+{
+	mapobjects.count = 0;
+	memset(map::show::road, 0, sizeof(map::show::road));
+}
+static command command_game_initialize("game_initialize", game_initialize);
 
 static struct mapobject_drawable_plugin : public drawable::plugin
 {

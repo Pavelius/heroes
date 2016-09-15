@@ -792,7 +792,7 @@ namespace map
 	extern point			camera;
 	inline int				i2x(int i) { return i % 144; }
 	inline int				i2y(int i) { return i / 144; }
-	bool					isroad(unsigned char object, unsigned char index, unsigned char direct);
+	bool					isroad(int index, unsigned char direct);
 	bool					ispassable(int index);
 	tokens					gettile(int index);
 	void					jumpto(int index);
@@ -802,12 +802,13 @@ namespace map
 	int						moveto(int index, directions direction);
 	inline int				m2i(int x, int y) { return 144 * y + x; }
 	directions				orient(int from, int to);
-	int						revers(int direction);
-	void					slide(directions type);
+	directions				revers(directions direction);
+	void					slide(map::directions direction);
 	namespace show
 	{
-		extern unsigned short   tiles[144 * 144];
 		extern unsigned char    flags[144 * 144];
+		extern unsigned char    road[144 * 144];
+		extern unsigned short   tiles[144 * 144];
 		extern unsigned char    type[144 * 144];
 	}
 	namespace route

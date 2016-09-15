@@ -822,6 +822,7 @@ void game::prepare()
 		hero = game::random::hero(0);
 		bsset(rec, RecruitLast, hero);
 	}
+	command::execute("game_prepare");
 	game_endweek();
 }
 

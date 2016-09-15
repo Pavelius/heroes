@@ -38,7 +38,7 @@ static void gnext(int index, unsigned& level, int& pos)
 
 bool map::route::pathable(int index)
 {
-	return path[index]<Blocked;
+	return path[index] < Blocked;
 }
 
 void map::route::around(int index, unsigned m)
@@ -75,8 +75,8 @@ unsigned map::movecost(int index, unsigned char direct, unsigned pathfinding)
 	// Grass   1.00   1.00   1.00   1.00
 	// Water   1.00   1.00   1.00   1.00
 	// Road    0.75   0.75   0.75   0.75
-	//if(map::is(index, isroad, direct))
-	//	return 75;
+	if(map::isroad(index, direct))
+		return 75;
 	unsigned result = 100;
 	switch(gettile(index))
 	{
@@ -123,28 +123,19 @@ static unsigned movecost2(int from, map::directions direct, unsigned pathfinding
 	return (cost1 + cost2) >> 1;
 }
 
-int map::revers(int direction)
+map::directions map::revers(map::directions direction)
 {
 	switch(direction)
 	{
-	case map::Left:
-		return map::Right;
-	case map::Right:
-		return map::Left;
-	case map::Down:
-		return map::Up;
-	case map::Up:
-		return map::Down;
-	case map::RightDown:
-		return map::LeftUp;
-	case map::LeftUp:
-		return map::RightDown;
-	case map::RightUp:
-		return map::LeftDown;
-	case map::LeftDown:
-		return map::RightUp;
-	default:
-		return -1;
+	case map::Left: return map::Right;
+	case map::Right: return map::Left;
+	case map::Down: return map::Up;
+	case map::Up: return map::Down;
+	case map::RightDown: return map::LeftUp;
+	case map::LeftUp: return map::RightDown;
+	case map::RightUp: return map::LeftDown;
+	case map::LeftDown: return map::RightUp;
+	default: return map::Center;
 	}
 }
 
@@ -168,69 +159,6 @@ map::directions map::orient(int from, int to)
 	int ax = dx / div;
 	int ay = dy / div;
 	return orientations[(ay + 2) * 5 + ax + 2];
-}
-
-bool map::isroad(unsigned char object, unsigned char index, unsigned char direct)
-{
-	switch(res::map(object))
-	{
-		// from sprite road
-	case res::ROAD:
-		if(0 == index || 4 == index || 5 == index || 13 == index || 26 == index)
-			return (direct&(Up | Down)) != 0;
-		else if(2 == index || 21 == index || 28 == index)
-			return (direct&(Left | Right)) != 0;
-		else if(17 == index || 29 == index)
-			return (direct & (LeftUp | RightDown)) != 0;
-		else if(18 == index || 30 == index)
-			return (direct & (RightUp | LeftDown)) != 0;
-		else if(3 == index)
-			return (direct & (Up | Down | Left | Right)) != 0;
-		else if(6 == index)
-			return (direct & (Up | Down | Right)) != 0;
-		else if(7 == index)
-			return (direct & (Up | Right)) != 0;
-		else if(9 == index)
-			return (direct & (Down | Right)) != 0;
-		else if(12 == index)
-			return (direct & (Down | Left)) != 0;
-		else if(14 == index)
-			return (direct & (Up | Down | Left)) != 0;
-		else if(16 == index)
-			return (direct & (Up | Left)) != 0;
-		else if(19 == index)
-			return (direct & (LeftUp | RightDown)) != 0;
-		else if(20 == index)
-			return (direct & (RightUp | LeftDown)) != 0;
-		// castle and tower (gate)
-	case res::OBJNTOWN:
-		if(13 == index ||
-			29 == index ||
-			45 == index ||
-			61 == index ||
-			77 == index ||
-			93 == index ||
-			109 == index ||
-			125 == index ||
-			141 == index ||
-			157 == index ||
-			173 == index ||
-			189 == index)
-			return (direct & (Up | Down)) != 0;
-		// castle lands (gate)
-	case res::OBJNTWBA:
-		if(7 == index ||
-			17 == index ||
-			27 == index ||
-			37 == index ||
-			47 == index ||
-			57 == index ||
-			67 == index ||
-			77 == index)
-			return (direct & (Up | Down)) != 0;
-	default:
-		return false;
-	}
 }
 
 static void apply_map_type()
@@ -367,12 +295,12 @@ int	map::route::getpathcount()
 
 void game::moveto(int hero, int player)
 {
-	if(path_push<2)
+	if(path_push < 2)
 		return;
-	while(path_push-1)
+	while(path_push - 1)
 	{
 		auto from = bsget(hero, Index);
-		auto to = path_stack[path_push-2];
+		auto to = path_stack[path_push - 2];
 		auto d = map::orient(from, to);
 		unsigned mp = bsget(hero, MovePoints);
 		auto mc = movecost2(from, d, bsget(hero, SkillPathfinding));

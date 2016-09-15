@@ -6,6 +6,7 @@ unsigned char	map::height;
 unsigned short	map::show::tiles[144*144];
 unsigned char	map::show::flags[144*144];
 unsigned char	map::show::type[144 * 144];
+unsigned char	map::show::road[144 * 144];
 point			map::camera;
 
 int	map::moveto(int index, map::directions direction)
@@ -98,4 +99,9 @@ bool map::ispassable(int index)
 	if(show::type[index] == 2)
 		return false;
 	return true;
+}
+
+bool map::isroad(int index, unsigned char direction)
+{
+	return (map::show::road[index] & direction) != 0;
 }
