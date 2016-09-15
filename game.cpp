@@ -1360,3 +1360,14 @@ char* game::addicon(char* result, const void* cost_void)
 		zcat(p, ")");
 	return result;
 }
+
+int game::getunitscount(int side)
+{
+	int count = 0;
+	for(int i = FirstTroopsIndex; i <= LastTroopsIndex; i += 2)
+	{
+		if(bsget(side, i))
+			count++;
+	}
+	return count;
+}

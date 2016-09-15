@@ -632,20 +632,23 @@ void draw::definput(int id)
 			int v12 = bsget(dest_rec, dest + 1);
 			int v21 = bsget(source_rec, source);
 			int v22 = bsget(source_rec, source + 1);
-			if(v11 == v21)
+			if(!(source_rec >= FirstHero && source_rec <= LastHero && source_rec!=dest_rec && game::getunitscount(source_rec) <= 1))
 			{
-				// Add total if same type
-				bsset(source_rec, source, 0);
-				bsset(source_rec, source + 1, 0);
-				bsset(dest_rec, dest, v21);
-				bsset(dest_rec, dest + 1, v12 + v22);
-			}
-			else
-			{
-				bsset(source_rec, source, v11);
-				bsset(source_rec, source + 1, v12);
-				bsset(dest_rec, dest, v21);
-				bsset(dest_rec, dest + 1, v22);
+				if(v11 == v21)
+				{
+					// Add total if same type
+					bsset(source_rec, source, 0);
+					bsset(source_rec, source + 1, 0);
+					bsset(dest_rec, dest, v21);
+					bsset(dest_rec, dest + 1, v12 + v22);
+				}
+				else
+				{
+					bsset(source_rec, source, v11);
+					bsset(source_rec, source + 1, v12);
+					bsset(dest_rec, dest, v21);
+					bsset(dest_rec, dest + 1, v22);
+				}
 			}
 			hot_troops_index = 0;
 		}

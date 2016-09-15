@@ -314,7 +314,9 @@ void game::moveto(int hero, int player)
 		{
 			bsset(hero, MoveTo, -1);
 			path_push = 0;
-			int object = bsfind(FirstMapObject, Index, to);
+			auto object = bsfind(FirstCastle, Index, to);
+			if(!object)
+				object = bsfind(FirstMapObject, Index, to);
 			if(object)
 				game::interact(to, object, hero, player);
 			return;

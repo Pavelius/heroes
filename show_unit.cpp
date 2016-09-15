@@ -135,6 +135,7 @@ void show::unit(int rec, int side, int count, int index)
 	int mt = rec;
 	if(mt >= FirstCombatant && mt <= LastCombatant)
 		mt = bsget(mt, Type);
+	bool allow_dismiss = !(index && side >= FirstHero && side <= LastHero && game::getunitscount(side) <= 1);
 	animation mon(tokens(mt), ActorWarn);
 	while(true)
 	{
@@ -161,7 +162,8 @@ void show::unit(int rec, int side, int count, int index)
 		{
 			if(game::canupgrade(mt, side))
 				draw::button(x + 435, y + 192, back, Upgrade, 5, 5, 6);
-			draw::button(x + 310, y + 221, back, Dismiss, 1, 1, 2);
+			if(allow_dismiss)
+				draw::button(x + 310, y + 221, back, Dismiss, 1, 1, 2);
 			draw::button(x + 435, y + 221, back, Cancel, 3, 3, 4);
 			draw::cursor(res::ADVMCO, 0);
 		}

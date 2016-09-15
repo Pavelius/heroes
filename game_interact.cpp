@@ -20,10 +20,9 @@ void game::interact(int index, int object, int hero, int player)
 	bool disapear = false;
 	bool isinteractive = (bsget(player, PlayerType) == Human);
 	bool islog = false;
-	auto side = bsget(hero, Player);
-	auto type = bsget(object, Type);
+	auto side = (tokens)bsget(hero, Player);
+	auto type = (tokens)bsget(object, Type);
 	auto count = bsget(object, Count);
-	int n;
 	switch(type)
 	{
 	case Knight:
@@ -33,16 +32,19 @@ void game::interact(int index, int object, int hero, int player)
 	case Wizard:
 	case Sorcerer:
 		// When visited castle learn all spells
-		n = bsget(object, MageGuild);
-		if(n)
+		if(game::hasspellbook(hero))
 		{
-			for(int i = FirstSpell; i <= LastSpell; i++)
+			auto n = bsget(object, MageGuild);
+			if(n)
 			{
-				if(!bsget(object, i))
-					continue;
-				if(bsget(i, Level) > n)
-					continue;
-				bsset(hero, i, 1);
+				for(int i = FirstSpell; i <= LastSpell; i++)
+				{
+					if(!bsget(object, i))
+						continue;
+					if(bsget(i, Level) > n)
+						continue;
+					bsset(hero, i, 1);
+				}
 			}
 		}
 		break;

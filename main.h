@@ -955,6 +955,7 @@ namespace game
 	int						gettarget(int rec);
 	int						gettrade(tokens resf, tokens rest, int markets = 0);
 	int						getunit(int race, int building, int level);
+	int						getunitscount(int side);
 	int						getupgrade(int rec);
 	int						getweek();
 	bool					hasspellbook(int rec);
