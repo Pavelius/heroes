@@ -669,6 +669,8 @@ void game::initialize()
 			bsset(rec, i, 0);
 		for(int i = FirstSpell; i <= LastSpell; i++)
 			bsset(rec, i, 0);
+		for(int i = FirstArtifactIndex; i <= LastArtifactIndex; i++)
+			bsset(rec, i, 0);
 		switch(game::get(rec, Type))
 		{
 		case Knight:
@@ -704,6 +706,7 @@ void game::initialize()
 			//
 			game::addunit(rec, Centaur, xrand(8, 16));
 			game::addunit(rec, Gargoyle, xrand(2, 4));
+			game::additem(rec, MagicBook);
 			break;
 		case Wizard:
 			bsset(rec, Attack, 0);
@@ -715,6 +718,7 @@ void game::initialize()
 			//
 			game::addunit(rec, Halfling, xrand(10, 20));
 			game::addunit(rec, Boar, xrand(2, 4));
+			game::additem(rec, MagicBook);
 			break;
 		case Sorcerer:
 			bsset(rec, Attack, 0);
@@ -727,6 +731,7 @@ void game::initialize()
 			//
 			game::addunit(rec, Sprite, xrand(10, 20));
 			game::addunit(rec, Dwarf, xrand(3, 7));
+			game::additem(rec, MagicBook);
 			break;
 		case Necromancer:
 			bsset(rec, Attack, 1);
@@ -739,6 +744,7 @@ void game::initialize()
 			//
 			game::addunit(rec, Skeleton, xrand(12, 22));
 			game::addunit(rec, Zombie, xrand(4, 8));
+			game::additem(rec, MagicBook);
 			break;
 		}
 	}
@@ -983,6 +989,8 @@ bool game::hire(int hero, int player, int index)
 		if(!hero)
 			return false;
 	}
+	bsset(hero, Player, player);
+	bsset(hero, Index, index);
 	if(bsget(player, Recruit) == hero)
 	{
 		bsset(player, Recruit, 0);
@@ -995,10 +1003,11 @@ bool game::hire(int hero, int player, int index)
 	{
 		bsset(player, RecruitLast, 0);
 		auto new_hero = game::random::hero(0);
-		bsset(player, RecruitLast, 0);
+		bsset(player, RecruitLast, new_hero);
 	}
-	bsset(hero, Player, player);
-	bsset(hero, Index, index);
+	int object = bsfind(FirstCastle, Index, index);
+	if(object)
+		game::interact(index, object, hero, player);
 	return true;
 }
 

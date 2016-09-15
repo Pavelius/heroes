@@ -66,7 +66,7 @@ void show::hero(tokens rec)
 			{
 				int n = bsget(rec, i);
 				if(n)
-					draw::clipart(x - 7, y, n, 0);
+					draw::clipart(x - 7, y, n, 0, 0, false, true);
 				else
 					draw::image(x - dx / 2, y, res::ARTIFACT, 0);
 				x += dx;
@@ -86,8 +86,18 @@ void show::hero(tokens rec)
 		switch(id)
 		{
 		case Cancel:
-		case 0:
 			return;
+		case Dismiss:
+			if(dlgask(0, szt("", "Вы действительно хотите уволить этого героя со всей армией?")))
+			{
+				bsset(rec, Player, 0);
+				bsset(rec, Index, -1);
+				return;
+			}
+			break;
+		case MagicBook:
+			show::spellbook(rec);
+			break;
 		default:
 			draw::definput(id);
 			break;

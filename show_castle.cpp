@@ -196,9 +196,9 @@ static res::tokens getrs(int race, int building, int level)
 		switch(building)
 		{
 		case Castle:
-			if(level==2)
+			if(level == 2)
 				return res::TWNBCSTL;
-			else if(level==1)
+			else if(level == 1)
 				return res::TWNBTENT;
 			return res::Empthy;
 		case SpecialBuilding:
@@ -286,7 +286,7 @@ static res::tokens getrs(int race, int building, int level)
 		case Dwelving1:
 			return res::TWNKDW_0;
 		case Dwelving2:
-			if(level==2)
+			if(level == 2)
 				return res::TWNKUP_1;
 			return res::TWNKDW_1;
 		case Dwelving3:
@@ -347,7 +347,7 @@ static res::tokens getrs(int race, int building, int level)
 		case Dwelving1:
 			return res::TWNNDW_0;
 		case Dwelving2:
-			if(level==2)
+			if(level == 2)
 				return res::TWNNUP_1;
 			return res::TWNNDW_1;
 		case Dwelving3:
@@ -407,7 +407,7 @@ static res::tokens getrs(int race, int building, int level)
 		case Dwelving1:
 			return res::TWNSDW_0;
 		case Dwelving2:
-			if(level==2)
+			if(level == 2)
 				return res::TWNSUP_1;
 			return res::TWNSDW_1;
 		case Dwelving3:
@@ -674,7 +674,7 @@ static void paint_panel(int x, int y, int mid, int hero)
 	draw::troops(x + 112, y + 6, mid);
 	if(hero)
 	{
-		draw::clipart(x + 5 + 50, y + 105, hero, LargeSize);
+		draw::clipart(x + 5 + 50, y + 105, hero, LargeSize, 0, false, true);
 		draw::troops(x + 112, y + 105, hero);
 	}
 	else

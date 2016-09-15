@@ -278,13 +278,23 @@ struct picture
 
 };
 
-int draw::clipart(int x, int y, int id, int param, int param2, bool border)
+int draw::clipart(int x, int y, int id, int param, int param2, bool border, bool clickable)
 {
 	picture icon;
 	icon.id = id;
 	icon.count = param;
 	icon.initialize();
 	icon.paint(x, y);
+	rect rc;
+	rc.x2 = icon.getwidth();
+	rc.y2 = icon.getheight();
+	rc.x1 = x - rc.x2 / 2; rc.x2 += rc.x1;
+	rc.y1 = y; rc.y2 += rc.y1;
+	if(draw::area(rc.x1, rc.y1, rc.x2, rc.y2))
+	{
+		if(clickable && hot::key == MouseLeft && hot::pressed)
+			draw::execute(id);
+	}
 	return icon.getheight();
 }
 
@@ -640,6 +650,8 @@ void draw::definput(int id)
 			hot_troops_index = 0;
 		}
 	}
+	else if(id >= FirstHero && id <= LastHero)
+		show::hero((tokens)id);
 }
 
 void draw::troops(int x, int y, int rec)
@@ -650,6 +662,8 @@ void draw::troops(int x, int y, int rec)
 	{
 		int unit = bsget(rec, i);
 		int count = bsget(rec, i + 1);
+		int key = hot::key;
+		bool pressed = hot::pressed;
 		if(unit == 0)
 			image(x, y, res::STRIP, 2);
 		else
@@ -658,11 +672,11 @@ void draw::troops(int x, int y, int rec)
 			image(x, y, res::STRIP, 1);
 		if(area(x, y, x + w, y + h))
 		{
-			if(hot::key == MouseRight && hot::pressed)
+			if(key == MouseRight && pressed)
 				execute(Information, bsget(rec, i), rec);
-			else if(hot::key == MouseLeft && hot::pressed)
+			else if(key == MouseLeft && pressed)
 				execute(i, rec);
-			else if(hot::key == MouseLeftDBL)
+			else if(key == MouseLeftDBL)
 				execute(i, rec, i);
 			if(unit)
 				status("%1i %2", count, bsgets(unit, NameMulti));

@@ -23,8 +23,36 @@ void game::interact(int index, int object, int hero, int player)
 	auto side = bsget(hero, Player);
 	auto type = bsget(object, Type);
 	auto count = bsget(object, Count);
-	if(type >= FirstResource && type <= LastResource)
+	int n;
+	switch(type)
 	{
+	case Knight:
+	case Barbarian:
+	case Necromancer:
+	case Warlock:
+	case Wizard:
+	case Sorcerer:
+		// When visited castle learn all spells
+		n = bsget(object, MageGuild);
+		if(n)
+		{
+			for(int i = FirstSpell; i <= LastSpell; i++)
+			{
+				if(!bsget(object, i))
+					continue;
+				if(bsget(i, Level) > n)
+					continue;
+				bsset(hero, i, 1);
+			}
+		}
+		break;
+	case Gold:
+	case Ore:
+	case Wood:
+	case Sulfur:
+	case Crystal:
+	case Gems:
+	case Mercury:
 		bsadd(player, type, count);
 		disapear = true;
 		move_to_object = false;
@@ -33,9 +61,8 @@ void game::interact(int index, int object, int hero, int player)
 				szt("You found", "Вы нашли"),
 				bsgets(type, Name),
 				type, count);
-	}
-	else if(type == TreasureChest)
-	{
+		break;
+	case TreasureChest:
 		disapear = true;
 		move_to_object = false;
 		// If there is no rooms for artifatcs
@@ -65,25 +92,28 @@ void game::interact(int index, int object, int hero, int player)
 				szt("Searching area you found a old treasure chest. Inside you found ancient artifact:", "Исследую окресности вы наткнулись на древний ларец. Внутри вы обнаружили артефакт:"),
 				count,
 				bsgets(count, Name)
-				);
+			);
 			game::additem(hero, count);
 		}
-	}
-	else if(type == CampFire)
-	{
+		break;
+	case CampFire:
 		disapear = true;
 		move_to_object = false;
-		auto gp = (1 + (count % 4)) * 250;
-		auto rs = 2 + ((count>>2) % 4);
-		auto rt = Mercury + (count >> 4) % 4;
-		message(player, hero,
-			"%1\n$(%2i/%3i,%4i/%5i)",
-			szt("Searching enemy camp you found hidden treasure.", "Обыскав вражеский лагерь вы обнаружили скрытый клад."),
-			Gold, gp,
-			rt, rs
-		);
-		bsadd(side, Gold, gp);
-		bsadd(side, rt, rs);
+		if(true)
+		{
+			auto gp = (1 + (count % 4)) * 250;
+			auto rs = 2 + ((count >> 2) % 4);
+			auto rt = Mercury + (count >> 4) % 4;
+			message(player, hero,
+				"%1\n$(%2i/%3i,%4i/%5i)",
+				szt("Searching enemy camp you found hidden treasure.", "Обыскав вражеский лагерь вы обнаружили скрытый клад."),
+				Gold, gp,
+				rt, rs
+			);
+			bsadd(side, Gold, gp);
+			bsadd(side, rt, rs);
+		}
+		break;
 	}
 	if(disapear)
 	{
