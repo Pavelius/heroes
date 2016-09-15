@@ -798,6 +798,14 @@ void game::build(int rec, int id)
 	if(next_level == 1 && id >= Dwelving1 && id <= Dwelving6)
 		bsadd(rec, id - Dwelving1 + FirstCreatureCount, getgrowth(rec, id));
 	bsadd(rec, AlreadyMoved, 1);
+	if(race == Wizard && id == SpecialBuilding)
+	{
+		game::random::spell(rec, 1);
+		game::random::spell(rec, 2);
+		game::random::spell(rec, 3);
+		game::random::spell(rec, 4);
+		game::random::spell(rec, 5);
+	}
 }
 
 void game::prepare()

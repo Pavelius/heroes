@@ -144,6 +144,11 @@ struct picture
 			icn = res::ARTIFACT;
 			frame = id - FirstArtifact + 1;
 		}
+		else if(id >= FirstSpell && id <= LastSpell)
+		{
+			icn = res::SPELLS;
+			frame = bsget(id, Portrait);
+		}
 		else if(id == Experience)
 		{
 			icn = res::EXPMRL;
@@ -156,16 +161,6 @@ struct picture
 				frame = 3;
 			else
 				frame = 2;
-		}
-		else if(id == Yes)
-		{
-			icn = draw::isevil(res::SYSTEME, res::SYSTEM);
-			frame = 5;
-		}
-		else if(id == Yes)
-		{
-			icn = draw::isevil(res::SYSTEME, res::SYSTEM);
-			frame = 5;
 		}
 		else if(id == Yes)
 		{
@@ -198,13 +193,17 @@ struct picture
 	{
 		if(id >= FirstResource && id <= LastResource)
 			return 45;
-		if(id == Experience)
+		else if(id >= FirstSpell && id <= LastSpell)
+			return 36;
+		else if(id == Experience)
 			return res::height(icn, frame) + res::height(res::SMALFONT, 'I' - 0x20) + 2 + 2;
 		return res::height(icn, frame);
 	}
 
 	int getwidth() const
 	{
+		if(id >= FirstSpell && id <= LastSpell)
+			return 64;
 		return res::width(icn, frame);
 	}
 
@@ -214,6 +213,7 @@ struct picture
 		int w = getwidth();
 		int h = getheight();
 		int paint_count = 0;
+		bool paint_name = false;
 		if(id >= FirstResource && id <= LastResource)
 		{
 			draw::image(x - w / 2, y + h - draw::texth() - res::height(icn, frame), icn, frame, AFNoOffset);
@@ -239,6 +239,11 @@ struct picture
 			draw::image(x - w / 2, y, res::tokens(res::MONH0000 + id - FirstMonster), 0);
 			paint_count = 2;
 		}
+		else if(id >= FirstSpell && id <= LastSpell)
+		{
+			draw::image(x - res::width(icn,frame) / 2, y, icn, frame, AFNoOffset);
+			paint_name = true;
+		}
 		else if(id == Experience)
 		{
 			draw::image(x - w / 2, y, icn, frame, AFNoOffset);
@@ -258,6 +263,16 @@ struct picture
 			if(paint_count == 1)
 				x1 = x - w1 / 2;
 			draw::text(x1, y + h - draw::texth(), temp);
+		}
+		if(paint_name)
+		{
+			const char* p = bsgets(id, Name);
+			if(p)
+			{
+				draw::state push;
+				draw::font = res::SMALFONT;
+				draw::textm(x-w/2+2, y + getheight() + draw::texth(), getwidth(), draw::Center, p);
+			}
 		}
 	}
 

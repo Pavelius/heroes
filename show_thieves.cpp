@@ -164,6 +164,7 @@ int show::thieves(int player)
 	{
 		draw::image(0, 0, res::STONEBAK, 0);
 		draw::image(0, 461, res::WELLXTRA, 2);
+		draw::status(21, draw::height - 16, 21 + res::width(res::SMALLBAR, 0), draw::height - 1);
 		int x = 4;
 		// Часть 1
 		paint_title(x + startx, 5, maxw, count);

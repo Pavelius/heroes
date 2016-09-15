@@ -88,7 +88,7 @@ int game::random::hero(int type)
 	return source[rand()%count];
 }
 
-static void add_random_spell(int castle, int level)
+void game::random::spell(int castle, int level)
 {
 	int source[LastSpell - FirstSpell + 2];
 	bsselect(source, FirstSpell, -1, Level, level);
@@ -104,17 +104,17 @@ static void add_random_spell(int castle, int level)
 
 void game::random::spells(int rec)
 {
-	add_random_spell(rec, 1);
-	add_random_spell(rec, 1);
-	add_random_spell(rec, 1);
-	add_random_spell(rec, 2);
-	add_random_spell(rec, 2);
-	add_random_spell(rec, 2);
-	add_random_spell(rec, 3);
-	add_random_spell(rec, 3);
-	add_random_spell(rec, 4);
-	add_random_spell(rec, 4);
-	add_random_spell(rec, 5);
+	spell(rec, 1);
+	spell(rec, 1);
+	spell(rec, 1);
+	spell(rec, 2);
+	spell(rec, 2);
+	spell(rec, 2);
+	spell(rec, 3);
+	spell(rec, 3);
+	spell(rec, 4);
+	spell(rec, 4);
+	spell(rec, 5);
 }
 
 int game::random::castle(int type, int player, int index, bool has_castle)

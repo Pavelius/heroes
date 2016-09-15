@@ -912,6 +912,7 @@ namespace game
 		int					castle(int type, int player, int index, bool has_castle);
 		int					hero(int type);
 		int					monster(int level);
+		void				spell(int castle, int level);
 		void				spells(int castle);
 	}
 	char*					addicon(char* result, int t1, int c2);

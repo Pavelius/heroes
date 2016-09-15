@@ -176,6 +176,15 @@ const rect& getrect(int race, int building)
 			{98, 25, 98 + 55, 25 + 229},
 			{196, 7, 196 + 129, 7 + 38},
 		},
+		{
+			// Mage guild
+			{348, 20, 348 + 50, 20 + 124},
+			{398, 55, 398 + 58, 55 + 125},
+			{570, 45, 570 + 61, 45 + 162},
+			{285, 32, 285 + 55, 32 + 129},
+			{590, 14, 590 + 50, 14 + 155},
+			{585, 0, 585 + 57, 0 + 122},
+		},
 	};
 	return data[building - Castle][race - Barbarian];
 }
@@ -766,6 +775,12 @@ void show::castle(int rec)
 			break;
 		case MarketPlace:
 			show::marketplace(player);
+			break;
+		case ThievesGuild:
+			show::thieves(player);
+			break;
+		case MageGuild:
+			show::mageguild(rec);
 			break;
 		case Cancel:
 			return;
