@@ -62,6 +62,8 @@ BSMETA(castle, "Castles", "Замки", FirstCastle);
 
 COMMAND(game_initialize)
 {
+	for(int i = 0; i < castles.count; i++)
+		bsdelete(FirstCastle + i);
 	castles.count = 0;
 }
 

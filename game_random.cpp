@@ -3,7 +3,7 @@
 static unsigned char artifacts[LastArtifact - FirstArtifact + 1];
 static unsigned char monsters[LastMonster - FirstMonster + 1];
 
-void game::random::initialize()
+COMMAND(game_initialize)
 {
 	memset(artifacts, 0, sizeof(artifacts));
 	memset(monsters, 0, sizeof(monsters));
@@ -88,6 +88,35 @@ int game::random::hero(int type)
 	return source[rand()%count];
 }
 
+static void add_random_spell(int castle, int level)
+{
+	int source[LastSpell - FirstSpell + 2];
+	bsselect(source, FirstSpell, -1, Level, level);
+	zshuffle(source, zlen(source));
+	for(int i = 0; source[i]; i++)
+	{
+		if(bsget(castle, source[i]))
+			continue;
+		bsset(castle, source[i], 1);
+		return;
+	}
+}
+
+void game::random::spells(int rec)
+{
+	add_random_spell(rec, 1);
+	add_random_spell(rec, 1);
+	add_random_spell(rec, 1);
+	add_random_spell(rec, 2);
+	add_random_spell(rec, 2);
+	add_random_spell(rec, 2);
+	add_random_spell(rec, 3);
+	add_random_spell(rec, 3);
+	add_random_spell(rec, 4);
+	add_random_spell(rec, 4);
+	add_random_spell(rec, 5);
+}
+
 int game::random::castle(int type, int player, int index, bool has_castle)
 {
 	int rec = bscreate(FirstCastle);
@@ -99,5 +128,6 @@ int game::random::castle(int type, int player, int index, bool has_castle)
 		bsset(rec, Castle, 2);
 	else
 		bsset(rec, Castle, 1);
+	spells(rec);
 	return rec;
 }

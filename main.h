@@ -911,8 +911,8 @@ namespace game
 		int					artifact(int level);
 		int					castle(int type, int player, int index, bool has_castle);
 		int					hero(int type);
-		void				initialize();
 		int					monster(int level);
+		void				spells(int castle);
 	}
 	char*					addicon(char* result, int t1, int c2);
 	char*					addicon(char* result, int t1, int c1, int t2, int c2);

@@ -610,6 +610,7 @@ bool map::load(gamefile& game)
 				{
 					int rec = bscreate(FirstCastle);
 					load_object((mp2::castle*)pblock, rec);
+					game::random::spells(rec);
 					bsset(rec, Index, mp2i(findobject));
 				}
 				break;

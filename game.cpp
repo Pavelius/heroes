@@ -641,7 +641,6 @@ void game::initialize()
 	week_of = Empthy;
 	month_of = Empthy;
 	// Setup random generator
-	game::random::initialize();
 	bsmeta::getbase("hero")->count = LastHero - FirstHero + 1;
 	// Clear all players
 	for(int rec = FirstPlayer; rec <= LastPlayer; rec++)
