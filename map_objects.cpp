@@ -555,7 +555,7 @@ static struct mapobjectset
 	{Empthy, res::OBJNMUL2, sizeof(multiobj2) / sizeof(multiobj2[0]), multiobj2},
 };
 
-static void initialize()
+COMMAND(initialize)
 {
 	// Initialize shapes
 	for(auto& ts : mapobjectsets)
@@ -600,7 +600,6 @@ static void initialize()
 		}
 	}
 }
-static command command_initialize("initialize", initialize);
 
 static mapobjectinfo* find_object(res::tokens icn, unsigned char frame)
 {
@@ -1034,7 +1033,7 @@ void add_object(unsigned short index, unsigned char object, unsigned char frame,
 	last_object = &e;
 }
 
-static void map_block()
+COMMAND(map_block)
 {
 	// Другие объекты
 	for(int i = 0; i < mapobjects.count; i++)
@@ -1105,14 +1104,12 @@ static void map_block()
 		}
 	}
 }
-static command command_map_block("map_block", map_block);
 
-static void game_initialize()
+COMMAND(game_initialize)
 {
 	mapobjects.count = 0;
 	memset(map::show::road, 0, sizeof(map::show::road));
 }
-static command command_game_initialize("game_initialize", game_initialize);
 
 static struct mapobject_drawable_plugin : public drawable::plugin
 {

@@ -60,6 +60,11 @@ static bsmeta::field fields[] = {
 };
 BSMETA(castle, "Castles", "Замки", FirstCastle);
 
+COMMAND(game_initialize)
+{
+	castles.count = 0;
+}
+
 void draw::castle(int x, int y, int tile, int race, bool town, bool shadow)
 {
 	int index;

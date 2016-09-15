@@ -71,5 +71,6 @@
     <ClCompile Include="command.cpp" />
     <ClCompile Include="map_objects.cpp" />
     <ClCompile Include="game_interact.cpp" />
+    <ClCompile Include="show_mageguild.cpp" />
   </ItemGroup>
 </Project>

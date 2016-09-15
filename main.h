@@ -718,6 +718,7 @@ namespace show
 	int					    game(int player);
 	void				    hero(tokens rec);
 	void				    highscore();
+	void					mageguild(int rec);
 	void					marketplace(int player);
 	void					message(const char* format, const char* arguments);
 	bool                    recruit(int rec, int& count, int maximum, void* available_resources);

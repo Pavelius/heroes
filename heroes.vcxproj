@@ -78,6 +78,7 @@
     <ClCompile Include="resource.cpp" />
     <ClCompile Include="show_battle.cpp" />
     <ClCompile Include="show_hero.cpp" />
+    <ClCompile Include="show_mageguild.cpp" />
     <ClCompile Include="show_marketplace.cpp" />
     <ClCompile Include="show_tavern.cpp" />
     <ClCompile Include="show_thieves.cpp" />

@@ -1,5 +1,10 @@
 #pragma once
 
+// Use this macro and don't have any problem
+#define COMMAND(name) static void name();\
+static command command_##name(#name, name);\
+static void name()
+
 struct command
 {
 	const char*			name;
