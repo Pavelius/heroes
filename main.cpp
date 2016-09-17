@@ -442,6 +442,7 @@ void test_castle()
 	bsset(castle, MageGuild, 3);
 	bsset(castle, ThievesGuild, 1);
 	bsset(castle, Well, 1);
+	bsset(castle, Dwelving2, 1);
 	game::prepare();
 	//show::thieves(player);
 	show::castle(castle);

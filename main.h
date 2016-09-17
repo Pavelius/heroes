@@ -562,6 +562,7 @@ namespace res
 		Empthy
 	};
 	rect					box(int x, int y, tokens res, int frame, unsigned flags = 0);
+	tokens					building(int race, int building, int level);
 	tokens					buildings(int race);
 	bool					ishight(res::tokens icn, int index);
 	int						getcount(tokens res);
