@@ -194,7 +194,7 @@ struct picture
 		if(id >= FirstResource && id <= LastResource)
 			return 45;
 		else if(id >= FirstSpell && id <= LastSpell)
-			return 36;
+			return 64;
 		else if(id == Experience)
 			return res::height(icn, frame) + res::height(res::SMALFONT, 'I' - 0x20) + 2 + 2;
 		return res::height(icn, frame);
@@ -210,9 +210,9 @@ struct picture
 	void paint(int x, int y) const
 	{
 		char temp[32];
-		int w = getwidth();
-		int h = getheight();
-		int paint_count = 0;
+		auto w = getwidth();
+		auto h = getheight();
+		auto paint_count = 0;
 		bool paint_name = false;
 		if(id >= FirstResource && id <= LastResource)
 		{
@@ -271,14 +271,16 @@ struct picture
 			{
 				draw::state push;
 				draw::font = res::SMALFONT;
-				draw::textm(x-w/2+2, y + getheight() + draw::texth(), getwidth(), draw::Center, p);
+				auto th = draw::texth(p, w);
+				auto ih = res::height(icn, frame);
+				draw::textm(x-w/2+2, y + ih + (h - ih - th)/2, w, draw::Center, p);
 			}
 		}
 	}
 
 };
 
-int draw::clipart(int x, int y, int id, int param, int param2, bool border, bool clickable)
+int draw::clipart(int x, int y, int id, int param, int param2, bool border, bool clickable, bool informable)
 {
 	picture icon;
 	icon.id = id;
@@ -294,6 +296,8 @@ int draw::clipart(int x, int y, int id, int param, int param2, bool border, bool
 	{
 		if(clickable && hot::key == MouseLeft && hot::pressed)
 			draw::execute(id);
+		if(informable && hot::key == MouseRight && hot::pressed)
+			draw::execute(Information, id);
 	}
 	return icon.getheight();
 }
@@ -533,6 +537,8 @@ void show::message(const char* format, const char* arguments)
 void show::tips(const char* text)
 {
 	draw::screenshoot surface;
+	draw::state push;
+	draw::font = res::FONT;
 	int tw = 304 - 54 - 16;
 	int th = draw::textf(tw, text);
 	int x = (draw::width - tw) / 2;
@@ -552,6 +558,13 @@ void show::tips(const char* text)
 			return;
 		}
 	}
+}
+
+void show::tipsf(const char* format, ...)
+{
+	char temp[4096];
+	szprintv(temp, format, xva_start(format));
+	tips(temp);
 }
 
 void draw::tiles(int x, int y, res::tokens icn, int* rec, int w, int h)
@@ -601,8 +614,10 @@ void draw::definput(int id)
 	{
 		if(hot::param >= FirstBuilding && hot::param <= LastBuilding)
 			show::tips(game::getbuildinginfo(hot::param2, hot::param, hot::level));
-		if(hot::param >= FirstMonster && hot::param <= LastMonster)
+		else if(hot::param >= FirstMonster && hot::param <= LastMonster)
 			show::unit(hot::param, hot::param2, 0, 0);
+		else if(hot::param >= FirstSpell && hot::param <= LastSpell)
+			show::tipsf("$(%1i)\n%2", hot::param, bsgets(hot::param, Text));
 	}
 	else if(id >= FirstTroopsIndex && id <= LastTroopsIndex)
 	{

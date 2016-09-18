@@ -607,7 +607,7 @@ namespace draw
 	//
 	void					button(int x, int y, res::tokens icn, int id, int normal, int hilite, int pressed, int key = 0, unsigned flags = 0, const char* tips = 0, int param = 0);
 	void					castle(int x, int y, int tile, int race, bool town, bool shadow = true);
-	int						clipart(int x, int y, int id, int param, int param2 = 0, bool border = false, bool clickable = false);
+	int						clipart(int x, int y, int id, int param, int param2 = 0, bool border = false, bool clickable = false, bool informable = true);
 	extern rect				clipping;
 	extern unsigned			counter; // increse every 100 milliseconds
 	bool					create(const char* title, unsigned milliseconds, bool fullscreen);
@@ -727,6 +727,7 @@ namespace show
 	int						spellbook(int mid, tokens mode = CombatSpells);
 	void					tavern();
 	void                    tips(const char* text);
+	void					tipsf(const char* foramt, ...);
 	int						thieves(int player);
 	void                    unit(int rec, int parent, int count, int index);
 	void					well(int rec);

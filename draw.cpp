@@ -540,7 +540,7 @@ void draw::image(int x, int y, res::tokens res, unsigned frame, unsigned flags, 
 		x -= r.width / 2;
 	if(flags&AFCenterV)
 		y -= r.height / 2;
-	if(y + height < clipping.y1 || y >= clipping.y2)
+	if(y + r.height < clipping.y1 || y >= clipping.y2)
 		return;
 	if(r.type == 0x20)
 	{

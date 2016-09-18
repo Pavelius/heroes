@@ -116,15 +116,22 @@ int show::spellbook(int rec, tokens original_mode)
 			//draw::text(rc.x1+(cw1-draw::textw(temp))/2, rc.y1+cw2+1, temp);
 			if(sp >= bsget(sid, SpellPoints))
 			{
-				if(hot::mouse.in(rc))
+				if(draw::mousein(rc))
 				{
 					if(hot::key == MouseLeft && hot::pressed)
 						draw::execute(names[i]);
+					else if(hot::key == MouseRight && hot::pressed)
+						draw::execute(Information, names[i]);
 				}
 				draw::textm(rc.x1, rc.y1 + cw2 + 1, cw1, draw::Center, temp);
 			}
 			else
 			{
+				if(draw::mousein(rc))
+				{
+					if(hot::key == MouseRight && hot::pressed)
+						draw::execute(Information, names[i]);
+				}
 				//draw::fontgr push(sheme::gray_font);
 				draw::textm(rc.x1, rc.y1 + cw2 + 1, cw1, draw::Center, temp);
 			}
@@ -140,5 +147,7 @@ int show::spellbook(int rec, tokens original_mode)
 			mode = (tokens)id;
 			update_spells = true;
 		}
+		else
+			draw::definput(id);
 	}
 }
