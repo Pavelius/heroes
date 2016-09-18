@@ -217,7 +217,17 @@ static void button_type(int x, int y, tokens type, int i, bool show_name = true)
     {
 		draw::state push;
 		draw::font = res::SMALFONT;
-		const char* p = bsgets(FirstPlayer+i,Name);
+		int id = FirstPlayer + i;
+		const char* p = bsgets(id,Name);
+		switch(id)
+		{
+		case PlayerPurple:
+			p = szt("Purple", "Фиолет.");
+			break;
+		case PlayerOrange:
+			p = szt("Orange", "Оранж.");
+			break;
+		}
         draw::text(x+(rc.width()-draw::textw(p))/2, y+rc.height(), p);
     }
     if(hot::mouse.in(rc))
@@ -320,7 +330,6 @@ static bool tune_scenario(gamefile& result)
                      szt("Start scenario with current setting.", "Начать сценарий с текущими настройками."));
         draw::button(x + 287, y + 380, res::NGEXTRA, Cancel, 68, 68, 69, KeyEscape, 0,
                      szt("Cancel current selection.","Отменить текущий выбор."));
-        draw::debug();
         draw::cursor(res::ADVMCO, 0);
         int id = draw::input();
         switch(id)

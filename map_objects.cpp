@@ -976,7 +976,7 @@ void add_object(unsigned short index, unsigned char object, unsigned char frame,
 	case res::OBJNTWBA: // Не будем добавлять базу городов
 	case res::OBJNTWRD: // No random towns and castles
 		map::show::road[index] = getroad(object, frame);
-		break;
+		return;
 	case res::MINIHERO: // No heroes
 	case res::SHADOW32: // No heroes shadows
 	case res::FLAG32: // No player flags
@@ -1109,6 +1109,20 @@ COMMAND(game_initialize)
 {
 	mapobjects.count = 0;
 	memset(map::show::road, 0, sizeof(map::show::road));
+}
+
+int map::getobject(short unsigned index)
+{
+	for(int i = 0; i < mapobjects.count; i++)
+	{
+		if(objects[i].index == index)
+		{
+			if(objects[i].type >= Volcano)
+				continue;
+			return FirstMapObject + i;
+		}
+	}
+	return 0;
 }
 
 static struct mapobject_drawable_plugin : public drawable::plugin

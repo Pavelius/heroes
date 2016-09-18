@@ -798,6 +798,7 @@ namespace map
 	inline int				i2y(int i) { return i / 144; }
 	bool					isroad(int index, unsigned char direct);
 	bool					ispassable(int index);
+	int						getobject(short unsigned index);
 	tokens					gettile(int index);
 	void					jumpto(int index);
 	bool					load(gamefile& e);
