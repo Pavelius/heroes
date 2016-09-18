@@ -96,7 +96,7 @@ void show::hero(tokens rec)
 			}
 			break;
 		case MagicBook:
-			show::spellbook(rec);
+			show::spellbook(rec, Empthy);
 			break;
 		default:
 			draw::definput(id);
