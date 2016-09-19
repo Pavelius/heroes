@@ -909,6 +909,16 @@ private:
 	void					box(int x, int y, int count, res::tokens icn, int dy, int dx, int sbu, int sbd, int sbs, int sdbd, int sb, int bf, res::tokens iss);
 	void					flatbutton(int x, int y, res::tokens icn, int index, int command, int count);
 };
+struct strparams
+{
+	strparams();
+	~strparams();
+	tokens					artifact;
+	tokens					building;
+	int						cost[LastResource - FirstResource];
+	tokens					hero;
+	tokens					spell;
+};
 namespace game
 {
 	namespace random
@@ -968,6 +978,7 @@ namespace game
 	bool					isarcher(int rec);
 	bool					isboosted(int rec);
 	bool					iscombat(int rec);
+	bool					isfemale(int rec);
 	bool					isfly(int rec);
 	bool					isfriendly(int rec);
 	bool					isfullartifacts(int hero);
@@ -981,6 +992,7 @@ namespace game
 	bool					ismeleearcher(int rec);
 	void					moveto(int hero, int player);
 	void					mulresource(int* result, const void* source, int value);
+	extern strparams		params;
 	bool					passrequipment(int rec, int building, int level);
 	int						play(gamefile& game);
 	void					prepare();

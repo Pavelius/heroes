@@ -617,7 +617,15 @@ void draw::definput(int id)
 		else if(hot::param >= FirstMonster && hot::param <= LastMonster)
 			show::unit(hot::param, hot::param2, 0, 0);
 		else if(hot::param >= FirstSpell && hot::param <= LastSpell)
-			show::tipsf("$(%1i)\n%2", hot::param, bsgets(hot::param, Text));
+		{
+			char temp[4096];
+			auto p = bsgets(hot::param, Text);
+			if(!p)
+				return;
+			szprint(temp, "$(%1i)\n", hot::param);
+			szprint(zend(temp), p, bsget(hot::param, Value));
+			show::tips(temp);
+		}
 	}
 	else if(id >= FirstTroopsIndex && id <= LastTroopsIndex)
 	{

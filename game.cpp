@@ -1371,3 +1371,26 @@ int game::getunitscount(int side)
 	}
 	return count;
 }
+
+bool game::isfemale(int rec)
+{
+	switch(rec)
+	{
+	case Gvenneth:
+	case Ruby:
+	case Jezebel:
+	case Jaclyn:
+	case Myra:
+	case Dawn:
+	case Myrini:
+	case Kalindra:
+	case Darlana:
+	case Charity:
+	case Roxana:
+	case Celia:
+	case Eliza:
+		return true;
+	default:
+		return (rec >= Astra && rec <= Luna);
+	}
+}

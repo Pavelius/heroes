@@ -73,5 +73,6 @@
     <ClCompile Include="game_interact.cpp" />
     <ClCompile Include="show_mageguild.cpp" />
     <ClCompile Include="show_well.cpp" />
+    <ClCompile Include="print.cpp" />
   </ItemGroup>
 </Project>
