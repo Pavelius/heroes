@@ -526,12 +526,12 @@ void dlgmsg(const char* title, const char* text)
 		int y1 = draw::dialog(th + res::height(ic1, 1) + padding/2);
 		y1 = y1 + draw::textf((draw::width - tw) / 2, y1, tw, text) + padding/2; // message text
 		draw::button((draw::width - res::width(ic1, 1)) / 2, y1,
-			ic1, 1, 1, 1, 2, KeyEnter);
+			ic1, Accept, 1, 1, 2, KeyEnter);
 		draw::cursor(res::ADVMCO, 0);
 		switch(draw::input())
 		{
-		case 0:
-		case 1:
+		case Cancel:
+		case Accept:
 			return;
 		}
 	}
