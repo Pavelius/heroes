@@ -584,6 +584,41 @@ int game::getincome(int rec)
 	return result;
 }
 
+tokens game::getresource(tokens type)
+{
+	switch(type)
+	{
+	case MineOre: return Ore;
+	case SawMill: return Wood;
+	case MineGems: return Gems;
+	case MineSulfur: return Sulfur;
+	case MineCrystal: return Crystal;
+	case MineGold: return Gold;
+	case AlchemyLab: return Mercury;
+	default: return Empthy;
+	}
+}
+
+int game::getmineincome(tokens id)
+{
+	switch(id)
+	{
+	case MineOre:
+	case SawMill:
+		return 2;
+	case MineCrystal:
+	case MineGems:
+	case MineSulfur:
+	case AlchemyLab:
+		return 1;
+	case MineGold:
+		return 1000;
+	default:
+		return 0;
+	}
+}
+
+
 static tokens get_oppose(tokens value)
 {
 	switch(value)
@@ -865,6 +900,30 @@ static void game_endturn()
 		{
 			int m = game::getincome(rec);
 			bsadd(p, Gold, m);
+		}
+	}
+	// All mines give income and refresh state
+	for(int rec = FirstMapObject; rec <= LastMapObject; rec++)
+	{
+		auto type = (tokens)bsget(rec, Type);
+		switch(type)
+		{
+		case SawMill:
+		case MineOre:
+		case MineCrystal:
+		case MineGems:
+		case MineSulfur:
+		case AlchemyLab:
+		case MineGold:
+			// Get income for all player exept neutral
+			auto p = bsget(rec, Count);
+			if(p)
+			{
+				auto r = game::getresource(type);
+				auto c = (type==SawMill || type==MineOre) ? 2 : (type == MineGold) ? 1000 : 1;
+				bsadd(p, r, c);
+			}
+			break;
 		}
 	}
 }

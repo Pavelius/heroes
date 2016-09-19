@@ -14,6 +14,59 @@ static void message(int player, int hero, const char* format, ...)
 	return show::message(format, xva_start(format));
 }
 
+static const char* get_mine_of(tokens id)
+{
+	switch(id)
+	{
+	case AlchemyLab: return szt("Alchemy lab", "алхимической лаборатории");
+	case SawMill: return szt("Saw Mill", "лесопилки");
+	case MineOre: return szt("Ore mine", "рудной шахты");
+	case MineSulfur: return szt("Ore mine", "серной шахты");
+	case MineCrystal: return szt("Crystal mine", "кристальной шахты");
+	case MineGems: return szt("Gem mine", "шахты драгоценых камней");
+	case MineGold: return szt("Gold mine", "золотой шахты");
+	default: return "";
+	}
+}
+
+static const char* get_resource_of_pluar(tokens id)
+{
+	switch(id)
+	{
+	case Wood: return szt("woods", "дерева");
+	case Ore: return szt("ore", "руды");
+	case Mercury: return szt("mercury", "ртути");
+	case Sulfur: return szt("sulfur", "серы");
+	case Crystal: return szt("crystals", "кристалла");
+	case Gems: return szt("gems", "драгоценных камня");
+	case Gold: return szt("golds", "золотых");
+	default: return "";
+	}
+}
+
+static const char* get_resource_of_single(tokens id)
+{
+	switch(id)
+	{
+	case Wood: return szt("wood", "дерево");
+	case Ore: return szt("ore", "руда");
+	case Mercury: return szt("mercury", "ртуть");
+	case Sulfur: return szt("sulfur", "сера");
+	case Crystal: return szt("crystals", "кристалл");
+	case Gems: return szt("gems", "драгоценный камень");
+	case Gold: return szt("gold", "золотой");
+	default: return "";
+	}
+}
+
+static const char* get_resource_of(tokens id, int count)
+{
+	if(count == 1)
+		return get_resource_of_single(id);
+	else
+		return get_resource_of_pluar(id);
+}
+
 void game::interact(int index, int object, int hero, int player)
 {
 	bool move_to_object = true;
@@ -114,6 +167,27 @@ void game::interact(int index, int object, int hero, int player)
 			);
 			bsadd(side, Gold, gp);
 			bsadd(side, rt, rs);
+		}
+		break;
+	case MineCrystal:
+	case MineGems:
+	case MineGold:
+	case MineOre:
+	case MineSulfur:
+	case SawMill:
+	case AlchemyLab:
+		if(true)
+		{
+			auto rcount = game::getmineincome(type);
+			auto rid = game::getresource(type);
+			message(player, hero,
+				szt("You become a owner of %1. You gain %2i %3 per day.\n$(d%4i/%2i)", "Вы стали хозяином %1. Вы будете получать %2i %3 в день.\n$(d%4i/%2i)"),
+				get_mine_of(type),
+				rcount,
+				get_resource_of(rid, rcount),
+				rid
+			);
+			bsset(object, Count, side);
 		}
 		break;
 	}

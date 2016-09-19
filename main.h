@@ -959,9 +959,11 @@ namespace game
 	int						getgrowth(int rec, int dwelling);
 	const int*				gethirecost(int rec);
 	int						getincome(int rec);
+	int						getmineincome(tokens id);
 	int						getmonth();
 	int						getmorale(int value);
 	int						getmoralechance(int value);
+	tokens					getresource(tokens type);
 	int						getspeed(int value);
 	int						getstrenght(int rec);
 	int						getsummary(int rec, int id, int side);

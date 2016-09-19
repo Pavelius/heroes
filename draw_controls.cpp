@@ -207,7 +207,7 @@ struct picture
 		return res::width(icn, frame);
 	}
 
-	void paint(int x, int y) const
+	void paint(int x, int y, bool perday) const
 	{
 		char temp[32];
 		auto w = getwidth();
@@ -255,7 +255,10 @@ struct picture
 		{
 			if(paint_count == 2 && count == 0)
 				return;
-			sznum(temp, count);
+			if(perday)
+				szprint(temp, "%1i / %2", count, szt("day", "день"));
+			else
+				sznum(temp, count);
 			draw::state push;
 			draw::font = res::SMALFONT;
 			int w1 = draw::textw(temp);
@@ -286,7 +289,7 @@ int draw::clipart(int x, int y, int id, int param, int param2, bool border, bool
 	icon.id = id;
 	icon.count = param;
 	icon.initialize();
-	icon.paint(x, y);
+	icon.paint(x, y, false);
 	rect rc;
 	rc.x2 = icon.getwidth();
 	rc.y2 = icon.getheight();
@@ -302,7 +305,7 @@ int draw::clipart(int x, int y, int id, int param, int param2, bool border, bool
 	return icon.getheight();
 }
 
-static int paint_icons(int x, int y, int width, picture* icons, int count, bool proportional)
+static int paint_icons(int x, int y, int width, picture* icons, int count, bool proportional, bool perday)
 {
 	if(!count)
 		return 0;
@@ -328,7 +331,7 @@ static int paint_icons(int x, int y, int width, picture* icons, int count, bool 
 		{
 			auto h1 = icons[i].getheight();
 			auto w1 = proportional ? (w/c) : icons[i].getwidth();
-			icons[i].paint(x1 + w1 / 2, y + h - h1);
+			icons[i].paint(x1 + w1 / 2, y + h - h1, perday);
 			x1 += w1;
 			if(!proportional)
 				x1 += pad;
@@ -353,12 +356,19 @@ int draw::textf(int x, int y, int width, const char* p)
 			p += 2;
 			int count = 0;
 			bool proportional = false;
+			bool dayly = false;
 			while(*p)
 			{
 				if(*p == 'p')
 				{
 					p++;
 					proportional = true;
+					continue;
+				}
+				else if(*p == 'd')
+				{
+					p++;
+					dayly = true;
 					continue;
 				}
 				params[count].id = sz2num(p, &p);
@@ -376,7 +386,7 @@ int draw::textf(int x, int y, int width, const char* p)
 					p++;
 			}
 			if(count)
-				y += paint_icons(x, y, width, params, count, proportional) + draw::texth();
+				y += paint_icons(x, y, width, params, count, proportional, dayly) + draw::texth();
 		}
 		else
 		{

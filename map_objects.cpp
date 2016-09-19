@@ -749,13 +749,19 @@ struct mapobject : public drawable
 			case MineSulfur:
 			case MineCrystal:
 			case MineGems:
-				draw::image(pt.x, pt.y, res::EXTRAOVR, type-FirstMine);
+				draw::image(pt.x, pt.y, res::EXTRAOVR, type - FirstMine);
+				if(count)
+					draw::image(pt.x + 22, pt.y - 12, res::FLAG32, count - FirstPlayer);
+				break;
+			case SawMill:
+				if(count)
+					draw::image(pt.x + 12, pt.y - 48, res::FLAG32, count - FirstPlayer);
 				break;
 			}
 		}
 		else if(type >= FirstResource && type <= LastResource)
 		{
-			static int decode_resource[LastResource - FirstResource + 1] = {13/2, 1/2, 3/2, 5/2, 7/2, 9/2, 11/2};
+			static int decode_resource[LastResource - FirstResource + 1] = {13 / 2, 1 / 2, 3 / 2, 5 / 2, 7 / 2, 9 / 2, 11 / 2};
 			auto id = decode_resource[type - FirstResource];
 			draw::image(pt.x - 32, pt.y, res::OBJNRSRC, id * 2);
 			draw::image(pt.x, pt.y, res::OBJNRSRC, id * 2 + 1);
@@ -865,7 +871,7 @@ void add_moveable(short unsigned index, short unsigned type, short unsigned quan
 			else
 			{
 				static tokens bad_artifacts[] = {TaxLien, FizbinMesfortune, HideousMask};
-				quantity = bad_artifacts[rand()%sizeof(bad_artifacts)/ sizeof(bad_artifacts[0])];
+				quantity = bad_artifacts[rand() % sizeof(bad_artifacts) / sizeof(bad_artifacts[0])];
 			}
 		}
 	}
@@ -881,21 +887,6 @@ void add_moveable(short unsigned index, short unsigned type, short unsigned quan
 	e.count = quantity;
 	e.info = 0;
 	e.type = tokens(type);
-}
-
-static tokens get_resource(tokens type)
-{
-	switch(type)
-	{
-	case MineOre: return Ore;
-	case SawMill: return Wood;
-	case MineGems: return Gems;
-	case MineSulfur: return Sulfur;
-	case MineCrystal: return Crystal;
-	case MineGold: return Gold;
-	case AlchemyLab: return Mercury;
-	default: return Empthy;
-	}
 }
 
 static unsigned char getroad(unsigned char object, unsigned char index)
@@ -996,6 +987,7 @@ void add_object(unsigned short index, unsigned char object, unsigned char frame,
 			// Abandone mine and Mountain Mines has overlay just after their objects
 			assert((last_object->type == Mines) || (last_object->type == AbandoneMine));
 			last_object->type = (tokens)(MineOre + frame);
+			last_object->count = 0;
 		}
 		return;
 	case res::STREAM:
@@ -1070,7 +1062,7 @@ COMMAND(map_block)
 		}
 		if(e.type >= FirstObject && e.type <= LastObject)
 			map::show::type[e.index] = TypeAction;
-		else if(e.type>=FirstResource && e.type<=LastResource)
+		else if(e.type >= FirstResource && e.type <= LastResource)
 			map::show::type[e.index] = TypeAction;
 		else if(e.type >= FirstArtifact && e.type <= LastArtifact)
 			map::show::type[e.index] = TypeAction;
