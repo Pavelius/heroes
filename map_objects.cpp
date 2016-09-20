@@ -70,7 +70,7 @@ static shapeinfo sh4x3u1b1 = {10, {4, 3}, {{-1, -1}, {0, -1}, {1, -1}, {-2, 0}, 
 static shapeinfo sh4x3u2a3 = {10, {4, 3}, {{0, -2}, {1, -2}, {-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}}, {3, 3, 3, 3, 3, 3, 3, 3, 3, 3}};
 static shapeinfo sh4x3u2r1d1a9 = {8, {4, 3}, {{-1, -2}, {-3, -1}, {-2, -1}, {-1, -1}, {0, -1}, {-2, 0}, {-1, 0}, {0, 0}}, {8, 8, 0, 0, 0, 0, 0, 0}};
 //
-static shapeinfo sh5x2 = {10, {5, 2}, {{-3, -1}, {-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {-3, 0}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}}};
+static shapeinfo sh5x2 = {10, {5, 2}, {{-3, -1}, {-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {-3, 0}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}}, {0}, {0, 0, 2, 2, 2, 0, 0, 2, 2, 2}};
 static shapeinfo sh5x2u1 = {9, {5, 2}, {{-1, -1}, {0, -1}, {1, -1}, {2, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {2, 0}}};
 static shapeinfo sh5x2r1 = {9, {5, 2}, {{-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {2, 0}}};
 static shapeinfo sh5x3 = {14, {5, 3}, {{-1, -1}, {0, -1}, {1, -1}, {2, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {2, 0}, {-2, 1}, {-1, 1}, {0, 1}, {1, 1}, {2, 1}}};
@@ -119,10 +119,10 @@ static mapobjectinfo grass[] = {
 	{Crack, sh4x2d1},
 	{Crack, sh3x3},
 	{Crack, sh2x2bk},
-	{Empthy, sh3x1},
-	{Empthy, sh3x1},
-	{Empthy, sh3x2u1r1}, // Big boulder
-	{Empthy, sh2x1}, // Big 
+	{Rock, sh3x1},
+	{Rock, sh3x1},
+	{Rock, sh3x2u1r1}, // Big boulder
+	{Rock, sh2x1}, // Big 
 	{Rock, sh1x1},
 	{Rock, sh2x1},
 	{Rock, sh2x1},
@@ -133,26 +133,26 @@ static mapobjectinfo grass[] = {
 	{Lake, sh4x2}, // Lake
 	{Lake, sh3x1}, // Lake
 	{Hill, sh3x1}, // Hill
-	{Trees, sh4x2u1}, // Trees
-	{Trees, sh3x2u1}, // Trees
-	{Trees, sh2x2J}, // Trees
-	{Empthy, sh4x1}, // Brush flowers
-	{Empthy, sh4x1}, // Brush
-	{Empthy, sh3x1}, // Brush small
-	{Empthy, sh3x1}, // Brush small flowers
-	{Empthy, sh3x1}, // Brush small to up
-	{Empthy, sh2x1}, // Single brush
-	{Empthy, sh4x1}, // Flowers red
-	{Empthy, sh4x2u1}, // Flowers red
-	{Empthy, sh4x1}, // Flowers red another
-	{Empthy, sh4x1}, // Flowers blue
-	{Empthy, sh3x2u1}, // Flowers blue
-	{Empthy, sh1x1}, // Flowers tiny
-	{Empthy, sh3x1}, // Flowers
-	{Empthy, sh2x1}, // Flowers
-	{Empthy, sh2x1}, // Flowers to up
-	{Empthy, sh2x1}, // Flowers white
-	{Empthy, sh2x1}, // Flowers ultraviolet
+	{Trees, sh4x2u1},
+	{Trees, sh3x2u1},
+	{Trees, sh2x2J},
+	{Brush, sh4x1}, // Brush flowers
+	{Brush, sh4x1}, // Brush
+	{Brush, sh3x1}, // Brush small
+	{Brush, sh3x1}, // Brush small flowers
+	{Brush, sh3x1}, // Brush small to up
+	{Brush, sh2x1}, // Single brush
+	{Flowers, sh4x1}, // Flowers red
+	{Flowers, sh4x2u1}, // Flowers red
+	{Flowers, sh4x1}, // Flowers red another
+	{Flowers, sh4x1}, // Flowers blue
+	{Flowers, sh3x2u1}, // Flowers blue
+	{Flowers, sh1x1}, // Flowers tiny
+	{Flowers, sh3x1}, // Flowers
+	{Flowers, sh2x1}, // Flowers
+	{Flowers, sh2x1}, // Flowers to up
+	{Flowers, sh2x1}, // Flowers white
+	{Flowers, sh2x1}, // Flowers ultraviolet
 	{Hill, sh2x1}, // Hill
 };
 static mapobjectinfo grass2[] = {
@@ -175,17 +175,17 @@ static mapobjectinfo dirt[] = {
 	{Hole, sh2x1},
 	{Hill, sh2x1},
 	{Hill, sh3x1},
-	{Empthy, sh2x1}, // Cracked earth
-	{Empthy, sh2x1}, // Cracked earth
-	{Empthy, sh2x1}, // Cracked earth
+	{Crack, sh2x1},
+	{Crack, sh2x1},
+	{Crack, sh2x1},
 	{Lake, sh8x3},
 	{Lake, sh5x2},
 	{Lake, sh2x1},
-	{Empthy, sh3x1}, // Brush
-	{Empthy, sh3x1}, // Brush
-	{Empthy, sh3x1}, // Brush
-	{Empthy, sh2x1}, // Brush
-	{Empthy, sh2x1}, // Brush
+	{Brush, sh3x1},
+	{Brush, sh3x1},
+	{Brush, sh3x1},
+	{Brush, sh2x1},
+	{Brush, sh2x1},
 	{Flowers, sh3x1},
 	{Flowers, sh3x1},
 	{Flowers, sh3x1},
@@ -226,34 +226,34 @@ static mapobjectinfo snow[] = {
 	{CampFire, sh1x1a6},
 	{DiggingHole, sh1x1}, // Digging
 	{LeanTo, sh2x1},
-	{Cliff, sh2x1}, // Cliff
-	{Empthy, sh2x1}, // Cliff
-	{Empthy, sh3x1}, // Cliff
-	{Empthy, sh2x1}, // Rock
-	{Empthy, sh3x2u1}, // Rock
-	{Empthy, sh1x1}, // Rock
-	{Empthy, sh2x1}, // Rock
-	{Empthy, sh2x1}, // Rock
-	{Empthy, sh3x1}, // Rock
-	{Empthy, sh2x1}, // Rock
-	{Empthy, sh2x1}, // Rock
+	{Cliff, sh2x1},
+	{Cliff, sh2x1},
+	{Cliff, sh3x1},
+	{Rock, sh2x1},
+	{Rock, sh3x2u1},
+	{Rock, sh1x1},
+	{Rock, sh2x1},
+	{Rock, sh2x1},
+	{Rock, sh3x1},
+	{Rock, sh2x1},
+	{Rock, sh2x1},
 	{Empthy, sh2x1}, // Wood (пеньки)
 	{Empthy, sh1x1}, // Wood (пеньки)
 	{Empthy, sh1x1}, // Grass
 	{Empthy, sh1x1}, // Grass
 	{Empthy, sh1x1}, // Grass
-	{Empthy, sh3x2u1}, // Tree
-	{Empthy, sh4x2u1}, // Tree
-	{Empthy, sh2x2J}, // Tree
-	{Empthy, sh3x2u1}, // Tree
-	{Empthy, sh2x2J}, // Tree
-	{Empthy, sh2x2J}, // Tree
-	{Empthy, sh2x2J}, // Tree
-	{Empthy, sh2x2J}, // Tree
-	{Empthy, sh2x2J}, // Tree
-	{Empthy, sh5x2r1}, // Lake
-	{Empthy, sh3x1}, // Lake
-	{Empthy, sh3x1}, // Lake
+	{Trees, sh3x2u1},
+	{Trees, sh4x2u1},
+	{Trees, sh2x2J},
+	{Trees, sh3x2u1},
+	{Trees, sh2x2J},
+	{Trees, sh2x2J},
+	{Trees, sh2x2J},
+	{Trees, sh2x2J},
+	{Trees, sh2x2J},
+	{Lake, sh5x2r1},
+	{Lake, sh3x1},
+	{Lake, sh3x1},
 	{WindMill, sh4x3u2a3},
 	{ThatchedHut, sh2x2J},
 	{Obelisk, sh2x2J},
@@ -267,32 +267,32 @@ static mapobjectinfo snow[] = {
 };
 static mapobjectinfo desert[] = {
 	{Empthy, sh2x1}, // Hole in Earth
-	{Empthy, sh2x1}, // Tree
-	{Empthy, sh2x2J}, // Tree
-	{Empthy, sh2x2J}, // Tree
-	{Empthy, sh2x2J}, // Tree
-	{Empthy, sh3x1}, // Hill
-	{Empthy, sh3x1}, // Hill
-	{Empthy, sh4x1}, // Tree
-	{Empthy, sh2x1}, // Tree
-	{Empthy, sh2x1}, // Tree
+	{Trees, sh2x1}, // Tree
+	{Trees, sh2x2J}, // Tree
+	{Trees, sh2x2J}, // Tree
+	{Trees, sh2x2J}, // Tree
+	{Hill, sh3x1}, // Hill
+	{Hill, sh3x1}, // Hill
+	{Trees, sh4x1}, // Tree
+	{Trees, sh2x1}, // Tree
+	{Trees, sh2x1}, // Tree
 	{Empthy, sh2x1},
 	{Empthy, sh2x1},
-	{Empthy, sh1x1}, // Cactus
-	{Empthy, sh1x1}, // Cactus
-	{Empthy, sh2x1}, // Cactus
-	{Empthy, sh2x1}, // Cactuses
-	{Empthy, sh2x2J}, // Cactuses
-	{Empthy, sh1x1}, // Cactuses
-	{Empthy, sh2x1}, // Cactuses
-	{Empthy, sh2x2J}, // Cactuses
-	{Empthy, sh2x2J}, // Cactuses
-	{Empthy, sh1x1}, // Cactuses
-	{Empthy, sh2x1}, // Cactuses
-	{Empthy, sh2x1}, // Cactuses
-	{CampFire, sh2x1a6}, // Cactuses
-	{Empthy, sh1x1}, // Cactuses
-	{DesertTent, sh3x2u1}, // Tent
+	{Cactus, sh1x1}, // Cactus
+	{Cactus, sh1x1}, // Cactus
+	{Cactus, sh2x1}, // Cactus
+	{Cactus, sh2x1}, // Cactuses
+	{Cactus, sh2x2J}, // Cactuses
+	{Cactus, sh1x1}, // Cactuses
+	{Cactus, sh2x1}, // Cactuses
+	{Cactus, sh2x2J}, // Cactuses
+	{Cactus, sh2x2J}, // Cactuses
+	{Cactus, sh1x1}, // Cactuses
+	{Cactus, sh2x1}, // Cactuses
+	{Cactus, sh2x1}, // Cactuses
+	{CampFire, sh2x1a6},
+	{Empthy, sh1x1},
+	{DesertTent, sh3x2u1},
 	{Empthy, sh2x2J},
 	{Pyramid, sh3x2},
 	{DeadSkeleton, sh2x1},
@@ -301,7 +301,7 @@ static mapobjectinfo desert[] = {
 	{Excavation, sh3x1},
 	{Obelisk, sh2x2J},
 	{Empthy, sh3x2u1},
-	{Empthy, sh3x1}, // Hole
+	{Hole, sh3x1},
 	{Empthy, sh3x2u1},
 	{Sign, sh2x1},
 	{Graveyard, sh3x1},
@@ -317,7 +317,7 @@ static mapobjectinfo water[] = {
 	{Empthy, sh3x1a6}, // Водросли
 	{Empthy, sh2x1a6}, // Водросли
 	{Empthy, sh1x1a6}, // Утопабщий
-	{Empthy, sh3x2a15}, // Птицы
+	{Rock, sh3x2a15}, // Птицы
 	{Empthy, sh2x1},
 	{Empthy, sh2x1},
 	{Empthy, sh2x1a6},
@@ -325,7 +325,7 @@ static mapobjectinfo water[] = {
 	{ShipWreck, sh3x2u1a6},
 };
 static mapobjectinfo water2[] = {
-	{Empthy, sh2x2J}, // Rock
+	{Rock, sh2x2J},
 	{ShipWreck, sh3x3r1a6},
 	{Boat, sh1x1},
 };
@@ -656,7 +656,7 @@ void tilesetsview()
 				center.y = py;
 			}
 			draw::rectb(px, py, px + 32, py + 32, 0xC);
-			if(sh.content[i] == 2)
+			if(sh.content[i] == TypeBlock)
 				draw::rectb(px + 1, py + 1, px + 32 - 1, py + 32 - 1, 0xBF);
 		}
 		int rx1 = x1 + sh.offset.x * 32;
@@ -751,7 +751,7 @@ struct mapobject : public drawable
 			case MineGems:
 				draw::image(pt.x, pt.y, res::EXTRAOVR, type - FirstMine);
 				if(count)
-					draw::image(pt.x + 22, pt.y - 12, res::FLAG32, count - FirstPlayer);
+					draw::image(pt.x + 6, pt.y - 26, res::FLAG32, count - FirstPlayer);
 				break;
 			case SawMill:
 				if(count)
@@ -796,7 +796,7 @@ struct mapobject : public drawable
 			draw::image(pt.x - 32, pt.y, res::OBJNRSRC, 18);
 			draw::image(pt.x, pt.y, res::OBJNRSRC, 19);
 		}
-		else if(type == GeniusLamp)
+		else if(type == AncientLamp)
 		{
 			draw::image(pt.x - 32, pt.y, res::OBJNRSRC, 14);
 			draw::image(pt.x, pt.y, res::OBJNRSRC, 15);
@@ -861,21 +861,8 @@ void add_moveable(short unsigned index, short unsigned type, short unsigned quan
 	else if(type == TreasureChest)
 	{
 		icn = res::OBJNRSRC;
-		if(!quantity)
-		{
-			int percent = d100();
-			if(percent < 75) // Золото
-				quantity = rand() % 4;
-			else if(percent < 95)
-				quantity = game::random::artifact(1);
-			else
-			{
-				static tokens bad_artifacts[] = {TaxLien, FizbinMesfortune, HideousMask};
-				quantity = bad_artifacts[rand() % sizeof(bad_artifacts) / sizeof(bad_artifacts[0])];
-			}
-		}
 	}
-	else if(type == GeniusLamp)
+	else if(type == AncientLamp)
 		icn = res::OBJNRSRC;
 	else
 	{
@@ -1046,27 +1033,22 @@ COMMAND(map_block)
 			auto& sh = e.info->shape;
 			int x = map::i2x(e.index);
 			int y = map::i2y(e.index);
-			if(sh.size.y > 1)
+			for(int index = 0; index < sh.count; index++)
 			{
-				for(int index = 0; index < sh.count; index++)
-				{
-					int x1 = x + sh.points[index].x;
-					int y1 = y + sh.points[index].y;
-					if(x1 < 0 || y1 < 0 || x1 >= map::width || y1 >= map::height)
-						continue;
-					auto i = map::m2i(x1, y1);
-					if(sh.content[index] == TypeBlock)
-						map::show::type[i] = TypeBlock;
-				}
+				int x1 = x + sh.points[index].x;
+				int y1 = y + sh.points[index].y;
+				if(x1 < 0 || y1 < 0 || x1 >= map::width || y1 >= map::height)
+					continue;
+				auto i = map::m2i(x1, y1);
+				if(sh.content[index] == TypeBlock)
+					map::show::type[i] = TypeBlock;
 			}
 		}
-		if(e.type >= FirstObject && e.type <= LastObject)
-			map::show::type[e.index] = TypeAction;
-		else if(e.type >= FirstResource && e.type <= LastResource)
-			map::show::type[e.index] = TypeAction;
-		else if(e.type >= FirstArtifact && e.type <= LastArtifact)
-			map::show::type[e.index] = TypeAction;
-		else if(e.type == TreasureChest && e.type == GeniusLamp)
+		if((e.type >= FirstObject && e.type <= LastObject)
+			|| (e.type >= FirstMine && e.type <= LastMine)
+			|| (e.type >= FirstResource && e.type <= LastResource)
+			|| (e.type >= FirstArtifact && e.type <= LastArtifact)
+			|| (e.type == TreasureChest || e.type == AncientLamp))
 			map::show::type[e.index] = TypeAction;
 	}
 	// Пройдемся по монстрам

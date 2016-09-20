@@ -529,7 +529,7 @@ void add_object(unsigned short pos, unsigned char object, unsigned char frame, u
 
 bool map::load(gamefile& game)
 {
-	static tokens decode_resource[] = {Wood, Mercury, Ore, Sulfur, Crystal, Gems, Gold, GeniusLamp, Resource, TreasureChest};
+	static tokens decode_resource[] = {Wood, Mercury, Ore, Sulfur, Crystal, Gems, Gold, AncientLamp, Resource, TreasureChest};
 	char temp[260];
 	io::file st(szurl(temp, "maps", game.file, "mp2"));
 	if(!st)
@@ -799,7 +799,23 @@ bool map::load(gamefile& game)
 			break;
 		case mp2obj(TreasureChest):
 			if(res::map(tiles[i].objectName1) == res::OBJNRSRC)
-				add_moveable(i1, TreasureChest, tiles[i].quantity1);
+			{
+				int quantity = tiles[i].quantity1;
+				if(!quantity)
+				{
+					int percent = d100();
+					if(percent < 75) // Золото
+						quantity = rand() % 4;
+					else if(percent < 95)
+						quantity = game::random::artifact(1);
+					else
+					{
+						static tokens bad_artifacts[] = {TaxLien, FizbinMesfortune, HideousMask};
+						quantity = bad_artifacts[rand() % sizeof(bad_artifacts) / sizeof(bad_artifacts[0])];
+					}
+				}
+				add_moveable(i1, TreasureChest, quantity);
+			}
 			break;
 		}
 	}

@@ -9,19 +9,6 @@ static unsigned short	path_pop;
 static unsigned short	path_goal;
 static unsigned short	path_start;
 
-static void snode(unsigned short index, unsigned cost)
-{
-	if(index == -1)
-		return;
-	auto a = path[index];
-	if(a >= Blocked)
-		return;
-	if(a != 0 && cost >= a)
-		return;
-	path_stack[path_push++] = index;
-	path[index] = cost;
-}
-
 static void gnext(int index, unsigned& level, int& pos)
 {
 	if(index == -1)
@@ -121,6 +108,25 @@ static unsigned movecost2(int from, map::directions direct, unsigned pathfinding
 	const auto cost1 = map::movecost(from, direct, pathfinding); // penalty: for [cur] out
 	const auto cost2 = map::movecost(map::moveto(from, direct), map::revers(direct), pathfinding); // penalty: for [tmp] in
 	return (cost1 + cost2) >> 1;
+}
+
+static void snode(unsigned short base_index, map::directions dir, unsigned base_cost, int skill)
+{
+	auto index = map::moveto(base_index, dir);
+	if(index == -1)
+		return;
+	auto cost = base_cost + movecost2(base_index, dir, skill);
+	if(map::show::type[index] == TypeBlock)
+	{
+		if(!((dir==map::Up || dir == map::RightUp || dir==map::LeftUp)
+			&& map::show::type[base_index] == 0))
+			return;
+	}
+	auto a = path[index];
+	if(a != 0 && cost >= a)
+		return;
+	path_stack[path_push++] = index;
+	path[index] = cost;
 }
 
 map::directions map::revers(map::directions direction)
@@ -240,14 +246,14 @@ void map::route::wave(int start, int skill, int ship_master)
 		auto cost = path[pos];
 		if(cost >= Blocked - 200)
 			break;
-		snode(moveto(pos, map::Left), cost + movecost2(pos, map::Left, skill));
-		snode(moveto(pos, map::Right), cost + movecost2(pos, map::Right, skill));
-		snode(moveto(pos, map::Up), cost + movecost2(pos, map::Up, skill));
-		snode(moveto(pos, map::Down), cost + movecost2(pos, map::Down, skill));
-		snode(moveto(pos, map::LeftUp), cost + movecost2(pos, map::LeftUp, skill));
-		snode(moveto(pos, map::LeftDown), cost + movecost2(pos, map::LeftDown, skill));
-		snode(moveto(pos, map::RightUp), cost + movecost2(pos, map::RightUp, skill));
-		snode(moveto(pos, map::RightDown), cost + movecost2(pos, map::RightDown, skill));
+		snode(pos, map::Left, cost, skill);
+		snode(pos, map::Right, cost, skill);
+		snode(pos, map::Up, cost, skill);
+		snode(pos, map::Down, cost, skill);
+		snode(pos, map::LeftUp, cost, skill);
+		snode(pos, map::LeftDown, cost, skill);
+		snode(pos, map::RightUp, cost, skill);
+		snode(pos, map::RightDown, cost, skill);
 	}
 	path_pop = 0;
 	path_push = 0;

@@ -229,9 +229,9 @@ enum tokens
 	// Major map objects
 	MineOre, MineSulfur, MineCrystal, MineGems, MineGold,
 	FirstMine = MineOre, LastMine = MineGold,
-	GeniusLamp,
 	// Not major map objects
-	Mushrooms, Volcano, DiggingHole, Flowers,
+	Mushrooms, Volcano, DiggingHole,
+	Flowers, Brush, Cactus,
 	Lake, Hill, Mountains, Trees,
 	Rock, Cliff, Hole, Crack, Road, Stream,
 	RiverDeltaDown, RiverDeltaUp, Stumps, Leprechaunt,
