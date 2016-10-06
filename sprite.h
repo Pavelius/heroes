@@ -12,7 +12,7 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
-#include "color.h"
+//#include "color.h"
 #include "rect.h"
 
 #pragma once
@@ -61,6 +61,6 @@ struct sprite
 	int					glyph(unsigned sym) const;
 	const unsigned char* offs(unsigned o) const { return (unsigned char*)this + o; }
 	void				setup(int count, int pallette_count = 0, int cicles = 0, int cicles_indexes = 0);
-	int					store(const unsigned char* p, int width, int w, int h, int ox, int oy, sprite::encodes mode, unsigned char shadow_index=1, color* pallette = 0, int frame_index=-1);
+	int					store(const unsigned char* p, int width, int w, int h, int ox, int oy, sprite::encodes mode, unsigned char shadow_index=1, int frame_index=-1);
 	void				write(const char* url);
 };

@@ -530,7 +530,7 @@ int main()
 {
 	locale = 1;
 	draw::font = res::FONT;
-	draw::create("Heroes II", 200, false);
+	draw::create("Heroes II", 200, true);
 	return mainmenu();
 }
 

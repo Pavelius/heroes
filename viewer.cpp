@@ -392,9 +392,12 @@ static int view()
 	}
 }
 
+void util_main();
+
 int main()
 {
 	draw::font = res::FONT;
+	util_main();
 	draw::create("Heroes II - Resource Viewer", 200, false);
 	view();
 	return 0;

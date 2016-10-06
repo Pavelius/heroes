@@ -508,6 +508,59 @@ typedef void(CALLBACK *PIMAGE_TLS_CALLBACK)(void* DllHandle, unsigned long Reaso
 
 #define INT_MIN     (-2147483647 - 1) // minimum (signed) int value
 
+#define CCHDEVICENAME 32
+#define CCHFORMNAME 32
+
+#define DM_ORIENTATION          0x00000001L
+#define DM_PAPERSIZE            0x00000002L
+#define DM_PAPERLENGTH          0x00000004L
+#define DM_PAPERWIDTH           0x00000008L
+#define DM_SCALE                0x00000010L
+#define DM_POSITION             0x00000020L
+#define DM_NUP                  0x00000040L
+#define DM_DISPLAYORIENTATION   0x00000080L
+
+#define DM_COPIES               0x00000100L
+#define DM_DEFAULTSOURCE        0x00000200L
+#define DM_PRINTQUALITY         0x00000400L
+#define DM_COLOR                0x00000800L
+#define DM_DUPLEX               0x00001000L
+#define DM_YRESOLUTION          0x00002000L
+#define DM_TTOPTION             0x00004000L
+#define DM_COLLATE              0x00008000L
+#define DM_FORMNAME             0x00010000L
+#define DM_LOGPIXELS            0x00020000L
+#define DM_BITSPERPEL           0x00040000L
+#define DM_PELSWIDTH            0x00080000L
+#define DM_PELSHEIGHT           0x00100000L
+#define DM_DISPLAYFLAGS         0x00200000L
+#define DM_DISPLAYFREQUENCY     0x00400000L
+
+#define DM_ICMMETHOD            0x00800000L
+#define DM_ICMINTENT            0x01000000L
+#define DM_MEDIATYPE            0x02000000L
+#define DM_DITHERTYPE           0x04000000L
+#define DM_PANNINGWIDTH         0x08000000L
+#define DM_PANNINGHEIGHT        0x10000000L
+
+#define DM_DISPLAYFIXEDOUTPUT   0x20000000L
+
+#define CDS_UPDATEREGISTRY	1
+#define CDS_TEST	2
+#define CDS_FULLSCREEN	4
+#define CDS_GLOBAL	8
+#define CDS_SET_PRIMARY	16
+#define CDS_RESET	0x40000000
+#define CDS_SETRECT	0x20000000
+#define CDS_NORESET	0x10000000
+#define DISP_CHANGE_SUCCESSFUL	0
+#define DISP_CHANGE_RESTART	1
+#define DISP_CHANGE_BADFLAGS	(-4)
+#define DISP_CHANGE_BADPARAM	(-5)
+#define DISP_CHANGE_FAILED	(-1)
+#define DISP_CHANGE_BADMODE	(-2)
+#define DISP_CHANGE_NOTUPDATED	(-3)
+
 struct POINT {
 	LONG		x;
 	LONG		y;
@@ -722,10 +775,59 @@ struct IMAGE_TLS_DIRECTORY {
 	unsigned	SizeOfZeroFill;
 	unsigned	Characteristics;
 };
+struct DEVMODE {
+	char		dmDeviceName[CCHDEVICENAME];
+	WORD		dmSpecVersion;
+	WORD		dmDriverVersion;
+	WORD		dmSize;
+	WORD		dmDriverExtra;
+	DWORD		dmFields;
+	union {
+		struct {
+			short	dmOrientation;
+			short	dmPaperSize;
+			short	dmPaperLength;
+			short	dmPaperWidth;
+			short	dmScale;
+			short	dmCopies;
+			short	dmDefaultSource;
+			short	dmPrintQuality;
+		};
+		struct {
+			POINT	dmPosition;
+			DWORD	dmDisplayOrientation;
+			DWORD	dmDisplayFixedOutput;
+		};
+	};
+	short	dmColor;
+	short	dmDuplex;
+	short	dmYResolution;
+	short	dmTTOption;
+	short	dmCollate;
+	char	dmFormName[CCHFORMNAME];
+	WORD	dmLogPixels;
+	DWORD	dmBitsPerPel;
+	DWORD	dmPelsWidth;
+	DWORD	dmPelsHeight;
+	union{
+		DWORD dmDisplayFlags;
+		DWORD dmNup;
+	};
+	DWORD dmDisplayFrequency;
+	DWORD dmICMMethod;
+	DWORD dmICMIntent;
+	DWORD dmMediaType;
+	DWORD dmDitherType;
+	DWORD dmReserved1;
+	DWORD dmReserved2;
+	DWORD dmPanningWidth;
+	DWORD dmPanningHeight;
+};
 
 DLL int WINAPI				AdjustWindowRectEx(RECT*, unsigned, int, unsigned);
 DLL int WINAPI				AppendMenuA(void*, UINT, unsigned, const char*);
 DLL int WINAPI				BringWindowToTop(void*);
+DLL int WINAPI				ChangeDisplaySettingsA(DEVMODE* lpDevMode, unsigned dwflags);
 DLL int WINAPI				ChooseColorA(CHOOSECOLOR*);
 DLL int WINAPI				ClientToScreen(void*, POINT*);
 DLL int WINAPI				CloseClipboard(void);

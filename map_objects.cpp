@@ -24,7 +24,7 @@ static shapeinfo sh2x2 = {4, {2, 2}, {{0, 0}, {1, 0}, {0, 1}, {1, 1}}, {0}, {2, 
 static shapeinfo sh2x2J = {3, {2, 2}, {{0, -1}, {-1, 0}, {0, 0}}, {0}, {1, 0, 2}};
 static shapeinfo sh2x2bk = {3, {2, 2}, {{0, -1}, {-1, 0}, {0, 0}}, {0}, {2, 2, 2}};
 static shapeinfo sh2x2Ja9 = {3, {2, 2}, {{0, -1}, {-1, 0}, {0, 0}}, {9, 9, 9}, {1, 0, 2}};
-static shapeinfo sh2x3 = {6, {2, 3}, {{-1, -1}, {0, -1}, {-1, 0}, {0, 0}, {-1, 1}, {0, 1}}, {0, 1, 1, 0, 2, 2}};
+static shapeinfo sh2x3 = {6, {2, 3}, {{-1, -1}, {0, -1}, {-1, 0}, {0, 0}, {-1, 1}, {0, 1}}, {0}, {0, 1, 1, 0, 2, 2}};
 //
 static shapeinfo sh3x1 = {3, {3, 1}, {{-2, 0}, {-1, 0}, {0, 0}}, {0}, {0, 2, 2}};
 static shapeinfo sh3x1a6 = {3, {3, 1}, {{-1, 0}, {0, 0}, {1, 0}}, {6, 6, 6}, {0, 2, 2}};
@@ -59,8 +59,8 @@ static shapeinfo sh4x2u1 = {7, {4, 2}, {{-1, -1}, {0, -1}, {1, -1}, {-2, 0}, {-1
 static shapeinfo sh4x2r1 = {7, {4, 2}, {{-2, -1}, {-1, -1}, {0, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}}};
 static shapeinfo sh4x2u2 = {6, {4, 2}, {{0, -1}, {1, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}}};
 static shapeinfo sh4x2d1 = {7, {4, 2}, {{-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {0, 0}, {1, 0}}, {0}, {2, 2, 2, 2, 1, 2, 2}};
-static shapeinfo sh4x2r1d1 = {6, {4, 2}, {{-1, -1}, {0, -1}, {1, -1}, {0, 0}, {1, 0}, {2, 0}}};
-static shapeinfo sh4x2u1b1 = {6, {4, 2}, {{0, -1}, {1, -1}, {2, -1}, {-1, 0}, {0, 0}, {1, 0}}};
+static shapeinfo sh4x2r1d1 = {6, {4, 2}, {{-1, -1}, {0, -1}, {1, -1}, {0, 0}, {1, 0}, {2, 0}}, {0}, {0, 2, 2, 0, 2, 2}};
+static shapeinfo sh4x2u1b1 = {6, {4, 2}, {{0, -1}, {1, -1}, {2, -1}, {-1, 0}, {0, 0}, {1, 0}}, {0}, {0, 2, 2, 0, 2, 2}};
 static shapeinfo sh4x2а6 = {8, {4, 2}, {{-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}}, {0, 0, 0, 0, 0, 0, 0, 6}};
 static shapeinfo sh4x2а6_rogcmp = {8, {4, 2}, {{-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}}, {0, 0, 0, 0, 0, 0, 6, 0}};
 static shapeinfo sh4x3 = {12, {4, 3}, {{-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {-2, 0}, {-1, 0}, {0, 0}, {1, 0}, {-2, 1}, {-1, 1}, {0, 1}, {1, 1}}};
@@ -330,20 +330,20 @@ static mapobjectinfo water2[] = {
 	{Boat, sh1x1},
 };
 static mapobjectinfo swamp[] = {
-	{WitchHut, sh3x3u2u2a6}, // Rock
-	{Empthy, sh2x1}, // Rock
+	{WitchHut, sh3x3u2u2a6},
+	{Rock, sh2x1},
 	{Empthy, sh3x1}, // Herbs
 	{Xanadu, sh5x3u2a6},
 	{Mushrooms, sh3x1},
-	{Empthy, sh1x1},// Digging hole
-	{Empthy, sh7x3r1},// Lake
-	{Empthy, sh4x2},// Lake
-	{Empthy, sh4x3u1r1},// Lake
-	{Empthy, sh2x1},// Flower
-	{Empthy, sh3x1},// Flower
-	{Empthy, sh2x1},// Flower
-	{Empthy, sh4x1},// Flower
-	{Empthy, sh2x1},// Flower
+	{DiggingHole, sh1x1},
+	{Lake, sh7x3r1},
+	{Lake, sh4x2},
+	{Lake, sh4x3u1r1},
+	{Flowers, sh2x1},
+	{Flowers, sh3x1},
+	{Flowers, sh2x1},
+	{Flowers, sh4x1},
+	{Flowers, sh2x1},
 	{Empthy, sh2x1},// Мох
 	{Sign, sh1x1},
 	{Empthy, sh5x2u1}, // Заводь
@@ -366,10 +366,10 @@ static mapobjectinfo swamp[] = {
 	{Empthy, sh2x1}, // Камыш (сверху)
 	{Empthy, sh2x1}, // Лилии
 	{Empthy, sh1x1}, // Лилии
-	{Empthy, sh2x1}, // Камень
-	{Empthy, sh2x1}, // Камень
-	{Empthy, sh3x2u2}, // Камень
-	{Empthy, sh1x1}, // Камень
+	{Rock, sh2x1},
+	{Rock, sh2x1},
+	{Rock, sh3x2u2},
+	{Rock, sh1x1},
 	{Empthy, sh3x1}, // Кувшинка
 	{Obelisk, sh2x2J},
 };
@@ -377,22 +377,22 @@ static mapobjectinfo wasteland[] = {
 	{ArtesianSpring, sh3x2u1},
 	{Empthy, sh2x1}, // Hole
 	{Empthy, sh3x2u1}, // Пальмы
-	{Empthy, sh2x2J}, // Кактус
-	{Empthy, sh2x1}, // Куст
+	{Cactus, sh2x2J},
+	{Brush, sh2x1},
 	{Empthy, sh1x1}, // Череп рогатого скота
-	{Empthy, sh1x1}, // Камень
-	{Empthy, sh3x2u1r1}, // Камень
-	{Empthy, sh3x1}, // Камень
-	{Empthy, sh3x2u1}, // Камень
-	{Empthy, sh2x1}, // Камень
-	{Empthy, sh3x1}, // Камень
-	{Empthy, sh3x1}, // Камень
-	{Empthy, sh3x1}, // Камень
-	{Empthy, sh2x1}, // Камень
-	{Empthy, sh2x2J}, // Камень
-	{Empthy, sh2x2J}, // Камень
-	{Empthy, sh2x2J}, // Камень
-	{Empthy, sh2x2J}, // Камень
+	{Rock, sh1x1},
+	{Rock, sh3x2u1r1},
+	{Rock, sh3x1},
+	{Rock, sh3x2u1},
+	{Rock, sh2x1},
+	{Rock, sh3x1},
+	{Rock, sh3x1},
+	{Rock, sh3x1},
+	{Rock, sh2x1},
+	{Rock, sh2x2J},
+	{Rock, sh2x2J},
+	{Rock, sh2x2J},
+	{Rock, sh2x2J},
 	{Empthy, sh2x1}, // Засохшая трава
 	{Empthy, sh4x3}, // Трещина
 	{Empthy, sh1x1}, // Digging
@@ -417,15 +417,15 @@ static mapobjectinfo lava[] = {
 	{Empthy, sh2x2J}, // Stones and lava
 	{Empthy, sh3x2u1}, // Stones and lava
 	{Empthy, sh1x1}, // Digg
-	{Empthy, sh6x2}, // Fire Lake
-	{Empthy, sh3x2}, // Fire Lake
-	{Empthy, sh4x2}, // Fire Lake
+	{Lake, sh6x2}, // Fire Lake
+	{Lake, sh3x2}, // Fire Lake
+	{Lake, sh4x2}, // Fire Lake
 	{Empthy, sh2x2}, // Lava
 	{Empthy, sh2x2J}, // Lava
 	{Empthy, sh2x2}, // Lava
 	{Empthy, sh3x2r1}, // Lava
 	{Empthy, sh3x2r1}, // Lava
-	{Empthy, sh2x2}, // Volcano
+	{Volcano, sh2x2},
 	{Empthy, sh2x2Ja9}, // Steam
 	{Obelisk, sh2x2J},
 	{DemonCave, sh3x2u1},

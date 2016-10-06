@@ -4,14 +4,14 @@
 struct videohead
 {
 	BITMAPINFO			bmp;
-	unsigned char		bmp_pallette[256*4];
+	unsigned char		bmp_pallette[255*4];
 };
 
 static const char*		window_class_name = "UIWindow32";
 static HWND				main_window;
-static bool				window_fullscreen;
 static videohead		video;
 static unsigned char*	video_bits;
+extern "C" int			atexit(void(*func)(void));
 
 static int tokey(int vk)
 {
@@ -191,6 +191,12 @@ void sleep(unsigned ms)
 	Sleep(ms);
 }
 
+static void reset_display_setting()
+{
+	DEVMODE	dmScreenSettings = {0}; // Device Mode
+	ChangeDisplaySettingsA(&dmScreenSettings, CDS_RESET);
+}
+
 // Create specified window
 bool sys_create(const char* title, int milliseconds, bool fullscreen, unsigned char* bits, int width, int height)
 {
@@ -216,20 +222,19 @@ bool sys_create(const char* title, int milliseconds, bool fullscreen, unsigned c
 
 	if(fullscreen)										// Attempt Fullscreen Mode?
 	{
-		//	DEVMODE	dmScreenSettings;						// Device Mode
-		//	memset(&dmScreenSettings, 0, sizeof(dmScreenSettings));	// Makes Sure Memory's Cleared
-		//	dmScreenSettings.dmSize = sizeof(dmScreenSettings);		// Size Of The Devmode Structure
-		//	dmScreenSettings.dmPelsWidth = width;			// Selected Screen Width
-		//	dmScreenSettings.dmPelsHeight = height;			// Selected Screen Height
-		//	dmScreenSettings.dmBitsPerPel = 32;						// Selected Bits Per Pixel
-		//	dmScreenSettings.dmFields = DM_BITSPERPEL|DM_PELSWIDTH|DM_PELSHEIGHT;
-		//	// Try To Set Selected Mode And Get Results.  NOTE: CDS_FULLSCREEN Gets Rid Of Start Bar.
-		//	if(ChangeDisplaySettings(&dmScreenSettings, CDS_FULLSCREEN) != DISP_CHANGE_SUCCESSFUL)
-		//		return false;
+		DEVMODE	dmScreenSettings = {0};					// Device Mode
+		dmScreenSettings.dmSize = sizeof(dmScreenSettings);		// Size Of The Devmode Structure
+		dmScreenSettings.dmPelsWidth = width;			// Selected Screen Width
+		dmScreenSettings.dmPelsHeight = height;			// Selected Screen Height
+		dmScreenSettings.dmBitsPerPel = 32;						// Selected Bits Per Pixel
+		dmScreenSettings.dmFields = DM_BITSPERPEL|DM_PELSWIDTH|DM_PELSHEIGHT;
+		// Try To Set Selected Mode And Get Results.  NOTE: CDS_FULLSCREEN Gets Rid Of Start Bar.
+		if(ChangeDisplaySettingsA(&dmScreenSettings, CDS_FULLSCREEN) != DISP_CHANGE_SUCCESSFUL)
+			return false;
 		dwStyle = WS_POPUP;								// Windows Style
+		atexit(reset_display_setting);
 	}
 
-	window_fullscreen = fullscreen;
 	AdjustWindowRectEx(&WindowRect, dwStyle, 0, 0);	// Adjust Window To True Requested Size
 
 													// Create The Window
