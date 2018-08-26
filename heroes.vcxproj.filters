@@ -2,22 +2,32 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClInclude Include="main.h" />
-    <ClInclude Include="base.h" />
     <ClInclude Include="crt.h" />
-    <ClInclude Include="drawable.h" />
     <ClInclude Include="array.h" />
     <ClInclude Include="io.h" />
-    <ClInclude Include="win.h" />
     <ClInclude Include="input.h" />
-    <ClInclude Include="point.h" />
-    <ClInclude Include="rect.h" />
     <ClInclude Include="command.h" />
-    <ClInclude Include="pointc.h" />
+    <ClInclude Include="win.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="drawable.h">
+      <Filter>draw</Filter>
+    </ClInclude>
+    <ClInclude Include="base.h">
+      <Filter>database</Filter>
+    </ClInclude>
+    <ClInclude Include="point.h">
+      <Filter>support</Filter>
+    </ClInclude>
+    <ClInclude Include="pointc.h">
+      <Filter>support</Filter>
+    </ClInclude>
+    <ClInclude Include="rect.h">
+      <Filter>support</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="win.cpp" />
-    <ClCompile Include="animation.cpp" />
     <ClCompile Include="list.cpp" />
     <ClCompile Include="pallette.cpp" />
     <ClCompile Include="text.cpp" />
@@ -30,34 +40,21 @@
     <ClCompile Include="monster.cpp" />
     <ClCompile Include="sign.cpp" />
     <ClCompile Include="artifacts.cpp" />
-    <ClCompile Include="combat_effect.cpp" />
-    <ClCompile Include="combat_route.cpp" />
-    <ClCompile Include="combat_spells.cpp" />
     <ClCompile Include="indexes.cpp" />
     <ClCompile Include="map_route.cpp" />
     <ClCompile Include="spells.cpp" />
     <ClCompile Include="tokens.cpp" />
     <ClCompile Include="game.cpp" />
-    <ClCompile Include="draw.cpp" />
-    <ClCompile Include="base.cpp" />
     <ClCompile Include="crt.cpp" />
-    <ClCompile Include="drawable.cpp" />
-    <ClCompile Include="base_meta.cpp" />
     <ClCompile Include="io.cpp" />
-    <ClCompile Include="win_io.cpp" />
-    <ClCompile Include="point.cpp" />
     <ClCompile Include="show_hero.cpp" />
     <ClCompile Include="show_unit.cpp" />
     <ClCompile Include="show_battle.cpp" />
     <ClCompile Include="show_battle_dialog.cpp" />
-    <ClCompile Include="combat.cpp" />
-    <ClCompile Include="draw_screenshot.cpp" />
     <ClCompile Include="show_battle_setting.cpp" />
-    <ClCompile Include="combat_unit.cpp" />
     <ClCompile Include="game_file.cpp" />
     <ClCompile Include="game_random.cpp" />
     <ClCompile Include="show_castle.cpp" />
-    <ClCompile Include="castle.cpp" />
     <ClCompile Include="show_castle_build.cpp" />
     <ClCompile Include="show_spellbook.cpp" />
     <ClCompile Include="show_hightscore.cpp" />
@@ -65,7 +62,6 @@
     <ClCompile Include="show_thieves.cpp" />
     <ClCompile Include="game_statistic.cpp" />
     <ClCompile Include="show_tavern.cpp" />
-    <ClCompile Include="draw_controls.cpp" />
     <ClCompile Include="show_marketplace.cpp" />
     <ClCompile Include="show_game.cpp" />
     <ClCompile Include="command.cpp" />
@@ -74,5 +70,70 @@
     <ClCompile Include="show_mageguild.cpp" />
     <ClCompile Include="show_well.cpp" />
     <ClCompile Include="print.cpp" />
+    <ClCompile Include="win.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="win_io.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="draw.cpp">
+      <Filter>draw</Filter>
+    </ClCompile>
+    <ClCompile Include="draw_controls.cpp">
+      <Filter>draw</Filter>
+    </ClCompile>
+    <ClCompile Include="draw_screenshot.cpp">
+      <Filter>draw</Filter>
+    </ClCompile>
+    <ClCompile Include="drawable.cpp">
+      <Filter>draw</Filter>
+    </ClCompile>
+    <ClCompile Include="castle.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="combat.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="combat_effect.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="combat_route.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="combat_spells.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="combat_unit.cpp">
+      <Filter>logic</Filter>
+    </ClCompile>
+    <ClCompile Include="base.cpp">
+      <Filter>database</Filter>
+    </ClCompile>
+    <ClCompile Include="base_meta.cpp">
+      <Filter>database</Filter>
+    </ClCompile>
+    <ClCompile Include="point.cpp">
+      <Filter>support</Filter>
+    </ClCompile>
+    <ClCompile Include="animation.cpp">
+      <Filter>draw</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="platform">
+      <UniqueIdentifier>{7dea5343-3a96-4315-a9de-aa01db7f23d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="draw">
+      <UniqueIdentifier>{97196eb4-3a2a-4bf4-b796-f8169c919a3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="logic">
+      <UniqueIdentifier>{4a6f3321-85c7-4419-832c-cac37abc0b38}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="support">
+      <UniqueIdentifier>{891e7173-7fbf-4d20-aa66-f3ac9acaee66}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="database">
+      <UniqueIdentifier>{114cbbc3-a065-433c-90ed-25323da3eaec}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

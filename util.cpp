@@ -1,46 +1,40 @@
 #include "main.h"
 #include "sprite.h"
 
-namespace res
-{
+namespace res {
 #pragma pack(push)
 #pragma pack(1)
-	struct icn
-	{
-		struct record
-		{
-			short int		x;
-			short int		y;
-			short int		width;
-			short int		height;
-			unsigned char	type;
-			unsigned		offset;
-		};
-		unsigned short		count;
-		unsigned			size;
-		record				records[1];
+struct icn {
+	struct record {
+		short int		x;
+		short int		y;
+		short int		width;
+		short int		height;
+		unsigned char	type;
+		unsigned		offset;
 	};
-	struct til
-	{
-		short unsigned		count;
-		short unsigned		width;
-		short unsigned		height;
-	};
+	unsigned short		count;
+	unsigned			size;
+	record				records[1];
+};
+struct til {
+	short unsigned		count;
+	short unsigned		width;
+	short unsigned		height;
+};
 #pragma pack(pop)
 }
 
-static unsigned char	picture_data[256*256*4*2];
+static unsigned char	picture_data[256 * 256 * 4 * 2];
 //static sprite			picture;
 const char*				rsname(int i);
 
-static const char* gpath(const char* fn, const char* ext = 0)
-{
+static const char* gpath(const char* fn, const char* ext = 0) {
 	static char temp[261];
 	zcpy(temp, "d:/applications/heroes");
 	zcat(temp, "/");
 	zcat(temp, fn);
-	if(ext)
-	{
+	if(ext) {
 		zcat(temp, ".");
 		zcat(temp, ext);
 	}
@@ -53,30 +47,24 @@ static const char* gpath(const char* fn, const char* ext = 0)
 // (81 - 9F) draw count of (B-0x80) bytes of alpha AA pixels
 // (A0, XX) skip count of XX pixels
 // (A1 - FF) skip count of (B-0xA0) pixels
-static unsigned char* encode_xx(unsigned char* dst, const unsigned char* src, int height)
-{
+static unsigned char* encode_xx(unsigned char* dst, const unsigned char* src, int height) {
 	unsigned char* x = dst;
-	while(true)
-	{
+	while(true) {
 		unsigned char c = *src++;
-		if(c == 0)
-		{
+		if(c == 0) {
 			*dst++ = c;
 			if(--height <= 0)
 				break;
-		}
-		else if(c < 0x80) // (01..7F) - bytes copy from src
+		} else if(c < 0x80) // (01..7F) - bytes copy from src
 		{
 			*dst++ = c;
 			while(c--)
 				*dst++ = *src++;
-		}
-		else if(c == 0x80) // 0x80 - end data
+		} else if(c == 0x80) // 0x80 - end data
 		{
 			*dst++ = 0;
 			break;
-		}
-		else if(c < 0xC0) // 0xBF - skip data
+		} else if(c < 0xC0) // 0xBF - skip data
 			*dst++ = (c - 0x80) + 0xA1;
 		else if(c == 0xC0)// 0xC0 - shadow
 		{
@@ -84,16 +72,14 @@ static unsigned char* encode_xx(unsigned char* dst, const unsigned char* src, in
 			++src;
 			if(c < (0x9F - 0x81))
 				*dst++ = 0x81 + (c - 1);
-			else
-			{
+			else {
 				*dst++ = 0xA0;
 				*dst++ = c;
 			}
-		}
-		else // fill
+		} else // fill
 		{
 			++src;
-			if(c==0xC1)
+			if(c == 0xC1)
 				c = *src++;
 			else
 				c -= 0xC0;
@@ -105,9 +91,7 @@ static unsigned char* encode_xx(unsigned char* dst, const unsigned char* src, in
 	}
 }
 
-static int encode_frame(unsigned char* d, unsigned char* s)
-{
-}
+static int encode_frame(unsigned char* d, unsigned char* s) {}
 
 //static void add_frame(res::icn& s, res::icn::record& r)
 //{
@@ -123,11 +107,9 @@ static int encode_frame(unsigned char* d, unsigned char* s)
 //	picture.size += encode_frame(d1, s1);
 //}
 
-void show_type_0x20()
-{
+void show_type_0x20() {
 	int count = 0;
-	for(int i = 0; i < res::Empthy; i++)
-	{
+	for(int i = 0; i < res::Empthy; i++) {
 		res::icn* p = (res::icn*)res::get(res::tokens(i));
 		if(!p)
 			continue;
@@ -139,11 +121,9 @@ void show_type_0x20()
 			continue;
 		if(strcmp(ext, "ICN") != 0)
 			continue;
-		for(int j = 0; j < p->count; j++)
-		{
+		for(int j = 0; j < p->count; j++) {
 			res::icn::record& e = p->records[j];
-			if(e.type == 0x20)
-			{
+			if(e.type == 0x20) {
 				char temp[512];
 				szprint(temp, "%1 %2i\n", name, j);
 				printc(temp);
@@ -169,27 +149,21 @@ void show_type_0x20()
 // 0xC0 shadow
 // 0xC1 fill byte XX by value XX
 // 0xC1..0xFF fill byte (NN-0xC0) by value XX
-static bool sprite_v1(const unsigned char* s, int height, unsigned char byte)
-{
-	while(true)
-	{
+static bool sprite_v1(const unsigned char* s, int height, unsigned char byte) {
+	while(true) {
 		register unsigned char c = *s;
-		if(c == 0x00)
-		{
+		if(c == 0x00) {
 			s++;
 			if(--height <= 0)
 				break;
-		}
-		else if(c < 0x80) // 0..0x7F - bytes copy from src
+		} else if(c < 0x80) // 0..0x7F - bytes copy from src
 		{
 			s++;
-			do
-			{
+			do {
 				if(*s++ == byte)
 					return true;
 			} while(--c);
-		}
-		else if(c == 0x80) // 0x80 - end data
+		} else if(c == 0x80) // 0x80 - end data
 			break;
 		else if(c < 0xC0) // 0xBF - skip data
 			s++;
@@ -198,8 +172,7 @@ static bool sprite_v1(const unsigned char* s, int height, unsigned char byte)
 			s++;
 			c = *s % 4 ? *s % 4 : *(++s);
 			s++;
-		}
-		else // fill
+		} else // fill
 		{
 			s++;
 			if(c == 0xC1)
@@ -214,10 +187,8 @@ static bool sprite_v1(const unsigned char* s, int height, unsigned char byte)
 	return false;
 }
 
-static bool has_byte(unsigned char byte)
-{
-	for(int i = 0; i < res::Empthy; i++)
-	{
+static bool has_byte(unsigned char byte) {
+	for(int i = 0; i < res::Empthy; i++) {
 		res::icn* p = (res::icn*)res::get(res::tokens(i));
 		if(!p)
 			continue;
@@ -229,11 +200,9 @@ static bool has_byte(unsigned char byte)
 			continue;
 		if(strcmp(ext, "ICN") != 0)
 			continue;
-		for(int j = 0; j < p->count; j++)
-		{
+		for(int j = 0; j < p->count; j++) {
 			res::icn::record& e = p->records[j];
-			if(e.type != 0x20)
-			{
+			if(e.type != 0x20) {
 				if(sprite_v1((unsigned char*)p + e.offset, e.height, byte))
 					return true;
 			}
@@ -242,11 +211,10 @@ static bool has_byte(unsigned char byte)
 	return false;
 }
 
-void util_main()
-{
-	for(unsigned char byte = 0; byte < 255; byte++)
-	{
-		if(!has_byte(byte))
-			return;
-	}
+void util_main() {
+	//for(unsigned char byte = 0; byte < 255; byte++)
+	//{
+	//	if(!has_byte(byte))
+	//		return;
+	//}
 }
