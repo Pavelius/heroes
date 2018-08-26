@@ -36,23 +36,23 @@ enum events {
 	FirstKey = MouseLeft,
 	FirstMouse = MouseLeft, LastMouse = MouseWheelDown,
 	// support
-	CommandMask 	= 0x0000FFFF,
+	CommandMask = 0x0000FFFF,
 	// misc events can be combination with previous
-	Ctrl			= 0x00010000,
-	Alt				= 0x00020000,
-	Shift			= 0x00040000,
+	Ctrl = 0x00010000,
+	Alt = 0x00020000,
+	Shift = 0x00040000,
 	// control visual flags
-    HideActiveBorder= 0x00100000,
-	HideBackground  = 0x00200000,
-	HideBorder		= 0x00400000,
+	HideActiveBorder = 0x00100000,
+	HideBackground = 0x00200000,
+	HideBorder = 0x00400000,
 	// command flags (common for all)
-    ShowText		= 0x01000000,
-	NoHandleTab		= 0x02000000,
-	NoFocusing		= 0x04000000,
-    // state flags
-	Focused			= 0x10000000, // Control has keyboard input and can change visual form.
-	Checked 		= 0x20000000, // Use in background virtual method.
-	Disabled		= 0x40000000, // Control not grant any input.
+	ShowText = 0x01000000,
+	NoHandleTab = 0x02000000,
+	NoFocusing = 0x04000000,
+	// state flags
+	Focused = 0x10000000, // Control has keyboard input and can change visual form.
+	Checked = 0x20000000, // Use in background virtual method.
+	Disabled = 0x40000000, // Control not grant any input.
 	FirstInput = InputSymbol,
 };
 enum areas {
@@ -60,11 +60,10 @@ enum areas {
 	AreaHilited, // Area have mouse
 	AreaHilitedPressed, // Area have mouse and mouse button is pressed
 };
-namespace hot
-{
-	void						clear();
-	extern int					key; // [in] if pressed key or mouse this field has key
-	extern point				mouse; // current mouse coordinates
-	extern bool					pressed; // flag if any of mouse keys is pressed
-	extern int					param; // command or input event parameter
+namespace hot {
+void						clear();
+extern int					key; // [in] if pressed key or mouse this field has key
+extern point				mouse; // current mouse coordinates
+extern bool					pressed; // flag if any of mouse keys is pressed
+extern int					param; // command or input event parameter
 }

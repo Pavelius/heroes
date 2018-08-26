@@ -124,7 +124,7 @@ char*								szput(char* output, unsigned u, codepages page = metrics::code); //
 char*								szsep(char* result, const char* sep = ", ");
 const char*							szskipcr(const char* p);
 const char*							szskipcrr(const char* p0, const char* p);
-inline const char*					szt(const char* en, const char* ru) { return locale ? ru : en; }
+constexpr const char*				szt(const char* en, const char* ru) { return ru; }
 unsigned							szupper(unsigned u);
 char*								szupper(char* p, int count=1); // to upper reg
 char*								szurl(char* p, const char* path, const char* name, const char* ext = 0, const char* suffix = 0);

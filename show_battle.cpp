@@ -1,19 +1,15 @@
 #include "main.h"
 
-struct leader : public animation
-{
+struct leader : public animation {
 
-	void setaction(tokens type, int param = 0) override
-	{
+	void setaction(tokens type, int param = 0) override {
 		set(game::get(rec, Type), type, param);
 	}
 
-	void painting(point screen, unsigned flags) const override
-	{
+	void painting(point screen, unsigned flags) const override {
 		animation::painting(screen);
 		int player = bsget(rec, Player);
-		if(player >= PlayerBlue && player <= LastPlayer)
-		{
+		if(player >= PlayerBlue && player <= LastPlayer) {
 			res::tokens icn = res::tokens(res::HEROFL00 + player - PlayerBlue);
 			draw::image(pos.x + screen.x, pos.y + screen.y, icn, draw::counter % 5, flags);
 		}
@@ -37,32 +33,27 @@ static int				hilite_index;
 static leader			attacker_leader;
 static leader			defender_leader;
 
-inline int sin_a(int a)
-{
+inline int sin_a(int a) {
 	return a * 38 / 43;
 }
 
-inline int cos_a(int a)
-{
+inline int cos_a(int a) {
 	return a * 22 / 43;
 }
 
-point combat::i2h(int index)
-{
+point combat::i2h(int index) {
 	int x = 20 + 88 - ((index / combat::awd) % 2 ? cell_wd / 2 : 0) + (cell_wd - 1) * (index % combat::awd);
 	int y = 20 + 85 + ((cell_hd / 4) * 3 - 1) * (index / combat::awd);
 	return{(short)x, (short)y};
 }
 
-static void action(animation& cursor, tokens id, int param, tokens idc = Empthy)
-{
+static void action(animation& cursor, tokens id, int param, tokens idc = Empthy) {
 	cursor.set(CursorCombat, (idc == Empthy) ? id : idc);
 	if(hot::key == MouseLeft && hot::pressed)
 		draw::execute(id, param);
 }
 
-static void prepare_leader(int rec, animation& e, bool defender)
-{
+static void prepare_leader(int rec, animation& e, bool defender) {
 	e.clear();
 	e.rec = rec;
 	if(rec >= FirstHero && rec <= LastHero)
@@ -70,31 +61,25 @@ static void prepare_leader(int rec, animation& e, bool defender)
 	else
 		return;
 	e.set(tokens(rec), ActorWait);
-	if(defender)
-	{
+	if(defender) {
 		e.pos.x = 606;
 		e.pos.y = 156;
 		e.flags = AFMirror;
-	}
-	else
-	{
+	} else {
 		e.pos.x = 32;
 		e.pos.y = 186;
 	}
 }
 
-void combat::board(int attacker, int defender)
-{
+void combat::board(int attacker, int defender) {
 	bool light = true;
 	bool trees = false;
 	tokens area = Lava;
-	if(defender >= FirstMapObject && defender <= LastMapObject)
-	{
+	if(defender >= FirstMapObject && defender <= LastMapObject) {
 		int pos = bsget(defender, Index);
 		area = map::gettile(pos);
 	}
-	switch(area)
-	{
+	switch(area) {
 	case Desert:
 		back = res::CBKGDSRT;
 		frng = res::FRNG0004;
@@ -135,8 +120,7 @@ void combat::board(int attacker, int defender)
 		frng = trees ? res::FRNG0011 : res::FRNG0009;
 		break;
 	}
-	if(false)
-	{
+	if(false) {
 		back = res::CBKGGRAV;
 		light = true;
 		frng = res::FRNG0001;
@@ -146,52 +130,44 @@ void combat::board(int attacker, int defender)
 	prepare_leader(defender, defender_leader, true);
 }
 
-static void hittest_grid()
-{
-	for(int i = 0; i < combat::awd*combat::ahd; i++)
-	{
+static void hittest_grid() {
+	for(int i = 0; i < combat::awd*combat::ahd; i++) {
 		auto pt = combat::i2h(i);
 		rect rc = {pt.x - cell_wd / 2, pt.y - cell_hr, pt.x + cell_wd / 2, pt.y + cell_hr};
 		point cooru[] =
 		{
 			{(short)(pt.x - cell_wd / 2), (short)(pt.y - cell_hr)},
-			{pt.x, (short)(pt.y - cell_hd / 2)},
-			{(short)(pt.x + cell_wd / 2), (short)(pt.y - cell_hr)},
+		{pt.x, (short)(pt.y - cell_hd / 2)},
+		{(short)(pt.x + cell_wd / 2), (short)(pt.y - cell_hr)},
 		};
 		point coord[] =
 		{
 			{(short)(pt.x + cell_wd / 2), (short)(pt.y + cell_hr)},
-			{(short)pt.x, (short)(pt.y + cell_hd / 2)},
-			{(short)(pt.x - cell_wd / 2), (short)(pt.y + cell_hr)},
+		{(short)pt.x, (short)(pt.y + cell_hd / 2)},
+		{(short)(pt.x - cell_wd / 2), (short)(pt.y + cell_hr)},
 		};
 		if(hot::mouse.in(rc)
 			|| hot::mouse.in(cooru[0], cooru[1], cooru[2])
-			|| hot::mouse.in(coord[0], coord[1], coord[2]))
-		{
+			|| hot::mouse.in(coord[0], coord[1], coord[2])) {
 			hilite_index = i;
 			return;
 		}
 	}
 }
 
-static void paint_grid(int rec)
-{
+static void paint_grid(int rec) {
 	// Shadow movement indecies
-	if(rec && combat::setting::movement)
-	{
+	if(rec && combat::setting::movement) {
 		draw::state push;
 		draw::font = res::SMALFONT;
 		int radius = game::get(rec, Speed) + 2;
-		for(int i = 0; i < combat::awd*combat::ahd; i++)
-		{
+		for(int i = 0; i < combat::awd*combat::ahd; i++) {
 			auto m = combat::getpassable(i);
-			if(m)
-			{
+			if(m) {
 				auto pt = combat::i2h(i);
 				if(m <= radius)
 					draw::hexagonf(pt.x, pt.y, 0);
-				if(m < BlockSquad && combat::setting::distance)
-				{
+				if(m < BlockSquad && combat::setting::distance) {
 					char temp[32];
 					sznum(temp, m - 1);
 					draw::text(pt.x - draw::textw(temp) / 2, pt.y - 5, temp);
@@ -200,30 +176,24 @@ static void paint_grid(int rec)
 		}
 	}
 	// Shadow cursor index
-	if(rec && combat::setting::cursor)
-	{
-		if(hilite_index != -1)
-		{
+	if(rec && combat::setting::cursor) {
+		if(hilite_index != -1) {
 			auto pt = combat::i2h(hilite_index);
 			draw::hexagonf(pt.x, pt.y, 0);
 		}
 	}
 	// Show grid
-	if(combat::setting::grid)
-	{
-		for(int i = 0; i < combat::awd*combat::ahd; i++)
-		{
+	if(combat::setting::grid) {
+		for(int i = 0; i < combat::awd*combat::ahd; i++) {
 			auto pt = combat::i2h(i);
 			draw::hexagon(pt.x, pt.y, hexagon_color);
 		}
 	}
 	// Show index (only debug)
-	if(rec && combat::setting::index)
-	{
+	if(rec && combat::setting::index) {
 		draw::state push;
 		draw::font = res::SMALFONT;
-		for(int i = 0; i < combat::awd*combat::ahd; i++)
-		{
+		for(int i = 0; i < combat::awd*combat::ahd; i++) {
 			char temp[8];
 			auto pt = combat::i2h(i);
 			sznum(temp, i);
@@ -232,19 +202,18 @@ static void paint_grid(int rec)
 	}
 }
 
-static tokens hex_direction(int x1, int y1, point pt)
-{
+static tokens hex_direction(int x1, int y1, point pt) {
 	const int INFL = 12;
 	point coord[7] =
 	{
 		{(short)x1, (short)y1},
 		//
-		{(short)x1, (short)(y1 - cell_hd*INFL / 2)}, // u
-		{(short)(x1 + cell_wd*INFL / 2), (short)(y1 - cell_hr*INFL)}, // ru
-		{(short)(x1 + cell_wd*INFL / 2), (short)(y1 + cell_hr*INFL)}, // rd
-		{(short)x1, (short)(y1 + cell_hd*INFL / 2)}, // d
-		{(short)(x1 - cell_wd*INFL / 2), (short)(y1 + cell_hr*INFL)}, // ld
-		{(short)(x1 - cell_wd*INFL / 2), (short)(y1 - cell_hr*INFL)}, // lu
+	{(short)x1, (short)(y1 - cell_hd * INFL / 2)}, // u
+	{(short)(x1 + cell_wd * INFL / 2), (short)(y1 - cell_hr * INFL)}, // ru
+	{(short)(x1 + cell_wd * INFL / 2), (short)(y1 + cell_hr * INFL)}, // rd
+	{(short)x1, (short)(y1 + cell_hd * INFL / 2)}, // d
+	{(short)(x1 - cell_wd * INFL / 2), (short)(y1 + cell_hr * INFL)}, // ld
+	{(short)(x1 - cell_wd * INFL / 2), (short)(y1 - cell_hr * INFL)}, // lu
 	};
 	if(pt == coord[0])
 		return HexCenter;
@@ -263,8 +232,7 @@ static tokens hex_direction(int x1, int y1, point pt)
 	return Empthy;
 }
 
-static void select_animation(drawable** objects)
-{
+static void select_animation(drawable** objects) {
 	combat_timeout = combat_timeout_values[combat::setting::speed];
 	objects[0] = 0;
 	dwselect(zend(objects), {0, 0, 640, 480}, {0, 0}, DWCombat);
@@ -272,8 +240,7 @@ static void select_animation(drawable** objects)
 	zcat(objects, static_cast<drawable*>(&defender_leader));
 }
 
-static void paint_field(int rec, drawable** objects)
-{
+static void paint_field(int rec, drawable** objects) {
 	int h1 = res::height(res::TEXTBAR, 4);
 	int h2 = res::height(res::TEXTBAR, 6);
 	int h3 = res::height(res::TEXTBAR, 0);
@@ -293,15 +260,13 @@ static void paint_field(int rec, drawable** objects)
 	paint_grid(rec);
 	if(frng != res::Empthy)
 		draw::image(0, 0, frng, 0);
-	if(objects)
-	{
+	if(objects) {
 		dworder(objects, zlen(objects));
 		dwpaint(objects, {0, 0, 640, 480}, {0, 0});
 	}
 }
 
-static int missile9(int dx, int dy)
-{
+static int missile9(int dx, int dy) {
 	if(0 == dx)
 		return dy > 0 ? 0 : 8;
 	int tan = iabs(1000 * dy / dx);
@@ -315,8 +280,7 @@ static int missile9(int dx, int dy)
 	return dy > 0 ? 2 : 6;
 }
 
-static int missile7(int dx, int dy)
-{
+static int missile7(int dx, int dy) {
 	if(0 == dx)
 		return dy > 0 ? 0 : 6;
 	else if(0 == dy)
@@ -329,10 +293,8 @@ static int missile7(int dx, int dy)
 	return dy > 0 ? 1 : 5;
 }
 
-static int get_missile_index(res::tokens icn, int dx, int dy)
-{
-	switch(res::getcount(icn))
-	{
+static int get_missile_index(res::tokens icn, int dx, int dy) {
+	switch(res::getcount(icn)) {
 	case 9:
 		return missile9(dx, dy);
 	case 7:
@@ -342,39 +304,33 @@ static int get_missile_index(res::tokens icn, int dx, int dy)
 	}
 }
 
-int show::battle::target(int side, int sid, int target)
-{
+int show::battle::target(int side, int sid, int target) {
 	if(!target)
 		return -1;
 	drawable* objects[64];
-	while(true)
-	{
+	while(true) {
 		int hilite_combatant = 0;
 		select_animation(objects);
 		paint_field(-1, objects);
 		int i = bsget(sid, Portrait);
-		if(hilite_index != -1)
-		{
+		if(hilite_index != -1) {
 			hilite_combatant = combat::getcombatant(hilite_index);
 			if(!combat::cast(side, sid, hilite_combatant, false, false, false))
 				i = -1;
 		}
-		if(hot::key == MouseLeft && hot::pressed)
-		{
+		if(hot::key == MouseLeft && hot::pressed) {
 			if(i != -1)
 				draw::execute(Spells);
 			else
 				draw::execute(Cancel);
-		}
-		else if(hot::key == MouseRight && hot::pressed)
+		} else if(hot::key == MouseRight && hot::pressed)
 			draw::execute(Cancel);
 		if(i == -1)
 			draw::cursor(res::SPELCO, 0, -res::width(res::SPELCO, 0) / 2, -res::height(res::SPELCO, 0) / 2);
 		else
 			draw::cursor(res::SPELCO, i, -res::width(res::SPELCO, i) / 2, -res::height(res::SPELCO, i) / 2);
 		int id = draw::input();
-		switch(id)
-		{
+		switch(id) {
 		case Cancel:
 		case 0:
 			return 0;
@@ -387,29 +343,24 @@ int show::battle::target(int side, int sid, int target)
 	}
 }
 
-void show::battle::leader(int side, tokens type)
-{
+void show::battle::leader(int side, tokens type) {
 	drawable* objects[64];
 	select_animation(objects);
 	paint_field(0, 0);
 	draw::screenshoot screen;
 	auto pa = combat::isattacker(side) ? &attacker_leader : &defender_leader;
 	pa->setaction(type, 0);
-	screen.redraw(objects, combat_timeout*2, pa);
+	screen.redraw(objects, combat_timeout * 2, pa);
 	pa->setaction(ActorWait, 0);
 }
 
-void show::battle::effect(int rec, int type, int param)
-{
-	struct animation_effect : public animation
-	{
-		animation_effect(int type, int param, point pt)
-		{
+void show::battle::effect(int rec, int type, int param) {
+	struct animation_effect : public animation {
+		animation_effect(int type, int param, point pt) {
 			set(AnimationType, type, param);
 			pos = pos + pt;
 		}
-		point getzpos() const override
-		{
+		point getzpos() const override {
 			return{pos.x, pos.y + 72};
 		}
 	};
@@ -427,8 +378,7 @@ void show::battle::effect(int rec, int type, int param)
 	screen.redraw(objects, combat_timeout, &e1);
 }
 
-void show::battle::shoot(int rec, int enemy, int damage)
-{
+void show::battle::shoot(int rec, int enemy, int damage) {
 	drawable* objects[64];
 	select_animation(objects);
 	paint_field(0, 0);
@@ -443,8 +393,7 @@ void show::battle::shoot(int rec, int enemy, int damage)
 	point p1 = combat::i2h(i1); p1.y -= 32;
 	point p2 = combat::i2h(i2); p2.y -= 32;
 	// Prepare shoot
-	if(pa->hasanimation(Shoot, 2))
-	{
+	if(pa->hasanimation(Shoot, 2)) {
 		pa->setaction(Shoot, 0);
 		screen.redraw(objects, combat_timeout, pa);
 		auto d = combat::getdirection(i1, i2);
@@ -452,16 +401,14 @@ void show::battle::shoot(int rec, int enemy, int damage)
 			pa->flags = AFMirror;
 		else
 			pa->flags = 0;
-		if(d==HexLeft || d==HexRight)
+		if(d == HexLeft || d == HexRight)
 			pa->setaction(Shoot, 2);
-		else if(d==HexLeftUp || d==HexLeftDown)
+		else if(d == HexLeftUp || d == HexLeftDown)
 			pa->setaction(Shoot, 1);
 		else
 			pa->setaction(Shoot, 3);
 		screen.redraw(objects, combat_timeout, pa, pa->start + pa->count - 1);
-	}
-	else
-	{
+	} else {
 		pa->setaction(Shoot, 0);
 		screen.redraw(objects, combat_timeout, pa, pa->start + pa->count - 1);
 	}
@@ -476,8 +423,7 @@ void show::battle::shoot(int rec, int enemy, int damage)
 	arrow.flags = pa->flags;
 	arrow.count = 1;
 	int count = animation::fly(points, p1, p2, 48);
-	for(int i = 1; i < count - 1; i++)
-	{
+	for(int i = 1; i < count - 1; i++) {
 		arrow.pos = points[i];
 		screen.redraw(objects, combat_timeout);
 	}
@@ -487,8 +433,7 @@ void show::battle::shoot(int rec, int enemy, int damage)
 	screen.redraw(objects, combat_timeout, pa, pe);
 }
 
-void show::battle::fly(int rec, int target)
-{
+void show::battle::fly(int rec, int target) {
 	point points[256];
 	drawable* objects[64];
 	select_animation(objects);
@@ -508,8 +453,7 @@ void show::battle::fly(int rec, int target)
 	// Main phase
 	pa->setaction(Fly, 1);
 	int count = animation::fly(points, p1, p2, 16);
-	for(int i = 1; i < count - 1; i++)
-	{
+	for(int i = 1; i < count - 1; i++) {
 		pa->pos = points[i];
 		screen.redraw(objects, combat_timeout);
 		if(pa->incframe())
@@ -521,8 +465,7 @@ void show::battle::fly(int rec, int target)
 	screen.redraw(objects, combat_timeout, pa);
 }
 
-void show::battle::attack(int rec, int enemy, int damage)
-{
+void show::battle::attack(int rec, int enemy, int damage) {
 	drawable* objects[64];
 	select_animation(objects);
 	paint_field(0, 0);
@@ -536,13 +479,10 @@ void show::battle::attack(int rec, int enemy, int damage)
 	draw::screenshoot screen;
 	animation::state a1(pa);
 	animation::state a2(pe);
-	if(d == HexLeft || d == HexLeftUp || d == HexLeftDown)
-	{
+	if(d == HexLeft || d == HexLeftUp || d == HexLeftDown) {
 		pa->flags = AFMirror;
 		pe->flags = 0;
-	}
-	else
-	{
+	} else {
 		pa->flags = 0;
 		pe->flags = AFMirror;
 	}
@@ -562,8 +502,7 @@ void show::battle::attack(int rec, int enemy, int damage)
 	screen.redraw(objects, combat_timeout, pe);
 }
 
-void show::battle::move(int rec, int target)
-{
+void show::battle::move(int rec, int target) {
 	int steps[64];
 	drawable* objects[64];
 	select_animation(objects);
@@ -574,8 +513,7 @@ void show::battle::move(int rec, int target)
 	animation::state a1(pa);
 	draw::screenshoot screen;
 	int count = combat::move(steps, bsget(rec, Index), target, game::get(rec, Speed));
-	for(int i = count - 1; i >= 0; i--)
-	{
+	for(int i = count - 1; i >= 0; i--) {
 		int i1 = bsget(rec, Index);
 		int i2 = steps[i];
 		auto d = combat::getdirection(i1, i2);
@@ -584,49 +522,34 @@ void show::battle::move(int rec, int target)
 			pa->frame++;
 		point move_base = res::offset(pa->icn, pa->frame);
 		point move_start = pa->pos;
-		if(d == HexLeft || d == HexLeftUp || d == HexLeftDown)
-		{
+		if(d == HexLeft || d == HexLeftUp || d == HexLeftDown) {
 			pa->flags = AFNoOffset | AFMirror;
 			move_start.x -= move_base.x;
-		}
-		else
-		{
+		} else {
 			pa->flags = AFNoOffset;
 			move_start.x += move_base.x;
 		}
 		move_start.y += move_base.y;
-		while(true)
-		{
+		while(true) {
 			point pt = res::offset(pa->icn, pa->frame) - move_base;
 			// cosA = 22/44 or 1/2
 			// sinA = 38/44 or 19/22
-			if(d == HexLeft)
-			{
+			if(d == HexLeft) {
 				pa->pos.x = move_start.x - pt.x;
 				pa->pos.y = move_start.y + pt.y;
-			}
-			else if(d == HexRight)
-			{
+			} else if(d == HexRight) {
 				pa->pos.x = move_start.x + pt.x;
 				pa->pos.y = move_start.y + pt.y;
-			}
-			else if(d == HexRightUp)
-			{
+			} else if(d == HexRightUp) {
 				pa->pos.x = move_start.x + (cos_a(pt.x) - sin_a(pt.y));
 				pa->pos.y = move_start.y - (sin_a(pt.x) - cos_a(pt.y));
-			}
-			else if(d == HexRightDown)
-			{
+			} else if(d == HexRightDown) {
 				pa->pos.x = move_start.x + (cos_a(pt.x) - sin_a(pt.y));
 				pa->pos.y = move_start.y + (sin_a(pt.x) - cos_a(pt.y));
-			}
-			else if(d == HexLeftUp)
-			{
+			} else if(d == HexLeftUp) {
 				pa->pos.x = move_start.x - (cos_a(pt.x) - sin_a(pt.y));
 				pa->pos.y = move_start.y - (sin_a(pt.x) - pt.y / 2);
-			}
-			else if(d == HexLeftDown)
-			{
+			} else if(d == HexLeftDown) {
 				pa->pos.x = move_start.x - (cos_a(pt.x) - sin_a(pt.y));
 				pa->pos.y = move_start.y + (sin_a(pt.x) - pt.y / 2);
 			}
@@ -638,40 +561,31 @@ void show::battle::move(int rec, int target)
 	}
 }
 
-int show::battle::unit(int rec, int casted)
-{
+int show::battle::unit(int rec, int casted) {
 	drawable* objects[64];
-	while(true)
-	{
+	while(true) {
 		animation cursor(CursorCombat, Cursor);
 		select_animation(objects);
 		paint_field(rec, objects);
-		if(hilite_index != -1)
-		{
+		if(hilite_index != -1) {
 			int radius = game::get(rec, Speed) + 2;
 			int hilite_combatant = combat::getcombatant(hilite_index);
-			if(hilite_combatant && game::get(hilite_combatant, Count))
-			{
+			if(hilite_combatant && game::get(hilite_combatant, Count)) {
 				if(combat::canshoot(rec, hilite_combatant))
 					action(cursor, Shoot, hilite_combatant);
-				else if(combat::isenemy(rec, hilite_combatant))
-				{
+				else if(combat::isenemy(rec, hilite_combatant)) {
 					auto pt = combat::i2h(hilite_index);
 					tokens d = hex_direction(pt.x, pt.y, hot::mouse);
-					if(combat::canattack(rec, hilite_combatant, hilite_index, d))
-					{
+					if(combat::canattack(rec, hilite_combatant, hilite_index, d)) {
 						hot::param2 = combat::moveto(hilite_index, d);
 						action(cursor, Attack, hilite_combatant, d);
 					}
 				}
 				if(hot::key == MouseRight && hot::pressed)
 					draw::execute(Information, hilite_combatant);
-			}
-			else if(combat::getpassable(hilite_index) <= radius)
+			} else if(combat::getpassable(hilite_index) <= radius)
 				action(cursor, Move, combat::getindex(hilite_index));
-		}
-		else if(hot::mouse.in(attacker_leader.getrect()))
-		{
+		} else if(hot::mouse.in(attacker_leader.getrect())) {
 			cursor.set(CursorCombat, Hero);
 			if(hot::key == MouseLeft && hot::pressed)
 				draw::execute(Hero, attacker_leader.getid());
@@ -680,8 +594,7 @@ int show::battle::unit(int rec, int casted)
 			draw::execute(Spells);
 		draw::cursor(cursor.icn, cursor.frame, cursor.pos.x, cursor.pos.y);
 		int id = draw::input();
-		switch(id)
-		{
+		switch(id) {
 		case Cancel:
 		case 0:
 		case Skip:
@@ -701,8 +614,7 @@ int show::battle::unit(int rec, int casted)
 				dlgmsg(0, szt("You can\'t cast spell twice per combat round.", "¬ы не можете создать заклинание дважды за ход."));
 			else if(!game::hasspellbook(bsget(rec, Side)))
 				dlgmsg(0, szt("You don't have a spellbook.", "” вас нету книги заклинаний."));
-			else
-			{
+			else {
 				id = show::spellbook(bsget(rec, Side), CombatSpells);
 				if(id)
 					return id;
@@ -716,10 +628,8 @@ int show::battle::unit(int rec, int casted)
 				draw::execute(Spells);
 			return id;
 		case InputTimer:
-			if((draw::counter % 4) == 0)
-			{
-				for(auto e : objects)
-				{
+			if((draw::counter % 4) == 0) {
+				for(auto e : objects) {
 					if(!e)
 						break;
 					e->update();

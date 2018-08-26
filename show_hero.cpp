@@ -1,10 +1,8 @@
 #include "main.h"
 
-void show::hero(tokens rec)
-{
+void show::hero(tokens rec) {
 	char temp[260];
-	while(true)
-	{
+	while(true) {
 		draw::status(22, draw::height - 16, 22 + res::width(res::HSBTNS, 8), draw::height - 1);
 		draw::button(0, draw::height - 20, res::HSBTNS, KeyLeft, 4, 4, 5, 0, 0, szt("Previous hero", "Предыдущий герой"));
 		draw::image(22, draw::height - 20, res::HSBTNS, 8);
@@ -18,12 +16,10 @@ void show::hero(tokens rec)
 			bsget(rec, Level));
 		draw::text((draw::width - draw::textw(temp)) / 2, 3, temp);
 		// Abilities
-		for(int i = (int)Attack; i <= (int)Wisdow; i++)
-		{
+		for(int i = (int)Attack; i <= (int)Wisdow; i++) {
 			int x = 152 + (i - Attack) * 88;
 			int y = 36;
-			if(true)
-			{
+			if(true) {
 				draw::state push;
 				draw::font = res::SMALFONT;
 				const char* p = bsgets(i, Name);
@@ -33,15 +29,13 @@ void show::hero(tokens rec)
 			draw::text(x + (88 - draw::textw(temp)) / 2, y + 72, temp);
 		}
 		// Skills
-		if(true)
-		{
+		if(true) {
 			draw::state push;
 			draw::font = res::SMALFONT;
 			int x = 40;
 			int y = 233;
 			const int dx = res::width(res::SECSKILL, 0) + 5;
-			for(int i = FirstSkill; i <= LastSkill; i++)
-			{
+			for(int i = FirstSkill; i <= LastSkill; i++) {
 				int n = bsget(rec, i);
 				if(!n)
 					continue;
@@ -49,29 +43,25 @@ void show::hero(tokens rec)
 				x += dx;
 			}
 			int x2 = 3 + 40 + 8 * dx;
-			while(x < x2)
-			{
+			while(x < x2) {
 				draw::image(x - 40 + 3, y, res::SECSKILL, 0, 0);
 				x += dx;
 			}
 		}
-		if(true)
-		{
+		if(true) {
 			const int dx = res::width(res::ARTIFACT, 0) + 15;
 			const int dy = res::height(res::ARTIFACT, 0) + 15;
 			int x = 51 + dx / 2;
 			int y = 308;
 			int x2 = x + 7 * dx;
-			for(int i = FirstArtifactIndex; i <= LastArtifactIndex; i++)
-			{
+			for(int i = FirstArtifactIndex; i <= LastArtifactIndex; i++) {
 				int n = bsget(rec, i);
 				if(n)
 					draw::clipart(x - 7, y, n, 0, 0, false, true);
 				else
 					draw::image(x - dx / 2, y, res::ARTIFACT, 0);
 				x += dx;
-				if(x >= x2)
-				{
+				if(x >= x2) {
 					x = 51 + dx / 2;
 					y += dy;
 				}
@@ -83,13 +73,11 @@ void show::hero(tokens rec)
 		draw::button(603, 318, res::HSBTNS, Cancel, 2, 2, 3, KeyEscape, 0, szt("Close hero window", "Закрыть окно"));
 		draw::cursor(res::ADVMCO, 0);
 		int id = draw::input();
-		switch(id)
-		{
+		switch(id) {
 		case Cancel:
 			return;
 		case Dismiss:
-			if(dlgask(0, szt("", "Вы действительно хотите уволить этого героя со всей армией?")))
-			{
+			if(dlgask(0, szt("", "Вы действительно хотите уволить этого героя со всей армией?"))) {
 				bsset(rec, Player, 0);
 				bsset(rec, Index, -1);
 				return;

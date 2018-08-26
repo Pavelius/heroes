@@ -1,12 +1,10 @@
 #include "main.h"
 
-int indexes::buildings(int building, int level)
-{
-	switch(building)
-	{
+int indexes::buildings(int building, int level) {
+	switch(building) {
 	case Dwelving1:	return 19;
 	case Dwelving2:
-		if(level==2)
+		if(level == 2)
 			return 25;
 		return 20;
 	case Dwelving3:
@@ -46,10 +44,8 @@ int indexes::buildings(int building, int level)
 	}
 }
 
-int indexes::animate(res::tokens res, int start, int ticket, bool quantity)
-{
-	switch(res)
-	{
+int indexes::animate(res::tokens res, int start, int ticket, bool quantity) {
+	switch(res) {
 	case res::TREASURY:	return start + ticket % 2;
 
 	case res::TWNBBOAT:
@@ -167,8 +163,7 @@ int indexes::animate(res::tokens res, int start, int ticket, bool quantity)
 
 	case res::OBJNWATR:
 
-		switch(start)
-		{
+		switch(start) {
 			// buttle
 		case 0x00:
 			return start + (ticket % 11) + 1;
@@ -229,8 +224,7 @@ int indexes::animate(res::tokens res, int start, int ticket, bool quantity)
 
 	case res::OBJNWAT2:
 
-		switch(start)
-		{
+		switch(start) {
 			// sail broken ship (left)
 		case 0x03:
 		case 0x0C:
@@ -243,8 +237,7 @@ int indexes::animate(res::tokens res, int start, int ticket, bool quantity)
 
 	case res::OBJNCRCK:
 
-		switch(start)
-		{
+		switch(start) {
 			// pool of oil
 		case 0x50:
 		case 0x5B:
@@ -268,8 +261,7 @@ int indexes::animate(res::tokens res, int start, int ticket, bool quantity)
 
 	case res::OBJNDIRT:
 
-		switch(start)
-		{
+		switch(start) {
 			// mill
 		case 0x99:
 		case 0x9D:
@@ -290,8 +282,7 @@ int indexes::animate(res::tokens res, int start, int ticket, bool quantity)
 
 	case res::OBJNDSRT:
 
-		switch(start)
-		{
+		switch(start) {
 			// campfire
 		case 0x36:
 		case 0x3D:
@@ -304,8 +295,7 @@ int indexes::animate(res::tokens res, int start, int ticket, bool quantity)
 
 	case res::OBJNGRA2:
 
-		switch(start)
-		{
+		switch(start) {
 			// mill
 		case 0x17:
 		case 0x1B:
@@ -341,8 +331,7 @@ int indexes::animate(res::tokens res, int start, int ticket, bool quantity)
 
 	case res::OBJNLAV2:
 
-		switch(start)
-		{
+		switch(start) {
 			// middle volcano
 		case 0x00:
 			// shadow
@@ -369,8 +358,7 @@ int indexes::animate(res::tokens res, int start, int ticket, bool quantity)
 	case res::OBJNLAV3:
 
 		// big volcano
-		switch(start)
-		{
+		switch(start) {
 			// smoke
 		case 0x00:
 		case 0x0F:
@@ -398,8 +386,7 @@ int indexes::animate(res::tokens res, int start, int ticket, bool quantity)
 
 	case res::OBJNLAVA:
 
-		switch(start)
-		{
+		switch(start) {
 			// shadow of lava
 		case 0x4E:
 		case 0x58:
@@ -413,8 +400,7 @@ int indexes::animate(res::tokens res, int start, int ticket, bool quantity)
 
 	case res::OBJNMUL2:
 
-		switch(start)
-		{
+		switch(start) {
 			// lighthouse
 		case 0x3D:
 			return start + (ticket % 9) + 1;
@@ -446,8 +432,7 @@ int indexes::animate(res::tokens res, int start, int ticket, bool quantity)
 		break;
 
 	case res::OBJNMULT:
-		switch(start)
-		{
+		switch(start) {
 			// smoke
 		case 0x05:
 			// shadow
@@ -472,8 +457,7 @@ int indexes::animate(res::tokens res, int start, int ticket, bool quantity)
 			return 0;
 		}
 	case res::OBJNSNOW:
-		switch(start)
-		{
+		switch(start) {
 			// firecamp
 		case 0x04:
 			// alchemytower
@@ -502,8 +486,7 @@ int indexes::animate(res::tokens res, int start, int ticket, bool quantity)
 			return 0;
 		}
 	case res::OBJNSWMP:
-		switch(start)
-		{
+		switch(start) {
 			// shadow
 		case 0x00:
 		case 0x0E:

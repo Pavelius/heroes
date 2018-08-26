@@ -6,8 +6,7 @@ static rect		rcmap = {16, 16, 16 + 32 * 14, 16 + 32 * 14};
 static char		info_text[512];
 static unsigned	info_stamp;
 
-static int routeindex(int from, int throught, int to, int mod)
-{
+static int routeindex(int from, int throught, int to, int mod) {
 	// ICN::ROUTE
 	// start index 1, 25, 49, 73, 97, 121 (size arrow path)
 	// 1 - from left to up+
@@ -25,10 +24,8 @@ static int routeindex(int from, int throught, int to, int mod)
 		index = 25;
 	map::directions d = map::orient(from, throught);
 	map::directions d1 = map::orient(throught, to);
-	if(from == throught)
-	{
-		switch(d)
-		{
+	if(from == throught) {
+		switch(d) {
 		case map::Up:		index += 8; break;
 		case map::RightUp:	index += 17; break;
 		case map::Right:	index += 18; break;
@@ -38,12 +35,9 @@ static int routeindex(int from, int throught, int to, int mod)
 		case map::RightDown:index += 19; break;
 		default: 			index = 0; break;
 		}
-	}
-	else switch(d)
-	{
+	} else switch(d) {
 	case map::Up:
-		switch(d1)
-		{
+		switch(d1) {
 		case map::Up:		index += 8; break;
 		case map::RightUp:	index += 17; break;
 		case map::Right:	index += 18; break;
@@ -55,8 +49,7 @@ static int routeindex(int from, int throught, int to, int mod)
 		}
 		break;
 	case map::RightUp:
-		switch(d1)
-		{
+		switch(d1) {
 		case map::Up:		index += 0; break;
 		case map::RightUp:	index += 9; break;
 		case map::Right:	index += 18; break;
@@ -68,8 +61,7 @@ static int routeindex(int from, int throught, int to, int mod)
 		}
 		break;
 	case map::Right:
-		switch(d1)
-		{
+		switch(d1) {
 		case map::Up:		index += 0; break;
 		case map::Down:		index += 20; break;
 		case map::RightDown:index += 19; break;
@@ -81,8 +73,7 @@ static int routeindex(int from, int throught, int to, int mod)
 		}
 		break;
 	case map::RightDown:
-		switch(d1)
-		{
+		switch(d1) {
 		case map::RightUp:	index += 1; break;
 		case map::Right:	index += 2; break;
 		case map::RightDown:index += 11; break;
@@ -94,8 +85,7 @@ static int routeindex(int from, int throught, int to, int mod)
 		}
 		break;
 	case map::Down:
-		switch(d1)
-		{
+		switch(d1) {
 		case map::Right:	index += 2; break;
 		case map::RightDown:index += 3; break;
 		case map::Down:		index += 12; break;
@@ -107,8 +97,7 @@ static int routeindex(int from, int throught, int to, int mod)
 		}
 		break;
 	case map::LeftDown:
-		switch(d1)
-		{
+		switch(d1) {
 		case map::RightDown:index += 3; break;
 		case map::Down:		index += 4; break;
 		case map::LeftDown:	index += 13; break;
@@ -120,8 +109,7 @@ static int routeindex(int from, int throught, int to, int mod)
 		}
 		break;
 	case map::Left:
-		switch(d1)
-		{
+		switch(d1) {
 		case map::Up:		index += 16; break;
 		case map::Down:		index += 4; break;
 		case map::LeftDown:	index += 5; break;
@@ -133,8 +121,7 @@ static int routeindex(int from, int throught, int to, int mod)
 		}
 		break;
 	case map::LeftUp:
-		switch(d1)
-		{
+		switch(d1) {
 		case map::Up:		index += 16; break;
 		case map::RightUp:	index += 17; break;
 		case map::LeftDown:	index += 5; break;
@@ -150,12 +137,10 @@ static int routeindex(int from, int throught, int to, int mod)
 	return index;
 }
 
-static void handle_input(int x, int y, int object)
-{
+static void handle_input(int x, int y, int object) {
 	if(object && selected_object == object)
 		draw::rectb(x, y, x + 54, y + 31, 0x56);
-	if(draw::mousein(x, y, x + 54, y + 31))
-	{
+	if(draw::mousein(x, y, x + 54, y + 31)) {
 		if(hot::key == MouseLeft && hot::pressed)
 			draw::execute(InputChoose, object);
 		else if(hot::key == MouseLeftDBL)
@@ -163,27 +148,22 @@ static void handle_input(int x, int y, int object)
 	}
 }
 
-static struct castlelist : public list
-{
+static struct castlelist : public list {
 
 	int	data[LastCastle - FirstCastle + 1];
 
-	void setup(int player)
-	{
+	void setup(int player) {
 		bsselect(data, FirstCastle, -1, Player, player);
 		maximum = zlen(data);
 	}
 
-	void row(int x, int y, int index) const
-	{
-		if(index < maximum && data[index])
-		{
+	void row(int x, int y, int index) const {
+		if(index < maximum && data[index]) {
 			int rec = data[index];
 			int index_sprite = 1;
 			bool iscastle = bsget(rec, Castle) != 0;
 			res::tokens icn = draw::isevil(res::LOCATORE, res::LOCATORS);
-			switch(bsget(rec, Type))
-			{
+			switch(bsget(rec, Type)) {
 			case Knight:
 				index_sprite = iscastle ? 9 : 15;
 				break;
@@ -207,51 +187,42 @@ static struct castlelist : public list
 			if(bsget(rec, AlreadyMoved))
 				draw::image(x - 1, y + 1, icn, 24);
 			handle_input(x, y, rec);
-		}
-		else
+		} else
 			draw::image(x - 1, y, draw::isevil(res::LOCATORE, res::LOCATORS), 1 + index);
 	}
 
 } castles;
 
-static struct herolist : public list
-{
+static struct herolist : public list {
 
 	int	data[LastHero - FirstHero + 1];
 
-	void setup(int player)
-	{
+	void setup(int player) {
 		bsselect(data, FirstHero, -1, Player, player);
 		maximum = zlen(data);
 	}
 
-	void row(int x, int y, int index) const
-	{
-		if(index < maximum && data[index])
-		{
+	void row(int x, int y, int index) const {
+		if(index < maximum && data[index]) {
 			draw::image(x + 4, y + 5, res::PORTXTRA, 0);
 			draw::image(x - 1, y, res::MINIPORT, bsget(data[index], Portrait));
 			draw::image(x + 4, y + 5, res::MOBILITY, imin(bsget(data[index], MovePoints) / 100, 25));
 			draw::image(x + 43, y + 5, res::MANA, imin(bsget(data[index], SpellPoints) / 5, 25));
 			handle_input(x, y, data[index]);
-		}
-		else
+		} else
 			draw::image(x - 1, y, draw::isevil(res::LOCATORE, res::LOCATORS), 1 + index);
 	}
 
 } heroes;
 
-static void minimap(int x, int y, int mode)
-{
+static void minimap(int x, int y, int mode) {
 	if(!mode)
 		draw::image(x, y, draw::isevil(res::HEROLOGE, res::HEROLOGO), 0, 0);
-	else
-	{
+	else {
 	}
 }
 
-static void information_resource(int x, int y, int id, int player)
-{
+static void information_resource(int x, int y, int id, int player) {
 	char temp[16];
 	auto cost = (int*)bsptr(player, FirstResource);
 	if(!cost)
@@ -260,11 +231,9 @@ static void information_resource(int x, int y, int id, int player)
 	draw::text(x - draw::textw(temp) / 2, y, temp);
 }
 
-static void paint_information(int x, int y, int player)
-{
+static void paint_information(int x, int y, int player) {
 	char temp[256];
-	if(!information_mode)
-	{
+	if(!information_mode) {
 		draw::image(x, y, draw::isevil(res::HEROLOGE, res::HEROLOGO), 0, 0);
 		return;
 	}
@@ -281,28 +250,23 @@ static void paint_information(int x, int y, int player)
 	draw::image(x, y, draw::isevil(res::STONBAKE, res::STONBACK), 0);
 	// Show text information
 	auto mouse_in_info = draw::mousein(x, y, x + 142, y + 4 * 36);
-	if(info_text[0])
-	{
+	if(info_text[0]) {
 		draw::state push;
 		draw::font = res::SMALFONT;
 		draw::textf(x + 2, y + 8, 142 - 4, info_text);
-		if(mouse_in_info)
-		{
+		if(mouse_in_info) {
 			if(hot::key == MouseLeft && hot::pressed)
 				info_text[0] = 0;
 		}
 		return;
 	}
-	if(mouse_in_info)
-	{
+	if(mouse_in_info) {
 		if(hot::key == MouseLeft && hot::pressed)
 			draw::execute(ChangeMode);
 	}
-	switch(information_mode)
-	{
+	switch(information_mode) {
 	case Resource:
-		if(true)
-		{
+		if(true) {
 			draw::state push;
 			draw::font = res::SMALFONT;
 			draw::image(x, y, res::RESSMALL, 0);
@@ -322,8 +286,7 @@ static void paint_information(int x, int y, int player)
 		break;
 	case Information:
 		draw::image(x, y, draw::isevil(res::SUNMOONE, res::SUNMOON), 3 - ((game::getweek() - 1) % 4) + 1);
-		if(true)
-		{
+		if(true) {
 			draw::state push;
 			draw::font = res::SMALFONT;
 			szprint(temp, "%1: %3i, %2: %4i",
@@ -339,17 +302,14 @@ static void paint_information(int x, int y, int player)
 	}
 }
 
-static void paint_cursor(rect screen, point camera)
-{
+static void paint_cursor(rect screen, point camera) {
 	if(hot::command)
 		return;
 	animation m(res::ADVMCO, 0, 0);
-	if(draw::mousein(screen))
-	{
+	if(draw::mousein(screen)) {
 		int i1 = map::m2i((camera.x + hot::mouse.x - screen.x1) / 32, (camera.y + hot::mouse.y - screen.y1) / 32);
 		int mc = map::show::type[i1];
-		switch(mc)
-		{
+		switch(mc) {
 		case TypeBlock:
 			// Non passable area. Mountains, Tree and like this.
 			// Use default cursor
@@ -357,8 +317,7 @@ static void paint_cursor(rect screen, point camera)
 		case TypeAttack:
 			// Monster area
 			m.set(CursorAdventure, Attack, 0);
-			if(hot::key == MouseLeft && hot::pressed)
-			{
+			if(hot::key == MouseLeft && hot::pressed) {
 				if(bsget(selected_object, First) == FirstHero)
 					draw::execute(MoveTo, i1);
 			}
@@ -366,8 +325,7 @@ static void paint_cursor(rect screen, point camera)
 		case TypeAction:
 			// Action able area. Chest, resource, gazebo, mine and like this
 			m.set(CursorAdventure, MakeAction, 0);
-			if(hot::key == MouseLeft && hot::pressed)
-			{
+			if(hot::key == MouseLeft && hot::pressed) {
 				if(bsget(selected_object, First) == FirstHero)
 					draw::execute(MoveTo, i1);
 			}
@@ -378,8 +336,7 @@ static void paint_cursor(rect screen, point camera)
 			if(!map::route::pathable(i1))
 				break;
 			m.set(CursorAdventure, MoveTo, 0);
-			if(hot::key == MouseLeft && hot::pressed)
-			{
+			if(hot::key == MouseLeft && hot::pressed) {
 				if(bsget(selected_object, First) == FirstHero)
 					draw::execute(MoveTo, i1);
 			}
@@ -389,26 +346,20 @@ static void paint_cursor(rect screen, point camera)
 	m.painting(hot::mouse);
 }
 
-static void paint_tiles(rect screen, point camera)
-{
+static void paint_tiles(rect screen, point camera) {
 	draw::state push;
 	draw::clipping = screen;
-	for(int y = screen.y1; y < screen.y2; y += 32)
-	{
-		for(int x = screen.x1; x < screen.x2; x += 32)
-		{
+	for(int y = screen.y1; y < screen.y2; y += 32) {
+		for(int x = screen.x1; x < screen.x2; x += 32) {
 			int index = map::m2i((x + camera.x) / 32, (y + camera.y) / 32);
 			draw::imager(x, y, res::TisGROUND32, map::show::tiles[index], map::show::flags[index] % 4);
 		}
 	}
 }
 
-static void paint_blocked(rect screen, point camera)
-{
-	for(int y = screen.y1; y < screen.y2; y += 32)
-	{
-		for(int x = screen.x1; x < screen.x2; x += 32)
-		{
+static void paint_blocked(rect screen, point camera) {
+	for(int y = screen.y1; y < screen.y2; y += 32) {
+		for(int x = screen.x1; x < screen.x2; x += 32) {
 			int index = map::m2i((x + camera.x) / 32, (y + camera.y) / 32);
 			if(map::show::type[index] == 2)
 				draw::rectb(x + 1, y + 1, x + 32 - 1, y + 32 - 1, 0xC0);
@@ -418,16 +369,14 @@ static void paint_blocked(rect screen, point camera)
 	}
 }
 
-static void paint_objects(drawable** drawables, rect screen, point camera)
-{
+static void paint_objects(drawable** drawables, rect screen, point camera) {
 	draw::state push;
 	draw::clipping = screen;
 	dworder(drawables, zlen(drawables));
 	dwpaint(drawables, screen, camera, DWObjects);
 }
 
-static void paint_route(rect screen, point camera)
-{
+static void paint_route(rect screen, point camera) {
 	draw::state push;
 	draw::clipping = screen;
 	auto path = map::route::getpath();
@@ -437,8 +386,7 @@ static void paint_route(rect screen, point camera)
 	if(!count)
 		return;
 	int from = path[count - 1];
-	for(int i = count - 2; i >= 0; i--)
-	{
+	for(int i = count - 2; i >= 0; i--) {
 		int index = path[i];
 		int to = index;
 		if(i > 0)
@@ -450,8 +398,7 @@ static void paint_route(rect screen, point camera)
 	}
 }
 
-static void paint_screen(drawable** drawables, int player)
-{
+static void paint_screen(drawable** drawables, int player) {
 	// After some time clear text info
 	if(info_stamp < clock())
 		info_text[0] = 0;
@@ -465,16 +412,14 @@ static void paint_screen(drawable** drawables, int player)
 	paint_route(rcmap, map::camera);
 }
 
-void show::adventure::screen(int player)
-{
+void show::adventure::screen(int player) {
 	drawable* drawables[2048];
 	dwselect(drawables, rcmap, map::camera, DWObjects);
 	dwclipping(drawables, rcmap, map::camera);
 	paint_screen(drawables, player);
 }
 
-void show::adventure::move(int from, int to, int hero, int player)
-{
+void show::adventure::move(int from, int to, int hero, int player) {
 	if(!player)
 		return;
 	map::jumpto(to);
@@ -483,14 +428,12 @@ void show::adventure::move(int from, int to, int hero, int player)
 	sleep(50);
 }
 
-void show::adventure::message(const char* format, ...)
-{
+void show::adventure::message(const char* format, ...) {
 	szprintv(info_text, format, xva_start(format));
 	info_stamp = clock() + 5000;
 }
 
-void show::adventure::disapear(int player, int object)
-{
+void show::adventure::disapear(int player, int object) {
 	show::adventure::screen(player);
 	draw::screenshoot before;
 	bsdelete(object);
@@ -499,8 +442,7 @@ void show::adventure::disapear(int player, int object)
 	before.blend(after);
 }
 
-int show::game(int player)
-{
+int show::game(int player) {
 	int selected_wave = -1;
 	if(!information_mode)
 		information_mode = Information;
@@ -517,8 +459,7 @@ int show::game(int player)
 	if(index > 0)
 		map::jumpto(index);
 	bool show_blocked = false;
-	switch(bsget(player, Type))
-	{
+	switch(bsget(player, Type)) {
 	case Wizard:
 	case Sorcerer:
 	case Knight:
@@ -528,11 +469,9 @@ int show::game(int player)
 		draw::setevil(true);
 		break;
 	}
-	while(true)
-	{
+	while(true) {
 		if(selected_object >= FirstHero && selected_object <= LastHero
-			&& selected_wave != selected_object)
-		{
+			&& selected_wave != selected_object) {
 			// Расчитаем карту пути
 			map::route::wave(bsget(selected_object, Index),
 				bsget(selected_object, SkillPathfinding),
@@ -550,14 +489,12 @@ int show::game(int player)
 			paint_blocked(rcmap, map::camera);
 		paint_cursor(rcmap, map::camera);
 		int id = draw::input();
-		switch(id)
-		{
+		switch(id) {
 		case 0:
 		case Cancel:
 			return 0;
 		case Move:
-			if(selected_object >= FirstHero && selected_object <= LastHero)
-			{
+			if(selected_object >= FirstHero && selected_object <= LastHero) {
 				game::moveto(selected_object, player);
 				selected_wave = -1;
 			}
@@ -584,8 +521,7 @@ int show::game(int player)
 			castles.setup(player);
 			break;
 		case ChangeMode:
-			switch(information_mode)
-			{
+			switch(information_mode) {
 			case Resource:
 				information_mode = Hero;
 				break;

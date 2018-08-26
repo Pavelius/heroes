@@ -52,68 +52,17 @@ res::tokens res::map(int object) {
 	case 0xC0: case 0xC1: case 0xC2: case 0xC3: return OBJNGRA2; // gras object
 	case 0xC4: case 0xC5: case 0xC6: case 0xC7: return TREDECI; // trees tredeci
 	case 0xC8: case 0xC9: case 0xCA: case 0xCB: return OBJNWATR; // sea object
-		// vegetation gras
-	case 0xCC:
-	case 0xCD:
-	case 0xCE:
-	case 0xCF:
-		return OBJNGRAS;
-		// object on snow
-	case 0xD0:
-	case 0xD1:
-	case 0xD2:
-	case 0xD3:
-		return OBJNSNOW;
-		// object on swamp
-	case 0xD4:
-	case 0xD5:
-	case 0xD6:
-	case 0xD7:
-		return OBJNSWMP;
-		// object on lava
-	case 0xD8:
-	case 0xD9:
-	case 0xDA:
-	case 0xDB:
-		return OBJNLAVA;
-		// object on desert
-	case 0xDC:
-	case 0xDD:
-	case 0xDE:
-	case 0xDF:
-		return OBJNDSRT;
-		// object on dirt
-	case 0xE0:
-	case 0xE1:
-	case 0xE2:
-	case 0xE3:
-		return OBJNDIRT;
-		// object on crck
-	case 0xE4:
-	case 0xE5:
-	case 0xE6:
-	case 0xE7:
-		return OBJNCRCK;
-		// object on lava
-	case 0xE8:
-	case 0xE9:
-	case 0xEA:
-	case 0xEB:
-		return OBJNLAV3;
-		// object on earth
-	case 0xEC:
-	case 0xED:
-	case 0xEE:
-	case 0xEF:
-		return OBJNMULT;
-		//  object on lava
-	case 0xF0:
-	case 0xF1:
-	case 0xF2:
-	case 0xF3:
-		return OBJNLAV2;
-	default:
-		return Empthy;
+	case 0xCC: case 0xCD: case 0xCE: case 0xCF: return OBJNGRAS; // vegetation gras
+	case 0xD0: case 0xD1: case 0xD2: case 0xD3: return OBJNSNOW; // object on snow
+	case 0xD4: case 0xD5: case 0xD6: case 0xD7: return OBJNSWMP; // object on swamp
+	case 0xD8: case 0xD9: case 0xDA: case 0xDB: return OBJNLAVA; // object on lava
+	case 0xDC: case 0xDD: case 0xDE: case 0xDF: return OBJNDSRT; // object on desert
+	case 0xE0: case 0xE1: case 0xE2: case 0xE3: return OBJNDIRT; // object on dirt
+	case 0xE4: case 0xE5: case 0xE6: case 0xE7: return OBJNCRCK; // object on crck
+	case 0xE8: case 0xE9: case 0xEA: case 0xEB: return OBJNLAV3; // object on lava
+	case 0xEC: case 0xED: case 0xEE: case 0xEF: return OBJNMULT; // object on earth
+	case 0xF0: case 0xF1: case 0xF2: case 0xF3: return OBJNLAV2; //  object on lava
+	default: return Empthy;
 	}
 }
 

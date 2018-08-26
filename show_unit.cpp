@@ -3,8 +3,7 @@
 static const int ox = 10;
 static const int oy = 18;
 
-static int field(int x, int y, int id, int rec, int side, const char* name)
-{
+static int field(int x, int y, int id, int rec, int side, const char* name) {
 	char temp[260];
 	if(!name)
 		name = bsgets(id, Name);
@@ -13,22 +12,17 @@ static int field(int x, int y, int id, int rec, int side, const char* name)
 	int mt = rec;
 	if(mt >= FirstCombatant)
 		mt = bsget(mt, Type);
-	if(id == HitPoints || id == HitPointsMax || id == Shoots)
-	{
+	if(id == HitPoints || id == HitPointsMax || id == Shoots) {
 		int dm1 = game::get(rec, id);
 		szprint(temp, "%1i", dm1);
-	}
-	else if(id == DamageMin)
-	{
+	} else if(id == DamageMin) {
 		int dm1 = game::get(rec, DamageMin);
 		int dm2 = game::get(rec, DamageMax);
 		if(dm1 != dm2)
 			szprint(temp, "%1i - %2i", dm1, dm2);
 		else
 			szprint(temp, "%1i", dm1);
-	}
-	else
-	{
+	} else {
 		int dm1 = bsget(mt, id);
 		int dm2 = game::getsummary(rec, id, side);
 		if(dm1 != dm2)
@@ -40,8 +34,7 @@ static int field(int x, int y, int id, int rec, int side, const char* name)
 	return oy;
 }
 
-static int fieldt(int x, int y, int id, int base, int min, int max, int rec, int side)
-{
+static int fieldt(int x, int y, int id, int base, int min, int max, int rec, int side) {
 	char temp[260];
 	int value = game::getsummary(rec, id, side) + base;
 	if(value < min)
@@ -54,8 +47,7 @@ static int fieldt(int x, int y, int id, int base, int min, int max, int rec, int
 	return oy;
 }
 
-static int status(int x, int y, int rec, int side)
-{
+static int status(int x, int y, int rec, int side) {
 	int	 y1 = y;
 	// attack
 	y += field(x, y, Attack, rec, side, 0);
@@ -77,11 +69,9 @@ static int status(int x, int y, int rec, int side)
 	return y - y1;
 }
 
-static void effects(int x, int y, int rec)
-{
+static void effects(int x, int y, int rec) {
 	char temp[32];
-	static const int modes[] =
-	{
+	static const int modes[] = {
 		SpellBloodLust, SpellBless, SpellHaste, SpellShield, SpellStoneSkin,
 		SpellDragonSlayer, SpellSteelSkin, SpellAntimagic, SpellCurse, SpellSlow,
 		SpellBerserker, SpellHypnotize, SpellBlind, SpellParalyze, SpellStone
@@ -89,16 +79,14 @@ static void effects(int x, int y, int rec)
 	draw::state push;
 	draw::font = res::SMALFONT;
 	int dx = 0;
-	for(auto sid : modes)
-	{
+	for(auto sid : modes) {
 		if(!bsget(rec, sid))
 			continue;
 		int f = bsget(sid, Frame);
 		dx += res::width(res::SPELLINF, f);
 	}
 	x = x - dx / 2;
-	for(auto sid : modes)
-	{
+	for(auto sid : modes) {
 		int value = bsget(rec, sid);
 		if(!value)
 			continue;
@@ -112,8 +100,7 @@ static void effects(int x, int y, int rec)
 	}
 }
 
-void show::unit(int rec, int side, int count, int index)
-{
+void show::unit(int rec, int side, int count, int index) {
 	if(!rec)
 		return;
 	char temp[260];
@@ -124,8 +111,7 @@ void show::unit(int rec, int side, int count, int index)
 	int x = (draw::width - w1) / 2 - 16;
 	int y = (draw::height - h1) / 2;
 	int side_info = side;
-	if(side >= FirstCastle && side <= LastCastle)
-	{
+	if(side >= FirstCastle && side <= LastCastle) {
 		if(bsget(side, Captain))
 			side_info = bsget(side_info, Type) - Barbarian + BarbarianCaptain;
 		int hero = bsfind(FirstHero, Index, bsget(side, Index));
@@ -137,8 +123,7 @@ void show::unit(int rec, int side, int count, int index)
 		mt = bsget(mt, Type);
 	bool allow_dismiss = !(index && side >= FirstHero && side <= LastHero && game::getunitscount(side) <= 1);
 	animation mon(tokens(mt), ActorWarn);
-	while(true)
-	{
+	while(true) {
 		surface.restore();
 		draw::image(x, y, back, 7);
 		draw::image(x, y, back, 0);
@@ -152,14 +137,12 @@ void show::unit(int rec, int side, int count, int index)
 		// avatar
 		res::tokens icn = res::tokens(res::MONH0000 + mt - FirstMonster);
 		mon.painting({(short)(x1 + 146 - (game::iswide(mt) ? cell_wd / 2 : 0)), (short)(y1 + 170)});
-		if(count)
-		{
+		if(count) {
 			char temp[32];
 			sznum(temp, count);
 			draw::text(x1 + 140 - draw::textw(temp) / 2, y1 + 227, temp);
 		}
-		if(index)
-		{
+		if(index) {
 			if(game::canupgrade(mt, side))
 				draw::button(x + 435, y + 192, back, Upgrade, 5, 5, 6);
 			if(allow_dismiss)
@@ -168,8 +151,7 @@ void show::unit(int rec, int side, int count, int index)
 			draw::cursor(res::ADVMCO, 0);
 		}
 		int id = draw::input();
-		switch(id)
-		{
+		switch(id) {
 		case 0:
 		case Cancel:
 		case KeyEscape:
@@ -177,8 +159,7 @@ void show::unit(int rec, int side, int count, int index)
 			return;
 		case MouseLeft:
 		case MouseRight:
-			if(!index)
-			{
+			if(!index) {
 				hot::clear();
 				return;
 			}
@@ -193,8 +174,7 @@ void show::unit(int rec, int side, int count, int index)
 			break;
 		case Dismiss:
 			szprint(temp, szt("You really want to dismiss %1i %2?", "¬ы действительно хотите распустить %1i %2?"), count, bsgets(mt, NameMulti));
-			if(dlgask(0, temp))
-			{
+			if(dlgask(0, temp)) {
 				bsset(side, index, 0);
 				bsset(side, index + 1, 0);
 				return;
@@ -204,8 +184,7 @@ void show::unit(int rec, int side, int count, int index)
 	}
 }
 
-bool show::recruit(int rec, int& count, int maximum, void* available_resources)
-{
+bool show::recruit(int rec, int& count, int maximum, void* available_resources) {
 	char temp[260];
 	draw::screenshoot surface;
 	res::tokens back = res::RECRBKG;
@@ -219,8 +198,7 @@ bool show::recruit(int rec, int& count, int maximum, void* available_resources)
 	auto maximum_available = game::divresource(available_resources, monster_cost);
 	if(maximum_available > maximum)
 		maximum_available = maximum;
-	while(true)
-	{
+	while(true) {
 		surface.restore();
 		draw::image(x, y, back, 1);
 		draw::image(x, y, back, 0);
@@ -228,8 +206,7 @@ bool show::recruit(int rec, int& count, int maximum, void* available_resources)
 		int y1 = y;
 		// name
 		draw::text(x1 + 23, y1 + 30, 273, draw::Center, bsgets(rec, Name));
-		if(true)
-		{
+		if(true) {
 			draw::state push;
 			draw::font = res::SMALFONT;
 			// available
@@ -243,8 +220,7 @@ bool show::recruit(int rec, int& count, int maximum, void* available_resources)
 		draw::image(x1 + 80 - res::width(icn, 0) / 2,
 			y1 + 100 - res::height(icn, 0) / 2,
 			icn, 0, AFNoOffset);
-		if(draw::mousein(x1 + 80 - 40, y1 + 100 - 50, x1 + 80 + 40, y1 + 100 + 50))
-		{
+		if(draw::mousein(x1 + 80 - 40, y1 + 100 - 50, x1 + 80 + 40, y1 + 100 + 50)) {
 			if(hot::key == MouseRight && hot::pressed)
 				draw::execute(Information);
 		}
@@ -261,8 +237,7 @@ bool show::recruit(int rec, int& count, int maximum, void* available_resources)
 		draw::button(x1 + 205, y1 + 169, res::RECRUIT, KeyDown, 2, 2, 3);
 		draw::cursor(res::ADVMCO, 0);
 		int id = draw::input();
-		switch(id)
-		{
+		switch(id) {
 		case 0:
 		case Cancel:
 			return false;

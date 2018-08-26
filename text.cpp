@@ -20,36 +20,29 @@ static unsigned char decode_ru[256] =
 	145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160,
 };
 
-static int spacewidth(res::tokens icn)
-{
+static int spacewidth(res::tokens icn) {
 	return res::width(icn, 'i' - 0x20);
 }
 
 res::tokens draw::font;
 
-int draw::texth()
-{
+int draw::texth() {
 	return res::height(font, 'I' - 0x20) + 2;
 }
 
-int draw::textbc(const char* string, int width)
-{
+int draw::textbc(const char* string, int width) {
 	int p = -1;
 	int w = 0;
 	const char* s1 = string;
 	res::tokens icn = font;
-	while(true)
-	{
+	while(true) {
 		unsigned char s = *((unsigned char*)s1++);
 		if(s == 0x20 || s == 9)
 			p = s1 - string;
-		else if(s == 0)
-		{
+		else if(s == 0) {
 			p = s1 - string - 1;
 			break;
-		}
-		else if(s == 10 || s == 13)
-		{
+		} else if(s == 10 || s == 13) {
 			p = s1 - string;
 			break;
 		}
@@ -62,19 +55,16 @@ int draw::textbc(const char* string, int width)
 	return p;
 }
 
-int draw::textw(const char* string, int count)
-{
+int draw::textw(const char* string, int count) {
 	int result = 0;
 	if(count == -1)
 		count = zlen(string);
 	res::tokens icn = font;
-	while(count)
-	{
+	while(count) {
 		unsigned char ch = *string++;
-		if(ch<=0x20)
+		if(ch <= 0x20)
 			result += spacewidth(icn);
-		else
-		{
+		else {
 			ch = decode_ru[ch];
 			result += res::width(icn, ch);
 		}
@@ -83,19 +73,16 @@ int draw::textw(const char* string, int count)
 	return result;
 }
 
-void draw::text(int x, int y, const char* string, int count)
-{
+void draw::text(int x, int y, const char* string, int count) {
 	if(count == -1)
 		count = zlen(string);
 	res::tokens icn = font;
 	const char* pe = string + count;
-	while(string<pe)
-	{
+	while(string < pe) {
 		unsigned char ch = (unsigned char)*string++;
-		if(ch<=0x20)
+		if(ch <= 0x20)
 			x += spacewidth(icn);
-		else
-		{
+		else {
 			ch = decode_ru[ch];
 			image(x, y, icn, ch);
 			x += res::width(icn, ch);
@@ -103,83 +90,71 @@ void draw::text(int x, int y, const char* string, int count)
 	}
 }
 
-int draw::textm(int x, int y, int width, justify jf, const char* string)
-{
+int draw::textm(int x, int y, int width, justify jf, const char* string) {
 	int y1 = y;
-	while(string[0])
-	{
+	while(string[0]) {
 		int c = textbc(string, width);
 		if(!c)
 			break;
 		text(x, y1, width, jf, string, c);
 		y1 += texth();
-		string = zskipspcr(string+c);
+		string = zskipspcr(string + c);
 	}
 	return y1 - y;
 }
 
-int draw::texth(const char* string, int width)
-{
+int draw::texth(const char* string, int width) {
 	int result = 0;
-	while(string[0])
-	{
+	while(string[0]) {
 		int c = textbc(string, width);
 		if(!c)
 			break;
 		result += texth();
-		string = zskipspcr(string+c);
+		string = zskipspcr(string + c);
 	}
 	return result;
 }
 
-void draw::textm(int x, int y, int width, int height, justify jf, const char* string)
-{
-	y -= (height - texth(string, width))/2;
+void draw::textm(int x, int y, int width, int height, justify jf, const char* string) {
+	y -= (height - texth(string, width)) / 2;
 	textm(x, y, width, jf, string);
 }
 
-void draw::text(int x, int y, int width, draw::justify jf, const char* string, int count)
-{
-    switch(jf)
-    {
-    case Left:
-        return text(x, y, string, count);
-    case Right:
-        return text(x+width-textw(string,count), y, string, count);
-    case Center:
-        return text(x+(width-textw(string,count))/2, y, string, count);
-    }
+void draw::text(int x, int y, int width, draw::justify jf, const char* string, int count) {
+	switch(jf) {
+	case Left:
+		return text(x, y, string, count);
+	case Right:
+		return text(x + width - textw(string, count), y, string, count);
+	case Center:
+		return text(x + (width - textw(string, count)) / 2, y, string, count);
+	}
 }
 
-void draw::edit(int x, int y, char* value, int maximum)
-{
-    if(hot::key==KeyBackspace)
-    {
-        char* p = zend(value);
-        if(value!=p)
-            p[-1] = 0;
-    }
-    else if(hot::key==InputSymbol && hot::param>=0x20)
-    {
-        char* p = zend(value);
-        p[0] = szupper(hot::param);
-        p[1] = 0;
-        hot::param = 0;
-    }
-    text(x-draw::width/2, y, draw::width, Center, value);
+void draw::edit(int x, int y, char* value, int maximum) {
+	if(hot::key == KeyBackspace) {
+		char* p = zend(value);
+		if(value != p)
+			p[-1] = 0;
+	} else if(hot::key == InputSymbol && hot::param >= 0x20) {
+		char* p = zend(value);
+		p[0] = szupper(hot::param);
+		p[1] = 0;
+		hot::param = 0;
+	}
+	text(x - draw::width / 2, y, draw::width, Center, value);
 }
 
-void draw::edit(int x, int y, int& value, int maximum, int minimum)
-{
-    if(hot::key==KeyBackspace)
-        value = value/10;
-    else if(hot::key == InputSymbol && hot::param>='0' && hot::param <='9')
-        value = value*10 + hot::param - '0';
-    if(value<minimum)
-        value = minimum;
-    if(value>maximum)
-        value = maximum;
-    char temp[32];
-    sznum(temp, value);
-    text(x-draw::width/2, y, draw::width, Center, temp);
+void draw::edit(int x, int y, int& value, int maximum, int minimum) {
+	if(hot::key == KeyBackspace)
+		value = value / 10;
+	else if(hot::key == InputSymbol && hot::param >= '0' && hot::param <= '9')
+		value = value * 10 + hot::param - '0';
+	if(value < minimum)
+		value = minimum;
+	if(value > maximum)
+		value = maximum;
+	char temp[32];
+	sznum(temp, value);
+	text(x - draw::width / 2, y, draw::width, Center, temp);
 }

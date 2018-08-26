@@ -1,6 +1,5 @@
 #include "main.h"
 
-void show::tavern()
-{
+void show::tavern() {
 
 }
