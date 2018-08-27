@@ -1,7 +1,6 @@
 #include "main.h"
 
-static struct combat_unit : public animation
-{
+static struct combat_unit : public animation {
 	int		index;
 	int		side;
 	int		hits;
@@ -12,8 +11,7 @@ static struct combat_unit : public animation
 
 	int getid() const override;
 
-	static int getbarframe(int rec)
-	{
+	static int getbarframe(int rec) {
 		bool isboosted = game::isboosted(rec);
 		bool ispenalized = game::ispenalized(rec);
 		if(isboosted && ispenalized)
@@ -25,14 +23,12 @@ static struct combat_unit : public animation
 		return 10;
 	}
 
-	void painting(point pt, unsigned paint_flags) const override
-	{
+	void painting(point pt, unsigned paint_flags) const override {
 		draw::image(pt.x + pos.x, pt.y + pos.y, icn, frame, flags);
 		// Draw count
 		int rec = getid();
 		int count = game::get(rec, Count);
-		if(count && action != Move && action!=Fly)
-		{
+		if(count && action != Move && action != Fly) {
 			draw::state push;
 			draw::font = res::SMALFONT;
 			char temp[32];
@@ -42,13 +38,10 @@ static struct combat_unit : public animation
 			int frame = getbarframe(rec);
 			int x1 = x;
 			int y1 = y;
-			if(combat::isattacker(rec))
-			{
+			if(combat::isattacker(rec)) {
 				x1 += 12;
 				y1 -= res::height(res::TEXTBAR, frame);
-			}
-			else
-			{
+			} else {
 				x1 -= 32;
 				y1 -= res::height(res::TEXTBAR, frame) * 2;
 			}
@@ -57,33 +50,27 @@ static struct combat_unit : public animation
 		}
 	}
 
-	void setaction(tokens action, int param = 0) override
-	{
+	void setaction(tokens action, int param = 0) override {
 		set(rec, action, param);
 		this->action = action;
 	}
 
-	bool incframe() override
-	{
-		if(wait)
-		{
+	bool incframe() override {
+		if(wait) {
 			wait--;
 			return false;
 		}
-		if(++frame >= start + count)
-		{
+		if(++frame >= start + count) {
 			frame = start;
 			if(action == Killed)
 				frame = start + count - 1;
-			else
-			{
+			else {
 				set(rec, ActorWarn);
 				int d = d100();
-				switch(count)
-				{
+				switch(count) {
 				case 4: // Peasant, Archer,
 					if(d < 40)
-						frame += xrand(1, count-1);
+						frame += xrand(1, count - 1);
 					else
 						wait = xrand(5, 10);
 					break;
@@ -92,30 +79,24 @@ static struct combat_unit : public animation
 						frame += xrand(3, count - 1);
 					else if(d < 20)
 						count = 2;
-					else
-					{
+					else {
 						frame += 2;
 						wait = xrand(5, 10);
 					}
 					break;
 				case 7:
-					if(icn == res::TROLL || icn == res::TROLL2)
-					{
-						if(d100()<25)
+					if(icn == res::TROLL || icn == res::TROLL2) {
+						if(d100() < 25)
 							count = 4;
-						else
-						{
+						else {
 							frame += 4;
 							wait = xrand(4, 10);
 						}
-					}
-					else
-					{
+					} else {
 						// Goblin, Roc
-						if(d100()<25)
+						if(d100() < 25)
 							count = 2;
-						else
-						{
+						else {
 							frame += 2;
 							wait = xrand(4, 10);
 						}
@@ -128,8 +109,7 @@ static struct combat_unit : public animation
 		return false;
 	}
 
-	point getzpos() const
-	{
+	point getzpos() const {
 		point pt = pos;
 		if(action == Killed && frame >= start + count - 1)
 			pt.y -= 500;
@@ -147,22 +127,19 @@ static bsmeta::field fields[] = {
 	BSREQ(combat_unit, moved, AlreadyMoved, Number),
 	BSREQ(combat_unit, defended, AlreadyDefended, Number),
 	BSREQ(combat_unit, shoots, Shoots, Number),
-	{0}
+{0}
 };
 BSMETA(combat_unit, "Combatants", "Участники боя", FirstCombatant);
 
-int combat_unit::getid() const
-{
+int combat_unit::getid() const {
 	return this - objects + FirstCombatant;
 }
 
-void combat::setaction(int rec, tokens action)
-{
+void combat::setaction(int rec, tokens action) {
 	objects[rec - FirstCombatant].setaction(action);
 }
 
-void combat::setindex(int rec, int index)
-{
+void combat::setindex(int rec, int index) {
 	auto& e = objects[rec - FirstCombatant];
 	e.index = index;
 	e.pos = combat::i2h(index);
@@ -179,15 +156,12 @@ void combat::setindex(int rec, int index)
 	e.incframe();
 }
 
-static struct creature_drawable_plugin : public drawable::plugin
-{
-	void selecting(drawable** result, rect screen, unsigned flags) override
-	{
+static struct creature_drawable_plugin : public drawable::plugin {
+	void selecting(drawable** result, rect screen, unsigned flags) override {
 		if((flags & DWMask) != DWCombat)
 			return;
 		auto p = result;
-		for(int i = 0; i < combat_units.count; i++)
-		{
+		for(int i = 0; i < combat_units.count; i++) {
 			if(!objects[i].rec)
 				continue;
 			*p++ = objects + i;

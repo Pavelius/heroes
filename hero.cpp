@@ -4,14 +4,12 @@
 // animate::hero(x1, y1 + 26, id, 0);
 // animate::heroflag(x1, y1 + 26, id, 0);
 
-static void paint_hero(int x, int y, int type, unsigned char direction, bool shipmaster)
-{
+static void paint_hero(int x, int y, int type, unsigned char direction, bool shipmaster) {
 	res::tokens icn = res::Empthy;
 	int index = 0;
 	if(shipmaster)
 		icn = res::BOAT32;
-	else switch(type)
-	{
+	else switch(type) {
 	case Knight: icn = res::KNGT32; break;
 	case Barbarian: icn = res::BARB32; break;
 	case Sorcerer: icn = res::SORC32; break;
@@ -21,8 +19,7 @@ static void paint_hero(int x, int y, int type, unsigned char direction, bool shi
 	default: return;
 	}
 	unsigned flags = 0;
-	switch(direction)
-	{
+	switch(direction) {
 	case map::Up:          index = 0; break;
 	case map::RightUp:     index = 9; break;
 	case map::Right:       index = 18; break;
@@ -34,17 +31,15 @@ static void paint_hero(int x, int y, int type, unsigned char direction, bool shi
 	default: break;
 	}
 	if(flags&AFMirror)
-		draw::image(x+32, y, icn, index, flags);
+		draw::image(x + 32, y, icn, index, flags);
 	else
 		draw::image(x, y, icn, index, flags);
 }
 
-static void paint_flag(int x, int y, int player, unsigned char direction, int tick, bool still)
-{
+static void paint_flag(int x, int y, int player, unsigned char direction, int tick, bool still) {
 	res::tokens icn = res::Empthy;
 	int index_sprite = 0;
-	switch(player)
-	{
+	switch(player) {
 	case PlayerBlue: icn = res::B_FLAG32; break;
 	case PlayerGreen: icn = res::G_FLAG32; break;
 	case PlayerRed: icn = res::R_FLAG32; break;
@@ -54,8 +49,7 @@ static void paint_flag(int x, int y, int player, unsigned char direction, int ti
 	default: return;
 	}
 	unsigned flags = 0;
-	switch(direction)
-	{
+	switch(direction) {
 	case map::Up:        index_sprite = 0; break;
 	case map::RightUp:   index_sprite = 9; break;
 	case map::Right:     index_sprite = 18; break;
@@ -68,19 +62,17 @@ static void paint_flag(int x, int y, int player, unsigned char direction, int ti
 	}
 	if(still)
 		index_sprite += 56;
-	int id = index_sprite + (tick % ((index_sprite>=45)?8:9));
+	int id = index_sprite + (tick % ((index_sprite >= 45) ? 8 : 9));
 	if(flags&AFMirror)
-		draw::image(x + 16 + res::ox(icn, id)*2, y, icn, id, flags);
+		draw::image(x + 16 + res::ox(icn, id) * 2, y, icn, id, flags);
 	else
 		draw::image(x, y, icn, id, flags);
 }
 
-static void paint_shad(int x, int y, unsigned direction, int index)
-{
+static void paint_shad(int x, int y, unsigned direction, int index) {
 	res::tokens icn = res::SHADOW32;
 	int index_sprite = 0;
-	switch(direction)
-	{
+	switch(direction) {
 	case map::Up:          index_sprite = 0; break;
 	case map::RightUp:     index_sprite = 9; break;
 	case map::Right:       index_sprite = 18; break;
@@ -94,8 +86,7 @@ static void paint_shad(int x, int y, unsigned direction, int index)
 	draw::image(x, y, icn, index_sprite + (index % 9));
 }
 
-struct hero : public drawable
-{
+struct hero : public drawable {
 	char				name[32];
 	unsigned char		level;
 	unsigned char		attack;
@@ -116,30 +107,26 @@ struct hero : public drawable
 
 	int getid() const override;
 
-	point getpos() const
-	{
+	point getpos() const {
 		return{(short)(map::i2x(index) * 32), (short)(map::i2y(index) * 32)};
 	}
 
 	// Fast clipping rect. For hit test use othe method.
-	rect getrect() const override
-	{
+	rect getrect() const override {
 		auto x = map::i2x(index) * 32;
 		auto y = map::i2y(index) * 32;
 		return{x - 16, y - 16, x + 32 + 16, y + 32 + 16};
 	}
 
-	point getzpos() const override
-	{
+	point getzpos() const override {
 		return{(short)(map::i2x(index) * 32), (short)(map::i2y(index) * 32) + 32};
 	}
 
-	void painting(point camera, unsigned paint_flags) const override
-	{
+	void painting(point camera, unsigned paint_flags) const override {
 		auto pt = getpos() - camera;
 		pt.y += 30;
 		int rec = getid();
-		paint_hero(pt.x, pt.y, game::get(rec, Type), direction, map::gettile(index)==Water);
+		paint_hero(pt.x, pt.y, game::get(rec, Type), direction, map::gettile(index) == Water);
 		paint_flag(pt.x, pt.y, bsget(rec, Player), direction, draw::counter, true);
 		paint_shad(pt.x, pt.y, direction, 0);
 	}
@@ -165,21 +152,17 @@ static bsmeta::field fields[] = {
 };
 BSMETA(hero, "Heroes", "Герои", FirstHero);
 
-int hero::getid() const
-{
+int hero::getid() const {
 	return FirstHero + (this - objects);
 }
 
-static struct hero_drawable_plugin : public drawable::plugin
-{
-	void selecting(drawable** result, rect screen, unsigned flags) override
-	{
-		auto mode = flags&DWMask;
+static struct hero_drawable_plugin : public drawable::plugin {
+	void selecting(drawable** result, rect screen, unsigned flags) override {
+		auto mode = flags & DWMask;
 		if(mode != DWObjects)
 			return;
 		auto p = result;
-		for(auto& e : objects)
-		{
+		for(auto& e : objects) {
 			if(!e.player)
 				continue;
 			if(!e.getrect().intersect(screen))

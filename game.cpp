@@ -14,37 +14,34 @@ static tokens	week_monsters[] =
 	Sprite, Dwarf, Elf,
 	Halfling, Boar, Roc,
 };
-static struct hero_data
-{
+static struct hero_data {
 	const char*		name[2];
 } heroes_data[LastHero - FirstHero + 1] = {
 	{{"Lord Killburn", "Лорд Килбурн"}}, {{"Sir Gallanth", "Сэр Галлант"}}, {{"Ector", "Эктор"}}, {{"Gvenneth", "Гвиннет"}}, {{"Tyro", "Тиро"}},
-	{{"Ambrose", "Амброуз"}}, {{"Ruby", "Руби"}}, {{"Maximus", "Максимус"}}, {{"Dimitry", "Димитрий"}},
-	//
-	{{"Thundax", "Громотопор"}}, {{"Fineous", "Прекраснейший"}}, {{"Jojosh", "Джоджош"}}, {{"Crag Hack", "Крэг Хек"}}, {{"Jezebel", "Жезебель"}},
-	{{"Jaclyn", "Жаклин"}}, {{"Ergon", "Эргон"}}, {{"Tsabu", "Тсабу"}}, {{"Atlas", "Атлас"}},
-	//
-	{{"Astra", "Астра"}}, {{"Natasha", "Наташа"}}, {{"Troyan", "Троян"}}, {{"Vatawna", "Ваттавна"}}, {{"Rebecca", "Ребека"}},
-	{{"Gem", "Джем"}}, {{"Ariel", "Ариэль"}}, {{"Carlawn", "Карлавн"}}, {{"Luna", "Луна"}},
-	//
-	{{"Arie", "Ари"}}, {{"Alamar", "Аламар"}}, {{"Vesper", "Веспер"}}, {{"Crodo", "Кродо"}}, {{"Barok", "Барок"}},
-	{{"Kastore", "Кастор"}}, {{"Agar", "Агар"}}, {{"Falagar", "Фалагар"}}, {{"Wrathmont", "Врасмонт"}},
-	//
-	{{"Myra", "Мира"}}, {{"Flint", "Флинт"}}, {{"Dawn", "Давн"}}, {{"Halon", "Халон"}}, {{"Myrini", "Мирини"}},
-	{{"Wilfrey", "Вилфрей"}}, {{"Sarakin", "Саракин"}}, {{"Kalindra", "Калиндра"}}, {{"Mandigal", "Мандигал"}},
-	//
-	{{"Zom", "Зом"}}, {{"Darlana", "Дарлана"}}, {{"Zam", "Зам"}}, {{"Ranloo", "Ранлу"}}, {{"Charity", "Чарити"}},
-	{{"Rialdo", "Риалдо"}}, {{"Roxana", "Роксана"}}, {{"Sandro", "Сандро"}}, {{"Celia", "Целиа"}},
+{{"Ambrose", "Амброуз"}}, {{"Ruby", "Руби"}}, {{"Maximus", "Максимус"}}, {{"Dimitry", "Димитрий"}},
+//
+{{"Thundax", "Громотопор"}}, {{"Fineous", "Прекраснейший"}}, {{"Jojosh", "Джоджош"}}, {{"Crag Hack", "Крэг Хек"}}, {{"Jezebel", "Жезебель"}},
+{{"Jaclyn", "Жаклин"}}, {{"Ergon", "Эргон"}}, {{"Tsabu", "Тсабу"}}, {{"Atlas", "Атлас"}},
+//
+{{"Astra", "Астра"}}, {{"Natasha", "Наташа"}}, {{"Troyan", "Троян"}}, {{"Vatawna", "Ваттавна"}}, {{"Rebecca", "Ребека"}},
+{{"Gem", "Джем"}}, {{"Ariel", "Ариэль"}}, {{"Carlawn", "Карлавн"}}, {{"Luna", "Луна"}},
+//
+{{"Arie", "Ари"}}, {{"Alamar", "Аламар"}}, {{"Vesper", "Веспер"}}, {{"Crodo", "Кродо"}}, {{"Barok", "Барок"}},
+{{"Kastore", "Кастор"}}, {{"Agar", "Агар"}}, {{"Falagar", "Фалагар"}}, {{"Wrathmont", "Врасмонт"}},
+//
+{{"Myra", "Мира"}}, {{"Flint", "Флинт"}}, {{"Dawn", "Давн"}}, {{"Halon", "Халон"}}, {{"Myrini", "Мирини"}},
+{{"Wilfrey", "Вилфрей"}}, {{"Sarakin", "Саракин"}}, {{"Kalindra", "Калиндра"}}, {{"Mandigal", "Мандигал"}},
+//
+{{"Zom", "Зом"}}, {{"Darlana", "Дарлана"}}, {{"Zam", "Зам"}}, {{"Ranloo", "Ранлу"}}, {{"Charity", "Чарити"}},
+{{"Rialdo", "Риалдо"}}, {{"Roxana", "Роксана"}}, {{"Sandro", "Сандро"}}, {{"Celia", "Целиа"}},
 };
 
-int artifacts_bonuses(int rec, int id)
-{
+int artifacts_bonuses(int rec, int id) {
 	short unsigned* p = (short unsigned*)bsptr(rec, FirstArtifactIndex);
 	if(!p)
 		return 0;
 	int result = 0;
-	for(int i = 0; i <= LastArtifactIndex - FirstArtifactIndex; i++)
-	{
+	for(int i = 0; i <= LastArtifactIndex - FirstArtifactIndex; i++) {
 		if(!p[i])
 			continue;
 		result += game::getartifact(p[i], id);
@@ -52,13 +49,11 @@ int artifacts_bonuses(int rec, int id)
 	return result;
 }
 
-static int get_free_hero(int type)
-{
+static int get_free_hero(int type) {
 	int temp[LastHero - FirstHero + 2];
 	bsselect(temp, FirstHero, LastHero);
 	zshuffle(temp, zlen(temp));
-	for(int* p = temp; *p; p++)
-	{
+	for(int* p = temp; *p; p++) {
 		if(bsget(*p, Recruit))
 			continue;
 		if(bsget(*p, Player))
@@ -70,14 +65,11 @@ static int get_free_hero(int type)
 	return 0;
 }
 
-bool game::isboosted(int rec)
-{
-	for(int eid = FirstEffect; eid <= LastEffect; eid++)
-	{
+bool game::isboosted(int rec) {
+	for(int eid = FirstEffect; eid <= LastEffect; eid++) {
 		if(bsget(eid, Parent) != rec)
 			continue;
-		switch(bsget(eid, Type))
-		{
+		switch(bsget(eid, Type)) {
 		case SpellBless:
 		case SpellStoneSkin:
 		case SpellSteelSkin:
@@ -91,14 +83,11 @@ bool game::isboosted(int rec)
 	return false;
 }
 
-bool game::ispenalized(int rec)
-{
-	for(int eid = FirstEffect; eid <= LastEffect; eid++)
-	{
+bool game::ispenalized(int rec) {
+	for(int eid = FirstEffect; eid <= LastEffect; eid++) {
 		if(bsget(eid, Parent) != rec)
 			continue;
-		switch(bsget(eid, Type))
-		{
+		switch(bsget(eid, Type)) {
 		case SpellBerserker:
 		case SpellBlind:
 		case SpellCurse:
@@ -112,12 +101,10 @@ bool game::ispenalized(int rec)
 	return false;
 }
 
-int game::getartifact(int rec, int id)
-{
+int game::getartifact(int rec, int id) {
 	int type = bsget(rec, Type);
 	int effect = bsget(rec, Value);
-	switch(id)
-	{
+	switch(id) {
 	case Attack:
 	case Defence:
 		if(type == id
@@ -139,23 +126,17 @@ int game::getartifact(int rec, int id)
 	}
 }
 
-void game::cleararmy(int rec)
-{
-	for(int i = FirstTroopsIndex; i <= LastTroopsIndex; i += 2)
-	{
+void game::cleararmy(int rec) {
+	for(int i = FirstTroopsIndex; i <= LastTroopsIndex; i += 2) {
 		bsset(rec, i, 0);
 		bsset(rec, i + 1, 0);
 	}
 }
 
-bool game::addunit(int rec, int type, int count)
-{
-	if(type >= FirstMonster && type <= LastMonster)
-	{
-		for(int i = FirstTroopsIndex; i <= LastTroopsIndex; i += 2)
-		{
-			if(bsget(rec, i) == type)
-			{
+bool game::addunit(int rec, int type, int count) {
+	if(type >= FirstMonster && type <= LastMonster) {
+		for(int i = FirstTroopsIndex; i <= LastTroopsIndex; i += 2) {
+			if(bsget(rec, i) == type) {
 				count += bsget(rec, i + 1);
 				if(count < 0)
 					count = 0;
@@ -166,10 +147,8 @@ bool game::addunit(int rec, int type, int count)
 			}
 		}
 		// Add new one
-		for(int i = FirstTroopsIndex; i <= LastTroopsIndex; i += 2)
-		{
-			if(!bsget(rec, i))
-			{
+		for(int i = FirstTroopsIndex; i <= LastTroopsIndex; i += 2) {
+			if(!bsget(rec, i)) {
 				bsset(rec, i, type);
 				bsset(rec, i + 1, count);
 				return true;
@@ -179,10 +158,8 @@ bool game::addunit(int rec, int type, int count)
 	return false;
 }
 
-bool game::additem(int rec, int type)
-{
-	for(int i = FirstArtifactIndex; i <= LastArtifactIndex; i++)
-	{
+bool game::additem(int rec, int type) {
+	for(int i = FirstArtifactIndex; i <= LastArtifactIndex; i++) {
 		if(bsget(rec, i))
 			continue;
 		bsset(rec, i, type);
@@ -191,23 +168,18 @@ bool game::additem(int rec, int type)
 	return false;
 }
 
-static int get_morale_troops(int i1, int i2, int side)
-{
+static int get_morale_troops(int i1, int i2, int side) {
 	int troops[SandsWarriors - Barbarian + 1];
 	memset(troops, 0, sizeof(troops));
-	for(int i = i1; i <= i2; i++)
-	{
+	for(int i = i1; i <= i2; i++) {
 		int rec = i;
-		if(rec >= FirstCombatant && rec <= LastCombatant)
-		{
+		if(rec >= FirstCombatant && rec <= LastCombatant) {
 			if(!bsget(rec, Type))
 				continue;
 			if(bsget(rec, Side) != side)
 				continue;
 			rec = bsget(rec, Type);
-		}
-		else if(rec >= FirstTroopsIndex && rec <= LastTroopsIndex)
-		{
+		} else if(rec >= FirstTroopsIndex && rec <= LastTroopsIndex) {
 			rec = bsget(side, rec);
 			i++;
 			if(!rec)
@@ -227,16 +199,14 @@ static int get_morale_troops(int i1, int i2, int side)
 	return 0;
 }
 
-int game::getsummary(int rec, int id, int side)
-{
+int game::getsummary(int rec, int id, int side) {
 	int t = rec;
 	if(t >= FirstCombatant && t <= LastCombatant)
 		t = bsget(t, Type);
 	int m = game::get(t, id);
 	if(side)
 		m += game::get(side, id);
-	switch(id)
-	{
+	switch(id) {
 	case Attack:
 		// RULE: Boold Lust
 		if(combat::geteffect(rec, SpellBloodLust))
@@ -251,8 +221,7 @@ int game::getsummary(int rec, int id, int side)
 			m += 5;
 		break;
 	case Morale:
-		if(rec >= FirstCombatant && rec <= LastCombatant)
-		{
+		if(rec >= FirstCombatant && rec <= LastCombatant) {
 			if(combat::isattacker(rec))
 				m += combat::enviroment::morale;
 			else
@@ -285,11 +254,9 @@ int game::getsummary(int rec, int id, int side)
 	return m;
 }
 
-int game::get(int rec, int id)
-{
+int game::get(int rec, int id) {
 	int m, k;
-	switch(id)
-	{
+	switch(id) {
 	case Speed:
 	case DamageMin:
 	case DamageMax:
@@ -301,42 +268,34 @@ int game::get(int rec, int id)
 	case Attack:
 		if(rec >= FirstHero && rec <= LastHero)
 			return bsget(rec, id) + artifacts_bonuses(rec, id);
-		else if(rec >= BarbarianCaptain && rec <= WizardCaptain)
-		{
-			switch(rec)
-			{
+		else if(rec >= BarbarianCaptain && rec <= WizardCaptain) {
+			switch(rec) {
 			case BarbarianCaptain: return 3;
 			case KnightCaptain: return 2;
 			case NecromancerCaptain: return 1;
 			default: return 0;
 			}
-		}
-		else if(rec >= FirstCombatant && rec <= LastCombatant)
+		} else if(rec >= FirstCombatant && rec <= LastCombatant)
 			return getsummary(rec, id, bsget(rec, Side));
 		return bsget(rec, id);
 	case Defence:
 		if(rec >= FirstHero && rec <= LastHero)
 			return bsget(rec, id) + artifacts_bonuses(rec, id);
-		else if(rec >= BarbarianCaptain && rec <= WizardCaptain)
-		{
-			switch(rec)
-			{
+		else if(rec >= BarbarianCaptain && rec <= WizardCaptain) {
+			switch(rec) {
 			case KnightCaptain: return 2;
 			case BarbarianCaptain:
 			case WizardCaptain: return 1;
 			default: return 0;
 			}
-		}
-		else if(rec >= FirstCombatant && rec <= LastCombatant)
+		} else if(rec >= FirstCombatant && rec <= LastCombatant)
 			return getsummary(rec, id, bsget(rec, Side));
 		return bsget(rec, id);
 	case Wisdow:
 		if(rec >= FirstHero && rec <= LastHero)
 			return bsget(rec, id) + artifacts_bonuses(rec, id);
-		else if(rec >= BarbarianCaptain && rec <= WizardCaptain)
-		{
-			switch(rec)
-			{
+		else if(rec >= BarbarianCaptain && rec <= WizardCaptain) {
+			switch(rec) {
 			case SorcererCaptain: return 4;
 			case WizardCaptain:
 			case WarlockCaptain:
@@ -348,10 +307,8 @@ int game::get(int rec, int id)
 	case SpellPower:
 		if(rec >= FirstHero && rec <= LastHero)
 			return bsget(rec, id) + artifacts_bonuses(rec, id);
-		else if(rec >= BarbarianCaptain && rec <= WizardCaptain)
-		{
-			switch(rec)
-			{
+		else if(rec >= BarbarianCaptain && rec <= WizardCaptain) {
+			switch(rec) {
 			case WarlockCaptain: return 4;
 			case SorcererCaptain:
 			case WizardCaptain:
@@ -367,10 +324,8 @@ int game::get(int rec, int id)
 			+ get_morale_troops(FirstTroopsIndex, LastTroopsIndex, rec);
 		else if(rec >= FirstCombatant && rec <= LastCombatant)
 			return getsummary(rec, id, bsget(rec, Side));
-		else
-		{
-			switch(rec)
-			{
+		else {
+			switch(rec) {
 			case MinotaurKing:
 			case BattleDwarf:
 				return 1;
@@ -383,10 +338,8 @@ int game::get(int rec, int id)
 			return bsget(rec, SkillLuck) + artifacts_bonuses(rec, id);
 		else if(rec >= FirstCombatant && rec <= LastCombatant)
 			return getsummary(rec, id, bsget(rec, Side));
-		else
-		{
-			switch(rec)
-			{
+		else {
+			switch(rec) {
 			case Sprite:
 				return 1;
 			default:
@@ -394,8 +347,7 @@ int game::get(int rec, int id)
 			}
 		}
 	case Count:
-		if(rec >= FirstCombatant && rec <= LastCombatant)
-		{
+		if(rec >= FirstCombatant && rec <= LastCombatant) {
 			int t = bsget(rec, Type);
 			int m = bsget(t, HitPointsMax);
 			int c = bsget(rec, HitPoints);
@@ -403,8 +355,7 @@ int game::get(int rec, int id)
 		}
 		return 0;
 	case HitPoints:
-		if(rec >= FirstCombatant && rec <= LastCombatant)
-		{
+		if(rec >= FirstCombatant && rec <= LastCombatant) {
 			int t = bsget(rec, Type);
 			int m = bsget(t, HitPointsMax);
 			return 1 + (bsget(rec, HitPoints) - 1) % m;
@@ -419,26 +370,21 @@ int game::get(int rec, int id)
 	case MovePointsMax:
 		m = 0;
 		// start point
-		if(get(rec, ShipMaster))
-		{
+		if(get(rec, ShipMaster)) {
 			m = 1500;
 			// skill navigation
 			m += m * 30 * get(rec, SkillNavigation) / 100;
 			// artifact bonus
 			k = artifacts_bonuses(rec, MovePointsSea);
-		}
-		else
-		{
+		} else {
 			m = 1000;
 			// slowest monster speed
-			for(int i = FirstTroopsIndex; i <= LastTroopsIndex; i += 2)
-			{
+			for(int i = FirstTroopsIndex; i <= LastTroopsIndex; i += 2) {
 				int unit = bsget(rec, i);
 				if(!unit)
 					continue;
 				int ms = 1000;
-				switch(bsget(unit, Speed))
-				{
+				switch(bsget(unit, Speed)) {
 				case SpeedSlow: ms = 1100; break;
 				case SpeedAverage: ms = 1200; break;
 				case SpeedFast: ms = 1300; break;
@@ -449,15 +395,14 @@ int game::get(int rec, int id)
 					m = ms;
 			}
 			// skill logistics
-			m += m*get(rec, SkillLogistics) * 10 / 100;
+			m += m * get(rec, SkillLogistics) * 10 / 100;
 			k = artifacts_bonuses(rec, MovePointsLand);
 		}
 		if(k)
 			m += k * 100;
 		return m;
 	case Type:
-		if(rec >= FirstHero && rec <= LastHero)
-		{
+		if(rec >= FirstHero && rec <= LastHero) {
 			if(rec <= Dimitry || rec == Corlagon)
 				return Knight;
 			if(rec <= Atlas || rec == Halton)
@@ -469,9 +414,7 @@ int game::get(int rec, int id)
 			if(rec <= Mandigal || rec == Roland)
 				return Wizard;
 			return Necromancer;
-		}
-		else if(rec >= FirstMonster && rec <= LastMonster)
-		{
+		} else if(rec >= FirstMonster && rec <= LastMonster) {
 			if(rec >= Peasant && rec <= Crusader)
 				return Knight;
 			else if(rec >= Goblin && rec <= Cyclop)
@@ -502,23 +445,19 @@ int game::get(int rec, int id)
 	}
 }
 
-bool game::hasspellbook(int rec)
-{
-	for(int i = FirstArtifactIndex; i <= LastArtifactIndex; i++)
-	{
+bool game::hasspellbook(int rec) {
+	for(int i = FirstArtifactIndex; i <= LastArtifactIndex; i++) {
 		if(bsget(rec, i) == MagicBook)
 			return true;
 	}
 	return false;
 }
 
-int game::getmoralechance(int value)
-{
+int game::getmoralechance(int value) {
 	return getmorale(value) * 10;
 }
 
-int game::getmorale(int value)
-{
+int game::getmorale(int value) {
 	if(value < -3)
 		value = -3;
 	else if(value > 3)
@@ -526,8 +465,7 @@ int game::getmorale(int value)
 	return value;
 }
 
-int game::getspeed(int value)
-{
+int game::getspeed(int value) {
 	if(value < 0)
 		value = 0;
 	else if(value > (SpeedUltraFast - SpeedCrawling))
@@ -535,32 +473,25 @@ int game::getspeed(int value)
 	return value;
 }
 
-int game::getday()
-{
+int game::getday() {
 	return (day % 7) + 1;
 }
 
-int game::getweek()
-{
+int game::getweek() {
 	return ((day / 7) % 4) + 1;
 }
 
-int game::getmonth()
-{
+int game::getmonth() {
 	return (day / (7 * 4) + 1);
 }
 
-int game::turn()
-{
-	for(int rec = FirstPlayer; rec <= LastPlayer; rec++)
-	{
+int game::turn() {
+	for(int rec = FirstPlayer; rec <= LastPlayer; rec++) {
 		if(!bsget(rec, Type))
 			continue;
-		switch(bsget(rec, PlayerType))
-		{
+		switch(bsget(rec, PlayerType)) {
 		case Human:
-			switch(show::game(rec))
-			{
+			switch(show::game(rec)) {
 			case 0:
 				return 0;
 			}
@@ -572,8 +503,7 @@ int game::turn()
 	return EndTurn;
 }
 
-int game::getincome(int rec)
-{
+int game::getincome(int rec) {
 	int result = 1000;
 	if(bsget(rec, Castle) < 2)
 		result = result / 2;
@@ -584,10 +514,8 @@ int game::getincome(int rec)
 	return result;
 }
 
-tokens game::getresource(tokens type)
-{
-	switch(type)
-	{
+tokens game::getresource(tokens type) {
+	switch(type) {
 	case MineOre: return Ore;
 	case SawMill: return Wood;
 	case MineGems: return Gems;
@@ -599,10 +527,8 @@ tokens game::getresource(tokens type)
 	}
 }
 
-int game::getmineincome(tokens id)
-{
-	switch(id)
-	{
+int game::getmineincome(tokens id) {
+	switch(id) {
 	case MineOre:
 	case SawMill:
 		return 2;
@@ -619,10 +545,8 @@ int game::getmineincome(tokens id)
 }
 
 
-static tokens get_oppose(tokens value)
-{
-	switch(value)
-	{
+static tokens get_oppose(tokens value) {
+	switch(value) {
 	case EasyDifficulty:
 		return ImpossibleDifficulty;
 	case NormalDifficulty:
@@ -636,10 +560,8 @@ static tokens get_oppose(tokens value)
 	}
 }
 
-static void game_set_difficult(int rec, tokens value)
-{
-	switch(value)
-	{
+static void game_set_difficult(int rec, tokens value) {
+	switch(value) {
 	case EasyDifficulty:
 		bsset(rec, Ore, 20);
 		bsset(rec, Wood, 20);
@@ -670,16 +592,14 @@ static void game_set_difficult(int rec, tokens value)
 	}
 }
 
-void game::initialize()
-{
+void game::initialize() {
 	day = 0;
 	week_of = Empthy;
 	month_of = Empthy;
 	// Setup random generator
 	bsmeta::getbase("hero")->count = LastHero - FirstHero + 1;
 	// Clear all players
-	for(int rec = FirstPlayer; rec <= LastPlayer; rec++)
-	{
+	for(int rec = FirstPlayer; rec <= LastPlayer; rec++) {
 		bsset(rec, Type, 0);
 		bsset(rec, PlayerType, 0);
 		bsset(rec, Recruit, 0);
@@ -688,8 +608,7 @@ void game::initialize()
 			bsset(rec, i, 0);
 	}
 	// Clear all heroes and create army
-	for(int rec = FirstHero; rec <= LastHero; rec++)
-	{
+	for(int rec = FirstHero; rec <= LastHero; rec++) {
 		bsset(rec, Player, 0);
 		bsset(rec, Recruit, 0);
 		bsset(rec, Portrait, rec - FirstHero);
@@ -706,8 +625,7 @@ void game::initialize()
 			bsset(rec, i, 0);
 		for(int i = FirstArtifactIndex; i <= LastArtifactIndex; i++)
 			bsset(rec, i, 0);
-		switch(game::get(rec, Type))
-		{
+		switch(game::get(rec, Type)) {
 		case Knight:
 			bsset(rec, Attack, 2);
 			bsset(rec, Defence, 2);
@@ -784,8 +702,7 @@ void game::initialize()
 		}
 	}
 	// Calculate monater ratin
-	for(int i = FirstMonster; i <= LastMonster; i++)
-	{
+	for(int i = FirstMonster; i <= LastMonster; i++) {
 		auto res = ((double)bsget(i, DamageMin) + (double)bsget(i, DamageMax)) / 2.0;
 		auto hal = res * 0.5;
 		// increase strength
@@ -808,15 +725,12 @@ void game::initialize()
 	command::execute("game_initialize");
 }
 
-static void game_endweek()
-{
+static void game_endweek() {
 	int m_base = bsget(week_of, Base);
 	int m_type = bsget(m_base, Type);
 	//int m_dwll = bsget(m_base, Dwelve);
-	for(int rec = FirstCastle; rec <= (int)LastCastle; rec++)
-	{
-		for(int i = Dwelving1; i <= Dwelving6; i++)
-		{
+	for(int rec = FirstCastle; rec <= (int)LastCastle; rec++) {
+		for(int i = Dwelving1; i <= Dwelving6; i++) {
 			if(!bsget(rec, i))
 				continue;
 			bsadd(rec, i - Dwelving1 + FirstCreatureCount, game::getgrowth(rec, i));
@@ -827,8 +741,7 @@ static void game_endweek()
 	}
 }
 
-void game::build(int rec, int id)
-{
+void game::build(int rec, int id) {
 	auto race = (tokens)bsget(rec, Type);
 	auto player = bsget(rec, Player);
 	auto next_level = bsget(rec, id) + 1;
@@ -839,8 +752,7 @@ void game::build(int rec, int id)
 	if(next_level == 1 && id >= Dwelving1 && id <= Dwelving6)
 		bsadd(rec, id - Dwelving1 + FirstCreatureCount, getgrowth(rec, id));
 	bsadd(rec, AlreadyMoved, 1);
-	if(race == Wizard && id == SpecialBuilding)
-	{
+	if(race == Wizard && id == SpecialBuilding) {
 		game::random::spell(rec, 1);
 		game::random::spell(rec, 2);
 		game::random::spell(rec, 3);
@@ -849,11 +761,9 @@ void game::build(int rec, int id)
 	}
 }
 
-void game::prepare()
-{
+void game::prepare() {
 	int hero;
-	for(int rec = FirstPlayer; rec <= LastPlayer; rec++)
-	{
+	for(int rec = FirstPlayer; rec <= LastPlayer; rec++) {
 		int type = bsget(rec, Type);
 		if(!type)
 			continue;
@@ -874,11 +784,9 @@ void game::prepare()
 	game_endweek();
 }
 
-static void game_endturn()
-{
+static void game_endturn() {
 	// All heroes refresh their values
-	for(int rec = FirstHero; rec <= LastHero; rec++)
-	{
+	for(int rec = FirstHero; rec <= LastHero; rec++) {
 		if(!bsget(rec, Player))
 			continue;
 		// Spell points
@@ -890,24 +798,20 @@ static void game_endturn()
 		bsset(rec, MovePoints, game::get(rec, MovePointsMax));
 	}
 	// All castles give income and refresh state
-	for(int rec = FirstCastle; rec <= LastCastle; rec++)
-	{
+	for(int rec = FirstCastle; rec <= LastCastle; rec++) {
 		// Update build flags
 		bsset(rec, AlreadyMoved, 0);
 		// Get income for all player exept neutral
 		int p = bsget(rec, Player);
-		if(p)
-		{
+		if(p) {
 			int m = game::getincome(rec);
 			bsadd(p, Gold, m);
 		}
 	}
 	// All mines give income and refresh state
-	for(int rec = FirstMapObject; rec <= LastMapObject; rec++)
-	{
+	for(int rec = FirstMapObject; rec <= LastMapObject; rec++) {
 		auto type = (tokens)bsget(rec, Type);
-		switch(type)
-		{
+		switch(type) {
 		case SawMill:
 		case MineOre:
 		case MineCrystal:
@@ -917,10 +821,9 @@ static void game_endturn()
 		case MineGold:
 			// Get income for all player exept neutral
 			auto p = bsget(rec, Count);
-			if(p)
-			{
+			if(p) {
 				auto r = game::getresource(type);
-				auto c = (type==SawMill || type==MineOre) ? 2 : (type == MineGold) ? 1000 : 1;
+				auto c = (type == SawMill || type == MineOre) ? 2 : (type == MineGold) ? 1000 : 1;
 				bsadd(p, r, c);
 			}
 			break;
@@ -928,15 +831,14 @@ static void game_endturn()
 	}
 }
 
-int game::getgrowth(int rec, int dwelling)
-{
+int game::getgrowth(int rec, int dwelling) {
 	static int		growth_per_week[][6] = {
 		{10, 8, 5, 4, 3, 2},
-		{12, 8, 5, 4, 3, 2},
-		{8, 6, 4, 3, 2, 1},
-		{6, 6, 4, 3, 2, 1},
-		{8, 6, 4, 3, 2, 1},
-		{8, 6, 4, 3, 2, 1},
+	{12, 8, 5, 4, 3, 2},
+	{8, 6, 4, 3, 2, 1},
+	{6, 6, 4, 3, 2, 1},
+	{8, 6, 4, 3, 2, 1},
+	{8, 6, 4, 3, 2, 1},
 	};
 	if(!bsget(rec, dwelling))
 		return 0;
@@ -949,65 +851,54 @@ int game::getgrowth(int rec, int dwelling)
 	return result;
 }
 
-int game::play(gamefile& game)
-{
+int game::play(gamefile& game) {
 	game.validate();
 	game::initialize();
 	if(!map::load(game))
 		return Cancel;
 	game::prepare();
-	while(true)
-	{
+	while(true) {
 		int result = turn();
 		if(!result)
 			return 0;
 		game_endturn();
 		day++;
-		if((day % 7) == 0)
-		{
+		if((day % 7) == 0) {
 			week_of = week_monsters[rand() % (sizeof(week_monsters) / sizeof(week_monsters[0]))];
 			game_endweek();
 		}
 	}
 }
 
-void game::addresources(void* result_void, const void* v1, const void* v2, bool negative)
-{
+void game::addresources(void* result_void, const void* v1, const void* v2, bool negative) {
 	auto result = (int*)result_void;
 	auto e1 = (int*)v1;
 	auto e2 = (int*)v2;
-	if(negative)
-	{
+	if(negative) {
 		for(int i = 0; i <= (LastResource - FirstResource); i++)
 			result[i] = e1[i] - e2[i];
-	}
-	else
-	{
+	} else {
 		for(int i = 0; i <= (LastResource - FirstResource); i++)
 			result[i] = e1[i] + e2[i];
 	}
 	// Normalize resource
-	for(int i = 0; i <= (LastResource - FirstResource); i++)
-	{
+	for(int i = 0; i <= (LastResource - FirstResource); i++) {
 		if(result[i] < 0)
 			result[i] = 0;
 	}
 }
 
-void game::mulresource(int* result, const void* source_void, int value)
-{
+void game::mulresource(int* result, const void* source_void, int value) {
 	int* source = (int*)source_void;
 	for(int i = 0; i <= (LastResource - FirstResource); i++)
 		result[i] = source[i] * value;
 }
 
-int game::divresource(const void* source_void, const void* divider_void)
-{
+int game::divresource(const void* source_void, const void* divider_void) {
 	auto source = (int*)source_void;
 	auto divider = (int*)divider_void;
 	int result = 0x7FFFFFFF;
-	for(int i = 0; i <= (LastResource - FirstResource); i++)
-	{
+	for(int i = 0; i <= (LastResource - FirstResource); i++) {
 		if(!divider[i])
 			continue;
 		auto v = source[i] / divider[i];
@@ -1017,31 +908,26 @@ int game::divresource(const void* source_void, const void* divider_void)
 	return result;
 }
 
-const int* game::gethirecost(int rec)
-{
+const int* game::gethirecost(int rec) {
 	static int cost[LastResource - FirstResource + 1] = {2500};
 	return cost;
 }
 
-bool game::ismatch(const void* c1_void, const void* c2_void)
-{
+bool game::ismatch(const void* c1_void, const void* c2_void) {
 	auto c1 = (int*)c1_void;
 	auto c2 = (int*)c2_void;
-	for(int i = 0; i <= (LastResource - FirstResource); i++)
-	{
+	for(int i = 0; i <= (LastResource - FirstResource); i++) {
 		if(c1[i] < c2[i])
 			return false;
 	}
 	return true;
 }
 
-bool game::hire(int hero, int player, int index)
-{
+bool game::hire(int hero, int player, int index) {
 	if(bsfind(FirstHero, Index, index))
 		return false;
 	int type = bsget(player, Type);
-	if(!hero)
-	{
+	if(!hero) {
 		hero = game::random::hero(type);
 		if(!hero)
 			hero = game::random::hero(0);
@@ -1050,16 +936,14 @@ bool game::hire(int hero, int player, int index)
 	}
 	bsset(hero, Player, player);
 	bsset(hero, Index, index);
-	if(bsget(player, Recruit) == hero)
-	{
+	if(bsget(player, Recruit) == hero) {
 		bsset(player, Recruit, 0);
 		auto new_hero = game::random::hero(type);
 		if(!new_hero)
 			new_hero = game::random::hero(0);
 		bsset(player, Recruit, new_hero);
 	}
-	if(bsget(player, RecruitLast) == hero)
-	{
+	if(bsget(player, RecruitLast) == hero) {
 		bsset(player, RecruitLast, 0);
 		auto new_hero = game::random::hero(0);
 		bsset(player, RecruitLast, new_hero);
@@ -1070,10 +954,8 @@ bool game::hire(int hero, int player, int index)
 	return true;
 }
 
-int game::getupgrade(int rec)
-{
-	switch(rec)
-	{
+int game::getupgrade(int rec) {
+	switch(rec) {
 	case Archer: return Ranger;
 	case Pikeman: return VeteranPikeman;
 	case Swordsman: return MasterSwordsman;
@@ -1099,10 +981,8 @@ int game::getupgrade(int rec)
 	}
 }
 
-int game::getdowngrade(int rec)
-{
-	switch(rec)
-	{
+int game::getdowngrade(int rec) {
+	switch(rec) {
 	case Ranger: return Archer;
 	case VeteranPikeman: return Pikeman;
 	case MasterSwordsman: return Swordsman;
@@ -1128,10 +1008,8 @@ int game::getdowngrade(int rec)
 	}
 }
 
-int game::getdwelving(int rec)
-{
-	switch(rec)
-	{
+int game::getdwelving(int rec) {
+	switch(rec) {
 	case Goblin:
 	case Centaur:
 	case Halfling:
@@ -1205,13 +1083,11 @@ int game::getdwelving(int rec)
 	}
 }
 
-int game::getcastle(int index)
-{
+int game::getcastle(int index) {
 	return bsfind(FirstCastle, Index, index);
 }
 
-bool game::canupgrade(int monster, int side)
-{
+bool game::canupgrade(int monster, int side) {
 	if(game::getupgrade(monster) == monster)
 		return false;
 	int castle;
@@ -1230,8 +1106,7 @@ bool game::canupgrade(int monster, int side)
 	return true;
 }
 
-bool game::upgrade(int side, int index, bool interactive)
-{
+bool game::upgrade(int side, int index, bool interactive) {
 	char temp[260];
 	auto monster = bsget(side, index);
 	auto monster_new = game::getupgrade(monster);
@@ -1247,26 +1122,20 @@ bool game::upgrade(int side, int index, bool interactive)
 	mulresource(t1, c1, count);
 	mulresource(t2, c2, count);
 	addresources(t2, t2, t1, true);
-	if(interactive)
-	{
+	if(interactive) {
 		szprint(temp, szt("Upgrade", "Улучшить"));
 		szprint(zend(temp), "\n$(%1i, %2i)\n", monster, monster_new);
 		game::addicon(zend(temp), t2);
 	}
-	if(ismatch(pl, t2))
-	{
-		if(interactive)
-		{
+	if(ismatch(pl, t2)) {
+		if(interactive) {
 			if(!dlgask(0, temp))
 				return false;
 		}
 		addresources(pl, pl, t2, true);
 		bsset(side, index, monster_new);
-	}
-	else
-	{
-		if(interactive)
-		{
+	} else {
+		if(interactive) {
 			szprint(zend(temp), szt("You don't have resources.", "У вас не хватает ресурсов."));
 			dlgmsg(0, temp);
 		}
@@ -1275,12 +1144,11 @@ bool game::upgrade(int side, int index, bool interactive)
 	return true;
 }
 
-int game::gettrade(tokens resf, tokens rest, int markets)
-{
+int game::gettrade(tokens resf, tokens rest, int markets) {
 	const int max_count = 9;
-	static int sale_uncostly[max_count+1] = {0, 25, 37, 50, 62, 74, 87, 100, 112, 124};
+	static int sale_uncostly[max_count + 1] = {0, 25, 37, 50, 62, 74, 87, 100, 112, 124};
 	static int sale_costly[max_count + 1] = {0, 50, 74, 100, 124, 149, 175, 200, 224, 249};
-	static int costly_costly[max_count+1] = {0, 10, 7, 5, 4, 4, 3, 3, 3, 2};
+	static int costly_costly[max_count + 1] = {0, 10, 7, 5, 4, 4, 3, 3, 3, 2};
 	static int uncostly_costly[max_count + 1] = {0, 20, 14, 10, 8, 7, 6, 5, 5, 4};
 	static int costly_uncostly[max_count + 1] = {0, 5, 4, 3, 2, 2, 2, 2, 2, 1};
 	static int buy_costly[max_count + 1] = {0, 5000, 3334, 2500, 2000, 1667, 1429, 1250, 1112, 1000};
@@ -1291,12 +1159,10 @@ int game::gettrade(tokens resf, tokens rest, int markets)
 		return 0;
 	if(markets > max_count)
 		markets = max_count;
-	switch(resf)
-	{
+	switch(resf) {
 	case Wood:
 	case Ore:
-		switch(rest)
-		{
+		switch(rest) {
 		case Gold:
 			return sale_uncostly[markets];
 		case Mercury:
@@ -1315,8 +1181,7 @@ int game::gettrade(tokens resf, tokens rest, int markets)
 	case Sulfur:
 	case Crystal:
 	case Gems:
-		switch(rest)
-		{
+		switch(rest) {
 		case Gold:
 			return sale_costly[markets];
 		case Mercury:
@@ -1331,8 +1196,7 @@ int game::gettrade(tokens resf, tokens rest, int markets)
 			return 0;
 		}
 	case Gold:
-		switch(rest)
-		{
+		switch(rest) {
 		case Mercury:
 		case Sulfur:
 		case Crystal:
@@ -1349,26 +1213,22 @@ int game::gettrade(tokens resf, tokens rest, int markets)
 	}
 }
 
-bool game::trade(int player, tokens from, tokens to, int count, int discount)
-{
+bool game::trade(int player, tokens from, tokens to, int count, int discount) {
 	int rate = gettrade(from, to, getbuildings(player, MarketPlace) + discount);
 	auto resources = (int*)bsptr(player, FirstResource);
 	if(!resources || !rate)
 		return false;
 	int resource_sub[LastResource - FirstResource + 1] = {0};
 	int resource_add[LastResource - FirstResource + 1] = {0};
-	if(to == Gold)
-	{
+	if(to == Gold) {
 		if(count > resources[from - FirstResource])
 			count = resources[from - FirstResource];
 		resource_sub[from - FirstResource] = count;
-		resource_add[to - FirstResource] = count*rate;
-	}
-	else
-	{
-		if(count > resources[from - FirstResource]/rate)
-			count = resources[from - FirstResource]/rate;
-		resource_sub[from - FirstResource] = count*rate;
+		resource_add[to - FirstResource] = count * rate;
+	} else {
+		if(count > resources[from - FirstResource] / rate)
+			count = resources[from - FirstResource] / rate;
+		resource_sub[from - FirstResource] = count * rate;
 		resource_add[to - FirstResource] = count;
 	}
 	addresources(resources, resources, resource_sub, true);
@@ -1376,35 +1236,29 @@ bool game::trade(int player, tokens from, tokens to, int count, int discount)
 	return true;
 }
 
-bool game::isfullartifacts(int hero)
-{
-	for(int i = FirstArtifactIndex; i <= LastArtifactIndex; i++)
-	{
+bool game::isfullartifacts(int hero) {
+	for(int i = FirstArtifactIndex; i <= LastArtifactIndex; i++) {
 		if(!bsget(hero, i))
 			return false;
 	}
 	return true;
 }
 
-char* game::addicon(char* result, int type, int count)
-{
+char* game::addicon(char* result, int type, int count) {
 	szprint(result, "\n$(%1i/%2i)", type, count);
 	return result;
 }
 
-char* game::addicon(char* result, int t1, int c1, int t2, int c2)
-{
+char* game::addicon(char* result, int t1, int c1, int t2, int c2) {
 	szprint(result, "\n$(p%1i/%2i, %3i/%4i)", t1, c1, t2, c2);
 	return result;
 }
 
-char* game::addicon(char* result, const void* cost_void)
-{
+char* game::addicon(char* result, const void* cost_void) {
 	char* p = result;
 	auto cost = (int*)cost_void;
 	p[0] = 0;
-	for(int id = FirstResource; id <= LastResource; id++)
-	{
+	for(int id = FirstResource; id <= LastResource; id++) {
 		int value = cost[id - FirstResource];
 		if(!value)
 			continue;
@@ -1420,21 +1274,17 @@ char* game::addicon(char* result, const void* cost_void)
 	return result;
 }
 
-int game::getunitscount(int side)
-{
+int game::getunitscount(int side) {
 	int count = 0;
-	for(int i = FirstTroopsIndex; i <= LastTroopsIndex; i += 2)
-	{
+	for(int i = FirstTroopsIndex; i <= LastTroopsIndex; i += 2) {
 		if(bsget(side, i))
 			count++;
 	}
 	return count;
 }
 
-bool game::isfemale(int rec)
-{
-	switch(rec)
-	{
+bool game::isfemale(int rec) {
+	switch(rec) {
 	case Gvenneth:
 	case Ruby:
 	case Jezebel:
