@@ -3,20 +3,18 @@
 const int		viewsize = 14;
 unsigned char	map::width;
 unsigned char	map::height;
-unsigned short	map::show::tiles[144*144];
-unsigned char	map::show::flags[144*144];
+unsigned short	map::show::tiles[144 * 144];
+unsigned char	map::show::flags[144 * 144];
 unsigned char	map::show::type[144 * 144];
 unsigned char	map::show::road[144 * 144];
 point			map::camera;
 
-int	map::moveto(int index, map::directions direction)
-{
-	if(index==-1)
+int	map::moveto(int index, map::directions direction) {
+	if(index == -1)
 		return -1;
 	int x = i2x(index);
 	int y = i2y(index);
-	switch(direction)
-	{
+	switch(direction) {
 	case map::LeftUp:
 		y--;
 	case map::Left:
@@ -40,40 +38,36 @@ int	map::moveto(int index, map::directions direction)
 	default:
 		return -1;
 	}
-	if(x<0 || x>=width || y<0 || y>=height)
+	if(x < 0 || x >= width || y < 0 || y >= height)
 		return -1;
-	return m2i(x,y);
+	return m2i(x, y);
 }
 
-static void setcamera(int x, int y)
-{
-	if(x<0)
+static void setcamera(int x, int y) {
+	if(x < 0)
 		x = 0;
-	if(y<0)
+	if(y < 0)
 		y = 0;
-	if(x>map::width-viewsize)
+	if(x > map::width - viewsize)
 		x = map::width - viewsize;
-	if(y>map::height-viewsize)
-		y = map::height-viewsize;
+	if(y > map::height - viewsize)
+		y = map::height - viewsize;
 	map::camera.x = x * 32;
 	map::camera.y = y * 32;
 }
 
-void map::jumpto(int index)
-{
-	setcamera(i2x(index) - viewsize /2, i2y(index) - viewsize /2);
+void map::jumpto(int index) {
+	setcamera(i2x(index) - viewsize / 2, i2y(index) - viewsize / 2);
 }
 
-void map::slide(map::directions type)
-{
-	int i = moveto(m2i(camera.x/32, camera.y/32), type);
-	if(i==-1)
+void map::slide(map::directions type) {
+	int i = moveto(m2i(camera.x / 32, camera.y / 32), type);
+	if(i == -1)
 		return;
 	setcamera(i2x(i), i2y(i));
 }
 
-tokens map::gettile(int index)
-{
+tokens map::gettile(int index) {
 	index = map::show::tiles[index];
 	if(30 > index) // 30 indexes
 		return Water;
@@ -94,14 +88,12 @@ tokens map::gettile(int index)
 	return Beach;
 }
 
-bool map::ispassable(int index)
-{
+bool map::ispassable(int index) {
 	if(show::type[index] == 2)
 		return false;
 	return true;
 }
 
-bool map::isroad(int index, unsigned char direction)
-{
+bool map::isroad(int index, unsigned char direction) {
 	return (map::show::road[index] & direction) != 0;
 }
