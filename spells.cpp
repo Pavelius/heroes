@@ -167,38 +167,22 @@ int game::gettarget(int rec) {
 int game::getframe(int rec) {
 	if(rec >= FirstSpell && rec <= LastSpell) {
 		switch(rec) {
-		case SpellBloodLust:
-			return 9;
-		case SpellBless:
-			return 3;
-		case SpellHaste:
-			return 0;
-		case SpellShield:
-			return 10;
-		case SpellStoneSkin:
-			return 13;
-		case SpellDragonSlayer:
-			return 8;
-		case SpellSteelSkin:
-			return 14;
-		case SpellAntimagic:
-			return 12;
-		case SpellCurse:
-			return 4;
-		case SpellSlow:
-			return 1;
-		case SpellBerserker:
-			return 5;
-		case SpellHypnotize:
-			return 7;
-		case SpellBlind:
-			return 2;
-		case SpellParalyze:
-			return 6;
-		case SpellStone:
-			return 11;
-		default:
-			return 100;
+		case SpellBloodLust: return 9;
+		case SpellBless: return 3;
+		case SpellHaste: return 0;
+		case SpellShield: return 10;
+		case SpellStoneSkin: return 13;
+		case SpellDragonSlayer: return 8;
+		case SpellSteelSkin: return 14;
+		case SpellAntimagic: return 12;
+		case SpellCurse: return 4;
+		case SpellSlow: return 1;
+		case SpellBerserker: return 5;
+		case SpellHypnotize: return 7;
+		case SpellBlind: return 2;
+		case SpellParalyze: return 6;
+		case SpellStone: return 11;
+		default: return 100;
 		}
 	}
 	return 0;
