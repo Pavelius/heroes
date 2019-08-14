@@ -1,6 +1,7 @@
 #include "main.h"
 
 static struct combat_unit : public animation {
+	
 	int		index;
 	int		side;
 	int		hits;

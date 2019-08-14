@@ -1,10 +1,10 @@
 #include "main.h"
 
-static int			attacker, defender;
-static int			combat_order[LastCombatant - FirstCombatant + 2];
-int					combat::rounds;
-int					combat::enviroment::morale;
-static int			casting[2];
+static int	attacker, defender;
+static int	combat_order[LastCombatant - FirstCombatant + 2];
+int			combat::rounds;
+int			combat::enviroment::morale;
+static int	casting[2];
 
 static int correct_damage(int result) {
 	if(result < 1)

@@ -66,9 +66,6 @@
     <ClCompile Include="base.cpp">
       <Filter>database</Filter>
     </ClCompile>
-    <ClCompile Include="base_meta.cpp">
-      <Filter>database</Filter>
-    </ClCompile>
     <ClCompile Include="point.cpp">
       <Filter>support</Filter>
     </ClCompile>
@@ -215,6 +212,9 @@
     </ClCompile>
     <ClCompile Include="list.cpp">
       <Filter>draw\core</Filter>
+    </ClCompile>
+    <ClCompile Include="base_meta.cpp">
+      <Filter>database</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

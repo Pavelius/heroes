@@ -648,7 +648,7 @@ struct animation : public drawable {
 		state(animation* a);
 		~state();
 	private:
-		animation * a;
+		animation*			a;
 		unsigned			flags;
 	};
 	int						rec;
